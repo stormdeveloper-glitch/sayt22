@@ -46,5 +46,6 @@ def save_data():
 
 if __name__ == '__main__':
     init_data_file()
-    print(f"Backend API ishga tushdi. Ma'lumotlar {DATA_FILE} faylida saqlanadi.")
-    app.run(host='0.0.0.0', port=os.environ.get('PORT', 5000), debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    print(f"Backend API ishga tushdi. Port: {port}")
+    app.run(host='0.0.0.0', port=port)
