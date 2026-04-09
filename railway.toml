@@ -3,6 +3,6 @@ builder = "NIXPACKS"
 buildCommand = "pip install -r requirements.txt"
 
 [deploy]
-startCommand = "gunicorn -b 0.0.0.0:$PORT app:app"
+startCommand = "python app.py"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
