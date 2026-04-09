@@ -493,15 +493,22 @@ const NAMES=["Bahodirjonov Sardor","Bahodirov Asadbek","Farangiz","Farxodjon 08"
 const TP="Ustoz2023",SK="texno_v3";
 let students=[],txs=[],nid=1,curType=null,curId=null,lbM="overall",lbM2="overall",chart=null;
 
-async function save(){const d=JSON.stringify({students,transactions:txs,nextStudentId:nid});try{if(window.storage)await window.storage.set(SK,d,true);}catch(e){}try{localStorage.setItem(SK,d);}catch(e){}}
-async function load(){let r=null;try{if(window.storage){const x=await window.storage.get(SK,true);if(x)r=x.value;}}catch(e){}if(!r)try{r=localStorage.getItem(SK);}catch(e){}return r?JSON.parse(r):null;}
+async function save(){
+  const d={students,transactions:txs,nextStudentId:nid};
+  try{await fetch('/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});}catch(e){}
+  try{localStorage.setItem(SK,JSON.stringify(d));}catch(e){}
+}
+async function load(){
+  try{const res=await fetch('/api/data');if(res.ok){const d=await res.json();if(d&&d.students&&d.students.length>0)return d;}}catch(e){}
+  try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}
+  return null;
+}
 
 async function init(){
   await new Promise(r=>setTimeout(r,1800));
   const d=await load();
   if(d&&d.students&&d.students.length>0){
-    if(confirm("Saqlangan ma'lumotlar mavjud.\nYuklash kerakmi?")){students=d.students;txs=d.transactions||[];nid=d.nextStudentId||students.length+1;}
-    else mkDef();
+    students=d.students;txs=d.transactions||[];nid=d.nextStudentId||students.length+1;
   } else mkDef();
   updBadges();updSels();
   document.getElementById('loadingOverlay').style.opacity='0';
