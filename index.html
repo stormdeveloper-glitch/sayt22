@@ -391,6 +391,9 @@
                 <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Daraja:</td><td style="padding:7px 0;border:none;" id="pr_l">-</td></tr>
                 <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Nishon:</td><td style="padding:7px 0;border:none;" id="pr_b">-</td></tr>
                 <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Tanga:</td><td style="padding:7px 0;font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--gold-mid);border:none;" id="pr_c">0</td></tr>
+                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Streak:</td><td style="padding:7px 0;font-weight:700;color:var(--green);border:none;" id="pr_s">🔥 0 kun</td></tr>
+                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Haftalik:</td><td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_w">0 🪙</td></tr>
+                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Oylik:</td><td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_m">0 🪙</td></tr>
                 <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Reyting:</td><td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_r">-</td></tr>
               </table>
               <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;"><button class="btn btn-og btn-sm" onclick="openModal('cpModal')"><i class="fas fa-key"></i> Parolni o'zgartirish</button></div>
@@ -493,73 +496,328 @@ const NAMES=["Bahodirjonov Sardor","Bahodirov Asadbek","Farangiz","Farxodjon 08"
 const TP="Ustoz2023",SK="texno_v3";
 let students=[],txs=[],nid=1,curType=null,curId=null,lbM="overall",lbM2="overall",chart=null;
 
+// ── ID normalizatsiya: barcha ID lar doim number bo'ladi ──────────────────
+function nNum(v){return Number(v);}
+
+// ── SAQLASH: avval server (Railway), keyin localStorage zaxira ───────────
 async function save(){
   const d={students,transactions:txs,nextStudentId:nid};
-  try{await fetch('/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});}catch(e){}
+  try{
+    await fetch('/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+  }catch(e){}
   try{localStorage.setItem(SK,JSON.stringify(d));}catch(e){}
 }
+
+// ── YUKLASH: avval server, bo'lmasa localStorage ─────────────────────────
 async function load(){
-  try{const res=await fetch('/api/data');if(res.ok){const d=await res.json();if(d&&d.students&&d.students.length>0)return d;}}catch(e){}
+  try{
+    const res=await fetch('/api/data');
+    if(res.ok){const d=await res.json();if(d&&d.students&&d.students.length>0)return d;}
+  }catch(e){}
   try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}
   return null;
 }
 
+// ── INIT: confirm yo'q, avtomatik yuklaydi, nid xavfsiz tiklanadi ─────────
 async function init(){
   await new Promise(r=>setTimeout(r,1800));
   const d=await load();
   if(d&&d.students&&d.students.length>0){
-    students=d.students;txs=d.transactions||[];nid=d.nextStudentId||students.length+1;
-  } else mkDef();
+    // Barcha ID larni number ga normalize qilamiz
+    students=d.students.map(s=>({...s,id:nNum(s.id)}));
+    txs=(d.transactions||[]).map(t=>({...t,studentId:nNum(t.studentId)}));
+    // nid: eng katta mavjud ID + 1 (har qanday holatda ham xavfsiz)
+    const maxId=students.length>0?Math.max(...students.map(s=>s.id)):0;
+    nid=Math.max(nNum(d.nextStudentId)||1, maxId+1);
+  } else {
+    mkDef();
+  }
   updBadges();updSels();
   document.getElementById('loadingOverlay').style.opacity='0';
   setTimeout(()=>document.getElementById('loadingOverlay').style.display='none',500);
 }
-function mkDef(){students=[];let id=1;for(let n of NAMES){const p=genP(n);students.push({id:id++,name:n,refCode:`REF${id}${~~(Math.random()*100)}`,password:p,totalCoins:0,streak:0,lastDailyDate:null,level:1,badge:"Starter"});}nid=id;txs=[];save();}
+
+// ── STANDART RO'YXAT: ID bug tuzatildi (id++ emas, avval id saqlab) ───────
+function mkDef(){
+  students=[];let id=1;
+  for(let n of NAMES){
+    const curId=id++;  // FIX: avval id ni saqlaymiz, keyin increment
+    const p=genP(n);
+    students.push({id:curId,name:n,refCode:`REF${curId}${~~(Math.random()*100)}`,password:p,totalCoins:0,streak:0,lastDailyDate:null,level:1,badge:"Starter"});
+  }
+  nid=id;txs=[];save();
+}
+
 function genP(n){return(n.replace(/\s/g,'').slice(0,3).toUpperCase()||"STU")+(~~(Math.random()*900)+100);}
 function updBadges(){for(let s of students){s.level=~~(s.totalCoins/100)+1;s.badge=s.totalCoins<100?"Starter":s.totalCoins<300?"Active":s.totalCoins<600?"Pro":"Elite";}}
-function addCoin(sid,amt,reason,details){const s=students.find(x=>x.id===sid);if(!s)return;s.totalCoins+=amt;const td=new Date().toDateString();if(s.lastDailyDate!==td){s.streak=(s.streak||0)+1;s.lastDailyDate=td;}txs.unshift({id:Date.now()+Math.random(),studentId:sid,amount:amt,reason,timestamp:Date.now(),details:details||`${reason} uchun ${amt} tanga`});updBadges();save();}
-function earned(sid,mode){if(mode==="weekly"){const w=Date.now()-7*864e5;return txs.filter(t=>t.studentId===sid&&t.timestamp>=w).reduce((a,b)=>a+b.amount,0);}if(mode==="monthly"){const m=Date.now()-30*864e5;return txs.filter(t=>t.studentId===sid&&t.timestamp>=m).reduce((a,b)=>a+b.amount,0);}return students.find(s=>s.id===sid)?.totalCoins||0;}
+
+// ── TANGA QO'SHISH: async, ID number ga normalize, await save ─────────────
+async function addCoin(sid,amt,reason,details){
+  const numSid=nNum(sid);
+  const s=students.find(x=>x.id===numSid);
+  if(!s){toast('Talaba topilmadi!','error');return;}
+  s.totalCoins+=amt;
+  const td=new Date().toDateString();
+  if(s.lastDailyDate!==td){s.streak=(s.streak||0)+1;s.lastDailyDate=td;}
+  txs.unshift({id:Date.now()+Math.random(),studentId:numSid,amount:amt,reason,timestamp:Date.now(),details:details||`${reason} uchun ${amt} tanga`});
+  updBadges();
+  await save();
+}
+
+// ── HISOBLAR: studentId ni number bilan solishtiramiz ─────────────────────
+function earned(sid,mode){
+  const numSid=nNum(sid);
+  if(mode==="weekly"){const w=Date.now()-7*864e5;return txs.filter(t=>t.studentId===numSid&&t.timestamp>=w).reduce((a,b)=>a+b.amount,0);}
+  if(mode==="monthly"){const m=Date.now()-30*864e5;return txs.filter(t=>t.studentId===numSid&&t.timestamp>=m).reduce((a,b)=>a+b.amount,0);}
+  return students.find(s=>s.id===numSid)?.totalCoins||0;
+}
 function sorted(mode){return[...students].map(s=>({...s,score:earned(s.id,mode)})).sort((a,b)=>b.score-a.score);}
-function rank(sid,mode){return sorted(mode).findIndex(s=>s.id===sid)+1;}
+function rank(sid,mode){const numSid=nNum(sid);return sorted(mode).findIndex(s=>s.id===numSid)+1;}
 
+// ── LOGIN / NAVIGATSIYA ───────────────────────────────────────────────────
 function swTab(t){document.getElementById('sLoginForm').style.display=t==='student'?'block':'none';document.getElementById('tLoginForm').style.display=t==='teacher'?'block':'none';document.getElementById('tabSBtn').classList.toggle('active',t==='student');document.getElementById('tabTBtn').classList.toggle('active',t==='teacher');}
-function updSels(){const o=students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');document.getElementById('sLoginSel').innerHTML=`<option value="">-- Tanlang --</option>${o}`;['aSt','hSt','pSt','rSt','mSt'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=students.map(s=>`<option value="${s.id}">${s.name} (${s.totalCoins}🪙)</option>`).join('');});}
 
-function doSLogin(){const sid=parseInt(document.getElementById('sLoginSel').value);const pwd=document.getElementById('sPwdIn').value;const s=students.find(x=>x.id===sid);if(!s){toast('Talabani tanlang!','error');return;}if(s.password!==pwd){toast('Parol xato!','error');return;}curType='student';curId=sid;enterS();}
+function updSels(){
+  const o=students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  document.getElementById('sLoginSel').innerHTML=`<option value="">-- Tanlang --</option>${o}`;
+  ['aSt','hSt','pSt','rSt','mSt'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=students.map(s=>`<option value="${s.id}">${s.name} (${s.totalCoins}🪙)</option>`).join('');});
+}
+
+function doSLogin(){
+  const sid=nNum(document.getElementById('sLoginSel').value);
+  const pwd=document.getElementById('sPwdIn').value;
+  if(!sid){toast('Talabani tanlang!','error');return;}
+  const s=students.find(x=>x.id===sid);
+  if(!s){toast('Talabani tanlang!','error');return;}
+  if(s.password!==pwd){toast('Parol xato!','error');return;}
+  curType='student';curId=sid;enterS();
+}
 function doTLogin(){const pwd=document.getElementById('tPwdIn').value;const sv=localStorage.getItem('tpwd')||TP;if(pwd!==sv){toast('Parol xato!','error');return;}curType='teacher';enterT();}
-function enterS(){document.getElementById('loginScreen').style.display='none';document.getElementById('appShell').style.display='flex';const s=students.find(x=>x.id===curId);document.getElementById('sbAv').textContent=s.name.slice(0,2).toUpperCase();document.getElementById('sbNm').textContent=s.name;document.getElementById('sbRl').textContent=`${s.badge} · D${s.level}`;document.getElementById('sNav').style.display='';document.getElementById('tNav').style.display='none';renderSD();renderLb();renderFLb();renderHist();renderProf();showPage('dpg',document.querySelector('#sNav .nav-item'));}
-function enterT(){document.getElementById('loginScreen').style.display='none';document.getElementById('appShell').style.display='flex';document.getElementById('sbAv').textContent='OQ';document.getElementById('sbNm').textContent="O'qituvchi";document.getElementById('sbRl').textContent='Administrator';document.getElementById('sNav').style.display='none';document.getElementById('tNav').style.display='';document.getElementById('tbRight').innerHTML='';renderAD();renderSTbl();updSels();showPage('adpg',document.querySelector('#tNav .nav-item'));}
-function doLogout(){curType=null;curId=null;document.getElementById('appShell').style.display='none';document.getElementById('loginScreen').style.display='flex';['sPwdIn','tPwdIn'].forEach(id=>document.getElementById(id).value='');}
 
-function showPage(pid,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(pid)?.classList.add('active');const tmap={dpg:'Bosh sahifa',rpg:'Reyting',hpg:'Faollik tarixi',ppg:'Profilim',adpg:'Statistika',stpg:'Talabalar',cpg:'Tanga berish'};document.getElementById('tbTitle').textContent=tmap[pid]||'';document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');if(pid==='dpg')renderSD();if(pid==='rpg')renderFLb();if(pid==='hpg')renderHist();if(pid==='ppg')renderProf();if(pid==='stpg')renderSTbl();if(pid==='adpg')renderAD();closeSB();}
+function enterS(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appShell').style.display='flex';
+  const s=students.find(x=>x.id===curId);
+  if(!s)return;
+  document.getElementById('sbAv').textContent=s.name.slice(0,2).toUpperCase();
+  document.getElementById('sbNm').textContent=s.name;
+  document.getElementById('sbRl').textContent=`${s.badge} · D${s.level}`;
+  document.getElementById('sNav').style.display='';
+  document.getElementById('tNav').style.display='none';
+  renderLb();renderFLb();renderHist();renderProf();
+  showPage('dpg',document.querySelector('#sNav .nav-item')); // renderSD shu yerda chaqiriladi
+  startAutoRefresh();
+}
+function enterT(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appShell').style.display='flex';
+  document.getElementById('sbAv').textContent='OQ';
+  document.getElementById('sbNm').textContent="O'qituvchi";
+  document.getElementById('sbRl').textContent='Administrator';
+  document.getElementById('sNav').style.display='none';
+  document.getElementById('tNav').style.display='';
+  document.getElementById('tbRight').innerHTML='';
+  renderAD();renderSTbl();updSels();
+  showPage('adpg',document.querySelector('#tNav .nav-item'));
+  startAutoRefresh();
+}
+function doLogout(){
+  stopAutoRefresh();
+  curType=null;curId=null;
+  document.getElementById('appShell').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  ['sPwdIn','tPwdIn'].forEach(id=>document.getElementById(id).value='');
+}
 
-function renderSD(){if(!curId)return;const s=students.find(x=>x.id===curId);if(!s)return;document.getElementById('st_c').textContent=s.totalCoins;document.getElementById('st_l').textContent=s.level;document.getElementById('st_b').textContent=s.badge;document.getElementById('st_s').textContent=s.streak||0;document.getElementById('st_r').textContent=`#${rank(curId,'overall')}`;document.getElementById('st_rs').textContent=`${students.length} talabadan`;const wk=earned(curId,'weekly');document.getElementById('wkf').style.width=Math.min(100,(wk/100)*100)+'%';document.getElementById('wkt').textContent=`${wk}/100`;
-const l7=[];for(let i=6;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);l7.push(txs.filter(t=>t.studentId===curId&&t.timestamp>=d.getTime()&&t.timestamp<d.getTime()+86400000).reduce((a,b)=>a+b.amount,0));}
-const ctx=document.getElementById('wkChart').getContext('2d');if(chart)chart.destroy();chart=new Chart(ctx,{type:'bar',data:{labels:['D-6','D-5','D-4','D-3','D-2','Kecha','Bugun'],datasets:[{label:'Tanga',data:l7,backgroundColor:'rgba(43,125,233,.6)',borderColor:'#2b7de9',borderWidth:1,borderRadius:5}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a5878',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a5878',font:{size:11}}}}}});
-const ut=txs.filter(t=>t.studentId===curId).slice(0,8);const c=document.getElementById('actList');c.innerHTML=ut.length?ut.map(t=>`<div class="ai"><span class="at">${t.details}</span><span class="ac">+${t.amount} 🪙</span></div>`).join(''):'<p style="color:var(--text-dim);text-align:center;padding:14px;font-size:13px;">Hozircha faollik yo\'q</p>';
-document.getElementById('tbRight').innerHTML=`<div class="top-badge tb-gold">🪙 ${s.totalCoins}</div><div class="top-badge tb-blue">🔥 ${s.streak||0}</div>`;}
+// ── AUTO-REFRESH: har 30 soniyada serverdan yangi ma'lumot oladi ──────────
+let _refreshTimer=null;
+function startAutoRefresh(){
+  stopAutoRefresh();
+  _refreshTimer=setInterval(async()=>{
+    if(!curId&&curType!=='teacher')return;
+    try{
+      const res=await fetch('/api/data');
+      if(!res.ok)return;
+      const d=await res.json();
+      if(!d||!d.students)return;
+      students=d.students.map(s=>({...s,id:nNum(s.id)}));
+      txs=(d.transactions||[]).map(t=>({...t,studentId:nNum(t.studentId)}));
+      const maxId=students.length>0?Math.max(...students.map(s=>s.id)):0;
+      nid=Math.max(nNum(d.nextStudentId)||1,maxId+1);
+      updBadges();
+      // Joriy sahifani yangilaydi
+      const activePage=document.querySelector('.page.active')?.id;
+      if(activePage==='dpg')renderSD();
+      else if(activePage==='rpg'){renderLb();renderFLb();}
+      else if(activePage==='hpg')renderHist();
+      else if(activePage==='ppg')renderProf();
+      else if(activePage==='adpg')renderAD();
+      else if(activePage==='stpg')renderSTbl();
+      updSels();
+    }catch(e){}
+  },30000);
+}
+function stopAutoRefresh(){if(_refreshTimer){clearInterval(_refreshTimer);_refreshTimer=null;}}
+
+function showPage(pid,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(pid)?.classList.add('active');
+  const tmap={dpg:'Bosh sahifa',rpg:'Reyting',hpg:'Faollik tarixi',ppg:'Profilim',adpg:'Statistika',stpg:'Talabalar',cpg:'Tanga berish'};
+  document.getElementById('tbTitle').textContent=tmap[pid]||'';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(pid==='dpg')renderSD();if(pid==='rpg')renderFLb();if(pid==='hpg')renderHist();
+  if(pid==='ppg')renderProf();if(pid==='stpg')renderSTbl();if(pid==='adpg')renderAD();
+  closeSB();
+}
+
+// ── RENDER: studentId number bilan taqqoslanadi ───────────────────────────
+function renderSD(){
+  if(!curId)return;
+  const s=students.find(x=>x.id===curId);if(!s)return;
+  document.getElementById('st_c').textContent=s.totalCoins;
+  document.getElementById('st_l').textContent=s.level;
+  document.getElementById('st_b').textContent=s.badge;
+  document.getElementById('st_s').textContent=s.streak||0;
+  document.getElementById('st_r').textContent=`#${rank(curId,'overall')}`;
+  document.getElementById('st_rs').textContent=`${students.length} talabadan`;
+  const wk=earned(curId,'weekly');
+  document.getElementById('wkf').style.width=Math.min(100,(wk/100)*100)+'%';
+  document.getElementById('wkt').textContent=`${wk}/100`;
+  const l7=[];
+  for(let i=6;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);l7.push(txs.filter(t=>t.studentId===curId&&t.timestamp>=d.getTime()&&t.timestamp<d.getTime()+86400000).reduce((a,b)=>a+b.amount,0));}
+  const ctx=document.getElementById('wkChart').getContext('2d');
+  if(chart)chart.destroy();
+  chart=new Chart(ctx,{type:'bar',data:{labels:['D-6','D-5','D-4','D-3','D-2','Kecha','Bugun'],datasets:[{label:'Tanga',data:l7,backgroundColor:'rgba(43,125,233,.6)',borderColor:'#2b7de9',borderWidth:1,borderRadius:5}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a5878',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a5878',font:{size:11}}}}}});
+  const ut=txs.filter(t=>t.studentId===curId).slice(0,8);
+  const c=document.getElementById('actList');
+  c.innerHTML=ut.length?ut.map(t=>`<div class="ai"><span class="at">${t.details}</span><span class="ac">+${t.amount} 🪙</span></div>`).join(''):'<p style="color:var(--text-dim);text-align:center;padding:14px;font-size:13px;">Hozircha faollik yo\'q</p>';
+  document.getElementById('tbRight').innerHTML=`<div class="top-badge tb-gold">🪙 ${s.totalCoins}</div><div class="top-badge tb-blue">🔥 ${s.streak||0}</div>`;
+}
 
 const medals=['🥇','🥈','🥉'];
-function renderLb(){const s2=sorted(lbM);document.getElementById('lbList').innerHTML=s2.slice(0,10).map((s,i)=>`<div class="lb-item ${s.id===curId?'me':''}"><div class="lb-rank">${medals[i]||i+1}</div><div class="lb-name">${s.name}${s.id===curId?' <span style="font-size:10px;color:var(--blue-light)">(Siz)</span>':''}</div><div class="lb-score">${s.score}🪙</div></div>`).join('');}
+function renderLb(){
+  const s2=sorted(lbM);
+  document.getElementById('lbList').innerHTML=s2.slice(0,10).map((s,i)=>`<div class="lb-item ${s.id===curId?'me':''}"><div class="lb-rank">${medals[i]||i+1}</div><div class="lb-name">${s.name}${s.id===curId?' <span style="font-size:10px;color:var(--blue-light)">(Siz)</span>':''}</div><div class="lb-score">${s.score}🪙</div></div>`).join('');
+}
 function setLb(mode,btn){lbM=mode;document.querySelectorAll('.lb1').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLb();}
-function renderFLb(){const s2=sorted(lbM2);document.getElementById('flb').innerHTML=`<table style="width:100%"><thead><tr><th>#</th><th>Ism</th><th>Tanga</th><th>Daraja</th><th>Nishon</th></tr></thead><tbody>`+s2.map((s,i)=>`<tr style="${s.id===curId?'background:rgba(43,125,233,.08);':''}"><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--text-muted);">${medals[i]||i+1}</td><td style="font-weight:${s.id===curId?700:400};color:${s.id===curId?'var(--blue-light)':'var(--text)'};">${s.name}${s.id===curId?' ✓':''}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.score}</td><td><span class="badge bb">D${s.level}</span></td><td><span class="badge bg">${s.badge}</span></td></tr>`).join('')+`</tbody></table>`;}
+function renderFLb(){
+  const s2=sorted(lbM2);
+  document.getElementById('flb').innerHTML=`<table style="width:100%"><thead><tr><th>#</th><th>Ism</th><th>Tanga</th><th>Daraja</th><th>Nishon</th></tr></thead><tbody>`+s2.map((s,i)=>`<tr style="${s.id===curId?'background:rgba(43,125,233,.08);':''}"><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--text-muted);">${medals[i]||i+1}</td><td style="font-weight:${s.id===curId?700:400};color:${s.id===curId?'var(--blue-light)':'var(--text)'};">${s.name}${s.id===curId?' ✓':''}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.score}</td><td><span class="badge bb">D${s.level}</span></td><td><span class="badge bg">${s.badge}</span></td></tr>`).join('')+`</tbody></table>`;
+}
 function setLb2(mode,btn){lbM2=mode;document.querySelectorAll('.lb2').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderFLb();}
-function renderHist(){if(!curId)return;const ut=txs.filter(t=>t.studentId===curId);const c=document.getElementById('fhist');if(!ut.length){c.innerHTML='<p style="color:var(--text-dim);text-align:center;padding:20px;">Faollik yo\'q</p>';return;}c.innerHTML=ut.map(t=>{const dt=new Date(t.timestamp).toLocaleDateString('uz-UZ',{day:'numeric',month:'short',year:'numeric'});return`<div class="ai"><div><div class="at">${t.details}</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px;">${dt}</div></div><span class="ac">+${t.amount} 🪙</span></div>`;}).join('');}
-function renderProf(){if(!curId)return;const s=students.find(x=>x.id===curId);if(!s)return;document.getElementById('pr_n').textContent=s.name;document.getElementById('pr_l').innerHTML=`<span class="badge bb">Daraja ${s.level}</span>`;document.getElementById('pr_b').innerHTML=`<span class="badge bg">${s.badge}</span>`;document.getElementById('pr_c').textContent=s.totalCoins+' 🪙';document.getElementById('pr_r').textContent=`#${rank(curId,'overall')} / ${students.length}`;document.getElementById('pr_rc').textContent=s.refCode;}
+
+function renderHist(){
+  if(!curId)return;
+  const ut=txs.filter(t=>t.studentId===curId);
+  const c=document.getElementById('fhist');
+  if(!ut.length){c.innerHTML='<p style="color:var(--text-dim);text-align:center;padding:20px;">Faollik yo\'q</p>';return;}
+  c.innerHTML=ut.map(t=>{const dt=new Date(t.timestamp).toLocaleDateString('uz-UZ',{day:'numeric',month:'short',year:'numeric'});return`<div class="ai"><div><div class="at">${t.details}</div><div style="font-size:10px;color:var(--text-dim);margin-top:2px;">${dt}</div></div><span class="ac">+${t.amount} 🪙</span></div>`;}).join('');
+}
+function renderProf(){
+  if(!curId)return;
+  const s=students.find(x=>x.id===curId);if(!s)return;
+  document.getElementById('pr_n').textContent=s.name;
+  document.getElementById('pr_l').innerHTML=`<span class="badge bb">Daraja ${s.level}</span>`;
+  document.getElementById('pr_b').innerHTML=`<span class="badge bg">${s.badge}</span>`;
+  document.getElementById('pr_c').textContent=s.totalCoins+' 🪙';
+  document.getElementById('pr_s').textContent=`🔥 ${s.streak||0} kun`;
+  document.getElementById('pr_w').textContent=earned(curId,'weekly')+' 🪙';
+  document.getElementById('pr_m').textContent=earned(curId,'monthly')+' 🪙';
+  document.getElementById('pr_r').textContent=`#${rank(curId,'overall')} / ${students.length}`;
+  document.getElementById('pr_rc').textContent=s.refCode||`REF${s.id}`;
+  // Sidebar ham yangilanadi
+  document.getElementById('sbRl').textContent=`${s.badge} · D${s.level}`;
+}
 function cpRef(){const c=document.getElementById('pr_rc').textContent;navigator.clipboard.writeText(c).then(()=>toast('Nusxalandi: '+c,'success'));}
 
-function renderAD(){const tc=txs.reduce((a,b)=>a+b.amount,0);const ac=students.filter(s=>{if(!s.lastDailyDate)return false;return(new Date()-new Date(s.lastDailyDate))/864e5<=7;}).length;const rc=txs.filter(t=>t.reason==='referral').length;document.getElementById('ad_t').textContent=students.length;document.getElementById('ad_c').textContent=tc;document.getElementById('ad_a').textContent=ac;document.getElementById('ad_r').textContent=rc;document.getElementById('atop').innerHTML=sorted('overall').slice(0,5).map((s,i)=>`<div class="lb-item"><div class="lb-rank">${medals[i]||i+1}</div><div class="lb-name">${s.name}</div><div class="lb-score">${s.totalCoins}🪙</div></div>`).join('');}
-function renderSTbl(){let h='';students.forEach((s,i)=>{h+=`<tr><td>${i+1}</td><td style="font-weight:600;">${s.name}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.totalCoins}</td><td><span class="badge bb">D${s.level}</span></td><td><code style="background:var(--bg-deep);padding:2px 8px;border-radius:4px;font-size:12px;border:1px solid var(--border);">${s.password}</code><button onclick="cpC('${s.password}')" class="btn btn-outline btn-sm" style="padding:3px 7px;margin-left:4px;"><i class="fas fa-copy"></i></button></td><td><button onclick="delSt(${s.id})" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`;});document.getElementById('stBody').innerHTML=h||'<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:18px;">Talabalar yo\'q</td></tr>';}
-function addSt(){const n=document.getElementById('nsName').value.trim();if(!n){toast('Ism kiriting!','error');return;}const id=nid++;const p=genP(n);students.push({id,name:n,refCode:`REF${id}${~~(Math.random()*100)}`,password:p,totalCoins:0,streak:0,lastDailyDate:null,level:1,badge:'Starter'});save();document.getElementById('nsName').value='';renderSTbl();updSels();renderAD();toast(`${n} qo'shildi! Parol: ${p}`,'success');}
-function delSt(id){if(!confirm("O'chirilsinmi?"))return;students=students.filter(s=>s.id!==id);txs=txs.filter(t=>t.studentId!==id);save();renderSTbl();renderAD();updSels();toast("O'chirildi",'success');}
-window.delSt=delSt;window.cpC=t=>{navigator.clipboard.writeText(t).then(()=>toast('Nusxalandi: '+t,'success'));};
+function renderAD(){
+  const tc=txs.reduce((a,b)=>a+b.amount,0);
+  const ac=students.filter(s=>{if(!s.lastDailyDate)return false;return(new Date()-new Date(s.lastDailyDate))/864e5<=7;}).length;
+  const rc=txs.filter(t=>t.reason==='referral').length;
+  document.getElementById('ad_t').textContent=students.length;
+  document.getElementById('ad_c').textContent=tc;
+  document.getElementById('ad_a').textContent=ac;
+  document.getElementById('ad_r').textContent=rc;
+  document.getElementById('atop').innerHTML=sorted('overall').slice(0,5).map((s,i)=>`<div class="lb-item"><div class="lb-rank">${medals[i]||i+1}</div><div class="lb-name">${s.name}</div><div class="lb-score">${s.totalCoins}🪙</div></div>`).join('');
+}
+function renderSTbl(){
+  let h='';
+  students.forEach((s,i)=>{h+=`<tr><td>${i+1}</td><td style="font-weight:600;">${s.name}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.totalCoins}</td><td><span class="badge bb">D${s.level}</span></td><td><code style="background:var(--bg-deep);padding:2px 8px;border-radius:4px;font-size:12px;border:1px solid var(--border);">${s.password}</code><button onclick="cpC('${s.password}')" class="btn btn-outline btn-sm" style="padding:3px 7px;margin-left:4px;"><i class="fas fa-copy"></i></button></td><td><button onclick="delSt(${s.id})" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`;});
+  document.getElementById('stBody').innerHTML=h||'<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:18px;">Talabalar yo\'q</td></tr>';
+}
 
-function giveC(reason,selId,rangeId,label){const sid=parseInt(document.getElementById(selId).value);const amt=parseInt(document.getElementById(rangeId).value);if(!sid){toast('Talabani tanlang!','error');return;}addCoin(sid,amt,reason,`${label} uchun ${amt} tanga`);renderAD();updSels();toast(`${students.find(s=>s.id===sid)?.name}ga ${amt} tanga berildi!`,'success');}
-function giveManual(){const sid=parseInt(document.getElementById('mSt').value);const amt=parseInt(document.getElementById('mAmt').value);const r=document.getElementById('mReason').value;if(!sid||!amt||!r){toast("To'liq ma'lumot kiriting",'error');return;}addCoin(sid,amt,'manual',r);renderAD();updSels();document.getElementById('mAmt').value='';document.getElementById('mReason').value='';toast(`${students.find(s=>s.id===sid)?.name}ga ${amt} tanga berildi!`,'success');}
-function monthlyBonus(){const ms=Date.now()-30*864e5;const top=[...students].map(s=>({...s,earn:txs.filter(t=>t.studentId===s.id&&t.timestamp>=ms).reduce((a,b)=>a+b.amount,0)})).sort((a,b)=>b.earn-a.earn)[0];if(!top){toast("Talaba topilmadi",'error');return;}addCoin(top.id,50,'monthly_bonus','Oylik eng yaxshi talaba bonusi');renderAD();updSels();toast(`${top.name}ga 50 tanga sovg'a!`,'success');}
+// ── TALABA QO'SHISH: async, save kutiladi, ID xavfsiz ────────────────────
+async function addSt(){
+  const n=document.getElementById('nsName').value.trim();
+  if(!n){toast('Ism kiriting!','error');return;}
+  const id=nid++;
+  const p=genP(n);
+  students.push({id,name:n,refCode:`REF${id}${~~(Math.random()*100)}`,password:p,totalCoins:0,streak:0,lastDailyDate:null,level:1,badge:'Starter'});
+  await save();
+  document.getElementById('nsName').value='';
+  renderSTbl();updSels();renderAD();
+  toast(`${n} qo'shildi! Parol: ${p}`,'success');
+}
+
+// ── TALABA O'CHIRISH: ID number bilan taqqoslanadi ────────────────────────
+async function delSt(id){
+  if(!confirm("O'chirilsinmi?"))return;
+  const numId=nNum(id);
+  students=students.filter(s=>s.id!==numId);
+  txs=txs.filter(t=>t.studentId!==numId);
+  await save();renderSTbl();renderAD();updSels();
+  toast("O'chirildi",'success');
+}
+window.delSt=delSt;
+window.cpC=t=>{navigator.clipboard.writeText(t).then(()=>toast('Nusxalandi: '+t,'success'));};
+
+// ── TANGA BERISH: addCoin async bo'lgani uchun await + keyin render ───────
+async function giveC(reason,selId,rangeId,label){
+  const sid=nNum(document.getElementById(selId).value);
+  const amt=parseInt(document.getElementById(rangeId).value);
+  if(!sid){toast('Talabani tanlang!','error');return;}
+  await addCoin(sid,amt,reason,`${label} uchun ${amt} tanga`);
+  renderAD();updSels();
+  const sName=students.find(s=>s.id===sid)?.name||'Talaba';
+  toast(`${sName}ga ${amt} tanga berildi!`,'success');
+}
+async function giveManual(){
+  const sid=nNum(document.getElementById('mSt').value);
+  const amt=parseInt(document.getElementById('mAmt').value);
+  const r=document.getElementById('mReason').value;
+  if(!sid||!amt||!r){toast("To'liq ma'lumot kiriting",'error');return;}
+  await addCoin(sid,amt,'manual',r);
+  renderAD();updSels();
+  document.getElementById('mAmt').value='';document.getElementById('mReason').value='';
+  const sName=students.find(s=>s.id===sid)?.name||'Talaba';
+  toast(`${sName}ga ${amt} tanga berildi!`,'success');
+}
+async function monthlyBonus(){
+  const ms=Date.now()-30*864e5;
+  const top=[...students].map(s=>({...s,earn:txs.filter(t=>t.studentId===s.id&&t.timestamp>=ms).reduce((a,b)=>a+b.amount,0)})).sort((a,b)=>b.earn-a.earn)[0];
+  if(!top){toast("Talaba topilmadi",'error');return;}
+  await addCoin(top.id,50,'monthly_bonus','Oylik eng yaxshi talaba bonusi');
+  renderAD();updSels();
+  toast(`${top.name}ga 50 tanga sovg'a!`,'success');
+}
+
 function chgTPwd(){const p=prompt("Yangi o'qituvchi paroli:");if(p&&p.length>=3){localStorage.setItem('tpwd',p);toast('Parol saqlandi!','success');}else if(p!==null)toast('Parol kamida 3 belgi','error');}
 
-function doChgPwd(){const s=students.find(x=>x.id===curId);const o=document.getElementById('oldP').value,n=document.getElementById('newP').value,c=document.getElementById('cnfP').value;if(o!==s.password){toast('Eski parol xato!','error');return;}if(n.length<3){toast('Parol kamida 3 belgi','error');return;}if(n!==c){toast('Parollar mos emas','error');return;}s.password=n;save();closeModal('cpModal');toast('Parol yangilandi!','success');['oldP','newP','cnfP'].forEach(id=>document.getElementById(id).value='');}
+// ── PAROL O'ZGARTIRISH: null check qo'shildi ─────────────────────────────
+async function doChgPwd(){
+  const s=students.find(x=>x.id===curId);
+  if(!s){toast('Foydalanuvchi topilmadi!','error');return;}
+  const o=document.getElementById('oldP').value,n=document.getElementById('newP').value,c=document.getElementById('cnfP').value;
+  if(o!==s.password){toast('Eski parol xato!','error');return;}
+  if(n.length<3){toast('Parol kamida 3 belgi','error');return;}
+  if(n!==c){toast('Parollar mos emas','error');return;}
+  s.password=n;
+  await save();
+  closeModal('cpModal');
+  toast('Parol yangilandi!','success');
+  ['oldP','newP','cnfP'].forEach(id=>document.getElementById(id).value='');
+}
 
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
