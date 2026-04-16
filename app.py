@@ -7,8 +7,10 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
-# Railway Volume ulangan joy
-DATA_DIR = os.environ.get('DATA_DIR', '/app/data')
+# Railway Volume ulangan joy.
+# Agar DATA_DIR berilmagan bo'lsa, lokalda loyiha ichidagi data papkasi ishlatiladi.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.environ.get('DATA_DIR', os.path.join(BASE_DIR, 'data'))
 DATA_FILE = os.path.join(DATA_DIR, 'data.json')
 
 def init_data_file():
@@ -17,7 +19,14 @@ def init_data_file():
         os.makedirs(DATA_DIR, exist_ok=True)
     if not os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump({"students": [], "transactions": [], "nextStudentId": 1}, f, ensure_ascii=False, indent=2)
+            json.dump({
+                "students": [],
+                "transactions": [],
+                "nextStudentId": 1,
+                "teachers": [],
+                "nextTeacherId": 1,
+                "adminPassword": "Admin2026"
+            }, f, ensure_ascii=False, indent=2)
 
 @app.route('/')
 def index():
@@ -39,7 +48,11 @@ def get_data():
 def save_data():
     """Frontend'dan kelgan ma'lumotni avtomatik Volume'ga saqlaydi"""
     try:
-        req_data = request.json
+        req_data = request.get_json(silent=True)
+        if not isinstance(req_data, dict):
+            return jsonify({"status": "error", "message": "JSON obyekt yuboring"}), 400
+        if not all(k in req_data for k in ("students", "transactions", "nextStudentId")):
+            return jsonify({"status": "error", "message": "Majburiy maydonlar yetishmayapti"}), 400
         init_data_file()
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(req_data, f, ensure_ascii=False, indent=2)

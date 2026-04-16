@@ -264,16 +264,22 @@
       <div class="tab-row">
         <button class="tab-btn active" id="tabSBtn" onclick="swTab('student')">Talaba</button>
         <button class="tab-btn" id="tabTBtn" onclick="swTab('teacher')">O'qituvchi</button>
+        <button class="tab-btn" id="tabABtn" onclick="swTab('admin')">Admin</button>
       </div>
       <div id="sLoginForm">
+        <div class="form-group"><label>O'qituvchi</label><select id="sTeacherSel" class="form-control" onchange="updStudentLoginOptions()"></select></div>
         <div class="form-group"><label>Talaba ismi</label><select id="sLoginSel" class="form-control"></select></div>
         <div class="form-group"><label>Parol</label><input type="password" id="sPwdIn" class="form-control" placeholder="Parolni kiriting"></div>
         <button class="btn btn-blue btn-block" onclick="doSLogin()"><i class="fas fa-sign-in-alt"></i> Kirish</button>
       </div>
       <div id="tLoginForm" style="display:none">
+        <div class="form-group"><label>O'qituvchi</label><select id="tLoginSel" class="form-control"></select></div>
         <div class="form-group"><label>O'qituvchi paroli</label><input type="password" id="tPwdIn" class="form-control" placeholder="Maxfiy parol"></div>
         <button class="btn btn-gold btn-block" onclick="doTLogin()"><i class="fas fa-chalkboard-teacher"></i> Kirish</button>
-        <p class="hint">Standart parol: <b>Ustoz2023</b></p>
+      </div>
+      <div id="aLoginForm" style="display:none">
+        <div class="form-group"><label>Asosiy admin paroli</label><input type="password" id="aPwdIn" class="form-control" placeholder="Admin parol"></div>
+        <button class="btn btn-gold btn-block" onclick="doALogin()"><i class="fas fa-user-shield"></i> Kirish</button>
       </div>
     </div>
   </div>
@@ -317,6 +323,7 @@
       <div class="nav-item active" onclick="showPage('adpg',this)"><i class="fas fa-chart-bar"></i> Statistika</div>
       <div class="nav-item" onclick="showPage('stpg',this)"><i class="fas fa-users"></i> Talabalar</div>
       <div class="nav-item" onclick="showPage('cpg',this)"><i class="fas fa-coins"></i> Tanga berish</div>
+      <div class="nav-item" id="tNavTeachers" style="display:none" onclick="showPage('tpg',this)"><i class="fas fa-chalkboard-teacher"></i> O'qituvchilar</div>
     </nav>
     <div class="sb-footer">
       <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;border-color:var(--border-gold);color:var(--text-muted);" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</button>
@@ -457,12 +464,13 @@
           <div class="cb">
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <input type="text" id="nsName" class="form-control" placeholder="Ism familiya" style="max-width:280px;flex:1;">
+              <select id="nsTeacher" class="form-control" style="max-width:220px;display:none"></select>
               <button class="btn btn-success" onclick="addSt()"><i class="fas fa-user-plus"></i> Qo'shish</button>
             </div>
-            <p style="font-size:11px;color:var(--text-dim);margin-top:5px;">Avtomatik parol yaratiladi</p>
+            <p style="font-size:11px;color:var(--text-dim);margin-top:5px;">Avtomatik parol yaratiladi va faqat tanlangan o'qituvchiga biriktiriladi</p>
           </div>
         </div>
-        <div class="card"><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Tanga</th><th>Daraja</th><th>Parol</th><th>Amal</th></tr></thead><tbody id="stBody"></tbody></table></div></div></div>
+        <div class="card"><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>O'qituvchi</th><th>Tanga</th><th>Daraja</th><th>Parol</th><th>Amal</th></tr></thead><tbody id="stBody"></tbody></table></div></div></div>
       </div>
 
       <!-- COINS PAGE -->
@@ -485,13 +493,40 @@
             </div>
           </div>
         </div>
+        <div class="card" style="margin-top:14px;">
+          <div class="ch"><h4>Tanga ayrish</h4></div>
+          <div class="cb">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Talaba</label><select id="dSt" class="form-control" style="min-width:180px;"></select></div>
+              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Miqdor</label><input type="number" id="dAmt" class="form-control" placeholder="Tanga" style="width:90px;" min="1"></div>
+              <div style="flex:1;min-width:150px;"><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Sabab</label><input type="text" id="dReason" class="form-control" placeholder="Nima uchun ayirildi"></div>
+              <button class="btn btn-danger" onclick="deductManual()"><i class="fas fa-minus-circle"></i> Ayrish</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEACHERS PAGE -->
+      <div class="page" id="tpg">
+        <div class="ph"><h2>O'qituvchilar boshqaruvi</h2><p>Faqat asosiy admin uchun</p></div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="ch"><h4>Yangi o'qituvchi qo'shish</h4></div>
+          <div class="cb">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Ism</label><input type="text" id="ntName" class="form-control" placeholder="O'qituvchi ismi"></div>
+              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Fan</label><input type="text" id="ntSubj" class="form-control" placeholder="Masalan: Matematika"></div>
+              <button class="btn btn-success" onclick="addTeacher()"><i class="fas fa-user-plus"></i> Qo'shish</button>
+            </div>
+          </div>
+        </div>
+        <div class="card"><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Fan</th><th>Talabalar</th><th>Amal</th></tr></thead><tbody id="tBody"></tbody></table></div></div></div>
       </div>
 
     </div>
   </div>
 </div>
 
-<script>
+<script type="text/plain" id="legacyScript">
 const NAMES=["Bahodirjonov Sardor","Bahodirov Asadbek","Farangiz","Farxodjon 08","Hikmatillo","Ibrohim","Mashrapov Azizbek","Muhiddinov Nurillo","Dadajonova Munavvara","Og'abek","Omonov Alisher","Shavkatova Fotima","Shaxboz","Shodiyona","Tojaliyev G'ayratjon","Tolipjonov Asadbek","Tursunaliyev Abdulaziz","Umaraliyev Ozodbek"];
 const TP="Ustoz2023",SK="texno_v3";
 let students=[],txs=[],nid=1,curType=null,curId=null,lbM="overall",lbM2="overall",chart=null;
@@ -512,7 +547,10 @@ async function save(){
 async function load(){
   try{
     const res=await fetch('/api/data');
-    if(res.ok){const d=await res.json();if(d&&d.students&&d.students.length>0)return d;}
+    if(res.ok){
+      const d=await res.json();
+      if(d&&Array.isArray(d.students)&&Array.isArray(d.transactions))return d;
+    }
   }catch(e){}
   try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}
   return null;
@@ -548,7 +586,18 @@ function mkDef(){
   nid=id;txs=[];save();
 }
 
-function genP(n){return(n.replace(/\s/g,'').slice(0,3).toUpperCase()||"STU")+(~~(Math.random()*900)+100);}
+function genP(n){
+  const safe=(n||'').replace(/[^a-zA-Z0-9]/g,'');
+  return(safe.slice(0,3).toUpperCase()||"STU")+(~~(Math.random()*900)+100);
+}
+function escHtml(v){
+  return String(v)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 function updBadges(){for(let s of students){s.level=~~(s.totalCoins/100)+1;s.badge=s.totalCoins<100?"Starter":s.totalCoins<300?"Active":s.totalCoins<600?"Pro":"Elite";}}
 
 // ── TANGA QO'SHISH: async, ID number ga normalize, await save ─────────────
@@ -743,7 +792,12 @@ function renderAD(){
 }
 function renderSTbl(){
   let h='';
-  students.forEach((s,i)=>{h+=`<tr><td>${i+1}</td><td style="font-weight:600;">${s.name}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.totalCoins}</td><td><span class="badge bb">D${s.level}</span></td><td><code style="background:var(--bg-deep);padding:2px 8px;border-radius:4px;font-size:12px;border:1px solid var(--border);">${s.password}</code><button onclick="cpC('${s.password}')" class="btn btn-outline btn-sm" style="padding:3px 7px;margin-left:4px;"><i class="fas fa-copy"></i></button></td><td><button onclick="delSt(${s.id})" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`;});
+  students.forEach((s,i)=>{
+    const safeName=escHtml(s.name);
+    const safePwd=escHtml(s.password);
+    const encodedPwd=encodeURIComponent(String(s.password));
+    h+=`<tr><td>${i+1}</td><td style="font-weight:600;">${safeName}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.totalCoins}</td><td><span class="badge bb">D${s.level}</span></td><td><code style="background:var(--bg-deep);padding:2px 8px;border-radius:4px;font-size:12px;border:1px solid var(--border);">${safePwd}</code><button onclick="cpC(decodeURIComponent('${encodedPwd}'))" class="btn btn-outline btn-sm" style="padding:3px 7px;margin-left:4px;"><i class="fas fa-copy"></i></button></td><td><button onclick="delSt(${s.id})" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`;
+  });
   document.getElementById('stBody').innerHTML=h||'<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:18px;">Talabalar yo\'q</td></tr>';
 }
 
@@ -832,7 +886,7 @@ document.getElementById('installBtn').addEventListener('click',async()=>{if(!dp)
 document.getElementById('installDismiss').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
 
 // Service Worker
-if('serviceWorker' in navigator){const sw=`const C='txv3';self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});`;const b=new Blob([sw],{type:'application/javascript'});navigator.serviceWorker.register(URL.createObjectURL(b)).catch(()=>{});}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}
 
 // Manifest
 const mf={name:"Teacher_texno",short_name:"T_texno",start_url:"./",display:"standalone",background_color:"#1a2235",theme_color:"#1a2235",orientation:"portrait-primary",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%231a2235' width='192' height='192' rx='38'/%3E%3Cpolygon points='96,12 172,52 172,140 96,180 20,140 20,52' fill='none' stroke='%23c8a020' stroke-width='6'/%3E%3Ctext x='96' y='112' font-size='52' font-family='Arial' font-weight='bold' fill='%232b7de9' text-anchor='middle'%3ETT%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"},{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%231a2235' width='512' height='512' rx='100'/%3E%3Cpolygon points='256,30 460,140 460,372 256,482 52,372 52,140' fill='none' stroke='%23c8a020' stroke-width='12'/%3E%3Ctext x='256' y='296' font-size='130' font-family='Arial' font-weight='bold' fill='%232b7de9' text-anchor='middle'%3ETT%3C/text%3E%3C/svg%3E",sizes:"512x512",type:"image/svg+xml"}]};
@@ -842,5 +896,6 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const ls=docum
 
 init();
 </script>
+<script src="app-client.js"></script>
 </body>
 </html>
