@@ -25,7 +25,10 @@ def init_data_file():
                 "nextStudentId": 1,
                 "teachers": [],
                 "nextTeacherId": 1,
-                "adminPassword": "Admin2026"
+                "admins": [],
+                "nextAdminId": 1,
+                "adminRequests": [],
+                "nextRequestId": 1
             }, f, ensure_ascii=False, indent=2)
 
 @app.route('/')

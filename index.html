@@ -278,7 +278,10 @@
         <button class="btn btn-gold btn-block" onclick="doTLogin()"><i class="fas fa-chalkboard-teacher"></i> Kirish</button>
       </div>
       <div id="aLoginForm" style="display:none">
-        <div class="form-group"><label>Asosiy admin paroli</label><input type="password" id="aPwdIn" class="form-control" placeholder="Admin parol"></div>
+        <div class="form-group"><label>Kirish turi</label><select id="aLoginType" class="form-control" onchange="toggleAdminLoginType()"><option value="super">Super Admin</option><option value="admin">Admin</option></select></div>
+        <div class="form-group" id="aAdminSelWrap" style="display:none"><label>Admin</label><select id="aAdminSel" class="form-control"></select></div>
+        <div class="form-group" id="aCodeWrap" style="display:none"><label>Maxsus kod</label><input type="text" id="aCodeIn" class="form-control" placeholder="Admin maxsus kod"></div>
+        <div class="form-group"><label>Parol</label><input type="password" id="aPwdIn" class="form-control" placeholder="Admin parol"></div>
         <button class="btn btn-gold btn-block" onclick="doALogin()"><i class="fas fa-user-shield"></i> Kirish</button>
       </div>
     </div>
@@ -323,6 +326,7 @@
       <div class="nav-item active" onclick="showPage('adpg',this)"><i class="fas fa-chart-bar"></i> Statistika</div>
       <div class="nav-item" onclick="showPage('stpg',this)"><i class="fas fa-users"></i> Talabalar</div>
       <div class="nav-item" onclick="showPage('cpg',this)"><i class="fas fa-coins"></i> Tanga berish</div>
+      <div class="nav-item" onclick="showPage('tapg',this)"><i class="fas fa-id-card"></i> Profil va Xavfsizlik</div>
       <div class="nav-item" id="tNavTeachers" style="display:none" onclick="showPage('tpg',this)"><i class="fas fa-chalkboard-teacher"></i> O'qituvchilar</div>
     </nav>
     <div class="sb-footer">
@@ -448,6 +452,13 @@
               <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Oylik eng faol talabaga 50 tanga sovg'a</p>
               <button class="btn btn-gold" onclick="monthlyBonus()"><i class="fas fa-gift"></i> Oylik bonus berish</button>
               <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
+                <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Joriy hisob ma'lumotlari:</p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                  <code id="adSelfPass" style="background:var(--bg-deep);padding:5px 8px;border-radius:4px;border:1px solid var(--border);">******</code>
+                  <button class="btn btn-outline btn-sm" onclick="toggleSelfPassword('adSelfPass', 'ad')"><i class="fas fa-eye"></i></button>
+                </div>
+              </div>
+              <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
                 <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">O'qituvchi paroli:</p>
                 <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i> O'zgartirish</button>
               </div>
@@ -464,6 +475,7 @@
           <div class="cb">
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <input type="text" id="nsName" class="form-control" placeholder="Ism familiya" style="max-width:280px;flex:1;">
+              <input type="text" id="nsRef" class="form-control" placeholder="Referral kod (ixtiyoriy)" style="max-width:220px;">
               <select id="nsTeacher" class="form-control" style="max-width:220px;display:none"></select>
               <button class="btn btn-success" onclick="addSt()"><i class="fas fa-user-plus"></i> Qo'shish</button>
             </div>
@@ -506,9 +518,38 @@
         </div>
       </div>
 
-      <!-- TEACHERS PAGE -->
+      <!-- TEACHER/ADMIN PROFILE PAGE -->
+      <div class="page" id="tapg">
+        <div class="ph"><h2>Profil va xavfsizlik</h2><p>Shaxsiy kirish ma'lumotlari va maxsus kod</p></div>
+        <div class="g2">
+          <div class="card">
+            <div class="ch"><h4>Kirish ma'lumotlari</h4></div>
+            <div class="cb">
+              <table style="width:100%;border:none;">
+                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;width:120px;border:none;">Login turi:</td><td style="padding:7px 0;font-weight:600;border:none;" id="tp_role">-</td></tr>
+                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Ism:</td><td style="padding:7px 0;border:none;" id="tp_name">-</td></tr>
+                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Maxsus kod:</td><td style="padding:7px 0;border:none;"><code id="tp_code" style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">-</code></td></tr>
+                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Parol:</td><td style="padding:7px 0;border:none;"><code id="tp_pwd" style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">******</code> <button class="btn btn-outline btn-sm" onclick="toggleSelfPassword('tp_pwd','tp')"><i class="fas fa-eye"></i></button></td></tr>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><h4>Sozlamalar</h4></div>
+            <div class="cb">
+              <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Parolni tez almashtiring va xavfsiz saqlang.</p>
+              <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <div class="ch"><h4>Mening talabalarim parollari</h4></div>
+          <div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Parol</th></tr></thead><tbody id="tpStudentsBody"></tbody></table></div></div>
+        </div>
+      </div>
+
+      <!-- TEACHERS + ADMINS PAGE -->
       <div class="page" id="tpg">
-        <div class="ph"><h2>O'qituvchilar boshqaruvi</h2><p>Faqat asosiy admin uchun</p></div>
+        <div class="ph"><h2>O'qituvchilar va adminlar</h2><p>Super admin to'liq, adminlar esa so'rov yuboradi</p></div>
         <div class="card" style="margin-bottom:14px;">
           <div class="ch"><h4>Yangi o'qituvchi qo'shish</h4></div>
           <div class="cb">
@@ -519,7 +560,20 @@
             </div>
           </div>
         </div>
-        <div class="card"><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Fan</th><th>Talabalar</th><th>Amal</th></tr></thead><tbody id="tBody"></tbody></table></div></div></div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="ch"><h4>Admin qo'shish / so'rov yuborish</h4></div>
+          <div class="cb">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Admin ism</label><input type="text" id="naName" class="form-control" placeholder="Admin ismi"></div>
+              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Parol</label><input type="password" id="naPwd" class="form-control" placeholder="Kuchli parol"></div>
+              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Bog'langan o'qituvchi</label><select id="naTeacher" class="form-control" style="min-width:200px;"></select></div>
+              <button class="btn btn-success" onclick="submitAdminAction()"><i class="fas fa-user-plus"></i> Yuborish</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:14px;"><div class="ch"><h4>Adminlar ro'yxati</h4></div><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Bog'langan o'qituvchi</th><th>Level</th><th>Status</th><th>Amal</th></tr></thead><tbody id="adminBody"></tbody></table></div></div></div>
+        <div class="card" id="reqCard"><div class="ch"><h4>Admin so'rovlari</h4></div><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>So'rovchi</th><th>Yangi admin</th><th>O'qituvchi</th><th>Vaqt</th><th>Amal</th></tr></thead><tbody id="reqBody"></tbody></table></div></div></div>
+        <div class="card"><div class="ch"><h4>O'qituvchilar ro'yxati</h4></div><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Fan</th><th>Talabalar</th><th>Amal</th></tr></thead><tbody id="tBody"></tbody></table></div></div></div>
       </div>
 
     </div>
