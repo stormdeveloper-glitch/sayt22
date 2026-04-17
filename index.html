@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="uz">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,579 +9,2037 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Teacher_texno">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%231a2235' width='192' height='192' rx='40'/%3E%3Cpolygon points='96,12 172,52 172,140 96,180 20,140 20,52' fill='none' stroke='%23c8a020' stroke-width='6'/%3E%3Ctext x='96' y='112' font-size='52' font-family='Arial' font-weight='bold' fill='%232b7de9' text-anchor='middle'%3ETT%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%231a2235' width='192' height='192' rx='40'/%3E%3Cpolygon points='96,12 172,52 172,140 96,180 20,140 20,52' fill='none' stroke='%23c8a020' stroke-width='6'/%3E%3Ctext x='96' y='112' font-size='52' font-family='Arial' font-weight='bold' fill='%232b7de9' text-anchor='middle'%3ETT%3C/text%3E%3C/svg%3E">
   <title>Teacher_texno | Valiyev Omadbek</title>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/jpg" href="./teacher.jpg">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg-deep:#111825;--bg-main:#1a2235;--bg-card:#1e2a3d;--bg-card2:#243047;--bg-hover:#2a3a55;
-      --gold-dark:#9a7818;--gold:#c8a020;--gold-mid:#e4c040;--gold-light:#f5d860;--gold-glow:rgba(200,160,32,.25);
-      --blue-dark:#1a4fb0;--blue:#2b7de9;--blue-mid:#4a96ff;--blue-light:#80bfff;--blue-glow:rgba(43,125,233,.25);
-      --text:#e8edf5;--text-muted:#7a8aaa;--text-dim:#4a5878;
-      --border:rgba(255,255,255,.07);--border-gold:rgba(200,160,32,.3);--border-blue:rgba(43,125,233,.3);
-      --green:#2aab6a;--red:#e04a4a;--amber:#e08a20;
-      --sw:250px;--hh:60px;--r:8px;--rl:14px
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
     }
-    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg-deep);color:var(--text);font-size:14px;overflow-x:hidden}
-    ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--border-gold);border-radius:3px}
+
+    :root {
+      --bg-deep: #111825;
+      --bg-main: #1a2235;
+      --bg-card: #1e2a3d;
+      --bg-card2: #243047;
+      --bg-hover: #2a3a55;
+      --gold-dark: #9a7818;
+      --gold: #c8a020;
+      --gold-mid: #e4c040;
+      --gold-light: #f5d860;
+      --gold-glow: rgba(200, 160, 32, .25);
+      --blue-dark: #1a4fb0;
+      --blue: #2b7de9;
+      --blue-mid: #4a96ff;
+      --blue-light: #80bfff;
+      --blue-glow: rgba(43, 125, 233, .25);
+      --text: #e8edf5;
+      --text-muted: #7a8aaa;
+      --text-dim: #4a5878;
+      --border: rgba(255, 255, 255, .07);
+      --border-gold: rgba(200, 160, 32, .3);
+      --border-blue: rgba(43, 125, 233, .3);
+      --green: #2aab6a;
+      --red: #e04a4a;
+      --amber: #e08a20;
+      --sw: 250px;
+      --hh: 60px;
+      --r: 8px;
+      --rl: 14px
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text);
+      font-size: 14px;
+      overflow-x: hidden
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-gold);
+      border-radius: 3px
+    }
 
     /* LOADING */
-    #loadingOverlay{position:fixed;inset:0;background:var(--bg-deep);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
-    .load-hex{width:80px;height:92px;margin-bottom:18px}
-    .load-hex svg{width:100%;height:100%;animation:hexP 2s ease-in-out infinite}
-    @keyframes hexP{0%,100%{opacity:.6;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
-    .load-title{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;letter-spacing:2px;background:linear-gradient(90deg,var(--gold),var(--blue-mid));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .load-sub{color:var(--text-muted);font-size:12px;margin-top:4px;letter-spacing:1px}
-    .load-bar{width:160px;height:3px;background:var(--bg-card2);border-radius:2px;margin-top:22px;overflow:hidden}
-    .load-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--blue-mid));border-radius:2px;animation:lf 1.8s ease-in-out}
-    @keyframes lf{from{width:0}to{width:100%}}
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-deep);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity .5s
+    }
+
+    .load-hex {
+      width: 80px;
+      height: 92px;
+      margin-bottom: 18px
+    }
+
+    .load-hex svg {
+      width: 100%;
+      height: 100%;
+      animation: hexP 2s ease-in-out infinite
+    }
+
+    @keyframes hexP {
+
+      0%,
+      100% {
+        opacity: .6;
+        transform: scale(.95)
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.05)
+      }
+    }
+
+    .load-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--blue-mid));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+
+    .load-sub {
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 4px;
+      letter-spacing: 1px
+    }
+
+    .load-bar {
+      width: 160px;
+      height: 3px;
+      background: var(--bg-card2);
+      border-radius: 2px;
+      margin-top: 22px;
+      overflow: hidden
+    }
+
+    .load-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--blue-mid));
+      border-radius: 2px;
+      animation: lf 1.8s ease-in-out
+    }
+
+    @keyframes lf {
+      from {
+        width: 0
+      }
+
+      to {
+        width: 100%
+      }
+    }
 
     /* LOGIN */
-    #loginScreen{position:fixed;inset:0;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;z-index:1000}
-    .lg-bg{position:absolute;inset:0;overflow:hidden}
-    .lg-pattern{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='92'%3E%3Cpolygon points='40,4 76,24 76,68 40,88 4,68 4,24' fill='none' stroke='%23c8a020' stroke-width='1'/%3E%3C/svg%3E");background-size:80px 92px;width:200%;height:200%;top:-50%;left:-50%}
-    .lg-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(43,125,233,.1) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%)}
-    .lg-card{position:relative;width:400px;max-width:95vw;background:var(--bg-card);border-radius:var(--rl);border:1px solid var(--border-gold);box-shadow:0 0 40px rgba(200,160,32,.1),0 20px 60px rgba(0,0,0,.5);overflow:hidden}
-    .lg-top{background:linear-gradient(135deg,#0d1628,var(--bg-card2));padding:28px 32px 22px;text-align:center;border-bottom:1px solid var(--border-gold)}
-    .lg-hex{width:68px;height:78px;margin-bottom:10px}
-    .lg-hex polygon{fill:#0d1628;stroke:var(--gold);stroke-width:2.5}
-    .lg-hex text{font-family:'Rajdhani',sans-serif;font-weight:700;fill:var(--blue-mid);font-size:20px}
-    .lg-title{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;letter-spacing:2px;background:linear-gradient(90deg,var(--gold-mid),var(--blue-mid));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .lg-sub{color:var(--text-muted);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
-    .lg-body{padding:22px 30px 26px}
+    #loginScreen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000
+    }
 
-    .tab-row{display:flex;background:var(--bg-deep);border-radius:var(--r);padding:3px;margin-bottom:18px;border:1px solid var(--border)}
-    .tab-btn{flex:1;padding:8px;border:none;background:transparent;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .2s}
-    .tab-btn.active{background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff}
+    .lg-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden
+    }
 
-    .form-group{margin-bottom:13px}
-    .form-group label{display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.8px}
-    .form-control{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:14px;background:var(--bg-deep);color:var(--text);transition:border-color .2s}
-    .form-control:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-glow)}
-    select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a8aaa'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+    .lg-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: .04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='92'%3E%3Cpolygon points='40,4 76,24 76,68 40,88 4,68 4,24' fill='none' stroke='%23c8a020' stroke-width='1'/%3E%3C/svg%3E");
+      background-size: 80px 92px;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%
+    }
 
-    .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
-    .btn-gold{background:linear-gradient(135deg,var(--gold-dark),var(--gold-mid));color:#0d1628}
-    .btn-gold:hover{background:linear-gradient(135deg,var(--gold),var(--gold-light));transform:translateY(-1px)}
-    .btn-blue{background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff}
-    .btn-blue:hover{background:linear-gradient(135deg,var(--blue),var(--blue-mid));transform:translateY(-1px)}
-    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-muted)}
-    .btn-outline:hover{border-color:var(--border-blue);color:var(--blue-light)}
-    .btn-og{background:transparent;border:1px solid var(--border-gold);color:var(--gold)}
-    .btn-og:hover{background:var(--gold-glow)}
-    .btn-danger{background:rgba(224,74,74,.15);border:1px solid rgba(224,74,74,.3);color:#ff8080}
-    .btn-danger:hover{background:rgba(224,74,74,.25)}
-    .btn-success{background:rgba(42,171,106,.15);border:1px solid rgba(42,171,106,.3);color:#60d090}
-    .btn-success:hover{background:rgba(42,171,106,.25)}
-    .btn-sm{padding:6px 11px;font-size:12px}
-    .btn-block{width:100%;justify-content:center;padding:12px;font-size:14px}
-    .hint{font-size:11px;color:var(--text-dim);margin-top:8px;text-align:center}
-    .hint b{color:var(--gold)}
+    .lg-glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(43, 125, 233, .1) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%)
+    }
+
+    .lg-card {
+      position: relative;
+      width: 400px;
+      max-width: 95vw;
+      background: var(--bg-card);
+      border-radius: var(--rl);
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 0 40px rgba(200, 160, 32, .1), 0 20px 60px rgba(0, 0, 0, .5);
+      overflow: hidden
+    }
+
+    .lg-top {
+      background: linear-gradient(135deg, #0d1628, var(--bg-card2));
+      padding: 28px 32px 22px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-gold)
+    }
+
+    .lg-hex {
+      width: 68px;
+      height: 78px;
+      margin-bottom: 10px
+    }
+
+    .lg-hex polygon {
+      fill: #0d1628;
+      stroke: var(--gold);
+      stroke-width: 2.5
+    }
+
+    .lg-hex text {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      fill: var(--blue-mid);
+      font-size: 20px
+    }
+
+    .lg-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--gold-mid), var(--blue-mid));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+
+    .lg-sub {
+      color: var(--text-muted);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 3px
+    }
+
+    .lg-body {
+      padding: 22px 30px 26px
+    }
+
+    .tab-row {
+      display: flex;
+      background: var(--bg-deep);
+      border-radius: var(--r);
+      padding: 3px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border)
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      color: #fff
+    }
+
+    .form-group {
+      margin-bottom: 13px
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: .8px
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      background: var(--bg-deep);
+      color: var(--text);
+      transition: border-color .2s
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-glow)
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a8aaa'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 30px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border: none;
+      border-radius: var(--r);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      white-space: nowrap
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold-mid));
+      color: #0d1628
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      transform: translateY(-1px)
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      color: #fff
+    }
+
+    .btn-blue:hover {
+      background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+      transform: translateY(-1px)
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted)
+    }
+
+    .btn-outline:hover {
+      border-color: var(--border-blue);
+      color: var(--blue-light)
+    }
+
+    .btn-og {
+      background: transparent;
+      border: 1px solid var(--border-gold);
+      color: var(--gold)
+    }
+
+    .btn-og:hover {
+      background: var(--gold-glow)
+    }
+
+    .btn-danger {
+      background: rgba(224, 74, 74, .15);
+      border: 1px solid rgba(224, 74, 74, .3);
+      color: #ff8080
+    }
+
+    .btn-danger:hover {
+      background: rgba(224, 74, 74, .25)
+    }
+
+    .btn-success {
+      background: rgba(42, 171, 106, .15);
+      border: 1px solid rgba(42, 171, 106, .3);
+      color: #60d090
+    }
+
+    .btn-success:hover {
+      background: rgba(42, 171, 106, .25)
+    }
+
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 12px
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+      padding: 12px;
+      font-size: 14px
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      text-align: center
+    }
+
+    .hint b {
+      color: var(--gold)
+    }
 
     /* INSTALL BANNER */
-    #installBanner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border-gold);border-radius:12px;padding:14px 18px;display:none;align-items:center;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:800;min-width:290px;max-width:92vw}
-    #installBanner.show{display:flex}
-    .ib-icon{font-size:22px}
-    .ib-text strong{display:block;font-size:13px;color:var(--gold-mid)}
-    .ib-text span{font-size:11px;color:var(--text-muted)}
+    #installBanner {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+      z-index: 800;
+      min-width: 290px;
+      max-width: 92vw
+    }
+
+    #installBanner.show {
+      display: flex
+    }
+
+    .ib-icon {
+      font-size: 22px
+    }
+
+    .ib-text strong {
+      display: block;
+      font-size: 13px;
+      color: var(--gold-mid)
+    }
+
+    .ib-text span {
+      font-size: 11px;
+      color: var(--text-muted)
+    }
 
     /* MODAL */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:900}
-    .modal-overlay.open{display:flex}
-    .modal-box{background:var(--bg-card);border-radius:var(--rl);width:420px;max-width:95vw;border:1px solid var(--border-gold);box-shadow:0 20px 60px rgba(0,0,0,.6);overflow:hidden}
-    .modal-head{background:linear-gradient(135deg,var(--bg-deep),var(--bg-card2));padding:15px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-gold)}
-    .modal-head h3{font-family:'Rajdhani',sans-serif;font-size:17px;color:var(--gold-mid);letter-spacing:1px}
-    .modal-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px}
-    .modal-close:hover{color:var(--text)}
-    .modal-body{padding:20px}
-    .modal-foot{padding:10px 20px 18px;display:flex;gap:8px;justify-content:flex-end}
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .7);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 900
+    }
+
+    .modal-overlay.open {
+      display: flex
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border-radius: var(--rl);
+      width: 420px;
+      max-width: 95vw;
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+      overflow: hidden
+    }
+
+    .modal-head {
+      background: linear-gradient(135deg, var(--bg-deep), var(--bg-card2));
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-gold)
+    }
+
+    .modal-head h3 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 17px;
+      color: var(--gold-mid);
+      letter-spacing: 1px
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px
+    }
+
+    .modal-close:hover {
+      color: var(--text)
+    }
+
+    .modal-body {
+      padding: 20px
+    }
+
+    .modal-foot {
+      padding: 10px 20px 18px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end
+    }
 
     /* APP SHELL */
-    #appShell{display:flex;min-height:100vh}
+    #appShell {
+      display: flex;
+      min-height: 100vh
+    }
 
     /* SIDEBAR */
-    #sidebar{width:var(--sw);background:var(--bg-card);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;border-right:1px solid var(--border-gold);transition:transform .3s}
-    .sb-brand{padding:16px 16px 12px;border-bottom:1px solid var(--border-gold);background:linear-gradient(135deg,#0d1628,var(--bg-card2))}
-    .sb-brand-row{display:flex;align-items:center;gap:10px}
-    .sb-hex{width:40px;height:46px;flex-shrink:0}
-    .sb-hex polygon{fill:var(--bg-deep);stroke:var(--gold);stroke-width:1.8}
-    .sb-hex text{font-family:'Rajdhani',sans-serif;font-weight:700;fill:var(--blue-mid);font-size:13px}
-    .sb-txt h2{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;color:var(--gold-mid)}
-    .sb-txt span{font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}
-    .sb-user{margin:10px;padding:10px 12px;background:var(--bg-deep);border-radius:var(--r);border:1px solid var(--border);display:flex;align-items:center;gap:10px}
-    .u-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue-dark),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:12px;flex-shrink:0;border:2px solid var(--border-blue)}
-    .u-nm{font-size:13px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-    .u-role{font-size:11px;color:var(--gold)}
-    nav.app-nav{flex:1;padding:6px 0;overflow-y:auto}
-    .nav-sec{padding:12px 14px 4px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);font-weight:600}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;color:var(--text-muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s;font-size:13px;font-weight:500;margin:1px 0}
-    .nav-item:hover{background:var(--bg-hover);color:var(--text)}
-    .nav-item.active{background:linear-gradient(90deg,rgba(43,125,233,.15),transparent);color:var(--blue-light);border-left-color:var(--blue)}
-    .nav-item i{width:15px;text-align:center;font-size:12px}
-    .sb-footer{padding:12px;border-top:1px solid var(--border)}
+    #sidebar {
+      width: var(--sw);
+      background: var(--bg-card);
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-gold);
+      transition: transform .3s
+    }
+
+    .sb-brand {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border-gold);
+      background: linear-gradient(135deg, #0d1628, var(--bg-card2))
+    }
+
+    .sb-brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .sb-hex {
+      width: 40px;
+      height: 46px;
+      flex-shrink: 0
+    }
+
+    .sb-hex polygon {
+      fill: var(--bg-deep);
+      stroke: var(--gold);
+      stroke-width: 1.8
+    }
+
+    .sb-hex text {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      fill: var(--blue-mid);
+      font-size: 13px
+    }
+
+    .sb-txt h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--gold-mid)
+    }
+
+    .sb-txt span {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    .sb-user {
+      margin: 10px;
+      padding: 10px 12px;
+      background: var(--bg-deep);
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .u-av {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      font-size: 12px;
+      flex-shrink: 0;
+      border: 2px solid var(--border-blue)
+    }
+
+    .u-nm {
+      font-size: 13px;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis
+    }
+
+    .u-role {
+      font-size: 11px;
+      color: var(--gold)
+    }
+
+    nav.app-nav {
+      flex: 1;
+      padding: 6px 0;
+      overflow-y: auto
+    }
+
+    .nav-sec {
+      padding: 12px 14px 4px;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-weight: 600
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 1px 0
+    }
+
+    .nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text)
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(43, 125, 233, .15), transparent);
+      color: var(--blue-light);
+      border-left-color: var(--blue)
+    }
+
+    .nav-item i {
+      width: 15px;
+      text-align: center;
+      font-size: 12px
+    }
+
+    .sb-footer {
+      padding: 12px;
+      border-top: 1px solid var(--border)
+    }
 
     /* MAIN */
-    #mainContent{margin-left:var(--sw);flex:1;min-height:100vh;display:flex;flex-direction:column}
-    .topbar{height:var(--hh);background:var(--bg-card);border-bottom:1px solid var(--border-gold);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:50}
-    .tb-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--gold-mid);letter-spacing:1px;flex:1}
-    .tb-right{display:flex;align-items:center;gap:8px}
-    .top-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}
-    .tb-gold{background:rgba(200,160,32,.12);border:1px solid var(--border-gold);color:var(--gold-mid)}
-    .tb-blue{background:rgba(43,125,233,.12);border:1px solid var(--border-blue);color:var(--blue-light)}
+    #mainContent {
+      margin-left: var(--sw);
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column
+    }
+
+    .topbar {
+      height: var(--hh);
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50
+    }
+
+    .tb-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold-mid);
+      letter-spacing: 1px;
+      flex: 1
+    }
+
+    .tb-right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .top-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .tb-gold {
+      background: rgba(200, 160, 32, .12);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-mid)
+    }
+
+    .tb-blue {
+      background: rgba(43, 125, 233, .12);
+      border: 1px solid var(--border-blue);
+      color: var(--blue-light)
+    }
 
     /* PAGES */
-    .pc{padding:20px;flex:1}
-    .page{display:none}
-    .page.active{display:block}
-    .ph{margin-bottom:16px}
-    .ph h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--gold-mid);letter-spacing:1px}
-    .ph p{font-size:12px;color:var(--text-muted);margin-top:2px}
+    .pc {
+      padding: 20px;
+      flex: 1
+    }
+
+    .page {
+      display: none
+    }
+
+    .page.active {
+      display: block
+    }
+
+    .ph {
+      margin-bottom: 16px
+    }
+
+    .ph h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold-mid);
+      letter-spacing: 1px
+    }
+
+    .ph p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px
+    }
 
     /* STAT CARDS */
-    .srow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-    .sc{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden}
-    .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light))}
-    .sc.bt::before{background:linear-gradient(90deg,var(--blue-dark),var(--blue-mid))}
-    .sc.gt::before{background:linear-gradient(90deg,#1a7a50,var(--green))}
-    .sc.rt::before{background:linear-gradient(90deg,#8a1a1a,var(--red))}
-    .sl{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px}
-    .sv{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--gold-mid);line-height:1}
-    .sc.bt .sv{color:var(--blue-light)}.sc.gt .sv{color:#60d090}.sc.rt .sv{color:#ff9090}
-    .ss{font-size:11px;color:var(--text-muted);margin-top:4px}
+    .srow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px
+    }
+
+    .sc {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .sc::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light))
+    }
+
+    .sc.bt::before {
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue-mid))
+    }
+
+    .sc.gt::before {
+      background: linear-gradient(90deg, #1a7a50, var(--green))
+    }
+
+    .sc.rt::before {
+      background: linear-gradient(90deg, #8a1a1a, var(--red))
+    }
+
+    .sl {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 7px
+    }
+
+    .sv {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--gold-mid);
+      line-height: 1
+    }
+
+    .sc.bt .sv {
+      color: var(--blue-light)
+    }
+
+    .sc.gt .sv {
+      color: #60d090
+    }
+
+    .sc.rt .sv {
+      color: #ff9090
+    }
+
+    .ss {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px
+    }
 
     /* CARD */
-    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r)}
-    .ch{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-    .ch h4{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--gold-mid);letter-spacing:.8px}
-    .cb{padding:14px 16px}
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r)
+    }
+
+    .ch {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .ch h4 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-mid);
+      letter-spacing: .8px
+    }
+
+    .cb {
+      padding: 14px 16px
+    }
 
     /* GRID */
-    .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .g2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    .g3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px
+    }
 
     /* TABLE */
-    .tw{overflow-x:auto}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    thead tr{background:var(--bg-deep)}
-    th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--text-dim);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--border-gold)}
-    td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
-    tr:last-child td{border-bottom:none}
-    tr:hover td{background:var(--bg-hover)}
+    .tw {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    thead tr {
+      background: var(--bg-deep)
+    }
+
+    th {
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-gold)
+    }
+
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle
+    }
+
+    tr:last-child td {
+      border-bottom: none
+    }
+
+    tr:hover td {
+      background: var(--bg-hover)
+    }
 
     /* BADGE */
-    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
-    .bg{background:rgba(200,160,32,.15);color:var(--gold-mid);border:1px solid var(--border-gold)}
-    .bb{background:rgba(43,125,233,.15);color:var(--blue-light);border:1px solid var(--border-blue)}
-    .bgg{background:rgba(42,171,106,.15);color:#60d090;border:1px solid rgba(42,171,106,.3)}
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .bg {
+      background: rgba(200, 160, 32, .15);
+      color: var(--gold-mid);
+      border: 1px solid var(--border-gold)
+    }
+
+    .bb {
+      background: rgba(43, 125, 233, .15);
+      color: var(--blue-light);
+      border: 1px solid var(--border-blue)
+    }
+
+    .bgg {
+      background: rgba(42, 171, 106, .15);
+      color: #60d090;
+      border: 1px solid rgba(42, 171, 106, .3)
+    }
 
     /* PROGRESS */
-    .pbar{height:6px;background:var(--bg-deep);border-radius:3px;overflow:hidden}
-    .pfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--gold-mid));transition:width .5s}
+    .pbar {
+      height: 6px;
+      background: var(--bg-deep);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .pfill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--gold-mid));
+      transition: width .5s
+    }
 
     /* LEADERBOARD */
-    .lb-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--r);margin-bottom:3px;transition:background .15s}
-    .lb-item:hover{background:var(--bg-hover)}
-    .lb-item.me{background:rgba(43,125,233,.1);border-left:2px solid var(--blue)}
-    .lb-rank{width:25px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--text-dim);text-align:center;flex-shrink:0}
-    .lb-name{flex:1;font-size:13px;font-weight:500}
-    .lb-score{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--gold-mid)}
+    .lb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: var(--r);
+      margin-bottom: 3px;
+      transition: background .15s
+    }
+
+    .lb-item:hover {
+      background: var(--bg-hover)
+    }
+
+    .lb-item.me {
+      background: rgba(43, 125, 233, .1);
+      border-left: 2px solid var(--blue)
+    }
+
+    .lb-rank {
+      width: 25px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-align: center;
+      flex-shrink: 0
+    }
+
+    .lb-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .lb-score {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--gold-mid)
+    }
 
     /* ACTIVITY */
-    .ai{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg-deep);margin-bottom:5px}
-    .at{font-size:12px;color:var(--text-muted)}
-    .ac{font-size:12px;font-weight:700;color:var(--green)}
+    .ai {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      background: var(--bg-deep);
+      margin-bottom: 5px
+    }
+
+    .at {
+      font-size: 12px;
+      color: var(--text-muted)
+    }
+
+    .ac {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green)
+    }
 
     /* GIVE CARD */
-    .gc{background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
-    .gc h5{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;letter-spacing:.8px;text-transform:uppercase}
-    .rr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-    .rr input[type=range]{flex:1;accent-color:var(--blue);height:4px}
-    .rv{width:28px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--gold-mid);text-align:right}
+    .gc {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px
+    }
+
+    .gc h5 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 10px;
+      letter-spacing: .8px;
+      text-transform: uppercase
+    }
+
+    .rr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px
+    }
+
+    .rr input[type=range] {
+      flex: 1;
+      accent-color: var(--blue);
+      height: 4px
+    }
+
+    .rv {
+      width: 28px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--gold-mid);
+      text-align: right
+    }
 
     /* TOAST */
-    #tc{position:fixed;top:16px;right:16px;z-index:9000;display:flex;flex-direction:column;gap:7px}
-    .toast{background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:var(--r);padding:11px 15px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);min-width:230px;animation:tin .3s ease}
-    .toast.success{border-left-color:var(--green)}.toast.error{border-left-color:var(--red)}
-    @keyframes tin{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+    #tc {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 7px
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: var(--r);
+      padding: 11px 15px;
+      font-size: 13px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+      min-width: 230px;
+      animation: tin .3s ease
+    }
+
+    .toast.success {
+      border-left-color: var(--green)
+    }
+
+    .toast.error {
+      border-left-color: var(--red)
+    }
+
+    @keyframes tin {
+      from {
+        opacity: 0;
+        transform: translateX(30px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
 
     /* REF */
-    .ref-box{background:var(--bg-deep);border:1px dashed var(--border-gold);border-radius:10px;padding:18px;text-align:center}
-    .ref-code{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;letter-spacing:5px;color:var(--gold-mid);margin:7px 0}
+    .ref-box {
+      background: var(--bg-deep);
+      border: 1px dashed var(--border-gold);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center
+    }
+
+    .ref-code {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      color: var(--gold-mid);
+      margin: 7px 0
+    }
 
     /* MOBILE */
-    #sidebarToggle{display:none;background:var(--bg-card2);border:1px solid var(--border-gold);color:var(--gold);width:35px;height:35px;border-radius:var(--r);cursor:pointer;font-size:14px;align-items:center;justify-content:center}
-    #sbBg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
-    #sbBg.open{display:block}
+    #sidebarToggle {
+      display: none;
+      background: var(--bg-card2);
+      border: 1px solid var(--border-gold);
+      color: var(--gold);
+      width: 35px;
+      height: 35px;
+      border-radius: var(--r);
+      cursor: pointer;
+      font-size: 14px;
+      align-items: center;
+      justify-content: center
+    }
 
-    @supports(padding:env(safe-area-inset-bottom)){
-      .sb-footer{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
-      .topbar{padding-top:env(safe-area-inset-top)}
+    #sbBg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .6);
+      z-index: 99
     }
-    @media(max-width:900px){
-      #sidebar{transform:translateX(-100%)}
-      #sidebar.open{transform:translateX(0)}
-      #mainContent{margin-left:0}
-      #sidebarToggle{display:flex}
-      .srow{grid-template-columns:1fr 1fr}
-      .g2,.g3{grid-template-columns:1fr}
+
+    #sbBg.open {
+      display: block
     }
-    @media(max-width:480px){
-      .srow{grid-template-columns:1fr 1fr}
-      .pc{padding:13px}
-      .sv{font-size:26px}
+
+    @supports(padding:env(safe-area-inset-bottom)) {
+      .sb-footer {
+        padding-bottom: calc(12px + env(safe-area-inset-bottom))
+      }
+
+      .topbar {
+        padding-top: env(safe-area-inset-top)
+      }
+    }
+
+    @media(max-width:900px) {
+      #sidebar {
+        transform: translateX(-100%)
+      }
+
+      #sidebar.open {
+        transform: translateX(0)
+      }
+
+      #mainContent {
+        margin-left: 0
+      }
+
+      #sidebarToggle {
+        display: flex
+      }
+
+      .srow {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .g2,
+      .g3 {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media(max-width:480px) {
+      .srow {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .pc {
+        padding: 13px
+      }
+
+      .sv {
+        font-size: 26px
+      }
     }
   </style>
 </head>
+
 <body>
 
-<div id="loadingOverlay">
-  <div class="load-hex"><img src="teacher.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" /></div>
-  <div class="load-title">Teacher_texno</div>
-  <div class="load-sub">Valiyev Omadbek · IT Instructor</div>
-  <div class="load-bar"><div class="load-fill"></div></div>
-</div>
-
-<div id="tc"></div>
-
-<div id="installBanner">
-  <div class="ib-icon">📱</div>
-  <div class="ib-text"><strong>Ilovani o'rnatish</strong><span>Android uchun Home Screen ga</span></div>
-  <button class="btn btn-gold btn-sm" id="installBtn">O'rnatish</button>
-  <button class="btn btn-outline btn-sm" id="installDismiss">✕</button>
-</div>
-
-<div id="loginScreen">
-  <div class="lg-bg"><div class="lg-pattern"></div><div class="lg-glow"></div></div>
-  <div class="lg-card">
-    <div class="lg-top">
-      <img class="lg-hex" src="teacher.jpg" alt="Logo" style="object-fit: cover; border-radius: 50%;">
-      <div class="lg-title">Teacher_texno</div>
-      <div class="lg-sub">IT Instructor · Valiyev Omadbek</div>
+  <div id="loadingOverlay">
+    <div class="load-hex"><img src="teacher.jpg" alt="Logo"
+        style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" /></div>
+    <div class="load-title">Teacher_texno</div>
+    <div class="load-sub">Valiyev Omadbek · IT Instructor</div>
+    <div class="load-bar">
+      <div class="load-fill"></div>
     </div>
-    <div class="lg-body">
-      <div class="tab-row">
-        <button class="tab-btn active" id="tabSBtn" onclick="swTab('student')">Talaba</button>
-        <button class="tab-btn" id="tabTBtn" onclick="swTab('teacher')">O'qituvchi</button>
-        <button class="tab-btn" id="tabABtn" onclick="swTab('admin')">Admin</button>
+  </div>
+
+  <div id="tc"></div>
+
+  <div id="installBanner">
+    <div class="ib-icon">📱</div>
+    <div class="ib-text"><strong>Ilovani o'rnatish</strong><span>Android uchun Home Screen ga</span></div>
+    <button class="btn btn-gold btn-sm" id="installBtn">O'rnatish</button>
+    <button class="btn btn-outline btn-sm" id="installDismiss">✕</button>
+  </div>
+
+  <div id="loginScreen">
+    <div class="lg-bg">
+      <div class="lg-pattern"></div>
+      <div class="lg-glow"></div>
+    </div>
+    <div class="lg-card">
+      <div class="lg-top">
+        <img class="lg-hex" src="teacher.jpg" alt="Logo" style="object-fit: cover; border-radius: 50%;">
+        <div class="lg-title">Teacher_texno</div>
+        <div class="lg-sub">IT Instructor · Valiyev Omadbek</div>
       </div>
-      <div id="sLoginForm">
-        <div class="form-group"><label>O'qituvchi</label><select id="sTeacherSel" class="form-control" onchange="updStudentLoginOptions()"></select></div>
-        <div class="form-group"><label>Talaba ismi</label><select id="sLoginSel" class="form-control"></select></div>
-        <div class="form-group"><label>Parol</label><input type="password" id="sPwdIn" class="form-control" placeholder="Parolni kiriting"></div>
-        <button class="btn btn-blue btn-block" onclick="doSLogin()"><i class="fas fa-sign-in-alt"></i> Kirish</button>
-      </div>
-      <div id="tLoginForm" style="display:none">
-        <div class="form-group"><label>O'qituvchi</label><select id="tLoginSel" class="form-control"></select></div>
-        <div class="form-group"><label>O'qituvchi paroli</label><input type="password" id="tPwdIn" class="form-control" placeholder="Maxfiy parol"></div>
-        <button class="btn btn-gold btn-block" onclick="doTLogin()"><i class="fas fa-chalkboard-teacher"></i> Kirish</button>
-      </div>
-      <div id="aLoginForm" style="display:none">
-        <div class="form-group"><label>Kirish turi</label><select id="aLoginType" class="form-control" onchange="toggleAdminLoginType()"><option value="super">Super Admin</option><option value="admin">Admin</option></select></div>
-        <div class="form-group" id="aAdminSelWrap" style="display:none"><label>Admin</label><select id="aAdminSel" class="form-control"></select></div>
-        <div class="form-group" id="aCodeWrap" style="display:none"><label>Maxsus kod</label><input type="text" id="aCodeIn" class="form-control" placeholder="Admin maxsus kod"></div>
-        <div class="form-group"><label>Parol</label><input type="password" id="aPwdIn" class="form-control" placeholder="Admin parol"></div>
-        <button class="btn btn-gold btn-block" onclick="doALogin()"><i class="fas fa-user-shield"></i> Kirish</button>
+      <div class="lg-body">
+        <div class="tab-row">
+          <button class="tab-btn active" id="tabSBtn" onclick="swTab('student')">Talaba</button>
+          <button class="tab-btn" id="tabTBtn" onclick="swTab('teacher')">O'qituvchi</button>
+          <button class="tab-btn" id="tabABtn" onclick="swTab('admin')">Admin</button>
+        </div>
+        <div id="sLoginForm">
+          <div class="form-group"><label>O'qituvchi</label><select id="sTeacherSel" class="form-control"
+              onchange="updStudentLoginOptions()"></select></div>
+          <div class="form-group"><label>Talaba ismi</label><select id="sLoginSel" class="form-control"></select></div>
+          <div class="form-group"><label>Parol</label><input type="password" id="sPwdIn" class="form-control"
+              placeholder="Parolni kiriting"></div>
+          <button class="btn btn-blue btn-block" onclick="doSLogin()"><i class="fas fa-sign-in-alt"></i> Kirish</button>
+          <div class="hint"
+            style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;text-align:left;">
+            <span>Parol esimdan chiqdi</span>
+            <button class="btn btn-outline btn-sm" onclick="openForgotPasswordModal()"><i class="fas fa-unlock-alt"></i>
+              Parolni tiklash</button>
+          </div>
+        </div>
+        <div id="tLoginForm" style="display:none">
+          <div class="form-group"><label>O'qituvchi</label><select id="tLoginSel" class="form-control"></select></div>
+          <div class="form-group"><label>O'qituvchi paroli</label><input type="password" id="tPwdIn"
+              class="form-control" placeholder="Maxfiy parol"></div>
+          <button class="btn btn-gold btn-block" onclick="doTLogin()"><i class="fas fa-chalkboard-teacher"></i>
+            Kirish</button>
+          <div class="hint"
+            style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;text-align:left;">
+            <span>Parol esimdan chiqdi</span>
+            <button class="btn btn-outline btn-sm" onclick="openTeacherForgotModal()"><i class="fas fa-unlock-alt"></i>
+              Parolni tiklash</button>
+          </div>
+        </div>
+        <div id="aLoginForm" style="display:none">
+          <div class="form-group"><label>Kirish turi</label><select id="aLoginType" class="form-control"
+              onchange="toggleAdminLoginType()">
+              <option value="super">Super Admin</option>
+              <option value="admin">Admin</option>
+            </select></div>
+          <div class="form-group" id="aAdminSelWrap" style="display:none"><label>Admin</label><select id="aAdminSel"
+              class="form-control"></select></div>
+          <div class="form-group" id="aCodeWrap" style="display:none"><label>Maxsus kod</label><input type="text"
+              id="aCodeIn" class="form-control" placeholder="Admin maxsus kod"></div>
+          <div class="form-group"><label>Parol</label><input type="password" id="aPwdIn" class="form-control"
+              placeholder="Admin parol"></div>
+          <button class="btn btn-gold btn-block" onclick="doALogin()"><i class="fas fa-user-shield"></i> Kirish</button>
+          <div class="hint"
+            style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;text-align:left;">
+            <span>Parol esimdan chiqdi</span>
+            <button class="btn btn-outline btn-sm" onclick="openAdminForgotModal()"><i class="fas fa-unlock-alt"></i>
+              Parolni tiklash</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="modal-overlay" id="cpModal">
-  <div class="modal-box">
-    <div class="modal-head"><h3><i class="fas fa-key" style="color:var(--gold);margin-right:8px;"></i>Parolni o'zgartirish</h3><button class="modal-close" onclick="closeModal('cpModal')"><i class="fas fa-times"></i></button></div>
-    <div class="modal-body">
-      <div class="form-group"><label>Joriy parol</label><input type="password" id="oldP" class="form-control" placeholder="Eski parol"></div>
-      <div class="form-group"><label>Yangi parol</label><input type="password" id="newP" class="form-control" placeholder="Yangi parol"></div>
-      <div class="form-group"><label>Takrorlang</label><input type="password" id="cnfP" class="form-control" placeholder="Qayta kiriting"></div>
+  <div class="modal-overlay" id="cpModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-key" style="color:var(--gold);margin-right:8px;"></i>Parolni o'zgartirish</h3><button
+          class="modal-close" onclick="closeModal('cpModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Joriy parol</label><input type="password" id="oldP" class="form-control"
+            placeholder="Eski parol"></div>
+        <div class="form-group"><label>Yangi parol</label><input type="password" id="newP" class="form-control"
+            placeholder="Yangi parol"></div>
+        <div class="form-group"><label>Takrorlang</label><input type="password" id="cnfP" class="form-control"
+            placeholder="Qayta kiriting"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-outline btn-sm"
+          onclick="closeModal('cpModal')">Bekor</button><button class="btn btn-blue btn-sm" onclick="doChgPwd()"><i
+            class="fas fa-save"></i> Saqlash</button></div>
     </div>
-    <div class="modal-foot"><button class="btn btn-outline btn-sm" onclick="closeModal('cpModal')">Bekor</button><button class="btn btn-blue btn-sm" onclick="doChgPwd()"><i class="fas fa-save"></i> Saqlash</button></div>
   </div>
-</div>
 
-<div id="appShell" style="display:none">
-  <div id="sbBg" onclick="closeSB()"></div>
-  <aside id="sidebar">
-    <div class="sb-brand">
-      <div class="sb-brand-row">
-        <img class="sb-hex" src="teacher.jpg" alt="Logo" style="object-fit: cover; border-radius: 50%;">
-        <div class="sb-txt"><h2>Teacher_texno</h2><span>IT Instructor</span></div>
+  <div class="modal-overlay" id="fpModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-unlock-alt" style="color:var(--gold);margin-right:8px;"></i>Parolni tiklash</h3><button
+          class="modal-close" onclick="closeModal('fpModal')"><i class="fas fa-times"></i></button>
       </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Talabaga tegishli referral kod orqali
+          yangi parol o'rnating.</p>
+        <div class="form-group"><label>O'qituvchi</label><select id="fpTeacherSel" class="form-control"
+            onchange="updForgotStudentOptions()"></select></div>
+        <div class="form-group"><label>Talaba</label><select id="fpStudentSel" class="form-control"></select></div>
+        <div class="form-group"><label>Referral kod</label><input type="text" id="fpRefIn" class="form-control"
+            placeholder="Masalan: REF102"></div>
+        <div class="form-group"><label>Yangi parol</label><input type="password" id="fpNewIn" class="form-control"
+            placeholder="Kamida 8 belgi"></div>
+        <div class="form-group"><label>Yangi parol (takror)</label><input type="password" id="fpCnfIn"
+            class="form-control" placeholder="Qayta kiriting"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-outline btn-sm"
+          onclick="closeModal('fpModal')">Bekor</button><button class="btn btn-blue btn-sm"
+          onclick="doForgotPasswordReset()"><i class="fas fa-save"></i> Saqlash</button></div>
     </div>
-    <div class="sb-user">
-      <div class="u-av" id="sbAv">?</div>
-      <div><div class="u-nm" id="sbNm">-</div><div class="u-role" id="sbRl">-</div></div>
-    </div>
-    <nav class="app-nav" id="sNav">
-      <div class="nav-sec">Mening sahifam</div>
-      <div class="nav-item active" onclick="showPage('dpg',this)"><i class="fas fa-th-large"></i> Bosh sahifa</div>
-      <div class="nav-item" onclick="showPage('rpg',this)"><i class="fas fa-trophy"></i> Reyting</div>
-      <div class="nav-item" onclick="showPage('hpg',this)"><i class="fas fa-history"></i> Faollik tarixi</div>
-      <div class="nav-sec">Profil</div>
-      <div class="nav-item" onclick="showPage('ppg',this)"><i class="fas fa-user-circle"></i> Profilim</div>
-    </nav>
-    <nav class="app-nav" id="tNav" style="display:none">
-      <div class="nav-sec">Boshqaruv</div>
-      <div class="nav-item active" onclick="showPage('adpg',this)"><i class="fas fa-chart-bar"></i> Statistika</div>
-      <div class="nav-item" onclick="showPage('stpg',this)"><i class="fas fa-users"></i> Talabalar</div>
-      <div class="nav-item" onclick="showPage('cpg',this)"><i class="fas fa-coins"></i> Tanga berish</div>
-      <div class="nav-item" onclick="showPage('tapg',this)"><i class="fas fa-id-card"></i> Profil va Xavfsizlik</div>
-      <div class="nav-item" id="tNavTeachers" style="display:none" onclick="showPage('tpg',this)"><i class="fas fa-chalkboard-teacher"></i> O'qituvchilar</div>
-    </nav>
-    <div class="sb-footer">
-      <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;border-color:var(--border-gold);color:var(--text-muted);" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</button>
-    </div>
-  </aside>
+  </div>
 
-  <div id="mainContent">
-    <div class="topbar">
-      <button id="sidebarToggle" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
-      <div class="tb-title" id="tbTitle">Bosh sahifa</div>
-      <div class="tb-right" id="tbRight"></div>
+  <!-- O'QITUVCHI PAROL TIKLASH MODALI -->
+  <div class="modal-overlay" id="ftModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-chalkboard-teacher" style="color:var(--gold);margin-right:8px;"></i>O'qituvchi parolni tiklash</h3><button
+          class="modal-close" onclick="closeModal('ftModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">O'qituvchining maxsus tiklanh kodi (resetCode) orqali yangi parol o'rnating.</p>
+        <div class="form-group"><label>O'qituvchi</label><select id="ftTeacherSel" class="form-control"></select></div>
+        <div class="form-group"><label>Maxsus tiklash kodi (resetCode)</label><input type="text" id="ftCodeIn"
+            class="form-control" placeholder="Masalan: TCH-XXXXXX"></div>
+        <div class="form-group"><label>Yangi parol</label><input type="password" id="ftNewIn" class="form-control"
+            placeholder="Kamida 8 belgi, harf+raqam"></div>
+        <div class="form-group"><label>Yangi parol (takror)</label><input type="password" id="ftCnfIn"
+            class="form-control" placeholder="Qayta kiriting"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-outline btn-sm"
+          onclick="closeModal('ftModal')">Bekor</button><button class="btn btn-gold btn-sm"
+          onclick="doTeacherForgotReset()"><i class="fas fa-save"></i> Saqlash</button></div>
     </div>
-    <div class="pc">
+  </div>
 
-      <!-- STUDENT DASHBOARD -->
-      <div class="page active" id="dpg">
-        <div class="srow">
-          <div class="sc"><div class="sl">Tangalar</div><div class="sv" id="st_c">0</div><div class="ss">Jami to'plangan</div></div>
-          <div class="sc bt"><div class="sl">Daraja</div><div class="sv" id="st_l">1</div><div class="ss" id="st_b">Starter</div></div>
-          <div class="sc gt"><div class="sl">Streak</div><div class="sv" id="st_s">0</div><div class="ss">Ketma-ket kun</div></div>
-          <div class="sc rt"><div class="sl">Reyting</div><div class="sv" id="st_r">#-</div><div class="ss" id="st_rs">umumiy</div></div>
-        </div>
-        <div class="g2" style="margin-bottom:14px;">
-          <div class="card">
-            <div class="ch"><h4>Haftalik progress</h4><span class="badge bg" id="wkt">0/100</span></div>
-            <div class="cb"><div class="pbar"><div class="pfill" id="wkf" style="width:0%"></div></div><p style="font-size:11px;color:var(--text-dim);margin:5px 0 12px;">Maqsad: 100 tanga/hafta</p><canvas id="wkChart" height="130"></canvas></div>
+  <!-- ADMIN PAROL TIKLASH MODALI -->
+  <div class="modal-overlay" id="faModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-user-shield" style="color:var(--gold);margin-right:8px;"></i>Admin parolni tiklash</h3><button
+          class="modal-close" onclick="closeModal('faModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Admin maxsus kodi (adminCode) orqali yangi parol o'rnating.</p>
+        <div class="form-group"><label>Kirish turi</label><select id="faTypeSel" class="form-control" onchange="toggleAdminForgotType()">
+          <option value="super">Super Admin</option>
+          <option value="admin">Admin</option>
+        </select></div>
+        <div class="form-group" id="faAdminSelWrap" style="display:none"><label>Admin</label><select id="faAdminSel"
+            class="form-control"></select></div>
+        <div class="form-group"><label>Maxsus kod (adminCode)</label><input type="text" id="faCodeIn"
+            class="form-control" placeholder="Masalan: ADM-XXXXXX yoki SPR-XXXXXX"></div>
+        <div class="form-group"><label>Yangi parol</label><input type="password" id="faNewIn" class="form-control"
+            placeholder="Kamida 8 belgi, harf+raqam"></div>
+        <div class="form-group"><label>Yangi parol (takror)</label><input type="password" id="faCnfIn"
+            class="form-control" placeholder="Qayta kiriting"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-outline btn-sm"
+          onclick="closeModal('faModal')">Bekor</button><button class="btn btn-gold btn-sm"
+          onclick="doAdminForgotReset()"><i class="fas fa-save"></i> Saqlash</button></div>
+    </div>
+  </div>
+
+  <div id="appShell" style="display:none">
+    <div id="sbBg" onclick="closeSB()"></div>
+    <aside id="sidebar">
+      <div class="sb-brand">
+        <div class="sb-brand-row">
+          <img class="sb-hex" src="teacher.jpg" alt="Logo" style="object-fit: cover; border-radius: 50%;">
+          <div class="sb-txt">
+            <h2>Teacher_texno</h2><span>IT Instructor</span>
           </div>
-          <div class="card">
-            <div class="ch"><h4>TOP-10 Reyting</h4>
-              <div style="display:flex;gap:4px;">
-                <button class="btn btn-sm btn-outline lb1 active" data-m="overall" onclick="setLb('overall',this)">Umumiy</button>
-                <button class="btn btn-sm btn-outline lb1" data-m="weekly" onclick="setLb('weekly',this)">Hafta</button>
-                <button class="btn btn-sm btn-outline lb1" data-m="monthly" onclick="setLb('monthly',this)">Oy</button>
+        </div>
+      </div>
+      <div class="sb-user">
+        <div class="u-av" id="sbAv">?</div>
+        <div>
+          <div class="u-nm" id="sbNm">-</div>
+          <div class="u-role" id="sbRl">-</div>
+        </div>
+      </div>
+      <nav class="app-nav" id="sNav">
+        <div class="nav-sec">Mening sahifam</div>
+        <div class="nav-item active" onclick="showPage('dpg',this)"><i class="fas fa-th-large"></i> Bosh sahifa</div>
+        <div class="nav-item" onclick="showPage('rpg',this)"><i class="fas fa-trophy"></i> Reyting</div>
+        <div class="nav-item" onclick="showPage('hpg',this)"><i class="fas fa-history"></i> Faollik tarixi</div>
+        <div class="nav-sec">Profil</div>
+        <div class="nav-item" onclick="showPage('ppg',this)"><i class="fas fa-user-circle"></i> Profilim</div>
+      </nav>
+      <nav class="app-nav" id="tNav" style="display:none">
+        <div class="nav-sec">Boshqaruv</div>
+        <div class="nav-item active" onclick="showPage('adpg',this)"><i class="fas fa-chart-bar"></i> Statistika</div>
+        <div class="nav-item" onclick="showPage('stpg',this)"><i class="fas fa-users"></i> Talabalar</div>
+        <div class="nav-item" onclick="showPage('cpg',this)"><i class="fas fa-coins"></i> Tanga berish</div>
+        <div class="nav-item" onclick="showPage('tapg',this)"><i class="fas fa-id-card"></i> Profil va Xavfsizlik</div>
+        <div class="nav-item" id="tNavTeachers" style="display:none" onclick="showPage('tpg',this)"><i
+            class="fas fa-chalkboard-teacher"></i> O'qituvchilar</div>
+      </nav>
+      <div class="sb-footer">
+        <button class="btn btn-outline btn-sm"
+          style="width:100%;justify-content:center;border-color:var(--border-gold);color:var(--text-muted);"
+          onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</button>
+      </div>
+    </aside>
+
+    <div id="mainContent">
+      <div class="topbar">
+        <button id="sidebarToggle" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
+        <div class="tb-title" id="tbTitle">Bosh sahifa</div>
+        <div class="tb-right" id="tbRight"></div>
+      </div>
+      <div class="pc">
+
+        <!-- STUDENT DASHBOARD -->
+        <div class="page active" id="dpg">
+          <div class="srow">
+            <div class="sc">
+              <div class="sl">Tangalar</div>
+              <div class="sv" id="st_c">0</div>
+              <div class="ss">Jami to'plangan</div>
+            </div>
+            <div class="sc bt">
+              <div class="sl">Daraja</div>
+              <div class="sv" id="st_l">1</div>
+              <div class="ss" id="st_b">Starter</div>
+            </div>
+            <div class="sc gt">
+              <div class="sl">Streak</div>
+              <div class="sv" id="st_s">0</div>
+              <div class="ss">Ketma-ket kun</div>
+            </div>
+            <div class="sc rt">
+              <div class="sl">Reyting</div>
+              <div class="sv" id="st_r">#-</div>
+              <div class="ss" id="st_rs">umumiy</div>
+            </div>
+          </div>
+          <div class="g2" style="margin-bottom:14px;">
+            <div class="card">
+              <div class="ch">
+                <h4>Haftalik progress</h4><span class="badge bg" id="wkt">0/100</span>
+              </div>
+              <div class="cb">
+                <div class="pbar">
+                  <div class="pfill" id="wkf" style="width:0%"></div>
+                </div>
+                <p style="font-size:11px;color:var(--text-dim);margin:5px 0 12px;">Maqsad: 100 tanga/hafta</p><canvas
+                  id="wkChart" height="130"></canvas>
               </div>
             </div>
-            <div class="cb" style="padding:10px 12px;max-height:260px;overflow-y:auto;"><div id="lbList"></div></div>
-          </div>
-        </div>
-        <div class="card"><div class="ch"><h4>So'nggi faollik</h4></div><div class="cb" style="padding:12px 14px;"><div id="actList"></div></div></div>
-      </div>
-
-      <!-- RANK -->
-      <div class="page" id="rpg">
-        <div class="ph"><h2>Reyting jadvali</h2><p>Barcha talabalar reytingi</p></div>
-        <div class="card">
-          <div class="ch"><h4>To'liq reyting</h4>
-            <div style="display:flex;gap:4px;">
-              <button class="btn btn-sm btn-outline lb2 active" data-m="overall" onclick="setLb2('overall',this)">Umumiy</button>
-              <button class="btn btn-sm btn-outline lb2" data-m="weekly" onclick="setLb2('weekly',this)">Haftalik</button>
-              <button class="btn btn-sm btn-outline lb2" data-m="monthly" onclick="setLb2('monthly',this)">Oylik</button>
-            </div>
-          </div>
-          <div class="cb" style="padding:8px;"><div class="tw"><div id="flb"></div></div></div>
-        </div>
-      </div>
-
-      <!-- HISTORY -->
-      <div class="page" id="hpg">
-        <div class="ph"><h2>Faollik tarixi</h2><p>Barcha tangalar va o'zgarishlar</p></div>
-        <div class="card"><div class="cb" style="padding:12px 14px;"><div id="fhist"></div></div></div>
-      </div>
-
-      <!-- PROFILE -->
-      <div class="page" id="ppg">
-        <div class="ph"><h2>Profilim</h2><p>Shaxsiy ma'lumotlar</p></div>
-        <div class="g2">
-          <div class="card">
-            <div class="ch"><h4>Ma'lumotlar</h4></div>
-            <div class="cb">
-              <table style="width:100%;border:none;">
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;width:100px;border:none;">Ism:</td><td style="padding:7px 0;font-weight:600;border:none;" id="pr_n">-</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Daraja:</td><td style="padding:7px 0;border:none;" id="pr_l">-</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Nishon:</td><td style="padding:7px 0;border:none;" id="pr_b">-</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Tanga:</td><td style="padding:7px 0;font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--gold-mid);border:none;" id="pr_c">0</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Streak:</td><td style="padding:7px 0;font-weight:700;color:var(--green);border:none;" id="pr_s">🔥 0 kun</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Haftalik:</td><td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_w">0 🪙</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Oylik:</td><td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_m">0 🪙</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Reyting:</td><td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_r">-</td></tr>
-              </table>
-              <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;"><button class="btn btn-og btn-sm" onclick="openModal('cpModal')"><i class="fas fa-key"></i> Parolni o'zgartirish</button></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="ch"><h4>Referral kod</h4></div>
-            <div class="cb">
-              <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Do'stingizni taklif qiling!</p>
-              <div class="ref-box"><p style="font-size:11px;color:var(--text-dim);">Sizning kodingiz</p><div class="ref-code" id="pr_rc">XXXX</div><button class="btn btn-og btn-sm" onclick="cpRef()" style="margin-top:8px;"><i class="fas fa-copy"></i> Nusxalash</button></div>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-top:14px;border-color:var(--border-blue);">
-          <div class="ch"><h4 style="color:var(--blue-light);">📱 Ilovani o'rnatish (APK / iOS)</h4></div>
-          <div class="cb">
-            <div class="g2">
-              <div style="background:var(--bg-deep);border-radius:var(--r);padding:14px;border:1px solid var(--border);">
-                <div style="color:#60d090;font-weight:700;margin-bottom:8px;font-size:13px;"><i class="fab fa-android"></i> Android (APK kabi)</div>
-                <p style="font-size:12px;color:var(--text-muted);line-height:1.8;">1. <b style="color:var(--text);">Chrome</b> da oching<br>2. Pastda banner chiqadi → <b style="color:var(--gold);">O'rnatish</b><br>3. Yoki: Chrome menyu → <b style="color:var(--gold);">Add to Home Screen</b><br>4. Home screen da ilova paydo bo'ladi ✅</p>
-              </div>
-              <div style="background:var(--bg-deep);border-radius:var(--r);padding:14px;border:1px solid var(--border);">
-                <div style="color:var(--blue-light);font-weight:700;margin-bottom:8px;font-size:13px;"><i class="fab fa-apple"></i> iPhone / iPad (iOS)</div>
-                <p style="font-size:12px;color:var(--text-muted);line-height:1.8;">1. <b style="color:var(--text);">Safari</b> da oching<br>2. Quyi markazda <b style="color:var(--blue);">Share 🔗</b> tugmasi<br>3. <b style="color:var(--gold);">Add to Home Screen</b> tanlang<br>4. Ilova nomini kiriting → Qo'shish ✅</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ADMIN DASHBOARD -->
-      <div class="page" id="adpg">
-        <div class="ph"><h2>O'qituvchi paneli</h2><p>Umumiy statistika va boshqaruv</p></div>
-        <div class="srow">
-          <div class="sc"><div class="sl">Talabalar</div><div class="sv" id="ad_t">0</div><div class="ss">Jami</div></div>
-          <div class="sc"><div class="sl">Berilgan tanga</div><div class="sv" id="ad_c">0</div><div class="ss">Jami</div></div>
-          <div class="sc gt"><div class="sl">Faol (7 kun)</div><div class="sv" id="ad_a">0</div><div class="ss">Talabalar</div></div>
-          <div class="sc bt"><div class="sl">Referallar</div><div class="sv" id="ad_r">0</div><div class="ss">Jami</div></div>
-        </div>
-        <div class="g2">
-          <div class="card"><div class="ch"><h4>Top talabalar</h4></div><div class="cb" style="padding:10px;"><div id="atop"></div></div></div>
-          <div class="card">
-            <div class="ch"><h4>Boshqaruv</h4></div>
-            <div class="cb">
-              <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Oylik eng faol talabaga 50 tanga sovg'a</p>
-              <button class="btn btn-gold" onclick="monthlyBonus()"><i class="fas fa-gift"></i> Oylik bonus berish</button>
-              <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
-                <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Joriy hisob ma'lumotlari:</p>
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                  <code id="adSelfPass" style="background:var(--bg-deep);padding:5px 8px;border-radius:4px;border:1px solid var(--border);">******</code>
-                  <button class="btn btn-outline btn-sm" onclick="toggleSelfPassword('adSelfPass', 'ad')"><i class="fas fa-eye"></i></button>
+            <div class="card">
+              <div class="ch">
+                <h4>TOP-10 Reyting</h4>
+                <div style="display:flex;gap:4px;">
+                  <button class="btn btn-sm btn-outline lb1 active" data-m="overall"
+                    onclick="setLb('overall',this)">Umumiy</button>
+                  <button class="btn btn-sm btn-outline lb1" data-m="weekly"
+                    onclick="setLb('weekly',this)">Hafta</button>
+                  <button class="btn btn-sm btn-outline lb1" data-m="monthly"
+                    onclick="setLb('monthly',this)">Oy</button>
                 </div>
               </div>
-              <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
-                <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">O'qituvchi paroli:</p>
-                <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i> O'zgartirish</button>
+              <div class="cb" style="padding:10px 12px;max-height:260px;overflow-y:auto;">
+                <div id="lbList"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <h4>So'nggi faollik</h4>
+            </div>
+            <div class="cb" style="padding:12px 14px;">
+              <div id="actList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RANK -->
+        <div class="page" id="rpg">
+          <div class="ph">
+            <h2>Reyting jadvali</h2>
+            <p>Barcha talabalar reytingi</p>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <h4>To'liq reyting</h4>
+              <div style="display:flex;gap:4px;">
+                <button class="btn btn-sm btn-outline lb2 active" data-m="overall"
+                  onclick="setLb2('overall',this)">Umumiy</button>
+                <button class="btn btn-sm btn-outline lb2" data-m="weekly"
+                  onclick="setLb2('weekly',this)">Haftalik</button>
+                <button class="btn btn-sm btn-outline lb2" data-m="monthly"
+                  onclick="setLb2('monthly',this)">Oylik</button>
+              </div>
+            </div>
+            <div class="cb" style="padding:8px;">
+              <div class="tw">
+                <div id="flb"></div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- STUDENTS PAGE -->
-      <div class="page" id="stpg">
-        <div class="ph"><h2>Talabalar ro'yxati</h2><p>Parol va holat bilan</p></div>
-        <div class="card" style="margin-bottom:14px;">
-          <div class="ch"><h4>Yangi talaba qo'shish</h4></div>
-          <div class="cb">
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <input type="text" id="nsName" class="form-control" placeholder="Ism familiya" style="max-width:280px;flex:1;">
-              <input type="text" id="nsRef" class="form-control" placeholder="Referral kod (ixtiyoriy)" style="max-width:220px;">
-              <select id="nsTeacher" class="form-control" style="max-width:220px;display:none"></select>
-              <button class="btn btn-success" onclick="addSt()"><i class="fas fa-user-plus"></i> Qo'shish</button>
-            </div>
-            <p style="font-size:11px;color:var(--text-dim);margin-top:5px;">Avtomatik parol yaratiladi va faqat tanlangan o'qituvchiga biriktiriladi</p>
-          </div>
-        </div>
-        <div class="card"><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>O'qituvchi</th><th>Tanga</th><th>Daraja</th><th>Parol</th><th>Amal</th></tr></thead><tbody id="stBody"></tbody></table></div></div></div>
-      </div>
-
-      <!-- COINS PAGE -->
-      <div class="page" id="cpg">
-        <div class="ph"><h2>Tanga berish tizimi</h2><p>Mukofot tangalar ulash</p></div>
-        <div class="g2" style="margin-bottom:14px;">
-          <div class="gc"><h5><i class="fas fa-book-open"></i> Davomat</h5><div class="rr"><input type="range" id="aR" min="1" max="5" value="3" oninput="document.getElementById('aV').innerText=this.value"><span class="rv" id="aV">3</span></div><select id="aSt" class="form-control" style="margin-bottom:8px;"></select><button class="btn btn-blue btn-sm btn-block" onclick="giveC('attendance','aSt','aR','Davomat')">Berish</button></div>
-          <div class="gc"><h5><i class="fas fa-tasks"></i> Uy vazifasi</h5><div class="rr"><input type="range" id="hR" min="5" max="10" value="7" oninput="document.getElementById('hV').innerText=this.value"><span class="rv" id="hV">7</span></div><select id="hSt" class="form-control" style="margin-bottom:8px;"></select><button class="btn btn-blue btn-sm btn-block" onclick="giveC('homework','hSt','hR','Uy vazifasi')">Berish</button></div>
-          <div class="gc"><h5><i class="fas fa-hand-paper"></i> Faollik</h5><div class="rr"><input type="range" id="pR" min="5" max="10" value="8" oninput="document.getElementById('pV').innerText=this.value"><span class="rv" id="pV">8</span></div><select id="pSt" class="form-control" style="margin-bottom:8px;"></select><button class="btn btn-blue btn-sm btn-block" onclick="giveC('participation','pSt','pR','Faollik')">Berish</button></div>
-          <div class="gc"><h5><i class="fas fa-user-friends"></i> Referal</h5><div class="rr"><input type="range" id="rR" min="12" max="20" value="15" oninput="document.getElementById('rV').innerText=this.value"><span class="rv" id="rV">15</span></div><select id="rSt" class="form-control" style="margin-bottom:8px;"></select><button class="btn btn-blue btn-sm btn-block" onclick="giveC('referral','rSt','rR','Referal bonus')">Berish</button></div>
-        </div>
-        <div class="card">
-          <div class="ch"><h4>Qo'lda tanga berish</h4></div>
-          <div class="cb">
-            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Talaba</label><select id="mSt" class="form-control" style="min-width:180px;"></select></div>
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Miqdor</label><input type="number" id="mAmt" class="form-control" placeholder="Tanga" style="width:90px;" min="1"></div>
-              <div style="flex:1;min-width:150px;"><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Sabab</label><input type="text" id="mReason" class="form-control" placeholder="Izoh"></div>
-              <button class="btn btn-gold" onclick="giveManual()"><i class="fas fa-coins"></i> Berish</button>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-top:14px;">
-          <div class="ch"><h4>Tanga ayrish</h4></div>
-          <div class="cb">
-            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Talaba</label><select id="dSt" class="form-control" style="min-width:180px;"></select></div>
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Miqdor</label><input type="number" id="dAmt" class="form-control" placeholder="Tanga" style="width:90px;" min="1"></div>
-              <div style="flex:1;min-width:150px;"><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Sabab</label><input type="text" id="dReason" class="form-control" placeholder="Nima uchun ayirildi"></div>
-              <button class="btn btn-danger" onclick="deductManual()"><i class="fas fa-minus-circle"></i> Ayrish</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TEACHER/ADMIN PROFILE PAGE -->
-      <div class="page" id="tapg">
-        <div class="ph"><h2>Profil va xavfsizlik</h2><p>Shaxsiy kirish ma'lumotlari va maxsus kod</p></div>
-        <div class="g2">
-          <div class="card">
-            <div class="ch"><h4>Kirish ma'lumotlari</h4></div>
-            <div class="cb">
-              <table style="width:100%;border:none;">
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;width:120px;border:none;">Login turi:</td><td style="padding:7px 0;font-weight:600;border:none;" id="tp_role">-</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Ism:</td><td style="padding:7px 0;border:none;" id="tp_name">-</td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Maxsus kod:</td><td style="padding:7px 0;border:none;"><code id="tp_code" style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">-</code></td></tr>
-                <tr><td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Parol:</td><td style="padding:7px 0;border:none;"><code id="tp_pwd" style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">******</code> <button class="btn btn-outline btn-sm" onclick="toggleSelfPassword('tp_pwd','tp')"><i class="fas fa-eye"></i></button></td></tr>
-              </table>
-            </div>
+        <!-- HISTORY -->
+        <div class="page" id="hpg">
+          <div class="ph">
+            <h2>Faollik tarixi</h2>
+            <p>Barcha tangalar va o'zgarishlar</p>
           </div>
           <div class="card">
-            <div class="ch"><h4>Sozlamalar</h4></div>
+            <div class="cb" style="padding:12px 14px;">
+              <div id="fhist"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="page" id="ppg">
+          <div class="ph">
+            <h2>Profilim</h2>
+            <p>Shaxsiy ma'lumotlar</p>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch">
+                <h4>Ma'lumotlar</h4>
+              </div>
+              <div class="cb">
+                <table style="width:100%;border:none;">
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;width:100px;border:none;">Ism:</td>
+                    <td style="padding:7px 0;font-weight:600;border:none;" id="pr_n">-</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Daraja:</td>
+                    <td style="padding:7px 0;border:none;" id="pr_l">-</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Nishon:</td>
+                    <td style="padding:7px 0;border:none;" id="pr_b">-</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Tanga:</td>
+                    <td
+                      style="padding:7px 0;font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--gold-mid);border:none;"
+                      id="pr_c">0</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Streak:</td>
+                    <td style="padding:7px 0;font-weight:700;color:var(--green);border:none;" id="pr_s">🔥 0 kun</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Haftalik:</td>
+                    <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_w">0 🪙</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Oylik:</td>
+                    <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_m">0 🪙</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Reyting:</td>
+                    <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;" id="pr_r">-</td>
+                  </tr>
+                </table>
+                <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;"><button
+                    class="btn btn-og btn-sm" onclick="openModal('cpModal')"><i class="fas fa-key"></i> Parolni
+                    o'zgartirish</button></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch">
+                <h4>Referral kod</h4>
+              </div>
+              <div class="cb">
+                <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Do'stingizni taklif qiling!</p>
+                <div class="ref-box">
+                  <p style="font-size:11px;color:var(--text-dim);">Sizning kodingiz</p>
+                  <div class="ref-code" id="pr_rc">XXXX</div><button class="btn btn-og btn-sm" onclick="cpRef()"
+                    style="margin-top:8px;"><i class="fas fa-copy"></i> Nusxalash</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;border-color:var(--border-blue);">
+            <div class="ch">
+              <h4 style="color:var(--blue-light);">📱 Ilovani o'rnatish (APK / iOS)</h4>
+            </div>
             <div class="cb">
-              <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Parolni tez almashtiring va xavfsiz saqlang.</p>
-              <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
+              <div class="g2">
+                <div
+                  style="background:var(--bg-deep);border-radius:var(--r);padding:14px;border:1px solid var(--border);">
+                  <div style="color:#60d090;font-weight:700;margin-bottom:8px;font-size:13px;"><i
+                      class="fab fa-android"></i> Android (APK kabi)</div>
+                  <p style="font-size:12px;color:var(--text-muted);line-height:1.8;">1. <b
+                      style="color:var(--text);">Chrome</b> da oching<br>2. Pastda banner chiqadi → <b
+                      style="color:var(--gold);">O'rnatish</b><br>3. Yoki: Chrome menyu → <b
+                      style="color:var(--gold);">Add to Home Screen</b><br>4. Home screen da ilova paydo bo'ladi ✅</p>
+                </div>
+                <div
+                  style="background:var(--bg-deep);border-radius:var(--r);padding:14px;border:1px solid var(--border);">
+                  <div style="color:var(--blue-light);font-weight:700;margin-bottom:8px;font-size:13px;"><i
+                      class="fab fa-apple"></i> iPhone / iPad (iOS)</div>
+                  <p style="font-size:12px;color:var(--text-muted);line-height:1.8;">1. <b
+                      style="color:var(--text);">Safari</b> da oching<br>2. Quyi markazda <b
+                      style="color:var(--blue);">Share 🔗</b> tugmasi<br>3. <b style="color:var(--gold);">Add to Home
+                      Screen</b> tanlang<br>4. Ilova nomini kiriting → Qo'shish ✅</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="card" style="margin-top:14px;">
-          <div class="ch"><h4>Mening talabalarim parollari</h4></div>
-          <div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Parol</th></tr></thead><tbody id="tpStudentsBody"></tbody></table></div></div>
-        </div>
-      </div>
 
-      <!-- TEACHERS + ADMINS PAGE -->
-      <div class="page" id="tpg">
-        <div class="ph"><h2>O'qituvchilar va adminlar</h2><p>Super admin to'liq, adminlar esa so'rov yuboradi</p></div>
-        <div class="card" style="margin-bottom:14px;">
-          <div class="ch"><h4>Yangi o'qituvchi qo'shish</h4></div>
-          <div class="cb">
-            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Ism</label><input type="text" id="ntName" class="form-control" placeholder="O'qituvchi ismi"></div>
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Fan</label><input type="text" id="ntSubj" class="form-control" placeholder="Masalan: Matematika"></div>
-              <button class="btn btn-success" onclick="addTeacher()"><i class="fas fa-user-plus"></i> Qo'shish</button>
+        <!-- ADMIN DASHBOARD -->
+        <div class="page" id="adpg">
+          <div class="ph">
+            <h2>O'qituvchi paneli</h2>
+            <p>Umumiy statistika va boshqaruv</p>
+          </div>
+          <div class="srow">
+            <div class="sc">
+              <div class="sl">Talabalar</div>
+              <div class="sv" id="ad_t">0</div>
+              <div class="ss">Jami</div>
+            </div>
+            <div class="sc">
+              <div class="sl">Berilgan tanga</div>
+              <div class="sv" id="ad_c">0</div>
+              <div class="ss">Jami</div>
+            </div>
+            <div class="sc gt">
+              <div class="sl">Faol (7 kun)</div>
+              <div class="sv" id="ad_a">0</div>
+              <div class="ss">Talabalar</div>
+            </div>
+            <div class="sc bt">
+              <div class="sl">Referallar</div>
+              <div class="sv" id="ad_r">0</div>
+              <div class="ss">Jami</div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch">
+                <h4>Top talabalar</h4>
+              </div>
+              <div class="cb" style="padding:10px;">
+                <div id="atop"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch">
+                <h4>Boshqaruv</h4>
+              </div>
+              <div class="cb">
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Oylik eng faol talabaga 50 tanga
+                  sovg'a</p>
+                <button class="btn btn-gold" onclick="monthlyBonus()"><i class="fas fa-gift"></i> Oylik bonus
+                  berish</button>
+                <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
+                  <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Joriy hisob ma'lumotlari:</p>
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <code id="adSelfPass"
+                      style="background:var(--bg-deep);padding:5px 8px;border-radius:4px;border:1px solid var(--border);">******</code>
+                    <button class="btn btn-outline btn-sm" onclick="toggleSelfPassword('adSelfPass', 'ad')"><i
+                        class="fas fa-eye"></i></button>
+                  </div>
+                </div>
+                <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
+                  <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">O'qituvchi paroli:</p>
+                  <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i> O'zgartirish</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="card" style="margin-bottom:14px;">
-          <div class="ch"><h4>Admin qo'shish / so'rov yuborish</h4></div>
-          <div class="cb">
-            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Admin ism</label><input type="text" id="naName" class="form-control" placeholder="Admin ismi"></div>
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Parol</label><input type="password" id="naPwd" class="form-control" placeholder="Kuchli parol"></div>
-              <div><label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Bog'langan o'qituvchi</label><select id="naTeacher" class="form-control" style="min-width:200px;"></select></div>
-              <button class="btn btn-success" onclick="submitAdminAction()"><i class="fas fa-user-plus"></i> Yuborish</button>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-bottom:14px;"><div class="ch"><h4>Adminlar ro'yxati</h4></div><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Bog'langan o'qituvchi</th><th>Level</th><th>Status</th><th>Amal</th></tr></thead><tbody id="adminBody"></tbody></table></div></div></div>
-        <div class="card" id="reqCard"><div class="ch"><h4>Admin so'rovlari</h4></div><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>So'rovchi</th><th>Yangi admin</th><th>O'qituvchi</th><th>Vaqt</th><th>Amal</th></tr></thead><tbody id="reqBody"></tbody></table></div></div></div>
-        <div class="card"><div class="ch"><h4>O'qituvchilar ro'yxati</h4></div><div class="cb" style="padding:8px;"><div class="tw"><table><thead><tr><th>#</th><th>Ism</th><th>Fan</th><th>Talabalar</th><th>Amal</th></tr></thead><tbody id="tBody"></tbody></table></div></div></div>
-      </div>
 
+        <!-- STUDENTS PAGE -->
+        <div class="page" id="stpg">
+          <div class="ph">
+            <h2>Talabalar ro'yxati</h2>
+            <p>Parol va holat bilan</p>
+          </div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">
+              <h4>Yangi talaba qo'shish</h4>
+            </div>
+            <div class="cb">
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <input type="text" id="nsName" class="form-control" placeholder="Ism familiya"
+                  style="max-width:280px;flex:1;">
+                <input type="text" id="nsRef" class="form-control" placeholder="Referral kod (ixtiyoriy)"
+                  style="max-width:220px;">
+                <select id="nsTeacher" class="form-control" style="max-width:220px;display:none"></select>
+                <button class="btn btn-success" onclick="addSt()"><i class="fas fa-user-plus"></i> Qo'shish</button>
+              </div>
+              <p style="font-size:11px;color:var(--text-dim);margin-top:5px;">Avtomatik parol yaratiladi va faqat
+                tanlangan o'qituvchiga biriktiriladi</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cb" style="padding:8px;">
+              <div class="tw">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Ism</th>
+                      <th>O'qituvchi</th>
+                      <th>Tanga</th>
+                      <th>Daraja</th>
+                      <th>Parol</th>
+                      <th>Amal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COINS PAGE -->
+        <div class="page" id="cpg">
+          <div class="ph">
+            <h2>Tanga berish tizimi</h2>
+            <p>Mukofot tangalar ulash</p>
+          </div>
+          <div class="g2" style="margin-bottom:14px;">
+            <div class="gc">
+              <h5><i class="fas fa-book-open"></i> Davomat</h5>
+              <div class="rr"><input type="range" id="aR" min="1" max="5" value="3"
+                  oninput="document.getElementById('aV').innerText=this.value"><span class="rv" id="aV">3</span></div>
+              <select id="aSt" class="form-control" style="margin-bottom:8px;"></select><button
+                class="btn btn-blue btn-sm btn-block" onclick="giveC('attendance','aSt','aR','Davomat')">Berish</button>
+            </div>
+            <div class="gc">
+              <h5><i class="fas fa-tasks"></i> Uy vazifasi</h5>
+              <div class="rr"><input type="range" id="hR" min="5" max="10" value="7"
+                  oninput="document.getElementById('hV').innerText=this.value"><span class="rv" id="hV">7</span></div>
+              <select id="hSt" class="form-control" style="margin-bottom:8px;"></select><button
+                class="btn btn-blue btn-sm btn-block"
+                onclick="giveC('homework','hSt','hR','Uy vazifasi')">Berish</button>
+            </div>
+            <div class="gc">
+              <h5><i class="fas fa-hand-paper"></i> Faollik</h5>
+              <div class="rr"><input type="range" id="pR" min="5" max="10" value="8"
+                  oninput="document.getElementById('pV').innerText=this.value"><span class="rv" id="pV">8</span></div>
+              <select id="pSt" class="form-control" style="margin-bottom:8px;"></select><button
+                class="btn btn-blue btn-sm btn-block"
+                onclick="giveC('participation','pSt','pR','Faollik')">Berish</button>
+            </div>
+            <div class="gc">
+              <h5><i class="fas fa-user-friends"></i> Referal</h5>
+              <div class="rr"><input type="range" id="rR" min="12" max="20" value="15"
+                  oninput="document.getElementById('rV').innerText=this.value"><span class="rv" id="rV">15</span></div>
+              <select id="rSt" class="form-control" style="margin-bottom:8px;"></select><button
+                class="btn btn-blue btn-sm btn-block"
+                onclick="giveC('referral','rSt','rR','Referal bonus')">Berish</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <h4>Qo'lda tanga berish</h4>
+            </div>
+            <div class="cb">
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Talaba</label><select
+                    id="mSt" class="form-control" style="min-width:180px;"></select></div>
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Miqdor</label><input
+                    type="number" id="mAmt" class="form-control" placeholder="Tanga" style="width:90px;" min="1"></div>
+                <div style="flex:1;min-width:150px;"><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Sabab</label><input
+                    type="text" id="mReason" class="form-control" placeholder="Izoh"></div>
+                <button class="btn btn-gold" onclick="giveManual()"><i class="fas fa-coins"></i> Berish</button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <div class="ch">
+              <h4>Tanga ayrish</h4>
+            </div>
+            <div class="cb">
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Talaba</label><select
+                    id="dSt" class="form-control" style="min-width:180px;"></select></div>
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Miqdor</label><input
+                    type="number" id="dAmt" class="form-control" placeholder="Tanga" style="width:90px;" min="1"></div>
+                <div style="flex:1;min-width:150px;"><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Sabab</label><input
+                    type="text" id="dReason" class="form-control" placeholder="Nima uchun ayirildi"></div>
+                <button class="btn btn-danger" onclick="deductManual()"><i class="fas fa-minus-circle"></i>
+                  Ayrish</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER/ADMIN PROFILE PAGE -->
+        <div class="page" id="tapg">
+          <div class="ph">
+            <h2>Profil va xavfsizlik</h2>
+            <p>Shaxsiy kirish ma'lumotlari va maxsus kod</p>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch">
+                <h4>Kirish ma'lumotlari</h4>
+              </div>
+              <div class="cb">
+                <table style="width:100%;border:none;">
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;width:120px;border:none;">Login turi:
+                    </td>
+                    <td style="padding:7px 0;font-weight:600;border:none;" id="tp_role">-</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Ism:</td>
+                    <td style="padding:7px 0;border:none;" id="tp_name">-</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Maxsus kod:</td>
+                    <td style="padding:7px 0;border:none;"><code id="tp_code"
+                        style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">-</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Parol:</td>
+                    <td style="padding:7px 0;border:none;"><code id="tp_pwd"
+                        style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">******</code>
+                      <button class="btn btn-outline btn-sm" onclick="toggleSelfPassword('tp_pwd','tp')"><i
+                          class="fas fa-eye"></i></button>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch">
+                <h4>Sozlamalar</h4>
+              </div>
+              <div class="cb">
+                <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Parolni tez almashtiring va
+                  xavfsiz saqlang.</p>
+                <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i> Parolni
+                  o'zgartirish</button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <div class="ch">
+              <h4>Mening talabalarim parollari</h4>
+            </div>
+            <div class="cb" style="padding:8px;">
+              <div class="tw">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Ism</th>
+                      <th>Parol</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tpStudentsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHERS + ADMINS PAGE -->
+        <div class="page" id="tpg">
+          <div class="ph">
+            <h2>O'qituvchilar va adminlar</h2>
+            <p>Super admin to'liq, adminlar esa so'rov yuboradi</p>
+          </div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">
+              <h4>Yangi o'qituvchi qo'shish</h4>
+            </div>
+            <div class="cb">
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Ism</label><input
+                    type="text" id="ntName" class="form-control" placeholder="O'qituvchi ismi"></div>
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Fan</label><input
+                    type="text" id="ntSubj" class="form-control" placeholder="Masalan: Matematika"></div>
+                <button class="btn btn-success" onclick="addTeacher()"><i class="fas fa-user-plus"></i>
+                  Qo'shish</button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">
+              <h4>Admin qo'shish / so'rov yuborish</h4>
+            </div>
+            <div class="cb">
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Admin
+                    ism</label><input type="text" id="naName" class="form-control" placeholder="Admin ismi"></div>
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Parol</label><input
+                    type="password" id="naPwd" class="form-control" placeholder="Kuchli parol"></div>
+                <div><label
+                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Bog'langan
+                    o'qituvchi</label><select id="naTeacher" class="form-control" style="min-width:200px;"></select>
+                </div>
+                <button class="btn btn-success" onclick="submitAdminAction()"><i class="fas fa-user-plus"></i>
+                  Yuborish</button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">
+              <h4>Adminlar ro'yxati</h4>
+            </div>
+            <div class="cb" style="padding:8px;">
+              <div class="tw">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Ism</th>
+                      <th>Bog'langan o'qituvchi</th>
+                      <th>Level</th>
+                      <th>Status</th>
+                      <th>Amal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card" id="reqCard">
+            <div class="ch">
+              <h4>Admin so'rovlari</h4>
+            </div>
+            <div class="cb" style="padding:8px;">
+              <div class="tw">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>So'rovchi</th>
+                      <th>Yangi admin</th>
+                      <th>O'qituvchi</th>
+                      <th>Vaqt</th>
+                      <th>Amal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reqBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <h4>O'qituvchilar ro'yxati</h4>
+            </div>
+            <div class="cb" style="padding:8px;">
+              <div class="tw">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Ism</th>
+                      <th>Fan</th>
+                      <th>Talabalar</th>
+                      <th>Amal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
-</div>
 
-<script type="text/plain" id="legacyScript">
+  <script type="text/plain" id="legacyScript">
 const NAMES=["Bahodirjonov Sardor","Bahodirov Asadbek","Farangiz","Farxodjon 08","Hikmatillo","Ibrohim","Mashrapov Azizbek","Muhiddinov Nurillo","Dadajonova Munavvara","Og'abek","Omonov Alisher","Shavkatova Fotima","Shaxboz","Shodiyona","Tojaliyev G'ayratjon","Tolipjonov Asadbek","Tursunaliyev Abdulaziz","Umaraliyev Ozodbek"];
 const TP="Ustoz2023",SK="texno_v3";
 let students=[],txs=[],nid=1,curType=null,curId=null,lbM="overall",lbM2="overall",chart=null;
@@ -950,6 +2409,7 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const ls=docum
 
 init();
 </script>
-<script src="app-client.js"></script>
+  <script src="app-client.js"></script>
 </body>
+
 </html>

@@ -86,7 +86,7 @@ function markFail(key){
 function clearFail(key){authState[key]={fails:0,lockUntil:0};}
 
 function mkDef(){
-  teachers=[{id:1,name:"IT O'qituvchi",subject:"IT",password:genP("UST"),isMain:false}];
+  teachers=[{id:1,name:"IT O'qituvchi",subject:"IT",password:genP("UST"),resetCode:genCode('TCH'),isMain:false}];
   admins=[{id:1,name:'Super Admin',role:'super',status:'active',password:DEFAULT_SUPER_ADMIN_PASSWORD,adminCode:genCode('SPR'),linkedTeacherId:null,createdByAdminId:null,createdAt:Date.now()}];
   adminRequests=[];
   students=[];
@@ -103,8 +103,8 @@ function mkDef(){
 }
 
 function normalizeData(d){
-  teachers=(Array.isArray(d?.teachers)?d.teachers:[]).map(t=>({id:nNum(t.id),name:t.name||"O'qituvchi",subject:t.subject||"Fan",password:String(t.password||genP(t.name)),isMain:false}));
-  if(!teachers.length){teachers=[{id:1,name:"IT O'qituvchi",subject:"IT",password:genP("UST"),isMain:false}];}
+  teachers=(Array.isArray(d?.teachers)?d.teachers:[]).map(t=>({id:nNum(t.id),name:t.name||"O'qituvchi",subject:t.subject||"Fan",password:String(t.password||genP(t.name)),resetCode:String(t.resetCode||genCode('TCH')),isMain:false}));
+  if(!teachers.length){teachers=[{id:1,name:"IT O'qituvchi",subject:"IT",password:genP("UST"),resetCode:genCode('TCH'),isMain:false}];}
 
   admins=(Array.isArray(d?.admins)?d.admins:[]).map(a=>({id:nNum(a.id),name:a.name||'Admin',role:(a.role==='super'?'super':'admin'),status:(a.status==='pending'?'pending':'active'),password:String(a.password||genP(a.name)),adminCode:String(a.adminCode||genCode('ADM')),linkedTeacherId:a.linkedTeacherId?nNum(a.linkedTeacherId):null,createdByAdminId:a.createdByAdminId?nNum(a.createdByAdminId):null,createdAt:nNum(a.createdAt)||Date.now()}));
   if(!admins.length){const legacyPwd=String(d?.adminPassword||DEFAULT_SUPER_ADMIN_PASSWORD);admins=[{id:1,name:'Super Admin',role:'super',status:'active',password:legacyPwd,adminCode:genCode('SPR'),linkedTeacherId:null,createdByAdminId:null,createdAt:Date.now()}];}
@@ -142,11 +142,17 @@ function updTeacherLoginOptions(){
   document.getElementById('sTeacherSel').innerHTML=`<option value="">-- O'qituvchi tanlang --</option>${tOps}`;
   document.getElementById('tLoginSel').innerHTML=`<option value="">-- O'qituvchi tanlang --</option>${tOps}`;
   document.getElementById('naTeacher').innerHTML=`<option value="">-- O'qituvchi --</option>${tOps}`;
+  const fpTeacher=document.getElementById('fpTeacherSel');
+  if(fpTeacher)fpTeacher.innerHTML=`<option value="">-- O'qituvchi tanlang --</option>${tOps}`;
+  const ftTeacher=document.getElementById('ftTeacherSel');
+  if(ftTeacher)ftTeacher.innerHTML=`<option value="">-- O'qituvchi tanlang --</option>${tOps}`;
 }
 function updAdminLoginOptions(){
   const opts=activeSubAdmins().map(a=>`<option value="${a.id}">${escHtml(a.name)}</option>`).join('');
   const el=document.getElementById('aAdminSel');
   if(el)el.innerHTML=`<option value="">-- Admin tanlang --</option>${opts}`;
+  const fa=document.getElementById('faAdminSel');
+  if(fa)fa.innerHTML=`<option value="">-- Admin tanlang --</option>${opts}`;
 }
 function toggleAdminLoginType(){
   const type=document.getElementById('aLoginType').value;
@@ -159,6 +165,15 @@ function updStudentLoginOptions(){
   const list=students.filter(s=>s.teacherId===tid);
   const o=list.map(s=>`<option value="${s.id}">${escHtml(s.name)}</option>`).join('');
   document.getElementById('sLoginSel').innerHTML=`<option value="">-- Talaba tanlang --</option>${o}`;
+}
+function updForgotStudentOptions(){
+  const teacherEl=document.getElementById('fpTeacherSel');
+  const studentEl=document.getElementById('fpStudentSel');
+  if(!teacherEl||!studentEl)return;
+  const tid=nNum(teacherEl.value);
+  const list=students.filter(s=>s.teacherId===tid);
+  const opts=list.map(s=>`<option value="${s.id}">${escHtml(s.name)}</option>`).join('');
+  studentEl.innerHTML=`<option value="">-- Talaba tanlang --</option>${opts}`;
 }
 function updSels(){
   const vis=manageStudents();
@@ -222,6 +237,128 @@ function doALogin(){
   clearFail('admin');
   curType='admin';curAdminId=a.id;curId=null;curTeacherId=null;enterT();
 }
+function openTeacherForgotModal(){
+  const ft=document.getElementById('ftTeacherSel');
+  const tSel=document.getElementById('tLoginSel');
+  if(ft&&tSel&&tSel.value)ft.value=tSel.value;
+  ['ftCodeIn','ftNewIn','ftCnfIn'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  openModal('ftModal');
+}
+async function doTeacherForgotReset(){
+  const tid=nNum(document.getElementById('ftTeacherSel')?.value);
+  const code=String(document.getElementById('ftCodeIn')?.value||'').trim().toUpperCase();
+  const np=String(document.getElementById('ftNewIn')?.value||'');
+  const cp=String(document.getElementById('ftCnfIn')?.value||'');
+
+  if(!tid){toast("O'qituvchini tanlang",'error');return;}
+  const t=getTeacherById(tid);
+  if(!t){toast("O'qituvchi topilmadi",'error');return;}
+  if(!code){toast("Maxsus kodni kiriting",'error');return;}
+  if(String(t.resetCode||'').toUpperCase()!==code){toast("Maxsus kod noto'g'ri",'error');return;}
+  if(!validStrongPassword(np)){toast('Yangi parol kuchsiz (kamida 8, katta-kichik harf va raqam)','error');return;}
+  if(np!==cp){toast('Parollar mos emas','error');return;}
+
+  t.password=np;
+  await save();
+  closeModal('ftModal');
+  const tLoginSel=document.getElementById('tLoginSel');
+  if(tLoginSel)tLoginSel.value=String(tid);
+  document.getElementById('tPwdIn').value=np;
+  toast("Parol yangilandi. Endi 'Kirish'ni bosing.",'success');
+}
+function toggleAdminForgotType(){
+  const type=document.getElementById('faTypeSel')?.value||'super';
+  const showAdmin=(type==='admin');
+  const adminWrap=document.getElementById('faAdminSelWrap');
+  if(adminWrap)adminWrap.style.display=showAdmin?'block':'none';
+}
+function openAdminForgotModal(){
+  const type=document.getElementById('aLoginType')?.value||'super';
+  const faType=document.getElementById('faTypeSel');
+  if(faType)faType.value=type;
+  const faAdmin=document.getElementById('faAdminSel');
+  const aAdmin=document.getElementById('aAdminSel');
+  if(faAdmin&&aAdmin&&aAdmin.value)faAdmin.value=aAdmin.value;
+  toggleAdminForgotType();
+  ['faCodeIn','faNewIn','faCnfIn'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  openModal('faModal');
+}
+async function doAdminForgotReset(){
+  const type=document.getElementById('faTypeSel')?.value||'super';
+  const code=String(document.getElementById('faCodeIn')?.value||'').trim().toUpperCase();
+  const np=String(document.getElementById('faNewIn')?.value||'');
+  const cp=String(document.getElementById('faCnfIn')?.value||'');
+
+  if(!code){toast("Maxsus kodni kiriting",'error');return;}
+  if(!validStrongPassword(np)){toast('Yangi parol kuchsiz (kamida 8, katta-kichik harf va raqam)','error');return;}
+  if(np!==cp){toast('Parollar mos emas','error');return;}
+
+  if(type==='super'){
+    const s=getSuperAdmin();
+    if(!s){toast('Super admin topilmadi','error');return;}
+    if(String(s.adminCode||'').toUpperCase()!==code){toast("Super admin kodi noto'g'ri",'error');return;}
+    s.password=np;
+    await save();
+    closeModal('faModal');
+    const aType=document.getElementById('aLoginType');
+    if(aType){aType.value='super';toggleAdminLoginType();}
+    document.getElementById('aPwdIn').value=np;
+    toast("Parol yangilandi. Endi 'Kirish'ni bosing.",'success');
+    return;
+  }
+
+  const aid=nNum(document.getElementById('faAdminSel')?.value);
+  if(!aid){toast('Adminni tanlang','error');return;}
+  const a=getAdminById(aid);
+  if(!a||a.role!=='admin'||a.status!=='active'){toast('Admin topilmadi yoki aktiv emas','error');return;}
+  if(String(a.adminCode||'').toUpperCase()!==code){toast("Admin kodi noto'g'ri",'error');return;}
+  a.password=np;
+  await save();
+  closeModal('faModal');
+  const aType=document.getElementById('aLoginType');
+  if(aType){aType.value='admin';toggleAdminLoginType();}
+  const aSel=document.getElementById('aAdminSel');
+  if(aSel)aSel.value=String(aid);
+  document.getElementById('aCodeIn').value=code;
+  document.getElementById('aPwdIn').value=np;
+  toast("Parol yangilandi. Endi 'Kirish'ni bosing.",'success');
+}
+function openForgotPasswordModal(){
+  const teacherEl=document.getElementById('fpTeacherSel');
+  const sourceTeacher=document.getElementById('sTeacherSel');
+  if(teacherEl&&sourceTeacher&&sourceTeacher.value){teacherEl.value=sourceTeacher.value;}
+  updForgotStudentOptions();
+  ['fpRefIn','fpNewIn','fpCnfIn'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  openModal('fpModal');
+}
+async function doForgotPasswordReset(){
+  const tid=nNum(document.getElementById('fpTeacherSel')?.value);
+  const sid=nNum(document.getElementById('fpStudentSel')?.value);
+  const ref=normRefCode(document.getElementById('fpRefIn')?.value);
+  const np=String(document.getElementById('fpNewIn')?.value||'');
+  const cp=String(document.getElementById('fpCnfIn')?.value||'');
+
+  if(!tid||!sid){toast("O'qituvchi va talabani tanlang",'error');return;}
+  const s=getStudentById(sid);
+  if(!s||s.teacherId!==tid){toast("Talaba topilmadi",'error');return;}
+  if(!ref){toast("Referral kod kiriting",'error');return;}
+  if(normRefCode(s.refCode)!==ref){toast("Referral kod noto'g'ri",'error');return;}
+  if(!validStrongPassword(np)){toast('Yangi parol kuchsiz (kamida 8, katta-kichik harf va raqam)','error');return;}
+  if(np!==cp){toast('Parollar mos emas','error');return;}
+
+  s.password=np;
+  await save();
+  closeModal('fpModal');
+  const sTeacherSel=document.getElementById('sTeacherSel');
+  const sLoginSel=document.getElementById('sLoginSel');
+  if(sTeacherSel&&sLoginSel){
+    sTeacherSel.value=String(tid);
+    updStudentLoginOptions();
+    sLoginSel.value=String(sid);
+  }
+  document.getElementById('sPwdIn').value=np;
+  toast("Parol yangilandi. Endi 'Kirish'ni bosing.",'success');
+}
 
 function enterS(){
   const s=getStudentById(curId);if(!s)return;
@@ -266,7 +403,7 @@ function doLogout(){
   curType=null;curId=null;curTeacherId=null;curAdminId=null;
   document.getElementById('appShell').style.display='none';
   document.getElementById('loginScreen').style.display='flex';
-  ['sPwdIn','tPwdIn','aPwdIn','aCodeIn'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['sPwdIn','tPwdIn','aPwdIn','aCodeIn','fpRefIn','fpNewIn','fpCnfIn','ftCodeIn','ftNewIn','ftCnfIn','faCodeIn','faNewIn','faCnfIn'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
 }
 
 function startAutoRefresh(){
@@ -366,8 +503,20 @@ function renderAD(){
 function renderSTbl(){
   const vis=manageStudents();
   let h='';
-  vis.forEach((s,i)=>{const t=getTeacherById(s.teacherId);h+=`<tr><td>${i+1}</td><td style="font-weight:600;">${escHtml(s.name)}</td><td>${escHtml(t?.name||'-')}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.totalCoins}</td><td><span class="badge bb">D${s.level}</span></td><td><code class="pwd-mask" data-real="${escHtml(s.password)}">******</code> <button onclick="toggleRowPassword(this)" class="btn btn-outline btn-sm" style="padding:3px 7px;margin-left:4px;"><i class="fas fa-eye"></i></button></td><td><button onclick="delSt(${s.id})" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`;});
+  vis.forEach((s,i)=>{const t=getTeacherById(s.teacherId);h+=`<tr><td>${i+1}</td><td style="font-weight:600;">${escHtml(s.name)}</td><td>${escHtml(t?.name||'-')}</td><td style="font-family:Rajdhani,sans-serif;font-weight:700;color:var(--gold-mid);">${s.totalCoins}</td><td><span class="badge bb">D${s.level}</span></td><td><code class="pwd-mask" data-real="${escHtml(s.password)}">******</code> <button onclick="toggleRowPassword(this)" class="btn btn-outline btn-sm" style="padding:3px 7px;margin-left:4px;"><i class="fas fa-eye"></i></button></td><td><button onclick="resetStudentPwd(${s.id})" class="btn btn-outline btn-sm" title="Parolni qayta yaratish"><i class="fas fa-key"></i></button> <button onclick="delSt(${s.id})" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`;});
   document.getElementById('stBody').innerHTML=h||'<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:18px;">Talabalar yo\'q</td></tr>';
+}
+async function resetStudentPwd(id){
+  const s=getStudentById(id);
+  if(!s){toast('Talaba topilmadi!','error');return;}
+  if(!canManageStudent(s)){toast("Bu talabaga amalingiz yo'q",'error');return;}
+  const p=genP(s.name);
+  s.password=p;
+  await save();
+  renderSTbl();
+  renderTeacherProfilePage();
+  updStudentLoginOptions();
+  toast(`${s.name} uchun yangi parol: ${p}`,'success');
 }
 
 function renderTeacherProfilePage(){
@@ -377,8 +526,7 @@ function renderTeacherProfilePage(){
   if(curType==='teacher'){
     const t=getTeacherById(curTeacherId);if(!t)return;
     role="O'qituvchi";name=t.name;pwd=t.password;
-    const linked=activeSubAdmins().find(a=>a.linkedTeacherId===t.id)||pendingAdmins().find(a=>a.linkedTeacherId===t.id);
-    code=linked?linked.adminCode:'-';
+    code=t.resetCode||'-';
     myStudents=students.filter(s=>s.teacherId===t.id);
   }else{
     const a=getAdminById(curAdminId);if(!a)return;
@@ -464,7 +612,7 @@ async function addTeacher(){
   if(!isAdmin()){toast("Faqat admin qo'sha oladi",'error');return;}
   const n=document.getElementById('ntName').value.trim();const sub=document.getElementById('ntSubj').value.trim();
   if(!n||!sub){toast("Ism va fan kiriting",'error');return;}
-  const p=genP(n);teachers.push({id:ntid++,name:n,subject:sub,password:p,isMain:false});
+  const p=genP(n);teachers.push({id:ntid++,name:n,subject:sub,password:p,resetCode:genCode('TCH'),isMain:false});
   await save();document.getElementById('ntName').value='';document.getElementById('ntSubj').value='';
   renderTeachersPage();updTeacherLoginOptions();updSels();toast(`${n} qo'shildi. O'qituvchi paroli: ${p}`,'success');
 }
@@ -536,6 +684,15 @@ window.toggleRowPassword=toggleRowPassword;
 window.addTeacher=addTeacher;
 window.resetTeacherPwd=resetTeacherPwd;
 window.delTeacher=delTeacher;
+window.openForgotPasswordModal=openForgotPasswordModal;
+window.updForgotStudentOptions=updForgotStudentOptions;
+window.doForgotPasswordReset=doForgotPasswordReset;
+window.resetStudentPwd=resetStudentPwd;
+window.openTeacherForgotModal=openTeacherForgotModal;
+window.doTeacherForgotReset=doTeacherForgotReset;
+window.openAdminForgotModal=openAdminForgotModal;
+window.toggleAdminForgotType=toggleAdminForgotType;
+window.doAdminForgotReset=doAdminForgotReset;
 
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
