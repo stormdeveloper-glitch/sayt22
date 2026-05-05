@@ -958,7 +958,7 @@ async function registerNewStudent() {
   const paid = document.getElementById('regPaid')?.checked;
   if (!n) { toast('Ism kiriting!', 'error'); return; }
   if (!teacherId || !getTeacherById(teacherId)) {
-    toast('"O\'qituvchini tanlang!', 'error'); return;
+    toast("O'qituvchini tanlang!", 'error'); return;
   }
   let inviter = null;
   if (refInput) {
@@ -1009,21 +1009,40 @@ const installBtn = el('installBtn');
 if (installBtn) installBtn.addEventListener('click', async () => { if (!dp) return; dp.prompt(); const { outcome } = await dp.userChoice; dp = null; const banner = el('installBanner'); if (banner) banner.classList.remove('show'); if (outcome === 'accepted') toast('Ilova o\'rnatildi!', 'success'); });
 const installDismiss = el('installDismiss');
 if (installDismiss) installDismiss.addEventListener('click', () => { const banner = el('installBanner'); if (banner) banner.classList.remove('show'); });
-if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(() => { }); }
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations()
+    .then(registrations => Promise.all(registrations.map(registration => registration.unregister())))
+    .catch(() => { });
+}
+if ('caches' in window) {
+  caches.keys()
+    .then(keys => Promise.all(keys.map(key => caches.delete(key))))
+    .catch(() => { });
+}
 const mf = { name: "Teacher_texno", short_name: "T_texno", start_url: "./", display: "standalone", background_color: "#1a2235", theme_color: "#1a2235", orientation: "portrait-primary", icons: [{ src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%231a2235' width='192' height='192' rx='38'/%3E%3Cpolygon points='96,12 172,52 172,140 96,180 20,140 20,52' fill='none' stroke='%23c8a020' stroke-width='6'/%3E%3Ctext x='96' y='112' font-size='52' font-family='Arial' font-weight='bold' fill='%232b7de9' text-anchor='middle'%3ETT%3C/text%3E%3C/svg%3E", sizes: "192x192", type: "image/svg+xml" }, { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%231a2235' width='512' height='512' rx='100'/%3E%3Cpolygon points='256,30 460,140 460,372 256,482 52,372 52,140' fill='none' stroke='%23c8a020' stroke-width='12'/%3E%3Ctext x='256' y='296' font-size='130' font-family='Arial' font-weight='bold' fill='%232b7de9' text-anchor='middle'%3ETT%3C/text%3E%3C/svg%3E", sizes: "512x512", type: "image/svg+xml" }] };
 const ml = document.createElement('link'); ml.rel = 'manifest'; ml.href = URL.createObjectURL(new Blob([JSON.stringify(mf)], { type: 'application/json' })); document.head.appendChild(ml);
 
 document.addEventListener('keydown', e => { if (e.key !== 'Enter') return; const ls = document.getElementById('loginScreen'); if (!ls || ls.style.display === 'none') return; if (document.getElementById('sLoginForm').style.display !== 'none') doSLogin(); else if (document.getElementById('tLoginForm').style.display !== 'none') doTLogin(); else doALogin(); });
 
 async function init() {
-  await new Promise(r => setTimeout(r, 1200));
-  const d = await load();
-  if (d) normalizeData(d); else { mkDef(); await save(); }
-  updTeacherLoginOptions(); updAdminLoginOptions(); updStudentLoginOptions(); toggleAdminLoginType(); updSels();
-  const loading = el('loadingOverlay');
-  if (loading) {
-    loading.style.opacity = '0';
-    setTimeout(() => { loading.style.display = 'none'; }, 500);
+  try {
+    await new Promise(r => setTimeout(r, 1200));
+    const d = await load();
+    if (d) normalizeData(d); else { mkDef(); await save(); }
+    updTeacherLoginOptions();
+    updAdminLoginOptions();
+    updStudentLoginOptions();
+    toggleAdminLoginType();
+    updSels();
+  } catch (error) {
+    console.error('Init xatosi', error);
+    toast("Sayt yuklashda xato bo'ldi. Sahifani yangilang.", 'error');
+  } finally {
+    const loading = el('loadingOverlay');
+    if (loading) {
+      loading.style.opacity = '0';
+      setTimeout(() => { loading.style.display = 'none'; }, 500);
+    }
   }
 }
 init();
