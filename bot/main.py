@@ -356,12 +356,31 @@ async def cmd_help(message: Message):
     )
 
 
+@dp.message()
+async def cmd_fallback(message: Message):
+    text = (message.text or "").strip().lower()
+    if text in {"start", "/start", "boshlash", "salom", "assalomu alaykum", "assalom"}:
+        await cmd_start(message)
+        return
+    save_profile(message)
+    await message.answer(
+        "Men Teacher_texno botiman.\n\n"
+        "Boshlash uchun /start yuboring.\n"
+        "Telegram ID olish: /id\n"
+        "Profil va tanga: /me\n"
+        "Reyting: /reyting\n\n"
+        "O'qituvchi/admin uchun:\n"
+        "/plus student_id miqdor sabab\n"
+        "/minus student_id miqdor sabab"
+    )
+
+
 async def run_bot():
     if not BOT_TOKEN:
         print("[BOT] BOT_TOKEN env ichida topilmadi")
         return
     bot = Bot(BOT_TOKEN)
-    await dp.start_polling(bot)
+    await dp.start_polling(bot, handle_signals=False)
 
 
 def start_bot_thread():
