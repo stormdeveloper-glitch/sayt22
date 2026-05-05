@@ -33,6 +33,10 @@ DATA_FILE = os.path.join(DATA_DIR, "data.json")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 _DATA_LOCK = threading.Lock()
 
+print(f"[APP] DATA_DIR={DATA_DIR}")
+if DATA_DIR == os.path.join(BASE_DIR, "data"):
+    print("[APP] Ogohlantirish: DATA_DIR env o'rnatilmagan. Railway restart/deploy paytida data yo'qolishi mumkin.")
+
 
 def default_data():
     return {
@@ -211,12 +215,17 @@ def static_files(path):
 
 
 def maybe_start_bot():
-    if os.environ.get("RUN_TELEGRAM_BOT", "1") == "0" or not BOT_TOKEN:
+    if os.environ.get("RUN_TELEGRAM_BOT", "1") == "0":
+        print("[BOT] RUN_TELEGRAM_BOT=0, bot ishga tushmadi")
+        return
+    if not BOT_TOKEN:
+        print("[BOT] BOT_TOKEN topilmadi. Railway Variables ichiga BOT_TOKEN qo'shing.")
         return
     try:
         from bot.main import start_bot_thread
 
         start_bot_thread()
+        print("[BOT] Telegram bot thread ishga tushdi")
     except Exception as e:
         print(f"[BOT] Ishga tushirishda xato: {e}")
 
