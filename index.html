@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="uz">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -56,6 +57,7 @@
       --r: 8px;
       --rl: 14px
     }
+
     body.light-mode {
       --bg-deep: #f0f2f5;
       --bg-main: #ffffff;
@@ -342,6 +344,7 @@
       display: flex;
       align-items: center;
     }
+
     .pwd-toggle {
       position: absolute;
       right: 12px;
@@ -350,7 +353,10 @@
       transition: color .2s;
       z-index: 5;
     }
-    .pwd-toggle:hover { color: var(--blue-light); }
+
+    .pwd-toggle:hover {
+      color: var(--blue-light);
+    }
 
     select.form-control {
       appearance: none;
@@ -1597,7 +1603,7 @@
             </div>
           </div>
           <button class="btn btn-blue btn-block" onclick="doSLogin()"><i class="fas fa-sign-in-alt"></i> Kirish</button>
-                  <div class="hint"
+          <div class="hint"
             style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;text-align:left;">
             <span>Parol esimdan chiqdi</span>
             <button class="btn btn-outline btn-sm" onclick="openForgotPasswordModal()"><i class="fas fa-unlock-alt"></i>
@@ -2312,9 +2318,12 @@
             <div class="ch" style="display:flex; justify-content:space-between; align-items:center;">
               <h4>Talabalar ro'yxati</h4>
               <div class="tabs" style="display:flex; gap:5px;">
-                <button class="btn btn-outline btn-xs active st-filter-btn" onclick="setStFilter('all', this)">Barchasi</button>
-                <button class="btn btn-outline btn-xs st-filter-btn" onclick="setStFilter('active', this)">Faollar</button>
-                <button class="btn btn-outline btn-xs st-filter-btn" onclick="setStFilter('inactive', this)">Eskilar (Arxiv)</button>
+                <button class="btn btn-outline btn-xs active st-filter-btn"
+                  onclick="setStFilter('all', this)">Barchasi</button>
+                <button class="btn btn-outline btn-xs st-filter-btn"
+                  onclick="setStFilter('active', this)">Faollar</button>
+                <button class="btn btn-outline btn-xs st-filter-btn" onclick="setStFilter('inactive', this)">Eskilar
+                  (Arxiv)</button>
               </div>
             </div>
             <div class="cb" style="padding:8px;">
@@ -2700,179 +2709,177 @@
             </div>
           </div>
         </div>
-            <div class="modal-body">
-              <p id="quickPayInfo" style="margin-bottom:15px; font-weight:600;"></p>
-              <div class="form-group">
-                <label>Tanga miqdori</label>
-                <input type="number" id="quickPayAmt" class="form-control" value="15">
-              </div>
-              <div class="form-group">
-                <label>To'lov turi</label>
-                <select id="quickPayType" class="form-control">
-                  <option value="naqd">Naqd</option>
-                  <option value="plastik">Plastik</option>
-                </select>
-              </div>
-            </div>
-            <div class="modal-foot">
-              <button class="btn btn-outline btn-sm" onclick="closeModal('quickPayModal')">Bekor</button>
-              <button class="btn btn-blue btn-sm" onclick="confirmQuickPay()">To'lovni saqlash</button>
-            </div>
+        <div class="modal-body">
+          <p id="quickPayInfo" style="margin-bottom:15px; font-weight:600;"></p>
+          <div class="form-group">
+            <label>Tanga miqdori</label>
+            <input type="number" id="quickPayAmt" class="form-control" value="15">
+          </div>
+          <div class="form-group">
+            <label>To'lov turi</label>
+            <select id="quickPayType" class="form-control">
+              <option value="naqd">Naqd</option>
+              <option value="plastik">Plastik</option>
+            </select>
           </div>
         </div>
-        <!-- TRANSFER DIAMOND MODAL -->
-        <div class="modal-overlay" id="transferDiamondModal">
-          <div class="modal-box">
-            <div class="modal-head">
-              <h3><i class="fas fa-gem" style="color:#80ffff;"></i> Olmos yuborish</h3>
-              <button class="modal-close" onclick="closeModal('transferDiamondModal')"><i
-                  class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-              <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Siz o'z do'stingizga olmos sovg'a
-                qilishingiz mumkin.</p>
-              <div class="form-group">
-                <label>Olmos miqdori</label>
-                <input type="number" id="transferDiaAmt" class="form-control" placeholder="0" min="1">
-              </div>
-              <p id="transferDiaLimit" style="font-size:11px; color:var(--gold-mid);"></p>
-            </div>
-            <div class="modal-foot">
-              <button class="btn btn-outline btn-sm" onclick="closeModal('transferDiamondModal')">Bekor</button>
-              <button class="btn btn-blue btn-sm" onclick="confirmTransferDiamond()">Yuborish</button>
-            </div>
-          </div>
+        <div class="modal-foot">
+          <button class="btn btn-outline btn-sm" onclick="closeModal('quickPayModal')">Bekor</button>
+          <button class="btn btn-blue btn-sm" onclick="confirmQuickPay()">To'lovni saqlash</button>
         </div>
-        <div class="ph">
-          <h2>Mening o'qituvchilarim</h2>
-          <p>Sizga dars beradigan o'qituvchilar ro'yxati</p>
-        </div>
-        <div id="studentTeachersList" class="g1">
-          <!-- Teachers cards here -->
-        </div>
-      </div>
-
-      <!-- MARKET PAGE -->
-      <div class="page" id="marketpg">
-        <div class="ph">
-          <h2>Market</h2>
-          <p>Olmoslar orqali profilni bezatish va mahsulotlar sotib olish</p>
-        </div>
-        <div class="srow">
-          <div class="sc" style="background:rgba(43,233,233,.05); border-color:rgba(43,233,233,.2);">
-            <div class="sl">Mening olmoslarim</div>
-            <div class="sv" id="mk_diamonds" style="color:#80ffff;">0 💎</div>
-            <div class="ss">Jami to'plangan</div>
-          </div>
-        </div>
-        <div class="g3" id="marketItemsList">
-          <!-- Market items will be rendered here -->
-        </div>
-      </div>
-
-      <!-- TESTS PAGE (STUDENT) -->
-      <div class="page" id="testspg">
-        <div class="ph">
-          <h2>Testlar</h2>
-          <p>Bilimingizni sinab ko'ring va olmoslar yutib oling</p>
-        </div>
-        <div id="availableTests" class="g2">
-          <!-- Available tests for students -->
-        </div>
-
-        <!-- Test Taking View -->
-        <div id="testTakingView" style="display:none;">
-          <div class="card">
-            <div class="ch">
-              <h4 id="testActiveTitle">Test nomi</h4>
-              <div class="badge bb" id="testTimer">02:00:00</div>
-            </div>
-            <div class="cb" id="testQuestionArea">
-              <!-- Question will be here -->
-            </div>
-            <div class="modal-foot">
-              <button class="btn btn-outline" onclick="prevQuestion()">Orqaga</button>
-              <button class="btn btn-blue" onclick="nextQuestion()" id="nextQueBtn">Keyingisi</button>
-              <button class="btn btn-gold" onclick="finishTest()" id="finishTestBtn"
-                style="display:none;">Tugallash</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TEST MANAGEMENT PAGE (TEACHER) -->
-      <div class="page" id="testmgrpg">
-        <div class="ph">
-          <h2>Test boshqaruvi</h2>
-          <p>Yangi testlar yaratish va natijalarni ko'rish</p>
-        </div>
-        <div class="card pc" style="margin-bottom:20px;">
-          <div class="ch">
-            <h4>Yangi test yaratish</h4>
-          </div>
-          <div class="cb">
-            <div class="g2">
-              <div class="form-group"><label>Test nomi</label><input type="text" id="newTestTitle" class="form-control"
-                  placeholder="Masalan: HTML asoslari"></div>
-              <div class="form-group"><label>Yo'nalish</label>
-                <select id="newTestCategory" class="form-control">
-                  <option value="programmer">Dasturchi (Web: HTML, CSS, JS)</option>
-                  <option value="computer_literacy">Kompyuter savodxonligi</option>
-                </select>
-              </div>
-              <div class="form-group"><label>Imtihon kuni va vaqti</label><input type="datetime-local"
-                  id="newTestStartTime" class="form-control"></div>
-              <div class="form-group"><label>Guruh</label><select id="newTestGroup" class="form-control"></select></div>
-            </div>
-            <div id="newTestQuestions" style="margin-top:20px;">
-              <!-- 20 questions input will be generated here -->
-              <button class="btn btn-outline btn-block" onclick="generateQuestionInputs()">Savollarni kiritish (20
-                ta)</button>
-            </div>
-            <button class="btn btn-gold btn-block" style="margin-top:20px;" onclick="saveNewTest()">Testni
-              saqlash</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="ch">
-            <h4>Mavjud testlar</h4>
-          </div>
-          <div class="cb" id="teacherTestsList"></div>
-        </div>
-      </div>
-
-      <!-- GROUPS PAGE -->
-      <div class="page" id="grppg">
-        <div class="ph">
-          <h2>Guruhlar</h2>
-          <p>Guruhlar yaratish va boshqarish</p>
-        </div>
-        <div class="card pc" style="margin-bottom:20px;">
-          <div class="ch">
-            <h4>Yangi guruh</h4>
-          </div>
-          <div style="display:flex; gap:10px; align-items:flex-end;">
-            <div class="form-group" style="flex:1;"><label>Guruh nomi</label><input type="text" id="newGrpName"
-                class="form-control" placeholder="Guruh nomi"></div>
-            <div class="form-group" id="newGrpTeacherWrap" style="flex:1; display:none;">
-              <label>O'qituvchi</label><select id="newGrpTeacher" class="form-control"></select>
-            </div>
-            <div class="form-group" style="flex:1;">
-              <label>Yo'nalish</label>
-              <select id="newGrpCategory" class="form-control">
-                <option value="programmer">Dasturchi (Web: HTML, CSS, JS)</option>
-                <option value="computer_literacy">Kompyuter savodxonligi</option>
-              </select>
-            </div>
-            <button class="btn btn-gold" onclick="createGroup()"
-              style="height:38px; margin-bottom:15px;">Yaratish</button>
-          </div>
-        </div>
-        <div id="groupsList"></div>
-      </div>
-
       </div>
     </div>
+    <!-- TRANSFER DIAMOND MODAL -->
+    <div class="modal-overlay" id="transferDiamondModal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3><i class="fas fa-gem" style="color:#80ffff;"></i> Olmos yuborish</h3>
+          <button class="modal-close" onclick="closeModal('transferDiamondModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Siz o'z do'stingizga olmos sovg'a
+            qilishingiz mumkin.</p>
+          <div class="form-group">
+            <label>Olmos miqdori</label>
+            <input type="number" id="transferDiaAmt" class="form-control" placeholder="0" min="1">
+          </div>
+          <p id="transferDiaLimit" style="font-size:11px; color:var(--gold-mid);"></p>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-outline btn-sm" onclick="closeModal('transferDiamondModal')">Bekor</button>
+          <button class="btn btn-blue btn-sm" onclick="confirmTransferDiamond()">Yuborish</button>
+        </div>
+      </div>
+    </div>
+    <div class="ph">
+      <h2>Mening o'qituvchilarim</h2>
+      <p>Sizga dars beradigan o'qituvchilar ro'yxati</p>
+    </div>
+    <div id="studentTeachersList" class="g1">
+      <!-- Teachers cards here -->
+    </div>
+  </div>
+
+  <!-- MARKET PAGE -->
+  <div class="page" id="marketpg">
+    <div class="ph">
+      <h2>Market</h2>
+      <p>Olmoslar orqali profilni bezatish va mahsulotlar sotib olish</p>
+    </div>
+    <div class="srow">
+      <div class="sc" style="background:rgba(43,233,233,.05); border-color:rgba(43,233,233,.2);">
+        <div class="sl">Mening olmoslarim</div>
+        <div class="sv" id="mk_diamonds" style="color:#80ffff;">0 💎</div>
+        <div class="ss">Jami to'plangan</div>
+      </div>
+    </div>
+    <div class="g3" id="marketItemsList">
+      <!-- Market items will be rendered here -->
+    </div>
+  </div>
+
+  <!-- TESTS PAGE (STUDENT) -->
+  <div class="page" id="testspg">
+    <div class="ph">
+      <h2>Testlar</h2>
+      <p>Bilimingizni sinab ko'ring va olmoslar yutib oling</p>
+    </div>
+    <div id="availableTests" class="g2">
+      <!-- Available tests for students -->
+    </div>
+
+    <!-- Test Taking View -->
+    <div id="testTakingView" style="display:none;">
+      <div class="card">
+        <div class="ch">
+          <h4 id="testActiveTitle">Test nomi</h4>
+          <div class="badge bb" id="testTimer">02:00:00</div>
+        </div>
+        <div class="cb" id="testQuestionArea">
+          <!-- Question will be here -->
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-outline" onclick="prevQuestion()">Orqaga</button>
+          <button class="btn btn-blue" onclick="nextQuestion()" id="nextQueBtn">Keyingisi</button>
+          <button class="btn btn-gold" onclick="finishTest()" id="finishTestBtn"
+            style="display:none;">Tugallash</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST MANAGEMENT PAGE (TEACHER) -->
+  <div class="page" id="testmgrpg">
+    <div class="ph">
+      <h2>Test boshqaruvi</h2>
+      <p>Yangi testlar yaratish va natijalarni ko'rish</p>
+    </div>
+    <div class="card pc" style="margin-bottom:20px;">
+      <div class="ch">
+        <h4>Yangi test yaratish</h4>
+      </div>
+      <div class="cb">
+        <div class="g2">
+          <div class="form-group"><label>Test nomi</label><input type="text" id="newTestTitle" class="form-control"
+              placeholder="Masalan: HTML asoslari"></div>
+          <div class="form-group"><label>Yo'nalish</label>
+            <select id="newTestCategory" class="form-control">
+              <option value="programmer">Dasturchi (Web: HTML, CSS, JS)</option>
+              <option value="computer_literacy">Kompyuter savodxonligi</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Imtihon kuni va vaqti</label><input type="datetime-local" id="newTestStartTime"
+              class="form-control"></div>
+          <div class="form-group"><label>Guruh</label><select id="newTestGroup" class="form-control"></select></div>
+        </div>
+        <div id="newTestQuestions" style="margin-top:20px;">
+          <!-- 20 questions input will be generated here -->
+          <button class="btn btn-outline btn-block" onclick="generateQuestionInputs()">Savollarni kiritish (20
+            ta)</button>
+        </div>
+        <button class="btn btn-gold btn-block" style="margin-top:20px;" onclick="saveNewTest()">Testni
+          saqlash</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">
+        <h4>Mavjud testlar</h4>
+      </div>
+      <div class="cb" id="teacherTestsList"></div>
+    </div>
+  </div>
+
+  <!-- GROUPS PAGE -->
+  <div class="page" id="grppg">
+    <div class="ph">
+      <h2>Guruhlar</h2>
+      <p>Guruhlar yaratish va boshqarish</p>
+    </div>
+    <div class="card pc" style="margin-bottom:20px;">
+      <div class="ch">
+        <h4>Yangi guruh</h4>
+      </div>
+      <div style="display:flex; gap:10px; align-items:flex-end;">
+        <div class="form-group" style="flex:1;"><label>Guruh nomi</label><input type="text" id="newGrpName"
+            class="form-control" placeholder="Guruh nomi"></div>
+        <div class="form-group" id="newGrpTeacherWrap" style="flex:1; display:none;">
+          <label>O'qituvchi</label><select id="newGrpTeacher" class="form-control"></select>
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Yo'nalish</label>
+          <select id="newGrpCategory" class="form-control">
+            <option value="programmer">Dasturchi (Web: HTML, CSS, JS)</option>
+            <option value="computer_literacy">Kompyuter savodxonligi</option>
+          </select>
+        </div>
+        <button class="btn btn-gold" onclick="createGroup()" style="height:38px; margin-bottom:15px;">Yaratish</button>
+      </div>
+    </div>
+    <div id="groupsList"></div>
+  </div>
+
+  </div>
+  </div>
   </div>
 
   <!-- YUBORILGAN XABARLAR TARIXI -->
