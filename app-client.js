@@ -1747,7 +1747,7 @@ window.contactBotForReset = function () {
   if (!s) { toast('Bunday ID raqamli talaba topilmadi!', 'error'); return; }
 
   // Telegram bot linki (bot nomini foydalanuvchi xohishiga ko'ra o'zgartirish mumkin)
-  const botUrl = `https://t.me/Teacher_texno_bot?start=reset_${sid}`;
+  const botUrl = `https://t.me/texnoocom_bot?start=reset_${sid}`;
   window.open(botUrl, '_blank');
   closeModal('fpModal');
   toast('Botga yo\'naltirildingiz', 'success');
