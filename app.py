@@ -51,7 +51,8 @@ def init_data_file():
                 "chatFriends": [],
                 "chatGroups": [],
                 "pendingReqs": [],
-                "tests": []
+                "tests": [],
+                "telegramProfiles": {}
             }, f, ensure_ascii=False, indent=2)
 
 @app.route('/')

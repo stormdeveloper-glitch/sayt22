@@ -2653,6 +2653,28 @@
             </div>
             <div class="card">
               <div class="ch">
+                <h4>TELEGRAM BOT</h4>
+              </div>
+              <div class="cb">
+                <p style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;">
+                  // Botdan /id ni olib shu yerga kiriting</p>
+                <div class="form-group">
+                  <label>TELEGRAM ID</label>
+                  <input type="text" id="tgIdIn" class="form-control" placeholder="Masalan: 123456789">
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-sm btn-cyan" onclick="saveTelegramId()"><i class="fab fa-telegram-plane"></i>
+                    Ulash</button>
+                  <button class="btn btn-sm" onclick="openTelegramBot()"><i class="fab fa-telegram"></i> Botni ochish</button>
+                  <button class="btn btn-sm btn-danger" onclick="clearTelegramId()"><i class="fas fa-link-slash"></i>
+                    Uzish</button>
+                </div>
+                <div id="tgStatus" style="margin-top:10px;color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace;">
+                  // ulanmagan</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch">
                 <h4>REFERRAL KOD</h4>
               </div>
               <div class="cb">
@@ -2892,6 +2914,28 @@
                 </table>
                 <button class="btn btn-sm btn-gold" style="margin-top:10px;"
                   onclick="showToast('⚙️ Parol o\'zgartirish')"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch">
+                <h4>TELEGRAM BOT</h4>
+              </div>
+              <div class="cb">
+                <p style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;">
+                  // Botdan /id ni oling va profilingizga ulang</p>
+                <div class="form-group">
+                  <label>TELEGRAM ID</label>
+                  <input type="text" id="tgIdIn2" class="form-control" placeholder="Masalan: 123456789">
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-sm btn-cyan" onclick="saveTelegramId()"><i class="fab fa-telegram-plane"></i>
+                    Ulash</button>
+                  <button class="btn btn-sm" onclick="openTelegramBot()"><i class="fab fa-telegram"></i> Botni ochish</button>
+                  <button class="btn btn-sm btn-danger" onclick="clearTelegramId()"><i class="fas fa-link-slash"></i>
+                    Uzish</button>
+                </div>
+                <div id="tgStatus2" style="margin-top:10px;color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace;">
+                  // ulanmagan</div>
               </div>
             </div>
           </div>
@@ -3182,6 +3226,7 @@
         chatFriends,
         chatGroups,
         pendingReqs,
+        telegramProfiles: DB.telegramProfiles || {},
         tests: DB.tests || []
       };
     }
@@ -3200,6 +3245,7 @@
         if (Array.isArray(data.chatFriends)) chatFriends = data.chatFriends;
         if (Array.isArray(data.chatGroups)) chatGroups = data.chatGroups;
         if (Array.isArray(data.pendingReqs)) pendingReqs = data.pendingReqs;
+        DB.telegramProfiles = data.telegramProfiles && typeof data.telegramProfiles === 'object' ? data.telegramProfiles : {};
         DB.tests = Array.isArray(data.tests) ? data.tests : [];
       } catch (e) {
         console.warn('Backend data yuklanmadi, demo data ishlatiladi', e);
@@ -3225,6 +3271,7 @@
     let curUser = null, diamonds = 200, myOnline = true;
     let curChat = null, replyTo = null, selGrpMems = [], curCTab = 'chats';
     let reactTargetId = null;
+    const BOT_USERNAME = 'Teacher_texno_bot';
 
     const COLORS = [
       ['#00222e', '#00e5ff'], ['#1a1a00', '#ffcc00'],
@@ -3389,6 +3436,7 @@
       document.getElementById('pr_s').textContent = '🔥 ' + u.streak + ' kun';
       document.getElementById('pr_rc').textContent = u.ref || '????';
       document.getElementById('mk_diamonds').textContent = diamonds + ' 💎';
+      refreshTelegramLinkUI();
       renderLbMini(); renderActList(); renderFullLb();
     }
     function initT() {
@@ -3399,6 +3447,7 @@
       document.getElementById('tp_role').textContent = "O'qituvchi";
       document.getElementById('tp_name').textContent = curUser.name;
       document.getElementById('tp_code').textContent = curUser.code || 'TCH-???';
+      refreshTelegramLinkUI();
       renderTopStudents(); renderRankList(); renderStTable(); renderTBody();
     }
     function initA() {
@@ -3409,6 +3458,7 @@
       document.getElementById('tp_role').textContent = "Admin — " + curUser.level;
       document.getElementById('tp_name').textContent = curUser.name;
       document.getElementById('tp_code').textContent = curUser.code || 'ADM-???';
+      refreshTelegramLinkUI();
       renderStTable(); renderTBody();
     }
     function getLevelName(l) { return ["Starter", "Beginner", "Advanced", "Pro", "Expert", "Master"][l - 1] || "Legend"; }
@@ -3495,7 +3545,8 @@
       const p = document.getElementById('nsPhone').value.trim();
       const pass = document.getElementById('nsPass').value || '1234';
       if (!n) { showToast('❗ Ism kiriting'); return; }
-      DB.students.push({ id: Date.now(), name: n, phone: p, pass, coins: 0, level: 1, streak: 0, ref: 'NEW' + Math.floor(Math.random() * 9000 + 1000), group: 'Yangi' });
+      const teacherId = curUser?.role === 'teacher' ? curUser.id : null;
+      DB.students.push({ id: Date.now(), name: n, phone: p, pass, coins: 0, level: 1, streak: 0, ref: 'NEW' + Math.floor(Math.random() * 9000 + 1000), group: 'Yangi', teacherId, teacherIds: teacherId ? [teacherId] : [] });
       document.getElementById('nsName').value = ''; document.getElementById('nsPhone').value = ''; document.getElementById('nsPass').value = '';
       saveData();
       renderStTable(); fillCoinSelects(); fillLoginDropdowns(); showToast('✅ ' + n + " qo'shildi!");
@@ -3553,6 +3604,55 @@
     function cpRef() {
       const code = document.getElementById('pr_rc').textContent;
       navigator.clipboard?.writeText(code).catch(() => { }); showToast('📋 Kod nusxalandi: ' + code);
+    }
+    function getCurrentAccountRecord() {
+      if (!curUser) return null;
+      const list = curUser.role === 'student' ? DB.students : curUser.role === 'teacher' ? DB.teachers : DB.admins;
+      return list.find(x => x.id === curUser.id) || null;
+    }
+    function refreshTelegramLinkUI() {
+      const rec = getCurrentAccountRecord();
+      const id = rec?.telegramId || curUser?.telegramId || '';
+      ['tgIdIn', 'tgIdIn2'].forEach(elId => {
+        const el = document.getElementById(elId);
+        if (el) el.value = id || '';
+      });
+      const text = id ? '// ulangan: ' + id : '// ulanmagan';
+      ['tgStatus', 'tgStatus2'].forEach(elId => {
+        const el = document.getElementById(elId);
+        if (el) {
+          el.textContent = text;
+          el.style.color = id ? 'var(--green)' : 'var(--text3)';
+        }
+      });
+    }
+    function openTelegramBot() {
+      window.open('https://t.me/' + BOT_USERNAME + '?start=site', '_blank');
+    }
+    function saveTelegramId() {
+      const input = document.getElementById(curUser?.role === 'student' ? 'tgIdIn' : 'tgIdIn2') || document.getElementById('tgIdIn') || document.getElementById('tgIdIn2');
+      const telegramId = (input?.value || '').trim();
+      if (!/^\d{5,20}$/.test(telegramId)) { showToast('❗ Telegram ID raqam bo\'lishi kerak'); return; }
+      const rec = getCurrentAccountRecord();
+      if (!rec) { showToast('❌ Profil topilmadi'); return; }
+      rec.telegramId = Number(telegramId);
+      rec.telegramLinkedAt = Date.now();
+      curUser.telegramId = rec.telegramId;
+      curUser.telegramLinkedAt = rec.telegramLinkedAt;
+      saveData();
+      refreshTelegramLinkUI();
+      showToast('✅ Telegram bot ulandi');
+    }
+    function clearTelegramId() {
+      const rec = getCurrentAccountRecord();
+      if (!rec) return;
+      delete rec.telegramId;
+      delete rec.telegramLinkedAt;
+      delete curUser.telegramId;
+      delete curUser.telegramLinkedAt;
+      saveData();
+      refreshTelegramLinkUI();
+      showToast('🔗 Telegram ulanishi uzildi');
     }
     function renderMktPage() {
       document.getElementById('mktGrid').innerHTML = mktItems.map((item, i) => `

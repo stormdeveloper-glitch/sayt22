@@ -160,6 +160,18 @@ def linked_admins(data, telegram_id):
     return [a for a in data["admins"] if n_int(a.get("telegramId")) == telegram_id and a.get("status") == "active"]
 
 
+def student_teacher_ids(student):
+    ids = set()
+    for value in student.get("teacherIds") or []:
+        tid = n_int(value)
+        if tid:
+            ids.add(tid)
+    tid = n_int(student.get("teacherId"))
+    if tid:
+        ids.add(tid)
+    return ids
+
+
 def visible_students(data, telegram_id):
     students = data["students"]
     teachers = linked_teachers(data, telegram_id)
@@ -169,10 +181,12 @@ def visible_students(data, telegram_id):
         return students
     if teachers:
         teacher_ids = {n_int(t.get("id")) for t in teachers}
-        return [s for s in students if n_int(s.get("teacherId")) in teacher_ids]
+        return [s for s in students if student_teacher_ids(s) & teacher_ids]
     if own_students:
-        teacher_ids = {n_int(s.get("teacherId")) for s in own_students}
-        return [s for s in students if n_int(s.get("teacherId")) in teacher_ids]
+        teacher_ids = set()
+        for student in own_students:
+            teacher_ids.update(student_teacher_ids(student))
+        return [s for s in students if student_teacher_ids(s) & teacher_ids]
     return []
 
 
@@ -180,7 +194,7 @@ def can_manage_student(data, telegram_id, student):
     if linked_admins(data, telegram_id):
         return True
     teacher_ids = {n_int(t.get("id")) for t in linked_teachers(data, telegram_id)}
-    return n_int(student.get("teacherId")) in teacher_ids
+    return bool(student_teacher_ids(student) & teacher_ids)
 
 
 def student_by_id(data, student_id):
@@ -245,6 +259,20 @@ dp = Dispatcher()
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
     data = save_profile(message)
+    args = message.text.split(maxsplit=1)
+    start_arg = args[1].strip() if len(args) > 1 else ""
+    if start_arg.startswith("reset_"):
+        student = student_by_id(data, start_arg.replace("reset_", "", 1))
+        if student:
+            await message.answer(
+                f"<b>{escape(str(student.get('name', 'Talaba')))}</b>\n"
+                f"Login ID: <code>{n_int(student.get('id'))}</code>\n"
+                f"Parol: <code>{escape(str(student.get('password') or student.get('pass') or ''))}</code>",
+                parse_mode="HTML",
+            )
+            return
+        await message.answer("Bu ID bo'yicha talaba topilmadi.")
+        return
     students = linked_students(data, message.chat.id)
     teachers = linked_teachers(data, message.chat.id)
     admins = linked_admins(data, message.chat.id)
