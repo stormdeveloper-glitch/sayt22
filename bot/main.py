@@ -226,12 +226,12 @@ def main_keyboard(data, telegram_id):
 def admin_panel_keyboard():
     return InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="🔵 Statistika", callback_data="adm:stats"),
-            InlineKeyboardButton(text="🔵 Talabalar", callback_data="adm:students"),
+            InlineKeyboardButton(text="Statistika", callback_data="adm:stats", style=ButtonStyle.PRIMARY),
+            InlineKeyboardButton(text="Talabalar", callback_data="adm:students", style=ButtonStyle.PRIMARY),
         ],
         [
-            InlineKeyboardButton(text="🟢 Ulanishlar", callback_data="adm:links"),
-            InlineKeyboardButton(text="🔵 Reyting", callback_data="adm:rating"),
+            InlineKeyboardButton(text="Ulanishlar", callback_data="adm:links", style=ButtonStyle.SUCCESS),
+            InlineKeyboardButton(text="Reyting", callback_data="adm:rating", style=ButtonStyle.PRIMARY),
         ],
     ])
 

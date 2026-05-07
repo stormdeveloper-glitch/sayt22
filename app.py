@@ -280,8 +280,8 @@ def request_telegram_link():
         )
         inline_markup = {
             "inline_keyboard": [[
-                {"text": "🟢 Tasdiqlash", "callback_data": f"tgok:{token}"},
-                {"text": "🔴 Rad etish", "callback_data": f"tgno:{token}"},
+                {"text": "Tasdiqlash", "callback_data": f"tgok:{token}", "style": "success"},
+                {"text": "Rad etish", "callback_data": f"tgno:{token}", "style": "danger"},
             ]]
         }
         ok, err = send_bot_message(telegram_id, text, inline_markup)
