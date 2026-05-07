@@ -80,6 +80,8 @@ def normalize_data(data):
     data.setdefault("pendingReqs", [])
     data.setdefault("pendingTelegramLinks", [])
     data.setdefault("tests", [])
+    data.setdefault("plans", [])
+    data.setdefault("submissions", [])
     data.setdefault("telegramProfiles", {})
 
     changed = False
@@ -164,6 +166,8 @@ def init_data_file():
                 "pendingReqs": [],
                 "pendingTelegramLinks": [],
                 "tests": [],
+                "plans": [],
+                "submissions": [],
                 "telegramProfiles": {}
             }, f, ensure_ascii=False, indent=2)
 
@@ -202,6 +206,67 @@ def save_data():
         return jsonify({"status": "success", "message": "Ma'lumot saqlandi"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/ai/chat', methods=['POST'])
+def ai_chat():
+    """Chat ichidagi /texno komandasi uchun ChatGPT javobi."""
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        return jsonify({"status": "error", "message": "OPENAI_API_KEY sozlanmagan"}), 503
+
+    req_data = request.get_json(silent=True)
+    if not isinstance(req_data, dict):
+        return jsonify({"status": "error", "message": "JSON obyekt yuboring"}), 400
+
+    prompt = str(req_data.get("prompt", "")).strip()
+    if not prompt:
+        return jsonify({"status": "error", "message": "Savol matni kerak"}), 400
+
+    history = req_data.get("history", [])
+    messages = [{
+        "role": "system",
+        "content": (
+            "Siz Teacher_texno platformasidagi Texno AI yordamchisisiz. "
+            "Javoblarni asosan o'zbek tilida, qisqa, foydali va amaliy yozing. "
+            "Telegram/Instagram chatidagi mention assistant kabi kontekstga mos javob bering."
+        )
+    }]
+    if isinstance(history, list):
+        for item in history[-10:]:
+            if not isinstance(item, dict):
+                continue
+            role = "assistant" if item.get("role") == "assistant" else "user"
+            content = str(item.get("content", "")).strip()
+            if content:
+                messages.append({"role": role, "content": content[:1200]})
+    messages.append({"role": "user", "content": prompt})
+
+    payload = {
+        "model": os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+        "messages": messages,
+        "temperature": 0.4,
+        "max_tokens": 700,
+    }
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/chat/completions",
+        data=body,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=35) as res:
+            out = json.loads(res.read().decode("utf-8"))
+        answer = out.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+        return jsonify({"status": "success", "answer": answer or "Javob topilmadi"})
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", errors="ignore")
+        return jsonify({"status": "error", "message": detail or str(e)}), 502
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 502
 
 def find_account(data, role, account_id):
     collection = {"student": "students", "teacher": "teachers", "admin": "admins"}.get(role)

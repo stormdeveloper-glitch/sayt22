@@ -1615,6 +1615,17 @@
       flex-direction: row-reverse;
     }
 
+    .msg-ai-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(0, 229, 255, .45);
+      box-shadow: 0 0 12px rgba(0, 229, 255, .25);
+      flex-shrink: 0;
+      margin-bottom: 18px;
+    }
+
     .bubble {
       padding: 8px 13px;
       border-radius: 16px;
@@ -1712,6 +1723,11 @@
       margin-bottom: 2px;
       font-weight: 700;
       font-family: 'JetBrains Mono', monospace;
+    }
+
+    .msg-sender.ai {
+      color: var(--gold);
+      text-shadow: 0 0 10px rgba(255, 204, 0, .25);
     }
 
     .reply-prev {
@@ -3164,23 +3180,9 @@
     // DATA
     // ══════════════════════════════════════════════════
     const DB = {
-      students: [
-        { id: 1, name: "Aziz Karimov", pass: "1234", coins: 340, level: 5, streak: 12, ref: "AZ34", group: "Guruh A" },
-        { id: 2, name: "Malika Rahimova", pass: "1234", coins: 280, level: 4, streak: 8, ref: "ML28", group: "Guruh A" },
-        { id: 3, name: "Bobur Xasanov", pass: "5678", coins: 240, level: 3, streak: 5, ref: "BB24", group: "Guruh B" },
-        { id: 4, name: "Zulfiya Alimova", pass: "5678", coins: 210, level: 3, streak: 3, ref: "ZL21", group: "Guruh B" },
-        { id: 5, name: "Sardor Ismoilov", pass: "1234", coins: 180, level: 2, streak: 1, ref: "SR18", group: "Guruh A" },
-        { id: 6, name: "Kamola Tosheva", pass: "0000", coins: 120, level: 2, streak: 0, ref: "KM12", group: "Guruh C" },
-        { id: 7, name: "Jahongir Normatov", pass: "0000", coins: 90, level: 1, streak: 0, ref: "JH09", group: "Guruh C" },
-      ],
-      teachers: [
-        { id: 101, name: "Valiyev Omadbek", pass: "teacher123", subj: "IT / Web", code: "TCH-001" },
-        { id: 102, name: "Karimov Jasur", pass: "teach456", subj: "Python", code: "TCH-002" },
-      ],
-      admins: [
-        { id: 201, name: "Super Admin", pass: "admin2025", code: "ADM-001", level: "super" },
-        { id: 202, name: "Moderator", pass: "mod123", code: "ADM-002", level: "admin" },
-      ]
+      students: [],
+      teachers: [],
+      admins: []
     };
 
     let saveTimer = null;
@@ -3233,6 +3235,7 @@
       };
     }
     function toApiData() {
+      syncCurrentChats();
       return {
         seedVersion: 1,
         students: DB.students.map(s => {
@@ -3263,9 +3266,9 @@
         nextRequestId: 1,
         messages: DB.messages || [],
         groups: DB.groups || [],
-        chatFriends,
-        chatGroups,
-        pendingReqs,
+        chatFriends: allChatFriends,
+        chatGroups: allChatGroups,
+        pendingReqs: allPendingReqs,
         pendingTelegramLinks: DB.pendingTelegramLinks || [],
         telegramProfiles: DB.telegramProfiles || {},
         tests: DB.tests || []
@@ -3283,14 +3286,14 @@
         DB.adminRequests = Array.isArray(data.adminRequests) ? data.adminRequests : [];
         DB.messages = Array.isArray(data.messages) ? data.messages : [];
         DB.groups = Array.isArray(data.groups) ? data.groups : [];
-        if (Array.isArray(data.chatFriends)) chatFriends = data.chatFriends;
-        if (Array.isArray(data.chatGroups)) chatGroups = data.chatGroups;
-        if (Array.isArray(data.pendingReqs)) pendingReqs = data.pendingReqs;
+        if (Array.isArray(data.chatFriends)) allChatFriends = data.chatFriends;
+        if (Array.isArray(data.chatGroups)) allChatGroups = data.chatGroups;
+        if (Array.isArray(data.pendingReqs)) allPendingReqs = data.pendingReqs;
         DB.pendingTelegramLinks = Array.isArray(data.pendingTelegramLinks) ? data.pendingTelegramLinks : [];
         DB.telegramProfiles = data.telegramProfiles && typeof data.telegramProfiles === 'object' ? data.telegramProfiles : {};
         DB.tests = Array.isArray(data.tests) ? data.tests : [];
       } catch (e) {
-        console.warn('Backend data yuklanmadi, demo data ishlatiladi', e);
+        console.warn('Backend data yuklanmadi', e);
       }
     }
     function saveData() {
@@ -3321,31 +3324,12 @@
       ['#001a0a', '#00ff88'], ['#1a0800', '#ff8c42'],
     ];
 
-    let chatFriends = [
-      {
-        id: 1, name: "Aziz Karimov", ini: "AK", c: 0, online: true, blocked: false, msgs: [
-          { id: "m1", text: "Salom! Qandaysan? 👋", sent: false, time: "10:23", type: "text", reactions: {} },
-          { id: "m2", text: "Yaxshi, rahmat! Sen-chi? 😊", sent: true, time: "10:24", type: "text", reactions: {} },
-          { id: "m3", text: "Bugun uchrashamizmi?", sent: false, time: "10:25", type: "text", reactions: { "❤️": 1 } },
-        ]
-      },
-      {
-        id: 2, name: "Malika Rahimova", ini: "MR", c: 1, online: false, blocked: false, msgs: [
-          { id: "m4", text: "Loyiha tayyor bo'ldi! 🎉", sent: false, time: "09:10", type: "text", reactions: {} }
-        ]
-      },
-      { id: 3, name: "Bobur Xasanov", ini: "BX", c: 2, online: true, blocked: true, msgs: [] },
-      {
-        id: 4, name: "Zulfiya Alimova", ini: "ZA", c: 3, online: false, blocked: false, msgs: [
-          { id: "m5", text: "Kitobni o'qidingmi? 📚", sent: false, time: "Kecha", type: "text", reactions: {} }
-        ]
-      }
-    ];
+    let chatFriends = [];
     let chatGroups = [];
-    let pendingReqs = [
-      { id: 101, name: "Kamola Tosheva", ini: "KT", c: 4 },
-      { id: 102, name: "Jahongir Normatov", ini: "JN", c: 0 }
-    ];
+    let pendingReqs = [];
+    let allChatFriends = [];
+    let allChatGroups = [];
+    let allPendingReqs = [];
     const mktItems = [
       { icon: "🖼️", name: "Avatar ramka", price: 50 },
       { icon: "⭐", name: "VIP nishon", price: 100 },
@@ -3360,6 +3344,62 @@
     const STICKERS = ['🐱', '🐶', '🦊', '🐼', '🐨', '🦁', '🐸', '🦋', '🌸', '🌟', '🍕', '🍦', '🎮', '🎸', '🚀', '🌈', '💎', '🏆', '🎁', '🎪', '🤖', '👾', '🎯', '💡', '⚡', '🌙', '☀️', '🎵', '🎨', '🏅'];
     const REACT_EMOJIS = ['❤️', '😂', '😮', '😢', '👍', '🔥', '✨', '💯'];
     const AUTO_R = ['Ha, albatta! 😊', 'Tushundim 👍', 'Qiziq!', 'Yaxshi fikr!', 'Rahmat!', 'Ok 👌', '😂😂😂', 'Juda yaxshi!', '✅', 'Albatta!', '👾 Cool!', '💻 Zo\'r!'];
+
+    function accountKey(role, id) { return role + ':' + id; }
+    function currentOwnerKey() { return curUser ? accountKey(curUser.role, curUser.id) : ''; }
+    function initialsOf(name) {
+      return String(name || '?').split(' ').map(w => w[0]?.toUpperCase() || '').join('').slice(0, 2) || '??';
+    }
+    function allChatAccounts() {
+      return [
+        ...DB.students.map(x => ({ ...x, role: 'student' })),
+        ...DB.teachers.map(x => ({ ...x, role: 'teacher' })),
+        ...DB.admins.map(x => ({ ...x, role: 'admin' }))
+      ];
+    }
+    function syncCurrentChats() {
+      const owner = currentOwnerKey();
+      if (!owner) return;
+      allChatFriends = [
+        ...allChatFriends.filter(f => f.ownerKey !== owner),
+        ...chatFriends.map(f => ({ ...f, ownerKey: owner }))
+      ];
+      allChatGroups = [
+        ...allChatGroups.filter(g => g.ownerKey !== owner),
+        ...chatGroups.map(g => ({ ...g, ownerKey: owner }))
+      ];
+      allPendingReqs = [
+        ...allPendingReqs.filter(r => r.ownerKey !== owner),
+        ...pendingReqs.map(r => ({ ...r, ownerKey: owner }))
+      ];
+    }
+    function prepareChatsForCurrentUser() {
+      const owner = currentOwnerKey();
+      if (!owner) return;
+      const peers = allChatAccounts().filter(x => accountKey(x.role, x.id) !== owner);
+      chatFriends = allChatFriends.filter(f => f.ownerKey === owner);
+      peers.forEach((peer, index) => {
+        const peerKey = accountKey(peer.role, peer.id);
+        if (chatFriends.some(f => f.peerKey === peerKey)) return;
+        chatFriends.push({
+          id: peerKey,
+          ownerKey: owner,
+          peerKey,
+          peerRole: peer.role,
+          peerId: peer.id,
+          name: peer.name,
+          ini: initialsOf(peer.name),
+          c: index % COLORS.length,
+          online: peer.role !== 'student',
+          blocked: false,
+          msgs: []
+        });
+      });
+      chatFriends = chatFriends.filter(f => peers.some(p => accountKey(p.role, p.id) === f.peerKey));
+      chatGroups = allChatGroups.filter(g => g.ownerKey === owner);
+      pendingReqs = allPendingReqs.filter(r => r.ownerKey === owner);
+      syncCurrentChats();
+    }
 
     // ── Loading animation
     let pct = 0;
@@ -3456,6 +3496,8 @@
       document.getElementById('csMyAv').textContent = ini;
       document.getElementById('csMyName').textContent = curUser.name;
       document.getElementById('csCoins').textContent = diamonds;
+      prepareChatsForCurrentUser();
+      saveData();
       if (r === 'student') { initS(); showPage('dpg', null, 'BOSH SAHIFA'); }
       else if (r === 'teacher') { initT(); showPage('adpg', null, 'STATISTIKA'); }
       else { initA(); showPage('admpg', null, 'ADMIN DASHBOARD'); }
@@ -3795,7 +3837,7 @@
         el.appendChild(d);
       });
       // Friends
-      chatFriends.forEach(f => {
+      chatFriends.forEach((f, idx) => {
         const d = document.createElement('div');
         d.className = 'cl-item' + (curChat?.type === 'friend' && curChat?.id === f.id ? ' active' : '');
         d.onclick = () => openFChat(f);
@@ -3822,7 +3864,7 @@
     function renderCFriends() {
       const el = document.getElementById('cts-friends');
       el.innerHTML = `<div style="padding:6px 10px 3px;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;font-family:'Orbitron',monospace;">DO'STLAR (${chatFriends.length})</div>`;
-      chatFriends.forEach(f => {
+      chatFriends.forEach((f, idx) => {
         const d = document.createElement('div'); d.className = 'cl-item';
         const [, fg] = getColor(f.c);
         d.innerHTML = `
@@ -3832,8 +3874,8 @@
         <div class="cl-last" style="color:${f.blocked ? 'var(--red)' : f.online ? 'var(--green)' : 'var(--text3)'};">${f.blocked ? '🚫 Bloklangan' : f.online ? '● ONLINE' : '○ Offline'}</div>
       </div>
       <div style="display:flex;gap:3px;">
-        <button class="btn btn-xs" onclick="openFChat(chatFriends.find(x=>x.id===${f.id}));swCTab('chats')">💬</button>
-        <button class="btn btn-xs ${f.blocked ? 'btn-success' : 'btn-danger'}" onclick="toggleBlk(${f.id})">${f.blocked ? 'Och' : 'Blok'}</button>
+        <button class="btn btn-xs" onclick="openFChat(chatFriends[${idx}]);swCTab('chats')">💬</button>
+        <button class="btn btn-xs ${f.blocked ? 'btn-success' : 'btn-danger'}" onclick="toggleBlk(chatFriends[${idx}].id)">${f.blocked ? 'Och' : 'Blok'}</button>
       </div>`;
         el.appendChild(d);
       });
@@ -3851,7 +3893,7 @@
       <button class="btn btn-cyan btn-sm" style="width:100%;margin-top:6px;" onclick="addFriend()"><i class="fas fa-user-plus"></i> Qo'shish</button>
     </div>
     <div style="padding:2px 8px 4px;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;font-family:'Orbitron',monospace;">KELGAN SO'ROVLAR</div>`;
-      pendingReqs.forEach(r => {
+      pendingReqs.forEach((r, idx) => {
         const d = document.createElement('div'); d.className = 'req-card';
         d.innerHTML = `
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
@@ -3859,8 +3901,8 @@
         <div><div style="font-size:13px;font-weight:600;">${r.name}</div><div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Do'stlik so'radi</div></div>
       </div>
       <div style="display:flex;gap:5px;">
-        <button class="btn btn-success btn-xs" style="flex:1;" onclick="acceptReq(${r.id})">✅ Qabul</button>
-        <button class="btn btn-danger btn-xs" style="flex:1;" onclick="declineReq(${r.id})">❌ Rad</button>
+        <button class="btn btn-success btn-xs" style="flex:1;" onclick="acceptReq(pendingReqs[${idx}].id)">✅ Qabul</button>
+        <button class="btn btn-danger btn-xs" style="flex:1;" onclick="declineReq(pendingReqs[${idx}].id)">❌ Rad</button>
       </div>`;
         el.appendChild(d);
       });
@@ -3947,8 +3989,11 @@
       const gc = m.sent ? 'sent' : 'recv';
       const row = document.createElement('div');
       const isGroup = curChat?.type === 'group';
+      const isTexnoAI = m.senderId === 'texno-ai';
       let senderName = '';
-      if (isGroup && !m.sent && m.senderId) {
+      if (isTexnoAI) {
+        senderName = 'Texno AI';
+      } else if (isGroup && !m.sent && m.senderId) {
         const f = chatFriends.find(x => x.id === m.senderId);
         senderName = f ? f.name : 'Noma\'lum';
       }
@@ -3994,8 +4039,9 @@
 
       row.innerHTML = `
     <div class="msg-row ${gc}">
+      ${isTexnoAI ? '<img src="ai.png" class="msg-ai-avatar" alt="Texno AI">' : ''}
       <div class="msg-wrap ${gc}">
-        ${senderName ? `<div class="msg-sender">${senderName}</div>` : ''}
+        ${senderName ? `<div class="msg-sender ${isTexnoAI ? 'ai' : ''}">${senderName}</div>` : ''}
         ${inner}
         ${reactHTML}
         <div class="msg-time">${m.time}</div>
@@ -4017,16 +4063,37 @@
       renderMsgs(); renderCChats(); saveData();
       // Monitor
       if (curUser) { const mb = document.getElementById('monBody'); if (mb) { const row = mb.insertRow(0); row.innerHTML = `<td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${nTime()}</td><td>${curUser.name}</td><td>${data.name}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;">${text.slice(0, 60)}</td>`; } }
-      // Auto reply for friend chats
-      if (curChat.type === 'friend') {
-        const tiEl = document.getElementById('tyInd'); if (tiEl) tiEl.style.display = 'flex';
-        document.getElementById('msgArea').scrollTop = 99999;
-        setTimeout(() => {
-          const tiEl = document.getElementById('tyInd'); if (tiEl) tiEl.style.display = 'none';
-          data.msgs.push({ id: gId(), text: AUTO_R[Math.floor(Math.random() * AUTO_R.length)], sent: false, time: nTime(), type: 'text', reactions: {}, read: false });
-          renderMsgs(); renderCChats(); saveData();
-        }, 1000 + Math.random() * 800);
+      if (text.toLowerCase().startsWith('/texno')) {
+        askTexnoAI(text.replace(/^\/texno\s*/i, '').trim(), data);
+        return;
       }
+    }
+    async function askTexnoAI(prompt, data) {
+      if (!prompt) {
+        data.msgs.push({ id: gId(), text: "Texno AI uchun savol yozing: /texno sayt uchun reja tuz", sent: false, time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' });
+        renderMsgs(); renderCChats(); saveData();
+        return;
+      }
+      const aiMsg = { id: gId(), text: 'Texno AI yozmoqda...', sent: false, time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' };
+      data.msgs.push(aiMsg); renderMsgs(); renderCChats();
+      try {
+        const history = data.msgs
+          .filter(m => m.text && !m.deleted)
+          .slice(-12)
+          .map(m => ({ role: m.sent ? 'user' : 'assistant', content: m.text }));
+        const res = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, chatName: data.name, userName: curUser?.name, history })
+        });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(out.message || 'AI javob bermadi');
+        aiMsg.text = out.answer || 'Javob topilmadi';
+      } catch (e) {
+        aiMsg.text = '❌ Texno AI ishlamadi: ' + (e.message || 'server xatosi');
+      }
+      aiMsg.time = nTime();
+      renderMsgs(); renderCChats(); saveData();
     }
     async function uploadChatFile(file) {
       const fd = new FormData();
@@ -4139,7 +4206,8 @@
       const inp = document.getElementById('addFIn'); const name = inp.value.trim();
       if (!name) { showToast('❗ Ism kiriting'); return; }
       const ini = name.split(' ').map(w => w[0]?.toUpperCase() || '').join('').slice(0, 2) || '??';
-      chatFriends.push({ id: Date.now(), name, ini, c: Math.floor(Math.random() * COLORS.length), online: false, blocked: false, msgs: [] });
+      const manualKey = 'manual:' + Date.now();
+      chatFriends.push({ id: manualKey, ownerKey: currentOwnerKey(), peerKey: manualKey, name, ini, c: Math.floor(Math.random() * COLORS.length), online: false, blocked: false, msgs: [] });
       inp.value = ''; renderCFriends(); renderCChats(); saveData(); showToast("✅ " + name + " do'stlarga qo'shildi!");
     }
     function acceptReq(id) {
@@ -4208,7 +4276,7 @@
       if (!name) { showToast('❗ Guruh nomi kiriting'); return; }
       if (selGrpMems.length < 1) { showToast("❗ Kamida 1 a'zo tanlang"); return; }
       const g = {
-        id: Date.now(), name, members: [...selGrpMems], msgs: [
+        id: 'group:' + Date.now(), ownerKey: currentOwnerKey(), name, members: [...selGrpMems], msgs: [
           { id: gId(), text: name + ' guruhi yaratildi! 🎉', sent: false, time: nTime(), type: 'text', reactions: {} }
         ]
       };

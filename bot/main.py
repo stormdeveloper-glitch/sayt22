@@ -76,6 +76,8 @@ def default_data():
         "pendingReqs": [],
         "pendingTelegramLinks": [],
         "tests": [],
+        "plans": [],
+        "submissions": [],
         "telegramProfiles": {},
     }
 
@@ -84,7 +86,7 @@ def normalize_data(data):
     base = default_data()
     if isinstance(data, dict):
         base.update(data)
-    for key in ("students", "transactions", "teachers", "admins", "adminRequests", "messages", "groups", "chatFriends", "chatGroups", "pendingReqs", "pendingTelegramLinks", "tests"):
+    for key in ("students", "transactions", "teachers", "admins", "adminRequests", "messages", "groups", "chatFriends", "chatGroups", "pendingReqs", "pendingTelegramLinks", "tests", "plans", "submissions"):
         if not isinstance(base.get(key), list):
             base[key] = []
     if not isinstance(base.get("telegramProfiles"), dict):
