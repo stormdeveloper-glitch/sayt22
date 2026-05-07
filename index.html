@@ -458,6 +458,7 @@
       border-color: rgba(0, 229, 255, .3);
     }
 
+    .btn-primary,
     .btn-cyan {
       background: var(--cyan);
       border-color: var(--cyan);
@@ -465,6 +466,7 @@
       font-weight: 700;
     }
 
+    .btn-primary:hover,
     .btn-cyan:hover {
       background: #00ccee;
       box-shadow: 0 0 18px var(--cyan-glow);
@@ -498,15 +500,29 @@
     }
 
     .btn-danger {
-      background: var(--red-dim);
-      border-color: rgba(255, 56, 96, .25);
-      color: var(--red);
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 14px rgba(255, 56, 96, .16);
+    }
+
+    .btn-danger:hover {
+      background: #ff5a78;
+      box-shadow: 0 0 18px rgba(255, 56, 96, .28);
     }
 
     .btn-success {
-      background: var(--green-dim);
-      border-color: rgba(0, 255, 136, .25);
-      color: var(--green);
+      background: var(--green);
+      border-color: var(--green);
+      color: #00170c;
+      font-weight: 700;
+      box-shadow: 0 0 14px rgba(0, 255, 136, .16);
+    }
+
+    .btn-success:hover {
+      background: #35ff9f;
+      box-shadow: 0 0 18px rgba(0, 255, 136, .28);
     }
 
     /* ── TOPBAR ── */
