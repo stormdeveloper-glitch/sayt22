@@ -3250,6 +3250,7 @@
         chatFriends,
         chatGroups,
         pendingReqs,
+        pendingTelegramLinks: DB.pendingTelegramLinks || [],
         telegramProfiles: DB.telegramProfiles || {},
         tests: DB.tests || []
       };
@@ -3269,6 +3270,7 @@
         if (Array.isArray(data.chatFriends)) chatFriends = data.chatFriends;
         if (Array.isArray(data.chatGroups)) chatGroups = data.chatGroups;
         if (Array.isArray(data.pendingReqs)) pendingReqs = data.pendingReqs;
+        DB.pendingTelegramLinks = Array.isArray(data.pendingTelegramLinks) ? data.pendingTelegramLinks : [];
         DB.telegramProfiles = data.telegramProfiles && typeof data.telegramProfiles === 'object' ? data.telegramProfiles : {};
         DB.tests = Array.isArray(data.tests) ? data.tests : [];
       } catch (e) {
@@ -3653,19 +3655,28 @@
     function openTelegramBot() {
       window.open('https://t.me/' + BOT_USERNAME + '?start=site', '_blank');
     }
-    function saveTelegramId() {
+    async function saveTelegramId() {
       const input = document.getElementById(curUser?.role === 'student' ? 'tgIdIn' : 'tgIdIn2') || document.getElementById('tgIdIn') || document.getElementById('tgIdIn2');
       const telegramId = (input?.value || '').trim();
       if (!/^\d{5,20}$/.test(telegramId)) { showToast('❗ Telegram ID raqam bo\'lishi kerak'); return; }
       const rec = getCurrentAccountRecord();
       if (!rec) { showToast('❌ Profil topilmadi'); return; }
-      rec.telegramId = Number(telegramId);
-      rec.telegramLinkedAt = Date.now();
-      curUser.telegramId = rec.telegramId;
-      curUser.telegramLinkedAt = rec.telegramLinkedAt;
-      saveData();
-      refreshTelegramLinkUI();
-      showToast('✅ Telegram bot ulandi');
+      try {
+        const res = await fetch('/api/telegram-link/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: curUser.role, accountId: curUser.id, telegramId })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || 'Telegram so\'rov yuborilmadi');
+        ['tgStatus', 'tgStatus2'].forEach(elId => {
+          const el = document.getElementById(elId);
+          if (el) { el.textContent = '// botda tasdiqlash kutilmoqda'; el.style.color = 'var(--gold)'; }
+        });
+        showToast('📨 Botga tasdiqlash yuborildi');
+      } catch (e) {
+        showToast('❌ ' + (e.message || 'Botga ulanmadi'));
+      }
     }
     function clearTelegramId() {
       const rec = getCurrentAccountRecord();

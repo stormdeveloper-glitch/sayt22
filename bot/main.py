@@ -6,7 +6,7 @@ from html import escape
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -72,6 +72,7 @@ def default_data():
         "chatFriends": [],
         "chatGroups": [],
         "pendingReqs": [],
+        "pendingTelegramLinks": [],
         "tests": [],
         "telegramProfiles": {},
     }
@@ -81,7 +82,7 @@ def normalize_data(data):
     base = default_data()
     if isinstance(data, dict):
         base.update(data)
-    for key in ("students", "transactions", "teachers", "admins", "adminRequests", "messages", "groups", "chatFriends", "chatGroups", "pendingReqs", "tests"):
+    for key in ("students", "transactions", "teachers", "admins", "adminRequests", "messages", "groups", "chatFriends", "chatGroups", "pendingReqs", "pendingTelegramLinks", "tests"):
         if not isinstance(base.get(key), list):
             base[key] = []
     if not isinstance(base.get("telegramProfiles"), dict):
@@ -203,6 +204,50 @@ def linked_teachers(data, telegram_id):
 
 def linked_admins(data, telegram_id):
     return [a for a in data["admins"] if n_int(a.get("telegramId")) == telegram_id and a.get("status") == "active"]
+
+
+def find_account(data, role, account_id):
+    collection = {"student": "students", "teacher": "teachers", "admin": "admins"}.get(role)
+    if not collection:
+        return None
+    aid = n_int(account_id)
+    return next((item for item in data.get(collection, []) if n_int(item.get("id")) == aid), None)
+
+
+def pending_link_for_chat(data, telegram_id, token=None):
+    pending = [
+        item for item in data.get("pendingTelegramLinks", [])
+        if item.get("status") == "pending" and n_int(item.get("telegramId")) == n_int(telegram_id)
+    ]
+    if token:
+        return next((item for item in pending if item.get("token") == token), None)
+    return pending[-1] if pending else None
+
+
+def finish_pending_link(telegram_id, approve=True, token=None):
+    data = read_data()
+    pending = pending_link_for_chat(data, telegram_id, token)
+    if not pending:
+        return False, "Faol ulash so'rovi topilmadi."
+    account = find_account(data, pending.get("role"), pending.get("accountId"))
+    if not account:
+        pending["status"] = "missing"
+        write_data(data)
+        return False, "Profil topilmadi."
+    if approve:
+        profile = data.get("telegramProfiles", {}).get(str(telegram_id), {})
+        account["telegramId"] = n_int(telegram_id)
+        account["telegramLinkedAt"] = int(__import__("time").time() * 1000)
+        account["telegramName"] = profile.get("telegramName", "")
+        account["telegramUsername"] = profile.get("telegramUsername", "")
+        pending["status"] = "approved"
+        msg = f"✅ Telegram profilingiz {account.get('name', '')} bilan ulandi."
+    else:
+        pending["status"] = "rejected"
+        msg = "❌ Telegram ulash so'rovi rad etildi."
+    pending["answeredAt"] = int(__import__("time").time() * 1000)
+    write_data(data)
+    return True, msg
 
 
 def student_teacher_ids(student):
@@ -346,6 +391,22 @@ async def cmd_start(message: Message):
 async def cmd_id(message: Message):
     save_profile(message)
     await message.answer(f"Sizning Telegram ID: <code>{message.chat.id}</code>", parse_mode="HTML")
+
+
+@dp.callback_query(lambda c: c.data and (c.data.startswith("tgok:") or c.data.startswith("tgno:")))
+async def cb_telegram_link(query: CallbackQuery):
+    action, token = query.data.split(":", 1)
+    ok, msg = finish_pending_link(query.from_user.id, approve=(action == "tgok"), token=token)
+    await query.answer("Bajarildi" if ok else "Topilmadi", show_alert=not ok)
+    await query.message.answer(msg, reply_markup=ReplyKeyboardRemove())
+
+
+@dp.message(lambda message: (message.text or "").strip() in {"✅ Tasdiqlash", "❌ Rad etish"})
+async def reply_telegram_link(message: Message):
+    save_profile(message)
+    approve = message.text.strip().startswith("✅")
+    _, msg = finish_pending_link(message.chat.id, approve=approve)
+    await message.answer(msg, reply_markup=ReplyKeyboardRemove())
 
 
 @dp.message(Command("me"))

@@ -1,6 +1,10 @@
 import os
 import json
 import uuid
+import time
+import urllib.parse
+import urllib.request
+import urllib.error
 from werkzeug.utils import secure_filename
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
@@ -74,6 +78,7 @@ def normalize_data(data):
     data.setdefault("chatFriends", [])
     data.setdefault("chatGroups", [])
     data.setdefault("pendingReqs", [])
+    data.setdefault("pendingTelegramLinks", [])
     data.setdefault("tests", [])
     data.setdefault("telegramProfiles", {})
 
@@ -157,6 +162,7 @@ def init_data_file():
                 "chatFriends": [],
                 "chatGroups": [],
                 "pendingReqs": [],
+                "pendingTelegramLinks": [],
                 "tests": [],
                 "telegramProfiles": {}
             }, f, ensure_ascii=False, indent=2)
@@ -194,6 +200,100 @@ def save_data():
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(req_data, f, ensure_ascii=False, indent=2)
         return jsonify({"status": "success", "message": "Ma'lumot saqlandi"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+def find_account(data, role, account_id):
+    collection = {"student": "students", "teacher": "teachers", "admin": "admins"}.get(role)
+    if not collection:
+        return None
+    aid = n_int(account_id)
+    return next((item for item in data.get(collection, []) if n_int(item.get("id")) == aid), None)
+
+def send_bot_message(chat_id, text, reply_markup=None):
+    token = os.environ.get('BOT_TOKEN', '').strip()
+    if not token:
+        return False, "BOT_TOKEN sozlanmagan"
+    payload = {
+        "chat_id": str(chat_id),
+        "text": text,
+        "parse_mode": "HTML",
+    }
+    if reply_markup:
+        payload["reply_markup"] = json.dumps(reply_markup, ensure_ascii=False)
+    body = urllib.parse.urlencode(payload).encode("utf-8")
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    try:
+        req = urllib.request.Request(url, data=body, method="POST")
+        with urllib.request.urlopen(req, timeout=15) as res:
+            return 200 <= res.getcode() < 300, ""
+    except urllib.error.HTTPError as e:
+        return False, e.read().decode("utf-8", errors="ignore") or str(e)
+    except Exception as e:
+        return False, str(e)
+
+@app.route('/api/telegram-link/request', methods=['POST'])
+def request_telegram_link():
+    try:
+        req_data = request.get_json(silent=True)
+        if not isinstance(req_data, dict):
+            return jsonify({"status": "error", "message": "JSON obyekt yuboring"}), 400
+        role = str(req_data.get("role", "")).strip()
+        account_id = n_int(req_data.get("accountId"))
+        telegram_id = n_int(req_data.get("telegramId"))
+        if role not in {"student", "teacher", "admin"} or not account_id or not telegram_id:
+            return jsonify({"status": "error", "message": "Role, profil ID va Telegram ID kerak"}), 400
+
+        init_data_file()
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        data, _ = normalize_data(data)
+        account = find_account(data, role, account_id)
+        if not account:
+            return jsonify({"status": "error", "message": "Profil topilmadi"}), 404
+
+        token = uuid.uuid4().hex[:12]
+        data["pendingTelegramLinks"] = [
+            item for item in data.get("pendingTelegramLinks", [])
+            if not (n_int(item.get("telegramId")) == telegram_id or (item.get("role") == role and n_int(item.get("accountId")) == account_id))
+        ]
+        pending = {
+            "token": token,
+            "role": role,
+            "accountId": account_id,
+            "telegramId": telegram_id,
+            "name": account.get("name", ""),
+            "createdAt": int(time.time() * 1000),
+            "status": "pending",
+        }
+        data["pendingTelegramLinks"].append(pending)
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        role_label = {"student": "Talaba", "teacher": "O'qituvchi", "admin": "Admin"}[role]
+        text = (
+            "Saytdan Telegram ulash so'rovi keldi.\n\n"
+            f"Profil: <b>{role_label}</b>\n"
+            f"Ism: <b>{account.get('name', '')}</b>\n"
+            f"ID: <code>{account_id}</code>\n\n"
+            "Tasdiqlaysizmi?"
+        )
+        inline_markup = {
+            "inline_keyboard": [[
+                {"text": "✅ Tasdiqlash", "callback_data": f"tgok:{token}"},
+                {"text": "❌ Rad etish", "callback_data": f"tgno:{token}"},
+            ]]
+        }
+        ok, err = send_bot_message(telegram_id, text, inline_markup)
+        if ok:
+            reply_markup = {
+                "keyboard": [[{"text": "✅ Tasdiqlash"}, {"text": "❌ Rad etish"}]],
+                "resize_keyboard": True,
+                "one_time_keyboard": True,
+            }
+            send_bot_message(telegram_id, "Reply keyboard orqali ham tanlashingiz mumkin:", reply_markup)
+            return jsonify({"status": "pending", "message": "Botga tasdiqlash yuborildi"})
+        return jsonify({"status": "error", "message": "Botga xabar yuborilmadi. Avval botga /start yuboring.", "details": err}), 502
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
