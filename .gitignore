@@ -3,3 +3,6 @@ __pycache__/
 .env
 data/
 *.tmp
+node_modules/
+package.json
+package-lock.json
