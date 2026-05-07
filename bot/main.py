@@ -380,7 +380,12 @@ async def run_bot():
         print("[BOT] BOT_TOKEN env ichida topilmadi")
         return
     bot = Bot(BOT_TOKEN)
-    await dp.start_polling(bot, handle_signals=False)
+    try:
+        await bot.delete_webhook(drop_pending_updates=True)
+        print("[BOT] Polling boshlandi")
+        await dp.start_polling(bot, handle_signals=False)
+    finally:
+        await bot.session.close()
 
 
 def start_bot_thread():

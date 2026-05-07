@@ -17,6 +17,18 @@ DATA_FILE = os.path.join(DATA_DIR, 'data.json')
 UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+def start_telegram_bot():
+    """Start Telegram bot in the same Railway service when BOT_TOKEN is set."""
+    if not os.environ.get('BOT_TOKEN', '').strip():
+        print('[BOT] BOT_TOKEN topilmadi, Telegram bot ishga tushmadi')
+        return
+    try:
+        from bot.main import start_bot_thread
+        start_bot_thread()
+        print('[BOT] Telegram bot background thread ishga tushdi')
+    except Exception as e:
+        print(f'[BOT] Telegram botni ishga tushirishda xato: {e}')
+
 def init_data_file():
     """Fayl mavjud bo'lmasa, bazani yaratadi"""
     if not os.path.exists(DATA_DIR):
@@ -122,8 +134,10 @@ def send_sms():
 def static_files(path):
     return send_from_directory('.', path)
 
+init_data_file()
+start_telegram_bot()
+
 if __name__ == '__main__':
-    init_data_file()
     # Railway beradigan 8080 yoki boshqa portda ishga tushadi
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
