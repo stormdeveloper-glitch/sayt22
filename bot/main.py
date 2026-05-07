@@ -6,12 +6,13 @@ from html import escape
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, Message, ReplyKeyboardMarkup
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _DATA_LOCK = threading.Lock()
 _BOT_THREAD = None
+_COIN_ACTIONS = {}
 
 STUDENT_DEFAULTS = {
     "Bahodirjonov Sardor": {"group": "D2", "coins": 100},
@@ -206,6 +207,43 @@ def linked_admins(data, telegram_id):
     return [a for a in data["admins"] if n_int(a.get("telegramId")) == telegram_id and a.get("status") == "active"]
 
 
+def is_super_admin(data, telegram_id):
+    return any(str(a.get("role") or a.get("level") or "").lower() == "super" for a in linked_admins(data, telegram_id))
+
+
+def main_keyboard(data, telegram_id):
+    rows = [
+        [KeyboardButton(text="👤 Profil"), KeyboardButton(text="🏆 Reyting")],
+        [KeyboardButton(text="🆔 Telegram ID"), KeyboardButton(text="➕ Tanga berish")],
+        [KeyboardButton(text="➖ Tanga ayirish")],
+    ]
+    if is_super_admin(data, telegram_id):
+        rows.insert(0, [KeyboardButton(text="🛡️ Boshqaruv")])
+    return ReplyKeyboardMarkup(keyboard=rows, resize_keyboard=True, input_field_placeholder="Tugmalardan tanlang")
+
+
+def admin_panel_keyboard():
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="📊 Statistika", callback_data="adm:stats"),
+            InlineKeyboardButton(text="👥 Talabalar", callback_data="adm:students"),
+        ],
+        [
+            InlineKeyboardButton(text="🔗 Ulanishlar", callback_data="adm:links"),
+            InlineKeyboardButton(text="🏆 Reyting", callback_data="adm:rating"),
+        ],
+    ])
+
+
+def account_counts(data):
+    return (
+        len(data.get("students", [])),
+        len(data.get("teachers", [])),
+        len(data.get("admins", [])),
+        sum(n_int(s.get("totalCoins")) for s in data.get("students", [])),
+    )
+
+
 def find_account(data, role, account_id):
     collection = {"student": "students", "teacher": "teachers", "admin": "admins"}.get(role)
     if not collection:
@@ -334,6 +372,23 @@ def add_coin(data, student, amount, reason, details, telegram_id):
     write_data(data)
 
 
+def apply_coin_change(data, telegram_id, student_id, amount, reason, sign):
+    student = student_by_id(data, student_id)
+    amount = n_int(amount)
+    reason = str(reason or "").strip()
+    if not student or amount <= 0 or not reason:
+        return False, "Talaba ID, miqdor yoki sabab noto'g'ri."
+    if not can_manage_student(data, telegram_id, student):
+        return False, "Bu talabaga tanga berish/ayirish huquqi yo'q."
+    signed_amount = amount * sign
+    details = reason if sign > 0 else f"Ayrildi: {reason}"
+    add_coin(data, student, signed_amount, "telegram_plus" if sign > 0 else "telegram_minus", details, telegram_id)
+    return True, (
+        f"{escape(str(student.get('name', 'Talaba')))}: {signed_amount:+d}\n"
+        f"Yangi balans: <b>{n_int(student.get('totalCoins'))}</b>"
+    )
+
+
 def format_student(student, data):
     sid = n_int(student.get("id"))
     return (
@@ -374,7 +429,7 @@ async def cmd_start(message: Message):
         "Bot ulandi.",
         f"Telegram ID: <code>{message.chat.id}</code>",
         "",
-        "Saytdagi profilga shu ID ni kiriting.",
+        "Saytdagi profilga shu ID ni kiriting va botda tasdiqlang.",
     ]
     if students or teachers or admins:
         lines.append("")
@@ -383,22 +438,23 @@ async def cmd_start(message: Message):
         lines.extend(f"O'qituvchi: {escape(str(t.get('name', '')))}" for t in teachers)
         lines.extend(f"Admin: {escape(str(a.get('name', '')))}" for a in admins)
     lines.append("")
-    lines.append("Buyruqlar: /me, /reyting, /plus, /minus, /id")
-    await message.answer("\n".join(lines), parse_mode="HTML")
+    lines.append("Pastdagi tugmalar orqali boshqaring.")
+    await message.answer("\n".join(lines), parse_mode="HTML", reply_markup=main_keyboard(data, message.chat.id))
 
 
 @dp.message(Command("id"))
 async def cmd_id(message: Message):
-    save_profile(message)
-    await message.answer(f"Sizning Telegram ID: <code>{message.chat.id}</code>", parse_mode="HTML")
+    data = save_profile(message)
+    await message.answer(f"Sizning Telegram ID: <code>{message.chat.id}</code>", parse_mode="HTML", reply_markup=main_keyboard(data, message.chat.id))
 
 
 @dp.callback_query(lambda c: c.data and (c.data.startswith("tgok:") or c.data.startswith("tgno:")))
 async def cb_telegram_link(query: CallbackQuery):
     action, token = query.data.split(":", 1)
     ok, msg = finish_pending_link(query.from_user.id, approve=(action == "tgok"), token=token)
+    data = read_data()
     await query.answer("Bajarildi" if ok else "Topilmadi", show_alert=not ok)
-    await query.message.answer(msg, reply_markup=ReplyKeyboardRemove())
+    await query.message.answer(msg, reply_markup=main_keyboard(data, query.from_user.id))
 
 
 @dp.message(lambda message: (message.text or "").strip() in {"✅ Tasdiqlash", "❌ Rad etish"})
@@ -406,7 +462,8 @@ async def reply_telegram_link(message: Message):
     save_profile(message)
     approve = message.text.strip().startswith("✅")
     _, msg = finish_pending_link(message.chat.id, approve=approve)
-    await message.answer(msg, reply_markup=ReplyKeyboardRemove())
+    data = read_data()
+    await message.answer(msg, reply_markup=main_keyboard(data, message.chat.id))
 
 
 @dp.message(Command("me"))
@@ -414,7 +471,7 @@ async def cmd_me(message: Message):
     data = save_profile(message)
     students = linked_students(data, message.chat.id)
     if students:
-        await message.answer("\n\n".join(format_student(s, data) for s in students), parse_mode="HTML")
+        await message.answer("\n\n".join(format_student(s, data) for s in students), parse_mode="HTML", reply_markup=main_keyboard(data, message.chat.id))
         return
     teachers = linked_teachers(data, message.chat.id)
     admins = linked_admins(data, message.chat.id)
@@ -423,12 +480,12 @@ async def cmd_me(message: Message):
         total = sum(n_int(s.get("totalCoins")) for s in visible)
         await message.answer(
             f"Profil ulangan.\nTalabalar: <b>{len(visible)}</b>\nJami tanga: <b>{total}</b>\n\n"
-            "Tanga berish: <code>/plus student_id miqdor sabab</code>\n"
-            "Tanga ayirish: <code>/minus student_id miqdor sabab</code>",
+            "Tanga uchun pastdagi ➕ / ➖ tugmalaridan foydalaning.",
             parse_mode="HTML",
+            reply_markup=main_keyboard(data, message.chat.id),
         )
         return
-    await message.answer("Profil ulanmagan. /id ni olib, saytdagi profilingizga Telegram ID qilib kiriting.")
+    await message.answer("Profil ulanmagan. 🆔 Telegram ID ni olib, saytdagi profilingizga kiriting.", reply_markup=main_keyboard(data, message.chat.id))
 
 
 @dp.message(Command("reyting"))
@@ -439,7 +496,7 @@ async def cmd_rating(message: Message):
     mode = {"hafta": "weekly", "weekly": "weekly", "oy": "monthly", "monthly": "monthly"}.get(mode_raw, "overall")
     students = visible_students(data, message.chat.id)
     if not students:
-        await message.answer("Reyting uchun profil ulanmagan.")
+        await message.answer("Reyting uchun profil ulanmagan.", reply_markup=main_keyboard(data, message.chat.id))
         return
     ranked = sorted(students, key=lambda s: earned(data, n_int(s.get("id")), mode), reverse=True)[:10]
     title = {"weekly": "Haftalik", "monthly": "Oylik", "overall": "Umumiy"}[mode]
@@ -447,7 +504,7 @@ async def cmd_rating(message: Message):
     for index, student in enumerate(ranked, 1):
         score = earned(data, n_int(student.get("id")), mode)
         lines.append(f"{index}. {escape(str(student.get('name', '')))} - <b>{score}</b> ID:{n_int(student.get('id'))}")
-    await message.answer("\n".join(lines), parse_mode="HTML")
+    await message.answer("\n".join(lines), parse_mode="HTML", reply_markup=main_keyboard(data, message.chat.id))
 
 
 async def coin_command(message: Message, sign: int):
@@ -455,25 +512,10 @@ async def coin_command(message: Message, sign: int):
     parts = message.text.split(maxsplit=3)
     if len(parts) < 4:
         sample = "/plus 12 10 yaxshi javob" if sign > 0 else "/minus 12 10 kechikdi"
-        await message.answer(f"Format: <code>{sample}</code>", parse_mode="HTML")
+        await message.answer(f"Format: <code>{sample}</code>", parse_mode="HTML", reply_markup=main_keyboard(data, message.chat.id))
         return
-    student = student_by_id(data, parts[1])
-    amount = n_int(parts[2])
-    reason = parts[3].strip()
-    if not student or amount <= 0 or not reason:
-        await message.answer("Talaba ID, miqdor yoki sabab noto'g'ri.")
-        return
-    if not can_manage_student(data, message.chat.id, student):
-        await message.answer("Bu talabaga tanga berish/ayirish huquqi yo'q.")
-        return
-    signed_amount = amount * sign
-    details = reason if sign > 0 else f"Ayrildi: {reason}"
-    add_coin(data, student, signed_amount, "telegram_plus" if sign > 0 else "telegram_minus", details, message.chat.id)
-    await message.answer(
-        f"{escape(str(student.get('name', 'Talaba')))}: {signed_amount:+d}\n"
-        f"Yangi balans: <b>{n_int(student.get('totalCoins'))}</b>",
-        parse_mode="HTML",
-    )
+    ok, answer = apply_coin_change(data, message.chat.id, parts[1], parts[2], parts[3], sign)
+    await message.answer(answer, parse_mode="HTML", reply_markup=main_keyboard(read_data(), message.chat.id))
 
 
 @dp.message(Command("plus"))
@@ -488,15 +530,97 @@ async def cmd_minus(message: Message):
 
 @dp.message(Command("help"))
 async def cmd_help(message: Message):
+    data = save_profile(message)
     await message.answer(
-        "Buyruqlar:\n"
-        "/id - Telegram ID\n"
-        "/me - profil va tanga\n"
-        "/reyting - umumiy reyting\n"
-        "/reyting hafta - haftalik reyting\n"
-        "/reyting oy - oylik reyting\n"
-        "/plus student_id miqdor sabab\n"
-        "/minus student_id miqdor sabab",
+        "Pastdagi tugmalar orqali botni boshqaring.\n\n"
+        "➕ yoki ➖ bosilgandan keyin format:\n"
+        "<code>student_id miqdor sabab</code>\n"
+        "Masalan: <code>12 10 yaxshi javob</code>",
+        parse_mode="HTML",
+        reply_markup=main_keyboard(data, message.chat.id),
+    )
+
+
+@dp.callback_query(lambda c: c.data and c.data.startswith("adm:"))
+async def cb_admin_panel(query: CallbackQuery):
+    data = read_data()
+    if not is_super_admin(data, query.from_user.id):
+        await query.answer("Faqat super admin uchun", show_alert=True)
+        return
+    action = query.data.split(":", 1)[1]
+    if action == "stats":
+        st_count, teacher_count, admin_count, total = account_counts(data)
+        text = (
+            "<b>🛡️ Boshqaruv statistikasi</b>\n\n"
+            f"👥 Talabalar: <b>{st_count}</b>\n"
+            f"👨‍🏫 O'qituvchilar: <b>{teacher_count}</b>\n"
+            f"🛡️ Adminlar: <b>{admin_count}</b>\n"
+            f"🪙 Jami tanga: <b>{total}</b>"
+        )
+    elif action == "students":
+        top = sorted(data.get("students", []), key=lambda s: n_int(s.get("totalCoins")), reverse=True)[:15]
+        text = "<b>👥 Talabalar</b>\n\n" + ("\n".join(
+            f"{i}. {escape(str(s.get('name', '')))} | ID:{n_int(s.get('id'))} | {escape(str(s.get('group', 'D1')))} | {n_int(s.get('totalCoins'))}🪙"
+            for i, s in enumerate(top, 1)
+        ) or "Talaba yo'q")
+    elif action == "links":
+        pending = [x for x in data.get("pendingTelegramLinks", []) if x.get("status") == "pending"]
+        text = "<b>🔗 Kutilayotgan ulanishlar</b>\n\n" + ("\n".join(
+            f"- {escape(str(x.get('name', '')))} | {escape(str(x.get('role', '')))} | TG:{n_int(x.get('telegramId'))}"
+            for x in pending[-15:]
+        ) or "Kutilayotgan ulanish yo'q")
+    else:
+        ranked = sorted(visible_students(data, query.from_user.id), key=lambda s: n_int(s.get("totalCoins")), reverse=True)[:10]
+        text = "<b>🏆 Reyting</b>\n\n" + ("\n".join(
+            f"{i}. {escape(str(s.get('name', '')))} - <b>{n_int(s.get('totalCoins'))}</b>"
+            for i, s in enumerate(ranked, 1)
+        ) or "Reyting bo'sh")
+    await query.answer()
+    await query.message.answer(text, parse_mode="HTML", reply_markup=admin_panel_keyboard())
+
+
+@dp.message(lambda message: (message.text or "").strip() in {"🏠 Menu", "👤 Profil", "🏆 Reyting", "🆔 Telegram ID", "🛡️ Boshqaruv", "➕ Tanga berish", "➖ Tanga ayirish"})
+async def button_router(message: Message):
+    text = (message.text or "").strip()
+    data = save_profile(message)
+    if text == "🏠 Menu":
+        await cmd_start(message)
+        return
+    if text == "👤 Profil":
+        await cmd_me(message)
+        return
+    if text == "🏆 Reyting":
+        await cmd_rating(message)
+        return
+    if text == "🆔 Telegram ID":
+        await cmd_id(message)
+        return
+    if text == "🛡️ Boshqaruv":
+        if not is_super_admin(data, message.chat.id):
+            await message.answer("Bu panel faqat super admin uchun.", reply_markup=main_keyboard(data, message.chat.id))
+            return
+        st_count, teacher_count, admin_count, total = account_counts(data)
+        await message.answer(
+            "<b>🛡️ Super admin panel</b>\n\n"
+            f"👥 Talabalar: <b>{st_count}</b>\n"
+            f"👨‍🏫 O'qituvchilar: <b>{teacher_count}</b>\n"
+            f"🛡️ Adminlar: <b>{admin_count}</b>\n"
+            f"🪙 Jami tanga: <b>{total}</b>",
+            parse_mode="HTML",
+            reply_markup=admin_panel_keyboard(),
+        )
+        return
+    sign = 1 if text.startswith("➕") else -1
+    if not (linked_teachers(data, message.chat.id) or linked_admins(data, message.chat.id)):
+        await message.answer("Tanga boshqaruvi faqat o'qituvchi/admin uchun.", reply_markup=main_keyboard(data, message.chat.id))
+        return
+    _COIN_ACTIONS[message.chat.id] = sign
+    await message.answer(
+        ("🟢 Tanga berish" if sign > 0 else "🔴 Tanga ayirish") + "\n\n"
+        "Buyruqsiz yuboring:\n<code>student_id miqdor sabab</code>\n"
+        "Masalan: <code>12 10 yaxshi javob</code>",
+        parse_mode="HTML",
+        reply_markup=main_keyboard(data, message.chat.id),
     )
 
 
@@ -506,16 +630,20 @@ async def cmd_fallback(message: Message):
     if text in {"start", "/start", "boshlash", "salom", "assalomu alaykum", "assalom"}:
         await cmd_start(message)
         return
-    save_profile(message)
+    data = save_profile(message)
+    if message.chat.id in _COIN_ACTIONS:
+        sign = _COIN_ACTIONS.pop(message.chat.id)
+        parts = (message.text or "").split(maxsplit=2)
+        if len(parts) < 3:
+            await message.answer("Format: <code>student_id miqdor sabab</code>", parse_mode="HTML", reply_markup=main_keyboard(data, message.chat.id))
+            return
+        ok, answer = apply_coin_change(data, message.chat.id, parts[0], parts[1], parts[2], sign)
+        await message.answer(answer, parse_mode="HTML", reply_markup=main_keyboard(read_data(), message.chat.id))
+        return
     await message.answer(
         "Men Teacher_texno botiman.\n\n"
-        "Boshlash uchun /start yuboring.\n"
-        "Telegram ID olish: /id\n"
-        "Profil va tanga: /me\n"
-        "Reyting: /reyting\n\n"
-        "O'qituvchi/admin uchun:\n"
-        "/plus student_id miqdor sabab\n"
-        "/minus student_id miqdor sabab"
+        "Pastdagi tugmalar orqali boshqaring.",
+        reply_markup=main_keyboard(data, message.chat.id),
     )
 
 
