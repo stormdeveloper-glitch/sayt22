@@ -18,6 +18,112 @@ DATA_FILE = os.path.join(DATA_DIR, 'data.json')
 UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+STUDENT_DEFAULTS = {
+    "Bahodirjonov Sardor": {"group": "D2", "coins": 100},
+    "Bahodirov Asadbek": {"group": "D1", "coins": 0},
+    "Farangiz": {"group": "D1", "coins": 25},
+    "Farxodjon 08": {"group": "D1", "coins": 0},
+    "Ibrohim": {"group": "D1", "coins": 65},
+    "Muhiddinov Nurillo": {"group": "D1", "coins": 0},
+    "Dadajonova Munavvara": {"group": "D1", "coins": 15},
+    "Og'abek": {"group": "D1", "coins": 0},
+    "Omonov Alisher": {"group": "D1", "coins": 50},
+    "Shavkatova Fotima": {"group": "D1", "coins": 50},
+    "Shaxboz": {"group": "D1", "coins": 25},
+    "Tojaliyev G'ayratjon": {"group": "D1", "coins": 0},
+    "Tolipjonov Asadbek": {"group": "D1", "coins": 26},
+    "Tursunaliyev Abdulaziz": {"group": "D1", "coins": 5},
+    "Umaraliyev Ozodbek": {"group": "D1", "coins": 50},
+    "Abdurazoqova Ra'noxon": {"group": "D1", "coins": 15},
+    "Abdulhakimov Sardorbek": {"group": "D1", "coins": 35},
+    "Ahmadjonova Shodiyona": {"group": "D1", "coins": 45},
+    "Hamidov Abdulahat": {"group": "D1", "coins": 24},
+    "Abdumo'minov Muhammadmuhtor": {"group": "D1", "coins": 10},
+    "Hoshimov Abdulhafiz": {"group": "D1", "coins": 0},
+    "Hasanboyev Muhamqodir": {"group": "D1", "coins": 5},
+    "Nurmuhamadov Diyorbek": {"group": "D1", "coins": 10},
+    "Mahamadov Ozodbek": {"group": "D1", "coins": 5},
+    "Shavkatov Abdulatif": {"group": "D1", "coins": 5},
+}
+
+def n_int(value, default=0):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+def coins_total(value):
+    if isinstance(value, dict):
+        return sum(n_int(v) for v in value.values())
+    return n_int(value)
+
+def normalize_data(data):
+    if not isinstance(data, dict):
+        data = {}
+    data.setdefault("students", [])
+    data.setdefault("transactions", [])
+    data.setdefault("nextStudentId", 1)
+    data.setdefault("teachers", [])
+    data.setdefault("nextTeacherId", 1)
+    data.setdefault("admins", [])
+    data.setdefault("nextAdminId", 1)
+    data.setdefault("adminRequests", [])
+    data.setdefault("nextRequestId", 1)
+    data.setdefault("messages", [])
+    data.setdefault("groups", [])
+    data.setdefault("chatFriends", [])
+    data.setdefault("chatGroups", [])
+    data.setdefault("pendingReqs", [])
+    data.setdefault("tests", [])
+    data.setdefault("telegramProfiles", {})
+
+    changed = False
+    for student in data.get("students", []):
+        if not isinstance(student, dict):
+            continue
+        default = STUDENT_DEFAULTS.get(str(student.get("name", "")).strip())
+        current_group = str(student.get("group") or "").strip()
+        if default and (not current_group or current_group == "Yangi" or (current_group == "D1" and default["group"] != "D1")):
+            student["group"] = default["group"]
+            changed = True
+        elif not current_group:
+            student["group"] = "D1"
+            changed = True
+
+        teacher_id = n_int((student.get("teacherIds") or [student.get("teacherId") or 1])[0] if isinstance(student.get("teacherIds"), list) else student.get("teacherId"), 1)
+        if not student.get("teacherId"):
+            student["teacherId"] = teacher_id
+            changed = True
+        if not isinstance(student.get("teacherIds"), list) or not student.get("teacherIds"):
+            student["teacherIds"] = [teacher_id]
+            changed = True
+
+        current_total = n_int(student.get("totalCoins")) or coins_total(student.get("coins"))
+        if current_total == 0 and default and default["coins"] > 0:
+            current_total = default["coins"]
+            student["totalCoins"] = current_total
+            student["coins"] = {str(teacher_id): current_total}
+            changed = True
+        elif isinstance(student.get("coins"), dict):
+            student["totalCoins"] = current_total
+        else:
+            student["totalCoins"] = current_total
+            student["coins"] = {str(teacher_id): current_total}
+            changed = True
+
+        coins = n_int(student.get("totalCoins"))
+        student["level"] = max(1, int(coins / 100) + 1)
+        if coins < 100:
+            student["badge"] = "Starter"
+        elif coins < 300:
+            student["badge"] = "Active"
+        elif coins < 600:
+            student["badge"] = "Pro"
+        else:
+            student["badge"] = "Elite"
+
+    return data, changed
+
 def start_telegram_bot():
     """Start Telegram bot in the same Railway service when BOT_TOKEN is set."""
     if not os.environ.get('BOT_TOKEN', '').strip():
@@ -66,6 +172,10 @@ def get_data():
         init_data_file()
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             data = json.load(f)
+        data, changed = normalize_data(data)
+        if changed:
+            with open(DATA_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -79,6 +189,7 @@ def save_data():
             return jsonify({"status": "error", "message": "JSON obyekt yuboring"}), 400
         if not all(k in req_data for k in ("students", "transactions", "nextStudentId")):
             return jsonify({"status": "error", "message": "Majburiy maydonlar yetishmayapti"}), 400
+        req_data, _ = normalize_data(req_data)
         init_data_file()
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(req_data, f, ensure_ascii=False, indent=2)

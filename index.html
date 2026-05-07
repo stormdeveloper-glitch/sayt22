@@ -3169,18 +3169,31 @@
 
     let saveTimer = null;
     const apiNum = (v, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
+    function coinMapOf(s) {
+      return s.coins && typeof s.coins === 'object' && !Array.isArray(s.coins) ? { ...s.coins } : (s.coinMap || {});
+    }
+    function coinTotalOf(s) {
+      const map = coinMapOf(s);
+      const mapTotal = Object.values(map).reduce((sum, value) => sum + apiNum(value, 0), 0);
+      return mapTotal || apiNum(s.totalCoins ?? s.coins, 0);
+    }
+    function primaryTeacherIdOf(s) {
+      return apiNum((Array.isArray(s.teacherIds) ? s.teacherIds[0] : s.teacherId), 1);
+    }
     function uiStudent(s) {
-      const coins = apiNum(s.coins ?? s.totalCoins, 0);
+      const coinMap = coinMapOf(s);
+      const coins = coinTotalOf(s);
       return {
         ...s,
         id: apiNum(s.id, Date.now()),
         name: s.name || 'Talaba',
         pass: String(s.pass ?? s.password ?? '1234'),
         coins,
+        coinMap,
         level: apiNum(s.level, Math.max(1, Math.floor(coins / 100) + 1)),
         streak: apiNum(s.streak, 0),
         ref: s.ref || s.refCode || ('REF' + (s.id || '')),
-        group: s.group || 'Yangi'
+        group: s.group || 'D1'
       };
     }
     function uiTeacher(t) {
@@ -3206,13 +3219,24 @@
     function toApiData() {
       return {
         seedVersion: 1,
-        students: DB.students.map(s => ({
-          ...s,
-          password: s.pass,
-          totalCoins: apiNum(s.coins, 0),
-          badge: getLevelName(apiNum(s.level, 1)),
-          refCode: s.ref
-        })),
+        students: DB.students.map(s => {
+          const coinMap = { ...coinMapOf(s) };
+          const teacherId = primaryTeacherIdOf(s);
+          const totalCoins = apiNum(s.coins, 0);
+          if (!Object.keys(coinMap).length || apiNum(coinMap[teacherId], 0) !== totalCoins) coinMap[teacherId] = totalCoins;
+          const { pass, ref, coinMap: _coinMap, ...rest } = s;
+          return {
+            ...rest,
+            coins: coinMap,
+            password: pass,
+            totalCoins,
+            badge: getLevelName(apiNum(s.level, 1)),
+            refCode: ref,
+            group: s.group || 'D1',
+            teacherId,
+            teacherIds: Array.isArray(s.teacherIds) && s.teacherIds.length ? s.teacherIds : [teacherId]
+          };
+        }),
         transactions: DB.transactions || [],
         nextStudentId: Math.max(1, ...DB.students.map(s => apiNum(s.id, 0))) + 1,
         teachers: DB.teachers.map(t => ({ ...t, password: t.pass, subject: t.subj, teacherCode: t.code })),
@@ -3566,7 +3590,7 @@
       const sid = document.getElementById('aSt').value;
       const s = DB.students.find(x => x.id == sid); if (!s) return;
       const pts = { present: 5, late: 2, absent_no: 0, absent_yes: 0 }[type] || 0;
-      if (pts > 0) { s.coins += pts; saveData(); showToast('✅ ' + s.name + ' — +' + pts + ' tanga'); }
+      if (pts > 0) { s.coins += pts; s.coinMap = { ...coinMapOf(s), [primaryTeacherIdOf(s)]: s.coins }; saveData(); showToast('✅ ' + s.name + ' — +' + pts + ' tanga'); }
       else showToast('📌 ' + s.name + ' — ' + type);
       updateCoinsDisplay();
     }
@@ -3574,14 +3598,14 @@
       const sid = document.getElementById(selId).value;
       const amt = parseInt(document.getElementById(rangeId).value) || 5;
       const s = DB.students.find(x => x.id == sid); if (!s) return;
-      s.coins += amt; saveData(); updateCoinsDisplay(); showToast('✅ ' + s.name + ' — ' + label + ': +' + amt + ' tanga');
+      s.coins += amt; s.coinMap = { ...coinMapOf(s), [primaryTeacherIdOf(s)]: s.coins }; saveData(); updateCoinsDisplay(); showToast('✅ ' + s.name + ' — ' + label + ': +' + amt + ' tanga');
     }
     function giveManual() {
       const sid = document.getElementById('mSt').value;
       const amt = parseInt(document.getElementById('mAmt').value) || 0;
       const reason = document.getElementById('mReason').value || "Qo'lda";
       const s = DB.students.find(x => x.id == sid); if (!s || amt <= 0) return;
-      s.coins += amt; saveData(); updateCoinsDisplay(); showToast('✅ ' + s.name + ' — ' + reason + ': +' + amt + ' tanga');
+      s.coins += amt; s.coinMap = { ...coinMapOf(s), [primaryTeacherIdOf(s)]: s.coins }; saveData(); updateCoinsDisplay(); showToast('✅ ' + s.name + ' — ' + reason + ': +' + amt + ' tanga');
       document.getElementById('mAmt').value = ''; document.getElementById('mReason').value = '';
     }
     function updateCoinsDisplay() {

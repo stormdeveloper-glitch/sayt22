@@ -13,6 +13,28 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _DATA_LOCK = threading.Lock()
 _BOT_THREAD = None
 
+STUDENT_DEFAULTS = {
+    "Bahodirjonov Sardor": {"group": "D2", "coins": 100},
+    "Farangiz": {"group": "D1", "coins": 25},
+    "Ibrohim": {"group": "D1", "coins": 65},
+    "Dadajonova Munavvara": {"group": "D1", "coins": 15},
+    "Omonov Alisher": {"group": "D1", "coins": 50},
+    "Shavkatova Fotima": {"group": "D1", "coins": 50},
+    "Shaxboz": {"group": "D1", "coins": 25},
+    "Tolipjonov Asadbek": {"group": "D1", "coins": 26},
+    "Tursunaliyev Abdulaziz": {"group": "D1", "coins": 5},
+    "Umaraliyev Ozodbek": {"group": "D1", "coins": 50},
+    "Abdurazoqova Ra'noxon": {"group": "D1", "coins": 15},
+    "Abdulhakimov Sardorbek": {"group": "D1", "coins": 35},
+    "Ahmadjonova Shodiyona": {"group": "D1", "coins": 45},
+    "Hamidov Abdulahat": {"group": "D1", "coins": 24},
+    "Abdumo'minov Muhammadmuhtor": {"group": "D1", "coins": 10},
+    "Hasanboyev Muhamqodir": {"group": "D1", "coins": 5},
+    "Nurmuhamadov Diyorbek": {"group": "D1", "coins": 10},
+    "Mahamadov Ozodbek": {"group": "D1", "coins": 5},
+    "Shavkatov Abdulatif": {"group": "D1", "coins": 5},
+}
+
 
 def load_env_file():
     env_file = os.path.join(BASE_DIR, ".env")
@@ -64,6 +86,29 @@ def normalize_data(data):
             base[key] = []
     if not isinstance(base.get("telegramProfiles"), dict):
         base["telegramProfiles"] = {}
+    for student in base["students"]:
+        if not isinstance(student, dict):
+            continue
+        default = STUDENT_DEFAULTS.get(str(student.get("name", "")).strip())
+        current_group = str(student.get("group") or "").strip()
+        if default and (not current_group or current_group == "Yangi" or (current_group == "D1" and default["group"] != "D1")):
+            student["group"] = default["group"] if default else "D1"
+        elif not current_group:
+            student["group"] = "D1"
+        teacher_id = n_int((student.get("teacherIds") or [student.get("teacherId") or 1])[0] if isinstance(student.get("teacherIds"), list) else student.get("teacherId"), 1)
+        student.setdefault("teacherId", teacher_id)
+        if not isinstance(student.get("teacherIds"), list) or not student.get("teacherIds"):
+            student["teacherIds"] = [teacher_id]
+        if isinstance(student.get("coins"), dict):
+            total = sum(n_int(v) for v in student["coins"].values())
+        else:
+            total = n_int(student.get("coins")) or n_int(student.get("totalCoins"))
+        if total == 0 and default and default["coins"] > 0:
+            total = default["coins"]
+            student["coins"] = {str(teacher_id): total}
+        elif not isinstance(student.get("coins"), dict):
+            student["coins"] = {str(teacher_id): total}
+        student["totalCoins"] = total
     return base
 
 
@@ -221,7 +266,11 @@ def earned(data, student_id, mode):
 
 def add_coin(data, student, amount, reason, details, telegram_id):
     amount = n_int(amount)
-    student["totalCoins"] = n_int(student.get("totalCoins")) + amount
+    teacher_id = next(iter(student_teacher_ids(student) or {1}))
+    if not isinstance(student.get("coins"), dict):
+        student["coins"] = {str(teacher_id): n_int(student.get("totalCoins"))}
+    student["coins"][str(teacher_id)] = n_int(student["coins"].get(str(teacher_id))) + amount
+    student["totalCoins"] = sum(n_int(v) for v in student["coins"].values())
     data["transactions"].insert(
         0,
         {
