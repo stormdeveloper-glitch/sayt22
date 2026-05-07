@@ -3347,6 +3347,9 @@
 
     function accountKey(role, id) { return role + ':' + id; }
     function currentOwnerKey() { return curUser ? accountKey(curUser.role, curUser.id) : ''; }
+    function directThreadId(a, b) { return [String(a), String(b)].sort().join('|'); }
+    function chatThreadKey(f) { return f.threadId || (f.ownerKey && f.peerKey ? directThreadId(f.ownerKey, f.peerKey) : f.id); }
+    function msgIsMine(m) { return m.senderKey ? m.senderKey === currentOwnerKey() : !!m.sent; }
     function initialsOf(name) {
       return String(name || '?').split(' ').map(w => w[0]?.toUpperCase() || '').join('').slice(0, 2) || '??';
     }
@@ -3357,13 +3360,27 @@
         ...DB.admins.map(x => ({ ...x, role: 'admin' }))
       ];
     }
+    function studentTeacherIds(student) {
+      const ids = Array.isArray(student.teacherIds) ? student.teacherIds : [student.teacherId];
+      return ids.map(x => String(x)).filter(Boolean);
+    }
+    function isChatPeerAllowed(peer) {
+      if (!curUser || accountKey(peer.role, peer.id) === currentOwnerKey()) return false;
+      if (curUser.role === 'admin') return true;
+      if (curUser.role === 'teacher') {
+        return peer.role === 'admin' || (peer.role === 'student' && studentTeacherIds(peer).includes(String(curUser.id)));
+      }
+      if (curUser.role === 'student') {
+        return peer.role === 'admin' || (peer.role === 'teacher' && studentTeacherIds(curUser).includes(String(peer.id)));
+      }
+      return false;
+    }
     function syncCurrentChats() {
       const owner = currentOwnerKey();
       if (!owner) return;
-      allChatFriends = [
-        ...allChatFriends.filter(f => f.ownerKey !== owner),
-        ...chatFriends.map(f => ({ ...f, ownerKey: owner }))
-      ];
+      const map = new Map(allChatFriends.map(f => [chatThreadKey(f), { ...f, id: chatThreadKey(f), threadId: chatThreadKey(f) }]));
+      chatFriends.forEach(f => map.set(chatThreadKey(f), { ...f, id: chatThreadKey(f), threadId: chatThreadKey(f) }));
+      allChatFriends = [...map.values()];
       allChatGroups = [
         ...allChatGroups.filter(g => g.ownerKey !== owner),
         ...chatGroups.map(g => ({ ...g, ownerKey: owner }))
@@ -3376,26 +3393,32 @@
     function prepareChatsForCurrentUser() {
       const owner = currentOwnerKey();
       if (!owner) return;
-      const peers = allChatAccounts().filter(x => accountKey(x.role, x.id) !== owner);
-      chatFriends = allChatFriends.filter(f => f.ownerKey === owner);
-      peers.forEach((peer, index) => {
+      const peers = allChatAccounts().filter(isChatPeerAllowed);
+      chatFriends = peers.map((peer, index) => {
         const peerKey = accountKey(peer.role, peer.id);
-        if (chatFriends.some(f => f.peerKey === peerKey)) return;
-        chatFriends.push({
-          id: peerKey,
-          ownerKey: owner,
+        const threadId = directThreadId(owner, peerKey);
+        const thread = allChatFriends.find(f => chatThreadKey(f) === threadId) || {
+          id: threadId,
+          threadId,
+          members: [owner, peerKey],
+          peerKey,
+          blocked: false,
+          msgs: []
+        };
+        return {
+          ...thread,
+          id: threadId,
+          threadId,
+          members: thread.members || [owner, peerKey],
           peerKey,
           peerRole: peer.role,
           peerId: peer.id,
           name: peer.name,
           ini: initialsOf(peer.name),
-          c: index % COLORS.length,
-          online: peer.role !== 'student',
-          blocked: false,
-          msgs: []
-        });
+          c: Number.isFinite(Number(thread.c)) ? Number(thread.c) : index % COLORS.length,
+          online: peer.role !== 'student'
+        };
       });
-      chatFriends = chatFriends.filter(f => peers.some(p => accountKey(p.role, p.id) === f.peerKey));
       chatGroups = allChatGroups.filter(g => g.ownerKey === owner);
       pendingReqs = allPendingReqs.filter(r => r.ownerKey === owner);
       syncCurrentChats();
@@ -3826,12 +3849,12 @@
         d.className = 'cl-item' + (curChat?.type === 'group' && curChat?.id === g.id ? ' active' : '');
         d.onclick = () => openGrpChat(g);
         const last = g.msgs[g.msgs.length - 1];
-        const unread = g.msgs.filter(m => !m.sent && !m.read).length;
+        const unread = g.msgs.filter(m => !msgIsMine(m) && !m.read).length;
         d.innerHTML = `
       <div class="cl-av" style="background:#0a001a;color:var(--purple);border:1.5px solid rgba(191,95,255,.3);box-shadow:0 0 8px rgba(191,95,255,.2);font-size:15px;">👥</div>
       <div class="cl-info">
         <div class="cl-name" style="color:var(--purple);">${g.name}</div>
-        <div class="cl-last">${last ? (last.sent ? 'Sen: ' : '') + last.text : "Guruh yaratildi"}</div>
+        <div class="cl-last">${last ? (msgIsMine(last) ? 'Sen: ' : '') + (last.text || '[Media]') : "Guruh yaratildi"}</div>
       </div>
       ${unread ? `<div class="cl-unread">${unread}</div>` : `<div class="cl-time">${last?.time || 'Hozir'}</div>`}`;
         el.appendChild(d);
@@ -3842,7 +3865,7 @@
         d.className = 'cl-item' + (curChat?.type === 'friend' && curChat?.id === f.id ? ' active' : '');
         d.onclick = () => openFChat(f);
         const last = f.msgs[f.msgs.length - 1];
-        const unread = f.msgs.filter(m => !m.sent && !m.read).length;
+        const unread = f.msgs.filter(m => !msgIsMine(m) && !m.read).length;
         const [, fg] = getColor(f.c);
         d.innerHTML = `
       <div class="cl-av" style="${getAvatarStyle(f.c)}">
@@ -3851,7 +3874,7 @@
       </div>
       <div class="cl-info">
         <div class="cl-name">${f.name}${f.blocked ? ' 🚫' : ''}</div>
-        <div class="cl-last">${last ? (last.type === 'image' ? '📷 Rasm' : (last.type === 'audio' ? '🎵 Audio' : (last.sent ? 'Sen: ' : '') + last.text)) : "Xabar yo'q"}</div>
+        <div class="cl-last">${last ? (last.type === 'image' ? '📷 Rasm' : (last.type === 'audio' ? '🎵 Audio' : (msgIsMine(last) ? 'Sen: ' : '') + (last.text || ''))) : "Xabar yo'q"}</div>
       </div>
       ${unread ? `<div class="cl-unread">${unread}</div>` : `<div class="cl-time">${last?.time || ''}</div>`}`;
         el.appendChild(d);
@@ -3933,7 +3956,7 @@
     function openFChat(f) {
       curChat = { type: 'friend', id: f.id }; cancelReply(); closeSearchInChat();
       // Mark as read
-      f.msgs.forEach(m => { if (!m.sent) m.read = true; });
+      f.msgs.forEach(m => { if (!msgIsMine(m)) m.read = true; });
       const av = document.getElementById('cTbAv');
       const [bg, fg] = getColor(f.c);
       av.textContent = f.ini; av.style.background = bg; av.style.color = fg;
@@ -3946,7 +3969,7 @@
     }
     function openGrpChat(g) {
       curChat = { type: 'group', id: g.id }; cancelReply(); closeSearchInChat();
-      g.msgs.forEach(m => { if (!m.sent) m.read = true; });
+      g.msgs.forEach(m => { if (!msgIsMine(m)) m.read = true; });
       const av = document.getElementById('cTbAv');
       av.innerHTML = '<i class="fas fa-users" style="font-size:14px;"></i>';
       av.style.cssText = 'background:#0a001a;color:var(--purple);border:1.5px solid rgba(191,95,255,.4);font-size:14px;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;flex-shrink:0;';
@@ -3986,22 +4009,25 @@
     }
 
     function buildMsgEl(m, data) {
-      const gc = m.sent ? 'sent' : 'recv';
+      const mine = msgIsMine(m);
+      const gc = mine ? 'sent' : 'recv';
       const row = document.createElement('div');
       const isGroup = curChat?.type === 'group';
       const isTexnoAI = m.senderId === 'texno-ai';
       let senderName = '';
       if (isTexnoAI) {
         senderName = 'Texno AI';
-      } else if (isGroup && !m.sent && m.senderId) {
+      } else if (isGroup && !mine && m.senderId) {
         const f = chatFriends.find(x => x.id === m.senderId);
-        senderName = f ? f.name : 'Noma\'lum';
+        senderName = f ? f.name : (m.senderName || 'Noma\'lum');
+      } else if (!mine && m.senderName) {
+        senderName = m.senderName;
       }
 
       let inner = '';
       let mac = `
     <div class="mac">
-      ${m.sent ? `<button class="mac-b" onclick="delMsg('${m.id}')" title="O'chirish">🗑️</button>` : ''}
+      ${mine ? `<button class="mac-b" onclick="delMsg('${m.id}')" title="O'chirish">🗑️</button>` : ''}
       <button class="mac-b" onclick="replyMsg('${m.id}')" title="Javob">↩️</button>
       ${(m.type !== 'image' && m.type !== 'audio' && m.type !== 'sticker') ? `<button class="mac-b" onclick="cpMsg('${m.id}')" title="Nusxa">📋</button>` : ''}
       <button class="mac-b" onclick="openReact('${m.id}')" title="Reaksiya">😊</button>
@@ -4057,7 +4083,7 @@
       const data = getChatData(); if (!data) return;
       if (curChat.type === 'friend' && data.blocked) return;
       const inp = document.getElementById('chatIn'); const text = inp.value.trim(); if (!text) return;
-      const msg = { id: gId(), text, sent: true, time: nTime(), type: 'text', reactions: {} };
+      const msg = { id: gId(), text, sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'text', reactions: {} };
       if (replyTo) msg.rply = replyTo.text?.slice(0, 50) || '[Media]';
       data.msgs.push(msg); inp.value = ''; inp.style.height = 'auto'; cancelReply();
       renderMsgs(); renderCChats(); saveData();
@@ -4070,17 +4096,17 @@
     }
     async function askTexnoAI(prompt, data) {
       if (!prompt) {
-        data.msgs.push({ id: gId(), text: "Texno AI uchun savol yozing: /texno sayt uchun reja tuz", sent: false, time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' });
+        data.msgs.push({ id: gId(), text: "Texno AI uchun savol yozing: /texno sayt uchun reja tuz", sent: false, senderKey: 'texno-ai', senderName: 'Texno AI', time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' });
         renderMsgs(); renderCChats(); saveData();
         return;
       }
-      const aiMsg = { id: gId(), text: 'Texno AI yozmoqda...', sent: false, time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' };
+      const aiMsg = { id: gId(), text: 'Texno AI yozmoqda...', sent: false, senderKey: 'texno-ai', senderName: 'Texno AI', time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' };
       data.msgs.push(aiMsg); renderMsgs(); renderCChats();
       try {
         const history = data.msgs
           .filter(m => m.text && !m.deleted)
           .slice(-12)
-          .map(m => ({ role: m.sent ? 'user' : 'assistant', content: m.text }));
+          .map(m => ({ role: msgIsMine(m) ? 'user' : 'assistant', content: m.text }));
         const res = await fetch('/api/ai/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -4113,13 +4139,13 @@
         console.warn('Media serverga yuklanmadi, vaqtinchalik preview ishlatiladi', e);
         showToast('⚠️ Media serverga yuklanmadi');
       }
-      data.msgs.push({ id: gId(), type, src: url, sent: true, time: nTime(), reactions: {} });
+      data.msgs.push({ id: gId(), type, src: url, sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), reactions: {} });
       inp.value = ''; renderMsgs(); renderCChats(); saveData();
       showToast(type === 'image' ? '📷 Rasm yuborildi' : '🎵 Audio yuborildi');
     }
     function delMsg(id) {
       const data = getChatData(); if (!data) return;
-      const m = data.msgs.find(x => x.id === id); if (m && m.sent) m.deleted = true;
+      const m = data.msgs.find(x => x.id === id); if (m && msgIsMine(m)) m.deleted = true;
       renderMsgs(); renderCChats(); saveData();
     }
     function replyMsg(id) {
@@ -4188,14 +4214,14 @@
     }
     function sendEmoji(e) {
       const data = getChatData(); if (!data) return;
-      data.msgs.push({ id: gId(), text: e, sent: true, time: nTime(), type: 'text', reactions: {} });
+      data.msgs.push({ id: gId(), text: e, sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'text', reactions: {} });
       renderMsgs(); renderCChats(); saveData();
       document.getElementById('emojiPick').classList.remove('open');
       document.getElementById('eBtnTog').classList.remove('active');
     }
     function sendStk(s) {
       const data = getChatData(); if (!data) return;
-      data.msgs.push({ id: gId(), text: s, sent: true, time: nTime(), type: 'sticker', reactions: {} });
+      data.msgs.push({ id: gId(), text: s, sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'sticker', reactions: {} });
       renderMsgs(); renderCChats(); saveData();
       document.getElementById('stkPick').classList.remove('open');
       document.getElementById('sBtnTog').classList.remove('active');
@@ -4277,7 +4303,7 @@
       if (selGrpMems.length < 1) { showToast("❗ Kamida 1 a'zo tanlang"); return; }
       const g = {
         id: 'group:' + Date.now(), ownerKey: currentOwnerKey(), name, members: [...selGrpMems], msgs: [
-          { id: gId(), text: name + ' guruhi yaratildi! 🎉', sent: false, time: nTime(), type: 'text', reactions: {} }
+          { id: gId(), text: name + ' guruhi yaratildi! 🎉', sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'text', reactions: {} }
         ]
       };
       chatGroups.push(g); closeMod('groupModal');
