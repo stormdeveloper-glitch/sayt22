@@ -287,7 +287,7 @@ def request_telegram_link():
         ok, err = send_bot_message(telegram_id, text, inline_markup)
         if ok:
             reply_markup = {
-                "keyboard": [[{"text": "🟢 Tasdiqlash"}, {"text": "🔴 Rad etish"}]],
+                "keyboard": [[{"text": "Tasdiqlash", "style": "success"}, {"text": "Rad etish", "style": "danger"}]],
                 "resize_keyboard": True,
                 "one_time_keyboard": True,
             }

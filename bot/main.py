@@ -5,6 +5,7 @@ import threading
 from html import escape
 
 from aiogram import Bot, Dispatcher
+from aiogram.enums import ButtonStyle
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, Message, ReplyKeyboardMarkup
 
@@ -213,12 +214,12 @@ def is_super_admin(data, telegram_id):
 
 def main_keyboard(data, telegram_id):
     rows = [
-        [KeyboardButton(text="🔵 Profil"), KeyboardButton(text="🔵 Reyting")],
-        [KeyboardButton(text="🔵 Telegram ID"), KeyboardButton(text="🟢 Tanga berish")],
-        [KeyboardButton(text="🔴 Tanga ayirish")],
+        [KeyboardButton(text="Profil", style=ButtonStyle.PRIMARY), KeyboardButton(text="Reyting", style=ButtonStyle.PRIMARY)],
+        [KeyboardButton(text="Telegram ID", style=ButtonStyle.PRIMARY), KeyboardButton(text="Tanga berish", style=ButtonStyle.SUCCESS)],
+        [KeyboardButton(text="Tanga ayirish", style=ButtonStyle.DANGER)],
     ]
     if is_super_admin(data, telegram_id):
-        rows.insert(0, [KeyboardButton(text="🔵 Boshqaruv")])
+        rows.insert(0, [KeyboardButton(text="Boshqaruv", style=ButtonStyle.PRIMARY)])
     return ReplyKeyboardMarkup(keyboard=rows, resize_keyboard=True, input_field_placeholder="Tugmalardan tanlang")
 
 
@@ -457,10 +458,10 @@ async def cb_telegram_link(query: CallbackQuery):
     await query.message.answer(msg, reply_markup=main_keyboard(data, query.from_user.id))
 
 
-@dp.message(lambda message: (message.text or "").strip() in {"🟢 Tasdiqlash", "🔴 Rad etish", "✅ Tasdiqlash", "❌ Rad etish"})
+@dp.message(lambda message: (message.text or "").strip() in {"Tasdiqlash", "Rad etish", "🟢 Tasdiqlash", "🔴 Rad etish", "✅ Tasdiqlash", "❌ Rad etish"})
 async def reply_telegram_link(message: Message):
     save_profile(message)
-    approve = message.text.strip().startswith(("🟢", "✅"))
+    approve = message.text.strip() == "Tasdiqlash" or message.text.strip().startswith(("🟢", "✅"))
     _, msg = finish_pending_link(message.chat.id, approve=approve)
     data = read_data()
     await message.answer(msg, reply_markup=main_keyboard(data, message.chat.id))
@@ -579,23 +580,23 @@ async def cb_admin_panel(query: CallbackQuery):
     await query.message.answer(text, parse_mode="HTML", reply_markup=admin_panel_keyboard())
 
 
-@dp.message(lambda message: (message.text or "").strip() in {"🏠 Menu", "👤 Profil", "🏆 Reyting", "🆔 Telegram ID", "🛡️ Boshqaruv", "➕ Tanga berish", "➖ Tanga ayirish", "🔵 Profil", "🔵 Reyting", "🔵 Telegram ID", "🔵 Boshqaruv", "🟢 Tanga berish", "🔴 Tanga ayirish"})
+@dp.message(lambda message: (message.text or "").strip() in {"Menu", "Profil", "Reyting", "Telegram ID", "Boshqaruv", "Tanga berish", "Tanga ayirish", "🏠 Menu", "👤 Profil", "🏆 Reyting", "🆔 Telegram ID", "🛡️ Boshqaruv", "➕ Tanga berish", "➖ Tanga ayirish", "🔵 Profil", "🔵 Reyting", "🔵 Telegram ID", "🔵 Boshqaruv", "🟢 Tanga berish", "🔴 Tanga ayirish"})
 async def button_router(message: Message):
     text = (message.text or "").strip()
     data = save_profile(message)
     if text == "🏠 Menu":
         await cmd_start(message)
         return
-    if text in {"👤 Profil", "🔵 Profil"}:
+    if text in {"Profil", "👤 Profil", "🔵 Profil"}:
         await cmd_me(message)
         return
-    if text in {"🏆 Reyting", "🔵 Reyting"}:
+    if text in {"Reyting", "🏆 Reyting", "🔵 Reyting"}:
         await cmd_rating(message)
         return
-    if text in {"🆔 Telegram ID", "🔵 Telegram ID"}:
+    if text in {"Telegram ID", "🆔 Telegram ID", "🔵 Telegram ID"}:
         await cmd_id(message)
         return
-    if text in {"🛡️ Boshqaruv", "🔵 Boshqaruv"}:
+    if text in {"Boshqaruv", "🛡️ Boshqaruv", "🔵 Boshqaruv"}:
         if not is_super_admin(data, message.chat.id):
             await message.answer("Bu panel faqat super admin uchun.", reply_markup=main_keyboard(data, message.chat.id))
             return
@@ -610,7 +611,7 @@ async def button_router(message: Message):
             reply_markup=admin_panel_keyboard(),
         )
         return
-    sign = 1 if text.startswith(("➕", "🟢")) else -1
+    sign = 1 if text == "Tanga berish" or text.startswith(("➕", "🟢")) else -1
     if not (linked_teachers(data, message.chat.id) or linked_admins(data, message.chat.id)):
         await message.answer("Tanga boshqaruvi faqat o'qituvchi/admin uchun.", reply_markup=main_keyboard(data, message.chat.id))
         return
