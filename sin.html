@@ -1,0 +1,2341 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1a2235">
+    <meta name="description" content="Teacher_texno - Valiyev Omadbek IT darslari">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Teacher_texno">
+    <title>Teacher_texno | Valiyev Omadbek</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/jpg" href="./teacher.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+
+    <style>
+        /* ══════════════════════════════════════════════
+       TEZLASHTIRILGAN LOADING — CSS animatsiya bilan
+    ══════════════════════════════════════════════ */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(135deg, #0d1526 0%, #1a2235 50%, #0d1526 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .load-hex {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #c8a020;
+            box-shadow: 0 0 30px rgba(200, 160, 32, .4);
+            animation: pulse-glow 1.5s ease-in-out infinite alternate;
+            margin-bottom: 18px;
+        }
+
+        @keyframes pulse-glow {
+            from {
+                box-shadow: 0 0 20px rgba(200, 160, 32, .3);
+            }
+
+            to {
+                box-shadow: 0 0 50px rgba(200, 160, 32, .7);
+            }
+        }
+
+        .load-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #e8c84a;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .load-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .5);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .load-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .load-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2b7de9, #c8a020);
+            border-radius: 2px;
+            width: 0%;
+            animation: fast-load 1.8s cubic-bezier(.4, 0, .2, 1) forwards;
+        }
+
+        @keyframes fast-load {
+            0% {
+                width: 0%;
+            }
+
+            30% {
+                width: 40%;
+            }
+
+            60% {
+                width: 75%;
+            }
+
+            85% {
+                width: 92%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* ══════════════════════════════════════════════
+       DROPDOWN MENU
+    ══════════════════════════════════════════════ */
+        .dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .12);
+            color: var(--text, #e8eaf0);
+            font-size: 13px;
+            font-weight: 500;
+            transition: background .2s, border-color .2s;
+            white-space: nowrap;
+        }
+
+        .dropdown-toggle:hover {
+            background: rgba(43, 125, 233, .15);
+            border-color: rgba(43, 125, 233, .4);
+        }
+
+        .dropdown-toggle .dd-arrow {
+            font-size: 10px;
+            transition: transform .25s;
+            margin-left: 2px;
+        }
+
+        .dropdown-toggle.open .dd-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            min-width: 220px;
+            z-index: 999;
+            background: #1e2d45;
+            border: 1px solid rgba(200, 160, 32, .25);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+            opacity: 0;
+            transform: translateY(-8px) scale(.97);
+            pointer-events: none;
+            transition: opacity .22s ease, transform .22s ease;
+        }
+
+        .dropdown-menu.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        .dd-header {
+            padding: 10px 14px 6px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, .35);
+            text-transform: uppercase;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            margin-bottom: 4px;
+        }
+
+        .dd-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: rgba(255, 255, 255, .8);
+            transition: background .15s, color .15s;
+        }
+
+        .dd-item:hover {
+            background: rgba(43, 125, 233, .18);
+            color: #fff;
+        }
+
+        .dd-item i {
+            width: 16px;
+            text-align: center;
+            opacity: .7;
+        }
+
+        .dd-item.danger {
+            color: #ff6b6b;
+        }
+
+        .dd-item.danger:hover {
+            background: rgba(255, 60, 60, .12);
+            color: #ff8080;
+        }
+
+        .dd-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, .06);
+            margin: 4px 0;
+        }
+
+        .dd-item .dd-badge {
+            margin-left: auto;
+            background: #c8a020;
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* ══════════════════════════════════════════════
+       TOPBAR YAXSHILASH
+    ══════════════════════════════════════════════ */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: rgba(26, 34, 53, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(200, 160, 32, .2);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, .3);
+        }
+
+        .topbar .tb-title {
+            flex: 1;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #e8eaf0;
+        }
+
+        .topbar .tb-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ══════════════════════════════════════════════
+       HAMBURGER BUTTON
+    ══════════════════════════════════════════════ */
+        #sidebarToggle {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: #e8eaf0;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s, transform .2s;
+        }
+
+        #sidebarToggle:hover {
+            background: rgba(43, 125, 233, .2);
+            transform: scale(1.05);
+        }
+
+        /* ══════════════════════════════════════════════
+       NOTIFICATION BELL
+    ══════════════════════════════════════════════ */
+        .notif-btn {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: #e8eaf0;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s;
+        }
+
+        .notif-btn:hover {
+            background: rgba(43, 125, 233, .2);
+        }
+
+        .notif-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e74c3c;
+            border: 2px solid #1a2235;
+            display: none;
+        }
+
+        .notif-dot.active {
+            display: block;
+        }
+
+        /* ══════════════════════════════════════════════
+       SIDEBAR YAXSHILASH
+    ══════════════════════════════════════════════ */
+        #sidebar {
+            transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .nav-item {
+            transition: background .15s, padding-left .15s, color .15s;
+            border-radius: 8px;
+            margin: 1px 8px;
+        }
+
+        .nav-item:hover {
+            background: rgba(43, 125, 233, .15);
+            padding-left: 20px;
+        }
+
+        .nav-item.active {
+            background: rgba(43, 125, 233, .25);
+            border-left: 3px solid #2b7de9;
+        }
+
+        /* ══════════════════════════════════════════════
+       WEB KIRGAN QURILMA — RESPONSIVE
+    ══════════════════════════════════════════════ */
+        @media (min-width: 900px) {
+            #appShell {
+                display: flex !important;
+            }
+
+            #sidebar {
+                position: relative !important;
+                transform: none !important;
+                width: 260px;
+            }
+
+            #sbBg {
+                display: none !important;
+            }
+
+            #sidebarToggle {
+                display: none;
+            }
+
+            #mainContent {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 899px) {
+            #sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 200;
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #sbBg {
+                display: block;
+            }
+        }
+
+        /* ══════════════════════════════════════════════
+       PAGE KIRISH ANIMATSIYASI
+    ══════════════════════════════════════════════ */
+        .page.active {
+            animation: page-in .25s ease forwards;
+        }
+
+        @keyframes page-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ══════════════════════════════════════════════
+       INSTALL BANNER
+    ══════════════════════════════════════════════ */
+        #installBanner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: #1e2d45;
+            border: 1px solid rgba(200, 160, 32, .35);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
+            z-index: 500;
+            transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
+            min-width: 280px;
+        }
+
+        #installBanner.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .ib-icon {
+            font-size: 24px;
+        }
+
+        .ib-text {
+            flex: 1;
+        }
+
+        .ib-text strong {
+            display: block;
+            font-size: 13px;
+            color: #e8eaf0;
+        }
+
+        .ib-text span {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .5);
+        }
+
+        /* ══════════════════════════════════════════════
+       USER PROFILE HEADER (Sidebar)
+    ══════════════════════════════════════════════ */
+        .sb-user {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, .04);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .u-av {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2b7de9, #1a5fbc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+            flex-shrink: 0;
+            border: 2px solid rgba(200, 160, 32, .4);
+        }
+
+        .u-nm {
+            font-weight: 600;
+            font-size: 14px;
+            color: #e8eaf0;
+        }
+
+        .u-role {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .45);
+            margin-top: 2px;
+        }
+
+        /* ══════════════════════════════════════════════
+       STAT CARDS YAXSHILASH
+    ══════════════════════════════════════════════ */
+        .sc {
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .sc:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+        }
+
+        /* ══════════════════════════════════════════════
+       TOAST NOTIFICATION
+    ══════════════════════════════════════════════ */
+        #toastContainer {
+            position: fixed;
+            top: 70px;
+            right: 16px;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 200px;
+            max-width: 320px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+            animation: toast-in .3s ease forwards;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.success {
+            background: #1a3d2b;
+            border: 1px solid #27ae60;
+            color: #6fcf97;
+        }
+
+        .toast.error {
+            background: #3d1a1a;
+            border: 1px solid #e74c3c;
+            color: #ff8080;
+        }
+
+        .toast.info {
+            background: #1a2d3d;
+            border: 1px solid #2b7de9;
+            color: #80bdff;
+        }
+
+        @keyframes toast-in {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+
+    <script>
+        /* ── LOADING: CSS animatsiya hisobiga tez, JS faqat yashirish ── */
+        (function () {
+            window.hideLoader = function () {
+                const overlay = document.getElementById('loadingOverlay');
+                if (!overlay) return;
+                overlay.classList.add('hidden');
+                setTimeout(() => { overlay.style.display = 'none'; }, 450);
+                const loginScreen = document.getElementById('loginScreen');
+                if (loginScreen) {
+                    loginScreen.style.display = 'flex';
+                    loginScreen.style.opacity = '0';
+                    requestAnimationFrame(() => {
+                        loginScreen.style.transition = 'opacity 0.35s ease';
+                        loginScreen.style.opacity = '1';
+                    });
+                }
+            };
+            /* 2.5 soniya maksimum — loading qotib qolmaydi */
+            setTimeout(window.hideLoader, 2500);
+        })();
+    </script>
+</head>
+
+<body>
+
+    <!-- ── LOADING ── -->
+    <div id="loadingOverlay">
+        <div class="load-hex">
+            <img src="teacher.jpg" alt="Logo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+        </div>
+        <div class="load-title">Teacher_texno</div>
+        <div class="load-sub">Valiyev Omadbek · IT Instructor</div>
+        <div class="load-bar">
+            <div class="load-fill"></div>
+        </div>
+    </div>
+
+    <!-- ── TOAST CONTAINER ── -->
+    <div id="toastContainer"></div>
+
+    <!-- ── INSTALL BANNER ── -->
+    <div id="installBanner">
+        <div class="ib-icon">📱</div>
+        <div class="ib-text">
+            <strong>Ilovani o'rnatish</strong>
+            <span>Android uchun Home Screen ga</span>
+        </div>
+        <button class="btn btn-gold btn-sm" id="installBtn">O'rnatish</button>
+        <button class="btn btn-outline btn-sm" id="installDismiss">✕</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+       LOGIN SCREEN
+  ══════════════════════════════════════════════ -->
+    <div id="loginScreen" style="display:none">
+        <div class="lg-bg">
+            <div class="lg-pattern"></div>
+            <div class="lg-glow"></div>
+        </div>
+        <div class="lg-card">
+            <div class="lg-top">
+                <img class="lg-hex" src="teacher.jpg" alt="Logo" style="object-fit:cover;border-radius:50%;">
+                <div class="lg-title">Teacher_texno</div>
+                <div class="lg-sub">IT Instructor · Valiyev Omadbek</div>
+            </div>
+            <div class="lg-body">
+                <div class="tab-row">
+                    <button class="tab-btn active" id="tabSBtn" onclick="swTab('student')">Talaba</button>
+                    <button class="tab-btn" id="tabTBtn" onclick="swTab('teacher')">O'qituvchi</button>
+                    <button class="tab-btn" id="tabABtn" onclick="swTab('admin')">Admin</button>
+                </div>
+
+                <!-- Talaba login -->
+                <div id="sLoginForm">
+                    <div class="form-group">
+                        <label>Ism familiyangizni tanlang</label>
+                        <select id="sLoginSel" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Parol</label>
+                        <div class="pwd-wrapper">
+                            <input type="password" id="sPwdIn" class="form-control" placeholder="Parolni kiriting">
+                            <i class="fas fa-eye pwd-toggle" onclick="togglePwd('sPwdIn',this)"></i>
+                        </div>
+                    </div>
+                    <button class="btn btn-blue btn-block" onclick="doSLogin()">
+                        <i class="fas fa-sign-in-alt"></i> Kirish
+                    </button>
+                    <div style="margin-top:10px;text-align:center;">
+                        <span style="font-size:12px;color:rgba(255,255,255,.4);">Parolni unutdingizmi?</span>
+                        <button class="btn btn-outline btn-xs" style="margin-left:6px;"
+                            onclick="openModal('fpModal')">Tiklash</button>
+                    </div>
+                </div>
+
+                <!-- O'qituvchi login -->
+                <div id="tLoginForm" style="display:none">
+                    <div class="form-group">
+                        <label>O'qituvchi</label>
+                        <select id="tLoginSel" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>O'qituvchi paroli</label>
+                        <div class="pwd-wrapper">
+                            <input type="password" id="tPwdIn" class="form-control" placeholder="Maxfiy parol">
+                            <i class="fas fa-eye pwd-toggle" onclick="togglePwd('tPwdIn',this)"></i>
+                        </div>
+                    </div>
+                    <button class="btn btn-gold btn-block" onclick="doTLogin()">
+                        <i class="fas fa-chalkboard-teacher"></i> Kirish
+                    </button>
+                    <div style="margin-top:10px;text-align:center;">
+                        <button class="btn btn-outline btn-xs" onclick="openModal('ftModal')">Parolni tiklash</button>
+                    </div>
+                </div>
+
+                <!-- Admin login -->
+                <div id="aLoginForm" style="display:none">
+                    <div class="form-group">
+                        <label>Kirish turi</label>
+                        <select id="aLoginType" class="form-control" onchange="toggleAdminLoginType()">
+                            <option value="super">Super Admin</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="aAdminSelWrap" style="display:none">
+                        <label>Admin</label>
+                        <select id="aAdminSel" class="form-control"></select>
+                    </div>
+                    <div class="form-group" id="aCodeWrap" style="display:none">
+                        <label>Maxsus kod</label>
+                        <input type="text" id="aCodeIn" class="form-control" placeholder="Admin maxsus kod">
+                    </div>
+                    <div class="form-group">
+                        <label>Parol</label>
+                        <div class="pwd-wrapper">
+                            <input type="password" id="aPwdIn" class="form-control" placeholder="Admin parol">
+                            <i class="fas fa-eye pwd-toggle" onclick="togglePwd('aPwdIn',this)"></i>
+                        </div>
+                    </div>
+                    <button class="btn btn-gold btn-block" onclick="doALogin()">
+                        <i class="fas fa-user-shield"></i> Kirish
+                    </button>
+                    <div style="margin-top:10px;text-align:center;">
+                        <button class="btn btn-outline btn-xs" onclick="openModal('faModal')">Parolni tiklash</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+       MODALS (o'zgarmagan)
+  ══════════════════════════════════════════════ -->
+    <div class="modal" id="receiptModal" style="display:none;">
+        <div class="modal-content"
+            style="max-width:350px;font-family:'Courier New',Courier,monospace;color:#000;background:#fff;padding:20px;box-shadow:0 0 20px rgba(0,0,0,.5);">
+            <div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:10px;">
+                <h3 style="margin:0;">TEACHER TEXNO</h3>
+                <p style="font-size:12px;margin:5px 0;">O'quv markazi to'lov cheki</p>
+            </div>
+            <div id="receiptContent" style="font-size:13px;line-height:1.6;"></div>
+            <div style="text-align:center;border-top:1px dashed #000;padding-top:10px;margin-top:10px;">
+                <p style="font-size:12px;margin:0;">Xaridingiz uchun rahmat!</p>
+                <div id="receiptQr" style="margin-top:10px;font-size:40px;"><i class="fas fa-qrcode"></i></div>
+            </div>
+            <div class="modal-foot" style="background:none;border:none;padding:10px 0 0 0;">
+                <button class="btn btn-blue btn-sm btn-block" onclick="window.print()">Chop etish</button>
+                <button class="btn btn-outline btn-sm btn-block" onclick="closeModal('receiptModal')"
+                    style="color:#000;border-color:#000;">Yopish</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="cpModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3><i class="fas fa-key" style="color:var(--gold);margin-right:8px;"></i>Parolni o'zgartirish</h3>
+                <button class="modal-close" onclick="closeModal('cpModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>Joriy parol</label><input type="password" id="oldP" class="form-control"
+                        placeholder="Eski parol"></div>
+                <div class="form-group"><label>Yangi parol</label><input type="password" id="newP" class="form-control"
+                        placeholder="Yangi parol"></div>
+                <div class="form-group"><label>Takrorlang</label><input type="password" id="cnfP" class="form-control"
+                        placeholder="Qayta kiriting"></div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-outline btn-sm" onclick="closeModal('cpModal')">Bekor</button>
+                <button class="btn btn-blue btn-sm" onclick="doChgPwd()"><i class="fas fa-save"></i> Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="fpModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3><i class="fas fa-unlock-alt" style="color:var(--gold);margin-right:8px;"></i>Parolni tiklash</h3>
+                <button class="modal-close" onclick="closeModal('fpModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <i class="fab fa-telegram" style="font-size:48px;color:#0088cc;margin-bottom:15px;"></i>
+                <p style="font-size:14px;margin-bottom:10px;">Parolingizni esdan chiqargan bo'lsangiz, ID raqamingizni
+                    bizning Telegram botimizga yuboring.</p>
+                <div class="form-group" style="text-align:left;">
+                    <label>ID raqamingiz</label>
+                    <input type="number" id="fpStudentId" class="form-control" placeholder="Masalan: 102">
+                </div>
+                <div
+                    style="background:rgba(43,125,233,.1);padding:10px;border-radius:8px;font-size:12px;color:var(--text-muted);margin-bottom:20px;">
+                    Botga ulanganda sizga parolingiz avtomatik yuboriladi.
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-outline btn-sm" onclick="closeModal('fpModal')">Bekor</button>
+                <button class="btn btn-blue btn-sm" onclick="contactBotForReset()"><i class="fab fa-telegram-plane"></i>
+                    Botga o'tish</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal-box" style="max-width:500px;">
+            <div class="modal-head">
+                <h3><i class="fas fa-book" style="color:var(--gold);margin-right:8px;"></i> Tizim qo'llanmasi</h3>
+                <button class="modal-close" onclick="closeModal('helpModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h4 style="color:var(--blue-light);margin-bottom:10px;"><i class="fas fa-globe"></i> Veb-sayt haqida
+                    </h4>
+                    <ul style="padding-left:20px;font-size:13px;line-height:1.6;">
+                        <li><b>Tangalar:</b> Darslardagi faollik va topshiriqlar uchun beriladi.</li>
+                        <li><b>Olmoslar:</b> Testlardan o'tish orqali to'planadi.</li>
+                        <li><b>Market:</b> To'plangan olmoslarni profil effektlariga almashtirish mumkin.</li>
+                        <li><b>Reyting:</b> Markazdagi barcha talabalar orasida o'z o'rningizni ko'ring.</li>
+                    </ul>
+                </div>
+                <hr style="border:0;border-top:1px solid var(--border);margin:15px 0;">
+                <div class="help-section">
+                    <h4 style="color:var(--green);margin-bottom:10px;"><i class="fab fa-telegram"></i> Telegram Bot
+                        (@Teacher_texno_bot)</h4>
+                    <ul style="padding-left:20px;font-size:13px;line-height:1.6;">
+                        <li><b>Parolni tiklash:</b> /start reset_ID buyrug'i orqali parolingizni oling.</li>
+                        <li><b>Bildirishnomalar:</b> Yangi darslar va xabarlar haqida ma'lumot oling.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-blue btn-sm" onclick="closeModal('helpModal')">Tushunarli</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="ftModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3><i class="fas fa-chalkboard-teacher" style="color:var(--gold);margin-right:8px;"></i>O'qituvchi
+                    parolni tiklash</h3>
+                <button class="modal-close" onclick="closeModal('ftModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>O'qituvchi</label><select id="ftTeacherSel"
+                        class="form-control"></select></div>
+                <div class="form-group"><label>Maxsus tiklash kodi (resetCode)</label><input type="text" id="ftCodeIn"
+                        class="form-control" placeholder="Masalan: TCH-XXXXXX"></div>
+                <div class="form-group"><label>Yangi parol</label><input type="password" id="ftNewIn"
+                        class="form-control" placeholder="Kamida 8 belgi"></div>
+                <div class="form-group"><label>Yangi parol (takror)</label><input type="password" id="ftCnfIn"
+                        class="form-control" placeholder="Qayta kiriting"></div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-outline btn-sm" onclick="closeModal('ftModal')">Bekor</button>
+                <button class="btn btn-gold btn-sm" onclick="doTeacherForgotReset()"><i class="fas fa-save"></i>
+                    Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="faModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3><i class="fas fa-user-shield" style="color:var(--gold);margin-right:8px;"></i>Admin parolni tiklash
+                </h3>
+                <button class="modal-close" onclick="closeModal('faModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>Kirish turi</label>
+                    <select id="faTypeSel" class="form-control" onchange="toggleAdminForgotType()">
+                        <option value="super">Super Admin</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group" id="faAdminSelWrap" style="display:none"><label>Admin</label><select
+                        id="faAdminSel" class="form-control"></select></div>
+                <div class="form-group"><label>Maxsus kod (adminCode)</label><input type="text" id="faCodeIn"
+                        class="form-control" placeholder="Masalan: ADM-XXXXXX"></div>
+                <div class="form-group"><label>Yangi parol</label><input type="password" id="faNewIn"
+                        class="form-control" placeholder="Kamida 8 belgi"></div>
+                <div class="form-group"><label>Yangi parol (takror)</label><input type="password" id="faCnfIn"
+                        class="form-control" placeholder="Qayta kiriting"></div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-outline btn-sm" onclick="closeModal('faModal')">Bekor</button>
+                <button class="btn btn-gold btn-sm" onclick="doAdminForgotReset()"><i class="fas fa-save"></i>
+                    Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3><i class="fas fa-user-plus" style="color:var(--gold);margin-right:8px;"></i> Yangi talaba ro'yxatdan
+                    o'tishi</h3>
+                <button class="modal-close" onclick="closeModal('registerModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>O'qituvchilar</label><select id="regTeacherSel" class="form-control"
+                        multiple onchange="updRegGroupOptions()"></select></div>
+                <div class="form-group"><label>Guruh</label><select id="regGroup" class="form-control"></select></div>
+                <div class="form-group"><label>Ism familiya</label><input type="text" id="regName" class="form-control"
+                        placeholder="Ism familiya"></div>
+                <div class="form-group"><label>Telefon raqam *</label><input type="tel" id="regPhone"
+                        class="form-control" placeholder="+998901234567"></div>
+                <div class="form-group"><label>To'lov miqdori (tanga)</label><input type="number" id="regPayAmount"
+                        class="form-control" value="15"></div>
+                <div class="form-group"><label>To'lov turi</label>
+                    <select id="regPayType" class="form-control">
+                        <option value="naqd">Naqd</option>
+                        <option value="plastik">Plastik</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-outline btn-sm" onclick="closeModal('registerModal')">Bekor</button>
+                <button class="btn btn-blue btn-sm" onclick="registerNewStudent()"><i class="fas fa-save"></i>
+                    Ro'yxatdan o'tkazish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+       APP SHELL
+  ══════════════════════════════════════════════ -->
+    <div id="appShell" style="display:none">
+        <div id="sbBg" onclick="closeSB()"></div>
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
+            <div class="sb-brand">
+                <div class="sb-brand-row">
+                    <img class="sb-hex" src="teacher.jpg" alt="Logo" style="object-fit:cover;border-radius:50%;">
+                    <div class="sb-txt">
+                        <h2 style="font-size:16px;">IT o'qituvchisi</h2>
+                        <span>Valiyev Omadbek</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sb-user">
+                <div class="u-av" id="sbAv">?</div>
+                <div>
+                    <div class="u-nm" id="sbNm">-</div>
+                    <div class="u-role" id="sbRl">-</div>
+                    <div id="sbIdDisplay" style="font-size:10px;color:var(--gold-mid);margin-top:2px;display:none;">
+                        ID: <span id="sbIdVal"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Talaba navigatsiya -->
+            <nav class="app-nav" id="sNav">
+                <div class="nav-sec">Mening sahifam</div>
+                <div class="nav-item active" onclick="showPage('dpg',this)"><i class="fas fa-th-large"></i> Bosh sahifa
+                </div>
+                <div class="nav-item" onclick="showPage('rpg',this)"><i class="fas fa-trophy"></i> Reyting</div>
+                <div class="nav-item" onclick="showPage('hpg',this)"><i class="fas fa-history"></i> Faollik tarixi</div>
+                <div class="nav-item" onclick="showPage('msgpg',this)">
+                    <i class="fas fa-envelope"></i> Xabarlar
+                    <span id="sNavMsgBadge" class="badge-notif" style="display:none;">0</span>
+                </div>
+                <div class="nav-item" onclick="showPage('marketpg',this)"><i class="fas fa-shopping-cart"></i> Market
+                </div>
+                <div class="nav-item" onclick="showPage('testspg',this)"><i class="fas fa-file-alt"></i> Testlar</div>
+                <div class="nav-item" onclick="openModal('helpModal')"><i class="fas fa-question-circle"></i> Qo'llanma
+                </div>
+                <div class="nav-sec">Profil</div>
+                <div class="nav-item" onclick="showPage('ppg',this)"><i class="fas fa-user-circle"></i> Profilim</div>
+                <div class="nav-item" onclick="showPage('stutpg',this)"><i class="fas fa-chalkboard-teacher"></i>
+                    O'qituvchilarim</div>
+                <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+            </nav>
+
+            <!-- O'qituvchi navigatsiya -->
+            <nav class="app-nav" id="tNav" style="display:none">
+                <div class="nav-sec">Asosiy</div>
+                <div class="nav-item active" onclick="showPage('adpg',this)"><i class="fas fa-chart-bar"></i> Statistika
+                </div>
+                <div class="nav-item" onclick="showPage('stpg',this)"><i class="fas fa-users"></i> Talabalar</div>
+                <div class="nav-item" onclick="showPage('cpg',this)">
+                    <i class="fas fa-comments"></i> Chat
+                    <span id="tNavMsgBadge" class="badge-notif" style="display:none;">0</span>
+                </div>
+                <div class="nav-item" onclick="showPage('grppg',this)"><i class="fas fa-layer-group"></i> Guruhlar</div>
+                <div class="nav-item" onclick="showPage('msgpg',this)">
+                    <i class="fas fa-envelope"></i> Xabarlar
+                    <span id="tNavMsgBadge2" class="badge-notif" style="display:none;">0</span>
+                </div>
+                <div class="nav-item" onclick="showPage('testmgrpg',this)"><i class="fas fa-vial"></i> Test boshqaruvi
+                </div>
+                <div class="nav-sec">Moliyaviy & Tangalar</div>
+                <div class="nav-item" onclick="showPage('paypg',this)"><i class="fas fa-money-bill-wave"></i> To'lov
+                    hisoboti</div>
+                <div class="nav-item" onclick="showPage('cpg',this)"><i class="fas fa-coins"></i> Tanga berish</div>
+                <div class="nav-sec">Profil & Yordam</div>
+                <div class="nav-item" onclick="showPage('tapg',this)"><i class="fas fa-id-card"></i> Profil va
+                    Xavfsizlik</div>
+                <div class="nav-item" onclick="showPage('monitoringpg',this)"><i class="fas fa-eye"></i> Xabarlar
+                    nazorati</div>
+                <div class="nav-item" onclick="openModal('helpModal')"><i class="fas fa-question-circle"></i> Yordam
+                </div>
+                <div class="nav-item" id="tNavTeachers" style="display:none" onclick="showPage('tpg',this)">
+                    <i class="fas fa-chalkboard-teacher"></i> O'qituvchilar
+                </div>
+                <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+            </nav>
+
+            <div class="sb-footer">
+                <div style="font-size:10px;color:rgba(255,255,255,.25);text-align:center;padding:8px;">
+                    Teacher_texno v2.0 · 2025
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── MAIN CONTENT ── -->
+        <div id="mainContent">
+
+            <!-- TOPBAR with DROPDOWN -->
+            <div class="topbar">
+                <button id="sidebarToggle" onclick="toggleSB()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="tb-title" id="tbTitle">Bosh sahifa</div>
+
+                <div class="tb-right" id="tbRight">
+                    <!-- Notifikatsiya tugmasi -->
+                    <button class="notif-btn" onclick="toggleNotifDropdown()" id="notifBtn" title="Bildirishnomalar">
+                        <i class="fas fa-bell"></i>
+                        <div class="notif-dot" id="notifDot"></div>
+                    </button>
+
+                    <!-- Tangalar & Olmoslar -->
+                    <div class="top-badge tb-gold" id="tbCoins">🪙 0</div>
+                    <div class="top-badge tb-blue" id="tbDiamonds"
+                        style="background:rgba(43,233,233,.12);border-color:rgba(43,233,233,.3);color:#80ffff;">💎 0
+                    </div>
+
+                    <!-- DROPDOWN MENU -->
+                    <div class="dropdown-wrapper" id="mainDropdown">
+                        <button class="dropdown-toggle" onclick="toggleMainDropdown(this)">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="ddUserName">Menyu</span>
+                            <i class="fas fa-chevron-down dd-arrow"></i>
+                        </button>
+                        <div class="dropdown-menu" id="mainDropdownMenu">
+
+                            <!-- Talaba dropdown -->
+                            <div id="ddStudentItems">
+                                <div class="dd-header">Talaba</div>
+                                <div class="dd-item" onclick="showPage('dpg',null);closeDropdown()">
+                                    <i class="fas fa-th-large"></i> Bosh sahifa
+                                </div>
+                                <div class="dd-item" onclick="showPage('ppg',null);closeDropdown()">
+                                    <i class="fas fa-user-circle"></i> Profilim
+                                </div>
+                                <div class="dd-item" onclick="showPage('rpg',null);closeDropdown()">
+                                    <i class="fas fa-trophy"></i> Reyting
+                                </div>
+                                <div class="dd-item" onclick="showPage('marketpg',null);closeDropdown()">
+                                    <i class="fas fa-shopping-cart"></i> Market
+                                </div>
+                                <div class="dd-item" onclick="showPage('testspg',null);closeDropdown()">
+                                    <i class="fas fa-file-alt"></i> Testlar
+                                </div>
+                                <div class="dd-divider"></div>
+                                <div class="dd-item" onclick="showPage('msgpg',null);closeDropdown()">
+                                    <i class="fas fa-envelope"></i> Xabarlar
+                                    <span class="dd-badge" id="ddMsgBadge" style="display:none;">0</span>
+                                </div>
+                                <div class="dd-item" onclick="openModal('helpModal');closeDropdown()">
+                                    <i class="fas fa-question-circle"></i> Qo'llanma
+                                </div>
+                                <div class="dd-divider"></div>
+                                <div class="dd-item" onclick="openModal('cpModal');closeDropdown()">
+                                    <i class="fas fa-key"></i> Parolni o'zgartirish
+                                </div>
+                                <div class="dd-item danger" onclick="doLogout()">
+                                    <i class="fas fa-sign-out-alt"></i> Chiqish
+                                </div>
+                            </div>
+
+                            <!-- O'qituvchi dropdown -->
+                            <div id="ddTeacherItems" style="display:none">
+                                <div class="dd-header">O'qituvchi paneli</div>
+                                <div class="dd-item" onclick="showPage('adpg',null);closeDropdown()">
+                                    <i class="fas fa-chart-bar"></i> Statistika
+                                </div>
+                                <div class="dd-item" onclick="showPage('stpg',null);closeDropdown()">
+                                    <i class="fas fa-users"></i> Talabalar
+                                </div>
+                                <div class="dd-item" onclick="showPage('grppg',null);closeDropdown()">
+                                    <i class="fas fa-layer-group"></i> Guruhlar
+                                </div>
+                                <div class="dd-item" onclick="showPage('testmgrpg',null);closeDropdown()">
+                                    <i class="fas fa-vial"></i> Test boshqaruvi
+                                </div>
+                                <div class="dd-item" onclick="showPage('paypg',null);closeDropdown()">
+                                    <i class="fas fa-money-bill-wave"></i> To'lov hisoboti
+                                </div>
+                                <div class="dd-divider"></div>
+                                <div class="dd-item" onclick="showPage('msgpg',null);closeDropdown()">
+                                    <i class="fas fa-envelope"></i> Xabarlar
+                                </div>
+                                <div class="dd-item" onclick="showPage('tapg',null);closeDropdown()">
+                                    <i class="fas fa-id-card"></i> Profil
+                                </div>
+                                <div class="dd-item" onclick="openModal('helpModal');closeDropdown()">
+                                    <i class="fas fa-question-circle"></i> Yordam
+                                </div>
+                                <div class="dd-divider"></div>
+                                <div class="dd-item danger" onclick="doLogout()">
+                                    <i class="fas fa-sign-out-alt"></i> Chiqish
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGES -->
+            <div class="pc">
+
+                <div class="page active" id="dpg">
+                    <div class="srow">
+                        <div class="sc">
+                            <div class="sl">Tangalar</div>
+                            <div class="sv" id="st_c">0</div>
+                            <div class="ss">Jami to'plangan</div>
+                        </div>
+                        <div class="sc bt">
+                            <div class="sl">Daraja</div>
+                            <div class="sv" id="st_l">1</div>
+                            <div class="ss" id="st_b">Starter</div>
+                        </div>
+                        <div class="sc gt">
+                            <div class="sl">Streak</div>
+                            <div class="sv" id="st_s">0</div>
+                            <div class="ss">Ketma-ket kun</div>
+                        </div>
+                        <div class="sc rt">
+                            <div class="sl">Reyting</div>
+                            <div class="sv" id="st_r">#-</div>
+                            <div class="ss" id="st_rs">umumiy</div>
+                        </div>
+                    </div>
+                    <div class="g2" style="margin-bottom:14px;">
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Haftalik progress</h4><span class="badge bg" id="wkt">0/100</span>
+                            </div>
+                            <div class="cb">
+                                <div class="pbar">
+                                    <div class="pfill" id="wkf" style="width:0%"></div>
+                                </div>
+                                <p style="font-size:11px;color:var(--text-dim);margin:5px 0 12px;">Maqsad: 100
+                                    tanga/hafta</p>
+                                <canvas id="wkChart" height="130"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <h4>TOP-10 Reyting</h4>
+                                <div style="display:flex;gap:4px;">
+                                    <button class="btn btn-sm btn-outline lb1 active"
+                                        onclick="setLb('overall',this)">Umumiy</button>
+                                    <button class="btn btn-sm btn-outline lb1"
+                                        onclick="setLb('weekly',this)">Hafta</button>
+                                    <button class="btn btn-sm btn-outline lb1"
+                                        onclick="setLb('monthly',this)">Oy</button>
+                                </div>
+                            </div>
+                            <div class="cb" style="padding:10px 12px;max-height:260px;overflow-y:auto;">
+                                <div id="lbList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <h4>So'nggi faollik</h4>
+                        </div>
+                        <div class="cb" style="padding:12px 14px;">
+                            <div id="actList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="rpg">
+                    <div class="ph">
+                        <h2>Reyting jadvali</h2>
+                        <p>Barcha talabalar reytingi</p>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <h4>To'liq reyting</h4>
+                            <div style="display:flex;gap:4px;">
+                                <button class="btn btn-sm btn-outline lb2 active"
+                                    onclick="setLb2('overall',this)">Umumiy</button>
+                                <button class="btn btn-sm btn-outline lb2"
+                                    onclick="setLb2('weekly',this)">Haftalik</button>
+                                <button class="btn btn-sm btn-outline lb2"
+                                    onclick="setLb2('monthly',this)">Oylik</button>
+                            </div>
+                        </div>
+                        <div class="cb" style="padding:8px;">
+                            <div class="tw">
+                                <div id="flb"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="hpg">
+                    <div class="ph">
+                        <h2>Faollik tarixi</h2>
+                        <p>Barcha tangalar va o'zgarishlar</p>
+                    </div>
+                    <div class="card">
+                        <div class="cb" style="padding:12px 14px;">
+                            <div id="fhist"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="ppg">
+                    <div class="ph">
+                        <h2>Profilim</h2>
+                        <p>Shaxsiy ma'lumotlar</p>
+                    </div>
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Ma'lumotlar</h4>
+                            </div>
+                            <div class="cb">
+                                <table style="width:100%;border:none;">
+                                    <tr>
+                                        <td
+                                            style="color:var(--text-dim);padding:7px 0;font-size:12px;width:100px;border:none;">
+                                            Ism:</td>
+                                        <td style="padding:7px 0;font-weight:600;border:none;" id="pr_n">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Daraja:</td>
+                                        <td style="padding:7px 0;border:none;" id="pr_l">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Nishon:</td>
+                                        <td style="padding:7px 0;border:none;" id="pr_b">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Tanga:</td>
+                                        <td style="padding:7px 0;font-family:Rajdhani,sans-serif;font-weight:700;font-size:16px;color:var(--gold-mid);border:none;"
+                                            id="pr_c">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Streak:</td>
+                                        <td style="padding:7px 0;font-weight:700;color:var(--green);border:none;"
+                                            id="pr_s">🔥 0 kun</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Haftalik:</td>
+                                        <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;"
+                                            id="pr_w">0 🪙</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Oylik:</td>
+                                        <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;"
+                                            id="pr_m">0 🪙</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Telefon:</td>
+                                        <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;"
+                                            id="pr_phone">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Guruh:</td>
+                                        <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;"
+                                            id="pr_group">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Reyting:</td>
+                                        <td style="padding:7px 0;font-weight:700;color:var(--blue-light);border:none;"
+                                            id="pr_r">-</td>
+                                    </tr>
+                                </table>
+                                <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;">
+                                    <button class="btn btn-og btn-sm" onclick="openModal('cpModal')"><i
+                                            class="fas fa-key"></i> Parolni o'zgartirish</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Referral kod</h4>
+                            </div>
+                            <div class="cb">
+                                <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Do'stingizni
+                                    taklif qiling!</p>
+                                <div class="ref-box">
+                                    <p style="font-size:11px;color:var(--text-dim);">Sizning kodingiz</p>
+                                    <div class="ref-code" id="pr_rc">XXXX</div>
+                                    <button class="btn btn-og btn-sm" onclick="cpRef()" style="margin-top:8px;"><i
+                                            class="fas fa-copy"></i> Nusxalash</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:14px;">
+                        <div class="ch">
+                            <h4>Ma'lumotlarni tahrirlash</h4>
+                        </div>
+                        <div class="cb">
+                            <div style="display:flex;flex-wrap:wrap;gap:15px;align-items:flex-start;">
+                                <div style="text-align:center;">
+                                    <div id="prAvatarPreview" class="u-av"
+                                        style="width:80px;height:80px;font-size:32px;margin:0 auto 10px;cursor:pointer;border:2px solid var(--blue);"
+                                        onclick="document.getElementById('prAvatarIn').click()">?</div>
+                                    <input type="file" id="prAvatarIn" style="display:none;" accept="image/*"
+                                        onchange="previewAvatar(this)">
+                                    <button class="btn btn-outline btn-xs"
+                                        onclick="document.getElementById('prAvatarIn').click()">Rasm tanlash</button>
+                                </div>
+                                <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+                                    <input id="prNameEdit" class="form-control" type="text"
+                                        placeholder="Ismingizni kiriting">
+                                    <input id="prUsernameEdit" class="form-control" type="text"
+                                        placeholder="Username (masalan: @omadbek)">
+                                    <input id="prPhoneEdit" class="form-control" type="tel" placeholder="Telefon">
+                                    <button class="btn btn-blue btn-sm" onclick="saveProfileInfo()"><i
+                                            class="fas fa-save"></i> Saqlash</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:14px;border-color:var(--border-blue);">
+                        <div class="ch">
+                            <h4>📩 O'qituvchidan xabarlar</h4>
+                        </div>
+                        <div class="cb">
+                            <div id="studentChatBox"
+                                style="min-height:220px;background:rgba(255,255,255,.04);border-radius:12px;padding:12px;overflow:auto;max-height:260px;margin-bottom:12px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:14px;border-color:var(--border-blue);">
+                        <div class="ch">
+                            <h4 style="color:var(--blue-light);">📱 Ilovani o'rnatish (APK / iOS)</h4>
+                        </div>
+                        <div class="cb">
+                            <div class="g2">
+                                <div
+                                    style="background:var(--bg-deep);border-radius:var(--r);padding:14px;border:1px solid var(--border);">
+                                    <div style="color:#60d090;font-weight:700;margin-bottom:8px;font-size:13px;"><i
+                                            class="fab fa-android"></i> Android (APK kabi)</div>
+                                    <p style="font-size:12px;color:var(--text-muted);line-height:1.8;">1. <b
+                                            style="color:var(--text);">Chrome</b> da oching<br>2. Pastda banner chiqadi
+                                        → <b style="color:var(--gold);">O'rnatish</b><br>3. Yoki: Chrome menyu → <b
+                                            style="color:var(--gold);">Add to Home Screen</b><br>4. Home screen da ilova
+                                        paydo bo'ladi ✅</p>
+                                </div>
+                                <div
+                                    style="background:var(--bg-deep);border-radius:var(--r);padding:14px;border:1px solid var(--border);">
+                                    <div
+                                        style="color:var(--blue-light);font-weight:700;margin-bottom:8px;font-size:13px;">
+                                        <i class="fab fa-apple"></i> iPhone / iPad (iOS)</div>
+                                    <p style="font-size:12px;color:var(--text-muted);line-height:1.8;">1. <b
+                                            style="color:var(--text);">Safari</b> da oching<br>2. Quyi markazda <b
+                                            style="color:var(--blue);">Share 🔗</b> tugmasi<br>3. <b
+                                            style="color:var(--gold);">Add to Home Screen</b> tanlang<br>4. Ilova nomini
+                                        kiriting → Qo'shish ✅</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O'QITUVCHI SAHIFALARI -->
+                <div class="page" id="adpg">
+                    <div class="ph" style="display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <h2>O'qituvchi paneli</h2>
+                            <p>Umumiy statistika va boshqaruv</p>
+                        </div>
+                        <button class="btn btn-gold btn-sm" onclick="triggerTop5Rewards()"><i class="fas fa-trophy"></i>
+                            Oylik TOP 5 Mukofot</button>
+                    </div>
+                    <div class="srow">
+                        <div class="sc">
+                            <div class="sl">Talabalar</div>
+                            <div class="sv" id="ad_t">0</div>
+                            <div class="ss">Jami</div>
+                        </div>
+                        <div class="sc">
+                            <div class="sl">Berilgan tanga</div>
+                            <div class="sv" id="ad_c">0</div>
+                            <div class="ss">Jami</div>
+                        </div>
+                        <div class="sc gt">
+                            <div class="sl">Faol (7 kun)</div>
+                            <div class="sv" id="ad_a">0</div>
+                            <div class="ss">Talabalar</div>
+                        </div>
+                        <div class="sc bt">
+                            <div class="sl">Referallar</div>
+                            <div class="sv" id="ad_r">0</div>
+                            <div class="ss">Jami</div>
+                        </div>
+                    </div>
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Top talabalar</h4>
+                            </div>
+                            <div class="cb" style="padding:10px;">
+                                <div id="atop"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Talabalar reytingi</h4>
+                            </div>
+                            <div class="cb" style="padding:10px;overflow-x:auto;">
+                                <div id="adRankList"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Boshqaruv</h4>
+                            </div>
+                            <div class="cb">
+                                <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Oylik eng faol
+                                    talabaga 50 tanga sovg'a</p>
+                                <button class="btn btn-gold" onclick="monthlyBonus()"><i class="fas fa-gift"></i> Oylik
+                                    bonus berish</button>
+                                <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
+                                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Joriy hisob
+                                        ma'lumotlari:</p>
+                                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                                        <code id="adSelfPass"
+                                            style="background:var(--bg-deep);padding:5px 8px;border-radius:4px;border:1px solid var(--border);">******</code>
+                                        <button class="btn btn-outline btn-sm"
+                                            onclick="toggleSelfPassword('adSelfPass','ad')"><i
+                                                class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
+                                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">O'qituvchi
+                                        paroli:</p>
+                                    <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i>
+                                        O'zgartirish</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="stpg">
+                    <div class="ph">
+                        <h2>Talabalar ro'yxati</h2>
+                        <p>Parol va holat bilan</p>
+                    </div>
+                    <div class="card" style="margin-bottom:14px;">
+                        <div class="ch">
+                            <h4>Yangi talaba qo'shish</h4>
+                        </div>
+                        <div class="cb">
+                            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+                                <div style="flex:1;min-width:180px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Ism
+                                        familiya *</label><input type="text" id="nsName" class="form-control"
+                                        placeholder="Ism familiya"></div>
+                                <div style="min-width:160px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Telefon
+                                        *</label><input type="tel" id="nsPhone" class="form-control"
+                                        placeholder="Telefon (majburiy)"></div>
+                                <div style="min-width:160px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Tug'ilgan
+                                        sana</label><input type="date" id="nsBirthDate" class="form-control"></div>
+                                <div style="min-width:160px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Referral
+                                        kod</label><input type="text" id="nsRef" class="form-control"
+                                        placeholder="Referral (ixtiyoriy)"></div>
+                                <div style="min-width:180px;" id="nsTeacherWrap"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">O'qituvchilar
+                                        *</label><select id="nsTeacher" class="form-control" multiple
+                                        onchange="updNsGroupOptions()"></select></div>
+                                <div style="min-width:140px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Guruh
+                                        * (majburiy)</label><select id="nsGroup" class="form-control"></select></div>
+                                <div style="min-width:140px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">To'lov
+                                        turi</label>
+                                    <select id="nsPayType" class="form-control">
+                                        <option value="naqd">Naqd</option>
+                                        <option value="plastik">Plastik</option>
+                                    </select>
+                                </div>
+                                <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;"><input
+                                        type="checkbox" id="nsPaid"> 15 tanga to'lov</label>
+                                <button class="btn btn-success" onclick="addSt()"><i class="fas fa-user-plus"></i>
+                                    Qo'shish</button>
+                            </div>
+                            <p style="font-size:11px;color:var(--text-dim);margin-top:5px;">Ism, Telefon, Guruh va
+                                O'qituvchi majburiy.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-bottom:14px;">
+                        <div class="ch">
+                            <h4>Yangi kelganlar</h4>
+                        </div>
+                        <div class="cb">
+                            <div id="newStudentsList"
+                                style="padding:10px;background:rgba(255,255,255,.02);border-radius:12px;min-height:80px;">
+                                Hozircha yangi talaba yo'q</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-bottom:14px;">
+                        <div class="ch" style="display:flex;justify-content:space-between;align-items:center;">
+                            <h4>Talabalar ro'yxati</h4>
+                            <div style="display:flex;gap:5px;">
+                                <button class="btn btn-outline btn-xs active st-filter-btn"
+                                    onclick="setStFilter('all',this)">Barchasi</button>
+                                <button class="btn btn-outline btn-xs st-filter-btn"
+                                    onclick="setStFilter('active',this)">Faollar</button>
+                                <button class="btn btn-outline btn-xs st-filter-btn"
+                                    onclick="setStFilter('trial',this)">Sinovdagilar</button>
+                                <button class="btn btn-outline btn-xs st-filter-btn"
+                                    onclick="setStFilter('inactive',this)">Eskilar (Arxiv)</button>
+                            </div>
+                        </div>
+                        <div class="cb" style="padding:8px;">
+                            <div class="tw">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ism / ID</th>
+                                            <th>Guruh / Fan</th>
+                                            <th>Tanga</th>
+                                            <th>Davomat %</th>
+                                            <th>Chegirma</th>
+                                            <th>Oylik to'lov</th>
+                                            <th>Amal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="cpg">
+                    <div class="ph">
+                        <h2>Tanga berish tizimi</h2>
+                        <p>Mukofot tangalar ulash</p>
+                    </div>
+                    <div class="g2" style="margin-bottom:14px;">
+                        <div class="gc">
+                            <h5><i class="fas fa-book-open"></i> Davomat</h5>
+                            <select id="attType" class="form-control" style="margin-bottom:8px;"
+                                onchange="toggleAttReason()">
+                                <option value="present">Bor (O'z vaqtida)</option>
+                                <option value="late">Kech qoldi</option>
+                                <option value="absent_no">Yo'q (Sababsiz)</option>
+                                <option value="absent_yes">Yo'q (Sababli)</option>
+                            </select>
+                            <select id="aSt" class="form-control" style="margin-bottom:8px;"></select>
+                            <button class="btn btn-blue btn-sm btn-block" onclick="doAttendance()">Saqlash</button>
+                        </div>
+                        <div class="gc">
+                            <h5><i class="fas fa-tasks"></i> Uy vazifasi</h5>
+                            <div class="rr"><input type="range" id="hR" min="5" max="10" value="7"
+                                    oninput="document.getElementById('hV').innerText=this.value"><span class="rv"
+                                    id="hV">7</span></div>
+                            <select id="hSt" class="form-control" style="margin-bottom:8px;"></select>
+                            <button class="btn btn-blue btn-sm btn-block"
+                                onclick="giveC('homework','hSt','hR','Uy vazifasi')">Berish</button>
+                        </div>
+                        <div class="gc">
+                            <h5><i class="fas fa-hand-paper"></i> Faollik</h5>
+                            <div class="rr"><input type="range" id="pR" min="5" max="10" value="8"
+                                    oninput="document.getElementById('pV').innerText=this.value"><span class="rv"
+                                    id="pV">8</span></div>
+                            <select id="pSt" class="form-control" style="margin-bottom:8px;"></select>
+                            <button class="btn btn-blue btn-sm btn-block"
+                                onclick="giveC('participation','pSt','pR','Faollik')">Berish</button>
+                        </div>
+                        <div class="gc">
+                            <h5><i class="fas fa-user-friends"></i> Referal</h5>
+                            <div class="rr"><input type="range" id="rR" min="12" max="20" value="15"
+                                    oninput="document.getElementById('rV').innerText=this.value"><span class="rv"
+                                    id="rV">15</span></div>
+                            <select id="rSt" class="form-control" style="margin-bottom:8px;"></select>
+                            <button class="btn btn-blue btn-sm btn-block"
+                                onclick="giveC('referral','rSt','rR','Referal bonus')">Berish</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <h4>Qo'lda tanga berish</h4>
+                        </div>
+                        <div class="cb">
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                                <div><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Talaba</label><select
+                                        id="mSt" class="form-control" style="min-width:180px;"></select></div>
+                                <div><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Miqdor</label><input
+                                        type="number" id="mAmt" class="form-control" placeholder="Tanga"
+                                        style="width:90px;" min="1"></div>
+                                <div style="flex:1;min-width:150px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Sabab</label><input
+                                        type="text" id="mReason" class="form-control" placeholder="Izoh"></div>
+                                <div style="width:120px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">To'lov
+                                        summasi</label><input type="number" id="mPaySum" class="form-control"
+                                        placeholder="UZS"></div>
+                                <div class="form-group"><label>To'lov turi</label><select id="mPayType"
+                                        class="form-control">
+                                        <option value="naqd">Naqd</option>
+                                        <option value="plastik">Plastik</option>
+                                    </select></div>
+                                <button class="btn btn-blue btn-block" onclick="giveManual()"><i
+                                        class="fas fa-plus"></i> Qo'shish</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:14px;">
+                        <div class="ch">
+                            <h4>Tanga ayrish</h4>
+                        </div>
+                        <div class="cb">
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                                <div><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Talaba</label><select
+                                        id="dSt" class="form-control" style="min-width:180px;"></select></div>
+                                <div><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Miqdor</label><input
+                                        type="number" id="dAmt" class="form-control" placeholder="Tanga"
+                                        style="width:90px;" min="1"></div>
+                                <div style="flex:1;min-width:150px;"><label
+                                        style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Sabab</label><input
+                                        type="text" id="dReason" class="form-control" placeholder="Nima uchun ayirildi">
+                                </div>
+                                <button class="btn btn-danger" onclick="deductManual()"><i
+                                        class="fas fa-minus-circle"></i> Ayrish</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="tapg">
+                    <div class="ph">
+                        <h2>Profil va xavfsizlik</h2>
+                        <p>Shaxsiy kirish ma'lumotlari</p>
+                    </div>
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Kirish ma'lumotlari</h4>
+                            </div>
+                            <div class="cb">
+                                <table style="width:100%;border:none;">
+                                    <tr>
+                                        <td
+                                            style="color:var(--text-dim);padding:7px 0;font-size:12px;width:120px;border:none;">
+                                            Login turi:</td>
+                                        <td style="padding:7px 0;font-weight:600;border:none;" id="tp_role">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">Ism:
+                                        </td>
+                                        <td style="padding:7px 0;border:none;" id="tp_name">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Maxsus kod:</td>
+                                        <td style="padding:7px 0;border:none;"><code id="tp_code"
+                                                style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">-</code>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--text-dim);padding:7px 0;font-size:12px;border:none;">
+                                            Parol:</td>
+                                        <td style="padding:7px 0;border:none;"><code id="tp_pwd"
+                                                style="background:var(--bg-deep);padding:4px 8px;border-radius:4px;border:1px solid var(--border);">******</code><button
+                                                class="btn btn-outline btn-sm"
+                                                onclick="toggleSelfPassword('tp_pwd','tp')"><i
+                                                    class="fas fa-eye"></i></button></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <h4>Sozlamalar</h4>
+                            </div>
+                            <div class="cb">
+                                <div style="margin-bottom:15px;display:flex;align-items:center;gap:10px;">
+                                    <input type="checkbox" id="smsNotifToggle" onchange="toggleSmsNotif(this.checked)">
+                                    <label for="smsNotifToggle" style="font-size:13px;">SMS xabarnoma</label>
+                                </div>
+                                <button class="btn btn-og btn-sm" onclick="chgTPwd()"><i class="fas fa-key"></i> Parolni
+                                    o'zgartirish</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:14px;">
+                        <div class="ch">
+                            <h4>Ma'lumotlarni tahrirlash</h4>
+                        </div>
+                        <div class="cb">
+                            <div style="display:flex;flex-wrap:wrap;gap:15px;align-items:flex-start;">
+                                <div style="text-align:center;">
+                                    <div id="tpAvatarPreview" class="u-av"
+                                        style="width:80px;height:80px;font-size:32px;margin:0 auto 10px;cursor:pointer;border:2px solid var(--blue);"
+                                        onclick="document.getElementById('tpAvatarIn').click()">?</div>
+                                    <input type="file" id="tpAvatarIn" style="display:none;" accept="image/*"
+                                        onchange="previewTeacherAvatar(this)">
+                                    <button class="btn btn-outline btn-xs"
+                                        onclick="document.getElementById('tpAvatarIn').click()">Rasm tanlash</button>
+                                </div>
+                                <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+                                    <input id="tpNameEdit" class="form-control" type="text"
+                                        placeholder="Ismingizni kiriting">
+                                    <input id="tpGroupEdit" class="form-control" type="text" placeholder="Guruh">
+                                    <button class="btn btn-blue btn-sm" onclick="saveProfileInfo()"><i
+                                            class="fas fa-save"></i> Saqlash</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:14px;">
+                        <div class="ch">
+                            <h4>Mening talabalarim parollari</h4>
+                        </div>
+                        <div class="cb" style="padding:8px;">
+                            <div class="tw">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ism</th>
+                                            <th>Guruh</th>
+                                            <th>Parol</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tpStudentsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:14px;border-color:var(--border-blue);">
+                        <div class="ch">
+                            <h4>📩 Talabalar bilan xabarlar</h4>
+                        </div>
+                        <div class="cb">
+                            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px;">
+                                <select id="tpChatMode" class="form-control" style="min-width:180px;"
+                                    onchange="syncTeacherChatControls()">
+                                    <option value="all">Barchaga</option>
+                                    <option value="group">Guruhga</option>
+                                    <option value="student">Talabaga</option>
+                                </select>
+                                <select id="tpChatGroupSel" class="form-control"
+                                    style="min-width:180px;display:none;"></select>
+                                <select id="tpChatStudentSel" class="form-control" style="min-width:240px;"></select>
+                                <button class="btn btn-outline btn-sm" onclick="renderTeacherChat()"><i
+                                        class="fas fa-sync-alt"></i> Yangilash</button>
+                            </div>
+                            <div id="teacherChatBox"
+                                style="min-height:220px;background:rgba(255,255,255,.04);border-radius:12px;padding:12px;overflow:auto;max-height:260px;margin-bottom:12px;">
+                            </div>
+                            <textarea id="tpMsgText" class="form-control" placeholder="Xabar yozing..."
+                                style="min-height:80px;"></textarea>
+                            <button class="btn btn-blue btn-sm" onclick="sendTeacherMessage()"
+                                style="margin-top:10px;"><i class="fas fa-paper-plane"></i> Yuborish</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- XABARLAR SAHIFASI -->
+                <div class="page" id="msgpg" style="padding:0;height:calc(100vh - var(--hh));overflow:hidden;">
+                    <div class="chat-container" style="display:flex;height:100%;">
+                        <div class="chat-sidebar"
+                            style="width:320px;border-right:1px solid var(--border-gold);background:var(--bg-card);display:flex;flex-direction:column;">
+                            <div style="padding:12px;border-bottom:1px solid var(--border);">
+                                <input type="text" class="form-control" placeholder="Qidirish..."
+                                    style="height:36px;font-size:13px;margin-bottom:10px;">
+                                <div id="msgTabsRow" style="display:flex;gap:5px;">
+                                    <button class="btn btn-outline btn-xs active" id="btnChatGroups"
+                                        onclick="setChatTab('groups')" style="white-space:nowrap;">Guruhlar</button>
+                                    <button class="btn btn-outline btn-xs" id="btnChatPersonal"
+                                        onclick="setChatTab('personal')" style="white-space:nowrap;">Shaxsiy</button>
+                                    <button class="btn btn-outline btn-xs" id="btnChatTeachers"
+                                        onclick="setChatTab('teachers')" style="white-space:nowrap;">Ustozlar</button>
+                                    <button class="btn btn-outline btn-xs" id="btnChatAdmins"
+                                        onclick="setChatTab('admins')" style="white-space:nowrap;">Adminlar</button>
+                                </div>
+                            </div>
+                            <div id="chatList" style="flex:1;overflow-y:auto;"></div>
+                        </div>
+                        <div class="chat-main"
+                            style="flex:1;display:flex;flex-direction:column;background:url('https://www.transparenttextures.com/patterns/cubes.png');background-color:var(--bg-deep);">
+                            <div id="chatHeader"
+                                style="padding:10px 20px;background:var(--bg-card);border-bottom:1px solid var(--border);display:none;align-items:center;gap:12px;">
+                                <div class="u-av" id="chatHeaderAv">?</div>
+                                <div style="flex:1;">
+                                    <div class="u-nm" id="chatHeaderNm">-</div>
+                                    <div class="u-role" id="chatHeaderStatus" style="font-size:10px;">online</div>
+                                </div>
+                                <div id="chatHeaderActions" style="display:flex;gap:8px;">
+                                    <button class="btn btn-outline btn-xs" id="btnTransferDiamond"
+                                        onclick="openTransferModal()" title="Olmos yuborish"><i class="fas fa-gem"
+                                            style="color:#80ffff;"></i></button>
+                                    <button class="btn btn-outline btn-xs btn-danger" id="btnBlockUser"
+                                        onclick="toggleBlockUser()" title="Bloklash"><i
+                                            class="fas fa-user-slash"></i></button>
+                                </div>
+                            </div>
+                            <div id="msgHistory"
+                                style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:8px;">
+                                <div style="margin:auto;text-align:center;color:var(--text-dim);">
+                                    <i class="fas fa-comments" style="font-size:48px;margin-bottom:10px;"></i>
+                                    <p>Suhbatni boshlash uchun biron bir chatni tanlang</p>
+                                </div>
+                            </div>
+                            <div id="replyPreview"
+                                style="display:none;padding:8px 16px;background:var(--bg-card2);border-top:1px solid var(--border);align-items:center;gap:10px;">
+                            </div>
+                            <div class="msg-input-area"
+                                style="padding:15px;background:var(--bg-card);border-top:1px solid var(--border);display:none;"
+                                id="msgInputArea">
+                                <div style="display:flex;gap:10px;align-items:flex-end;">
+                                    <div style="flex:1;position:relative;">
+                                        <textarea id="msgText" class="form-control" placeholder="Xabar yozing..."
+                                            style="height:44px;padding-right:40px;resize:none;border-radius:22px;"></textarea>
+                                        <label for="msgMediaIn"
+                                            style="position:absolute;right:15px;bottom:12px;cursor:pointer;color:var(--text-muted);"><i
+                                                class="fas fa-paperclip"></i></label>
+                                        <input type="file" id="msgMediaIn" style="display:none;">
+                                    </div>
+                                    <button class="btn btn-blue"
+                                        style="height:44px;width:44px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;"
+                                        onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="monitoringpg">
+                    <div class="ph">
+                        <h2>Xabarlar Nazorati</h2>
+                        <p>Barcha talabalar va guruhlar o'rtasidagi xabarlar oqimi</p>
+                    </div>
+                    <div class="card pc">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Vaqt</th>
+                                        <th>Kimdan</th>
+                                        <th>Kimgacha</th>
+                                        <th>Xabar mazmuni</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monitoringList"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Qolgan modals -->
+                <div class="modal-overlay" id="moveStudentModal">
+                    <div class="modal-box">
+                        <div class="modal-head">
+                            <h3><i class="fas fa-exchange-alt"></i> Guruhni almashtirish</h3><button class="modal-close"
+                                onclick="closeModal('moveStudentModal')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="moveStudentInfo" style="margin-bottom:15px;font-weight:600;"></p>
+                            <div class="form-group"><label>Yangi guruhni tanlang</label><select id="moveStudentGroupSel"
+                                    class="form-control"></select></div>
+                        </div>
+                        <div class="modal-foot"><button class="btn btn-outline btn-sm"
+                                onclick="closeModal('moveStudentModal')">Bekor</button><button
+                                class="btn btn-blue btn-sm" onclick="confirmMoveStudent()">Saqlash</button></div>
+                    </div>
+                </div>
+
+                <div class="modal-overlay" id="quickPayModal">
+                    <div class="modal-box">
+                        <div class="modal-head">
+                            <h3><i class="fas fa-money-bill-wave"></i> Tezkor to'lov</h3><button class="modal-close"
+                                onclick="closeModal('quickPayModal')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="quickPayInfo" style="margin-bottom:15px;font-weight:600;"></p>
+                            <div class="form-group"><label>Tanga miqdori</label><input type="number" id="quickPayAmt"
+                                    class="form-control" value="15"></div>
+                            <div class="form-group"><label>To'lov turi</label><select id="quickPayType"
+                                    class="form-control">
+                                    <option value="naqd">Naqd</option>
+                                    <option value="plastik">Plastik</option>
+                                </select></div>
+                        </div>
+                        <div class="modal-foot"><button class="btn btn-outline btn-sm"
+                                onclick="closeModal('quickPayModal')">Bekor</button><button class="btn btn-blue btn-sm"
+                                onclick="confirmQuickPay()">To'lovni saqlash</button></div>
+                    </div>
+                </div>
+
+                <div class="modal-overlay" id="transferDiamondModal">
+                    <div class="modal-box">
+                        <div class="modal-head">
+                            <h3><i class="fas fa-gem" style="color:#80ffff;"></i> Olmos yuborish</h3><button
+                                class="modal-close" onclick="closeModal('transferDiamondModal')"><i
+                                    class="fas fa-times"></i></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group"><label>Olmos miqdori</label><input type="number" id="transferDiaAmt"
+                                    class="form-control" placeholder="0" min="1"></div>
+                            <p id="transferDiaLimit" style="font-size:11px;color:var(--gold-mid);"></p>
+                        </div>
+                        <div class="modal-foot"><button class="btn btn-outline btn-sm"
+                                onclick="closeModal('transferDiamondModal')">Bekor</button><button
+                                class="btn btn-blue btn-sm" onclick="confirmTransferDiamond()">Yuborish</button></div>
+                    </div>
+                </div>
+
+                <div class="page" id="stutpg">
+                    <div class="ph">
+                        <h2>Mening o'qituvchilarim</h2>
+                        <p>Sizga dars beradigan o'qituvchilar ro'yxati</p>
+                    </div>
+                    <div id="studentTeachersList" class="g1"></div>
+                </div>
+
+                <div class="page" id="marketpg">
+                    <div class="ph">
+                        <h2>Market</h2>
+                        <p>Olmoslar orqali profilni bezatish va mahsulotlar sotib olish</p>
+                    </div>
+                    <div class="srow">
+                        <div class="sc" style="background:rgba(43,233,233,.05);border-color:rgba(43,233,233,.2);">
+                            <div class="sl">Mening olmoslarim</div>
+                            <div class="sv" id="mk_diamonds" style="color:#80ffff;">0 💎</div>
+                            <div class="ss">Jami to'plangan</div>
+                        </div>
+                    </div>
+                    <div class="g3" id="marketItemsList"></div>
+                </div>
+
+                <div class="page" id="testspg">
+                    <div class="ph">
+                        <h2>Testlar</h2>
+                        <p>Bilimingizni sinab ko'ring va olmoslar yutib oling</p>
+                    </div>
+                    <div id="availableTests" class="g2"></div>
+                    <div id="testTakingView" style="display:none;">
+                        <div class="card">
+                            <div class="ch">
+                                <h4 id="testActiveTitle">Test nomi</h4>
+                                <div class="badge bb" id="testTimer">02:00:00</div>
+                            </div>
+                            <div class="cb" id="testQuestionArea"></div>
+                            <div class="modal-foot">
+                                <button class="btn btn-outline" onclick="prevQuestion()">Orqaga</button>
+                                <button class="btn btn-blue" onclick="nextQuestion()" id="nextQueBtn">Keyingisi</button>
+                                <button class="btn btn-gold" onclick="finishTest()" id="finishTestBtn"
+                                    style="display:none;">Tugallash</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="testmgrpg">
+                    <div class="ph">
+                        <h2>Test boshqaruvi</h2>
+                        <p>Yangi testlar yaratish va natijalarni ko'rish</p>
+                    </div>
+                    <div class="card pc" style="margin-bottom:20px;">
+                        <div class="ch">
+                            <h4>Yangi test yaratish</h4>
+                        </div>
+                        <div class="cb">
+                            <div class="g2">
+                                <div class="form-group"><label>Test nomi</label><input type="text" id="newTestTitle"
+                                        class="form-control" placeholder="Masalan: HTML asoslari"></div>
+                                <div class="form-group"><label>Yo'nalish</label><select id="newTestCategory"
+                                        class="form-control">
+                                        <option value="programmer">Dasturchi (Web: HTML, CSS, JS)</option>
+                                        <option value="computer_literacy">Kompyuter savodxonligi</option>
+                                    </select></div>
+                                <div class="form-group"><label>Imtihon kuni va vaqti</label><input type="datetime-local"
+                                        id="newTestStartTime" class="form-control"></div>
+                                <div class="form-group"><label>Guruh</label><select id="newTestGroup"
+                                        class="form-control"></select></div>
+                            </div>
+                            <div id="newTestQuestions" style="margin-top:20px;">
+                                <button class="btn btn-outline btn-block" onclick="generateQuestionInputs()">Savollarni
+                                    kiritish (20 ta)</button>
+                            </div>
+                            <button class="btn btn-gold btn-block" style="margin-top:20px;"
+                                onclick="saveNewTest()">Testni saqlash</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <h4>Mavjud testlar</h4>
+                        </div>
+                        <div class="cb" id="teacherTestsList"></div>
+                    </div>
+                </div>
+
+                <div class="page" id="grppg">
+                    <div class="ph">
+                        <h2>Guruhlar</h2>
+                        <p>Guruhlar yaratish va boshqarish</p>
+                    </div>
+                    <div class="card pc" style="margin-bottom:20px;">
+                        <div class="ch">
+                            <h4>Yangi guruh</h4>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-end;">
+                            <div class="form-group" style="flex:1;"><label>Guruh nomi</label><input type="text"
+                                    id="newGrpName" class="form-control" placeholder="Guruh nomi"></div>
+                            <div class="form-group" id="newGrpTeacherWrap" style="flex:1;display:none;">
+                                <label>O'qituvchi</label><select id="newGrpTeacher" class="form-control"></select></div>
+                            <div class="form-group" style="flex:1;"><label>Yo'nalish</label><select id="newGrpCategory"
+                                    class="form-control">
+                                    <option value="programmer">Dasturchi</option>
+                                    <option value="computer_literacy">Kompyuter savodxonligi</option>
+                                </select></div>
+                            <button class="btn btn-gold" onclick="createGroup()"
+                                style="height:38px;margin-bottom:15px;">Yaratish</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:14px;">
+                    <div class="ch">
+                        <h4><i class="fas fa-history" style="color:var(--blue);margin-right:6px;"></i>Yuborilgan
+                            xabarlar tarixi</h4>
+                    </div>
+                    <div class="cb" style="padding:14px;max-height:350px;overflow-y:auto;" id="msgSentList"></div>
+                </div>
+
+            </div><!-- /.pc -->
+
+            <div class="page" id="paypg">
+                <div class="ph">
+                    <h2><i class="fas fa-money-bill-wave" style="color:var(--gold);"></i> To'lov hisoboti</h2>
+                    <p>Guruhlar bo'yicha to'lov holati</p>
+                </div>
+                <div id="payReportContainer"></div>
+            </div>
+
+            <div class="page" id="tpg">
+                <div class="ph">
+                    <h2>O'qituvchilar va adminlar</h2>
+                    <p>Super admin to'liq, adminlar esa so'rov yuboradi</p>
+                </div>
+                <div class="card" style="margin-bottom:14px;">
+                    <div class="ch">
+                        <h4>Yangi o'qituvchi qo'shish</h4>
+                    </div>
+                    <div class="cb">
+                        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                            <div><label
+                                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Ism</label><input
+                                    type="text" id="ntName" class="form-control" placeholder="O'qituvchi ismi"></div>
+                            <div><label
+                                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Fan</label><input
+                                    type="text" id="ntSubj" class="form-control" placeholder="Masalan: Matematika">
+                            </div>
+                            <div><label
+                                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Guruh</label><input
+                                    type="text" id="ntGroup" class="form-control" placeholder="Masalan: 11A"></div>
+                            <button class="btn btn-success" onclick="addTeacher()"><i class="fas fa-user-plus"></i>
+                                Qo'shish</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom:14px;">
+                    <div class="ch">
+                        <h4>Admin qo'shish / so'rov yuborish</h4>
+                    </div>
+                    <div class="cb">
+                        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                            <div><label
+                                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Admin
+                                    ism</label><input type="text" id="naName" class="form-control"
+                                    placeholder="Admin ismi"></div>
+                            <div><label
+                                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Parol</label><input
+                                    type="password" id="naPwd" class="form-control" placeholder="Kuchli parol"></div>
+                            <div><label
+                                    style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px;">Bog'langan
+                                    o'qituvchi</label><select id="naTeacher" class="form-control"
+                                    style="min-width:200px;"></select></div>
+                            <button class="btn btn-success" onclick="submitAdminAction()"><i
+                                    class="fas fa-user-plus"></i> Yuborish</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom:14px;">
+                    <div class="ch">
+                        <h4>Adminlar ro'yxati</h4>
+                    </div>
+                    <div class="cb" style="padding:8px;">
+                        <div class="tw">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ism</th>
+                                        <th>Bog'langan o'qituvchi</th>
+                                        <th>Level</th>
+                                        <th>Status</th>
+                                        <th>Amal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" id="reqCard">
+                    <div class="ch">
+                        <h4>Admin so'rovlari</h4>
+                    </div>
+                    <div class="cb" style="padding:8px;">
+                        <div class="tw">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>So'rovchi</th>
+                                        <th>Yangi admin</th>
+                                        <th>O'qituvchi</th>
+                                        <th>Vaqt</th>
+                                        <th>Amal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reqBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <h4>O'qituvchilar ro'yxati</h4>
+                    </div>
+                    <div class="cb" style="padding:8px;">
+                        <div class="tw">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>O'qituvchi ismi</th>
+                                        <th>Mutaxassislik</th>
+                                        <th>Talabalar</th>
+                                        <th>Oylik</th>
+                                        <th>Tushum</th>
+                                        <th>Avans</th>
+                                        <th>Amal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /#mainContent -->
+    </div><!-- /#appShell -->
+
+    <!-- ══════════════════════════════════════════════
+       DROPDOWN & UI SCRIPTS
+  ══════════════════════════════════════════════ -->
+    <script>
+        /* ── DROPDOWN ── */
+        function toggleMainDropdown(btn) {
+            const menu = document.getElementById('mainDropdownMenu');
+            const isOpen = menu.classList.contains('open');
+            closeAllDropdowns();
+            if (!isOpen) {
+                menu.classList.add('open');
+                btn.classList.add('open');
+            }
+        }
+        function closeDropdown() {
+            closeAllDropdowns();
+        }
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+            document.querySelectorAll('.dropdown-toggle').forEach(b => b.classList.remove('open'));
+        }
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.dropdown-wrapper')) closeAllDropdowns();
+        });
+
+        /* ── DROPDOWN USER TYPE ── */
+        function setDropdownMode(type) {
+            const isTeacher = (type === 'teacher' || type === 'admin');
+            document.getElementById('ddStudentItems').style.display = isTeacher ? 'none' : 'block';
+            document.getElementById('ddTeacherItems').style.display = isTeacher ? 'block' : 'none';
+        }
+
+        /* ── NOTIFIKATSIYA DROPDOWN ── */
+        function toggleNotifDropdown() {
+            // Kelajakda bildirishnomalar ro'yxati
+            document.getElementById('notifDot').classList.remove('active');
+        }
+
+        /* ── SIDEBAR ── */
+        function toggleSB() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sbBg').style.display =
+                document.getElementById('sidebar').classList.contains('open') ? 'block' : 'none';
+        }
+        function closeSB() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sbBg').style.display = 'none';
+        }
+
+        /* ── TOAST ── */
+        window.toast = function (msg, type = 'info', duration = 3000) {
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${msg}`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transition = 'opacity .3s';
+                setTimeout(() => t.remove(), 350);
+            }, duration);
+        };
+
+        /* ── MODAL ── */
+        window.openModal = function (id) {
+            const m = document.getElementById(id);
+            if (m) { m.style.display = 'flex'; }
+        };
+        window.closeModal = function (id) {
+            const m = document.getElementById(id);
+            if (m) { m.style.display = 'none'; }
+        };
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        });
+
+        /* ── PWD TOGGLE ── */
+        window.togglePwd = function (inputId, icon) {
+            const inp = document.getElementById(inputId);
+            if (!inp) return;
+            const show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            if (icon) { icon.classList.toggle('fa-eye', !show); icon.classList.toggle('fa-eye-slash', show); }
+        };
+
+        /* ── USER NAME IN DROPDOWN ── */
+        function updateDropdownUser(name) {
+            const el = document.getElementById('ddUserName');
+            if (el) el.textContent = name ? (name.split(' ')[0]) : 'Menyu';
+        }
+
+        /* ── ENTER HOOK: dropdown mode ni yangilash ── */
+        const _origEnterS = window.enterS;
+        const _origEnterT = window.enterT;
+
+        // enterS va enterT app-client.js da override qilinadi
+        // Biz event-based yondashamiz
+        document.addEventListener('DOMContentLoaded', () => {
+            // app-client.js yuklangandan keyin ishlaydi
+        });
+    </script>
+
+    <script src="app-client.js"></script>
+
+    <script>
+        /* ── enterS / enterT wrapper — dropdown mode ── */
+        (function patchEnterFunctions() {
+            const orig_enterS = window.enterS;
+            const orig_enterT = window.enterT;
+
+            window.enterS = function () {
+                if (orig_enterS) orig_enterS.apply(this, arguments);
+                setDropdownMode('student');
+                const s = window.students && window.curId ? window.students.find(x => x.id == window.curId) : null;
+                if (s) updateDropdownUser(s.name);
+            };
+
+            window.enterT = function () {
+                if (orig_enterT) orig_enterT.apply(this, arguments);
+                setDropdownMode('teacher');
+                updateDropdownUser("O'qituvchi");
+            };
+        })();
+
+        /* ── PWA Install Banner ── */
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const b = document.getElementById('installBanner');
+            if (b) b.classList.add('show');
+        });
+        document.getElementById('installBtn')?.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('installBanner')?.classList.remove('show');
+        });
+        document.getElementById('installDismiss')?.addEventListener('click', () => {
+            document.getElementById('installBanner')?.classList.remove('show');
+        });
+
+        /* ── Service Worker ── */
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(() => { });
+        }
+    </script>
+
+</body>
+
+</html>
