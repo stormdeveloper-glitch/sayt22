@@ -9,10 +9,11 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
-# Railway Volume ulangan joy.
-# Agar DATA_DIR berilmagan bo'lsa, lokalda loyiha ichidagi data papkasi ishlatiladi.
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.environ.get('DATA_DIR', os.path.join(BASE_DIR, 'data'))
+# Railway Volume ulangan joy: productionda /app/data/data.json.
+# Lokalda esa loyiha ichidagi data papkasi ishlatiladi.
+DEFAULT_DATA_DIR = '/app/data' if os.path.isdir('/app') else os.path.join(BASE_DIR, 'data')
+DATA_DIR = os.environ.get('DATA_DIR', DEFAULT_DATA_DIR)
 DATA_FILE = os.path.join(DATA_DIR, 'data.json')
 UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -45,7 +46,12 @@ def init_data_file():
                 "nextAdminId": 1,
                 "adminRequests": [],
                 "nextRequestId": 1,
-                "messages": []
+                "messages": [],
+                "groups": [],
+                "chatFriends": [],
+                "chatGroups": [],
+                "pendingReqs": [],
+                "tests": []
             }, f, ensure_ascii=False, indent=2)
 
 @app.route('/')

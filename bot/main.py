@@ -28,7 +28,8 @@ def load_env_file():
 
 
 load_env_file()
-DATA_DIR = os.environ.get("DATA_DIR", os.path.join(BASE_DIR, "data"))
+DEFAULT_DATA_DIR = "/app/data" if os.path.isdir("/app") else os.path.join(BASE_DIR, "data")
+DATA_DIR = os.environ.get("DATA_DIR", DEFAULT_DATA_DIR)
 DATA_FILE = os.path.join(DATA_DIR, "data.json")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 
@@ -45,6 +46,11 @@ def default_data():
         "adminRequests": [],
         "nextRequestId": 1,
         "messages": [],
+        "groups": [],
+        "chatFriends": [],
+        "chatGroups": [],
+        "pendingReqs": [],
+        "tests": [],
         "telegramProfiles": {},
     }
 
@@ -53,7 +59,7 @@ def normalize_data(data):
     base = default_data()
     if isinstance(data, dict):
         base.update(data)
-    for key in ("students", "transactions", "teachers", "admins", "adminRequests", "messages"):
+    for key in ("students", "transactions", "teachers", "admins", "adminRequests", "messages", "groups", "chatFriends", "chatGroups", "pendingReqs", "tests"):
         if not isinstance(base.get(key), list):
             base[key] = []
     if not isinstance(base.get("telegramProfiles"), dict):
