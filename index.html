@@ -8565,44 +8565,85 @@ function mRenderFingerBoard(activeChar) {
     </div>`;
 }
 let typingState = null;
-    function renderTypingV2() {
-      const wrap = document.getElementById('typingWrap'); if (!wrap) return;
-      const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('BARMOQ POYGASI'); return; }
-      mEnsureRich(s);
-      typingState = null;
-      wrap.innerHTML = `
-      <div class="pg-wrap">
-        <div class="pg-title"><i class="fas fa-keyboard"></i> BARMOQ POYGASI</div>
-        <div class="pg-sub">Tez va xatosiz teraing, olmos yutib oling!</div>
-        <div class="type-diff-row" id="typeDiffRow">
-          <span class="type-diff-btn active" onclick="mTypeSetDiff('easy',this)">Oson</span>
-          <span class="type-diff-btn" onclick="mTypeSetDiff('medium',this)">O'rta</span>
-          <span class="type-diff-btn" onclick="mTypeSetDiff('hard',this)">Qiyin</span>
+function renderTypingV2() {
+  const wrap = document.getElementById('typingWrap'); if (!wrap) return;
+  const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('BARMOQ POYGASI'); return; }
+  mEnsureRich(s);
+  typingState = null;
+  wrap.innerHTML = `
+  <div class="pg-wrap">
+    <div class="pg-title"><i class="fas fa-keyboard"></i> BARMOQ POYGASI</div>
+    <div class="pg-sub">Avval darslikni o'qing, keyin poygada sinab ko'ring!</div>
+
+    <div class="study-tabs mb-16">
+      <button class="st-tab active" id="typeSubTab-lesson" onclick="mTypingSubTab('lesson',this)"><i class="fas fa-book-open"></i> Darslik</button>
+      <button class="st-tab" id="typeSubTab-race" onclick="mTypingSubTab('race',this)"><i class="fas fa-flag-checkered"></i> Poyga</button>
+    </div>
+
+    <!-- DARSLIK QISMI -->
+    <div id="typeLessonPane">
+      <div class="scard mb-16">
+        <div class="sc-title mb-8"><i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Barmoqlar qaysi tugmani bosadi</div>
+        <p class="txt2 fs12 mb-12">Klaviaturada har bir barmoq ma'lum tugmalar ustunini boshqaradi. Pastdagi rangli sxemaga qarab, barmoqlaringizni to'g'ri joyga qo'ying va faqat o'sha barmoq bilan bosishga harakat qiling.</p>
+        <div id="typeLessonBoard"></div>
+        <div id="typeLessonHands"></div>
+      </div>
+      <div class="scard mb-16">
+        <div class="sc-title mb-8"><i class="fas fa-info-circle" style="color:var(--gold);"></i> Asosiy qoida — "Uy qatori"</div>
+        <p class="txt2 fs12">Barmoqlaringizni doim <b style="color:var(--text);">A S D F</b> (chap qo'l) va <b style="color:var(--text);">J K L</b> (o'ng qo'l) tugmalarida ushlab turing — bu "uy qatori" deb ataladi. Boshqa tugmani bosgandan so'ng, barmoq darhol shu qatorga qaytishi kerak. Ikkala bosh barmoq esa faqat <b>SPACE</b> (probel) tugmasi uchun ishlatiladi.</p>
+      </div>
+      <button class="btn btn-cyan" style="width:100%;justify-content:center;" onclick="mTypingSubTab('race', document.getElementById('typeSubTab-race'))"><i class="fas fa-flag-checkered"></i> Poygaga o'tish</button>
+    </div>
+
+    <!-- POYGA QISMI -->
+    <div id="typeRacePane" style="display:none;">
+      <div class="type-diff-row" id="typeDiffRow">
+        <span class="type-diff-btn active" onclick="mTypeSetDiff('easy',this)">Oson</span>
+        <span class="type-diff-btn" onclick="mTypeSetDiff('medium',this)">O'rta</span>
+        <span class="type-diff-btn" onclick="mTypeSetDiff('hard',this)">Qiyin</span>
+      </div>
+      <div class="type-arena">
+        <div class="type-stats-row">
+          <div class="type-stat"><div class="type-stat-val" id="typeWpm">0</div><div class="type-stat-lbl">So'z/daqiqa</div></div>
+          <div class="type-stat"><div class="type-stat-val" id="typeAcc">100%</div><div class="type-stat-lbl">Aniqlik</div></div>
+          <div class="type-stat"><div class="type-stat-val" id="typeTime">0.0s</div><div class="type-stat-lbl">Vaqt</div></div>
         </div>
-        <div class="type-arena">
-          <div class="type-stats-row">
-            <div class="type-stat"><div class="type-stat-val" id="typeWpm">0</div><div class="type-stat-lbl">So'z/daqiqa</div></div>
-            <div class="type-stat"><div class="type-stat-val" id="typeAcc">100%</div><div class="type-stat-lbl">Aniqlik</div></div>
-            <div class="type-stat"><div class="type-stat-val" id="typeTime">0.0s</div><div class="type-stat-lbl">Vaqt</div></div>
+        <div class="type-track"><div class="type-track-fill" id="typeTrackFill"></div></div>
+        <div class="type-text-box" id="typeTextBox"></div>
+        <textarea class="type-input" id="typeInput" rows="3" placeholder="Boshlash uchun shu yerga bosing va teraing..." oninput="mTypeOnInput()" disabled></textarea>
+
+        <div class="mt-16">
+          <div class="sc-title" style="font-size:12.5px;margin-bottom:8px;">
+            <i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Qaysi barmoq bilan bosish kerak
           </div>
-          <div class="type-track"><div class="type-track-fill" id="typeTrackFill"></div></div>
-          <div class="type-text-box" id="typeTextBox"></div>
-          <textarea class="type-input" id="typeInput" rows="3" placeholder="Boshlash uchun shu yerga bosing va teraing..." oninput="mTypeOnInput()" disabled></textarea>
-          <div class="mt-16">
-  <div class="sc-title" style="font-size:12.5px;margin-bottom:8px;">
-    <i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Qaysi barmoq bilan bosish kerak
-  </div>
-  <div id="typeFingerBoardWrap"></div>
-</div>
-          <div class="flex-center gap-10 mt-16">
-            <button class="btn" onclick="mTypeStart()"><i class="fas fa-flag-checkered"></i> Poygani boshlash</button>
-            <button class="btn btn-sm" style="border-color:var(--bor2);" onclick="mTypeStart()"><i class="fas fa-redo"></i> Qayta boshlash</button>
-          </div>
+          <div id="typeHandWrap"></div>
+          <div id="typeFingerBoardWrap"></div>
         </div>
-        <div id="typeResultWrap"></div>
-      </div>`;
-      mTypeStart();
-    }
+
+        <div class="flex-center gap-10 mt-16">
+          <button class="btn" onclick="mTypeStart()"><i class="fas fa-flag-checkered"></i> Poygani boshlash</button>
+          <button class="btn btn-sm" style="border-color:var(--bor2);" onclick="mTypeStart()"><i class="fas fa-redo"></i> Qayta boshlash</button>
+        </div>
+      </div>
+      <div id="typeResultWrap"></div>
+    </div>
+  </div>`;
+
+  // Darslik qismidagi statik sxemani chizamiz (aktiv tugmasiz)
+  const lb = document.getElementById('typeLessonBoard'); if (lb) lb.innerHTML = mRenderFingerBoard(null);
+  const lh = document.getElementById('typeLessonHands'); if (lh) lh.innerHTML = mRenderHandsVisual(null);
+}
+
+function mTypingSubTab(tab, el) {
+  document.querySelectorAll('#typingWrap .st-tab').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const lessonPane = document.getElementById('typeLessonPane');
+  const racePane = document.getElementById('typeRacePane');
+  if (lessonPane) lessonPane.style.display = tab === 'lesson' ? 'block' : 'none';
+  if (racePane) racePane.style.display = tab === 'race' ? 'block' : 'none';
+  if (tab === 'race' && !typingState) mTypeStart();
+}
+window.mTypingSubTab = mTypingSubTab;
     function mTypeSetDiff(diff, el) {
       document.querySelectorAll('#typeDiffRow .type-diff-btn').forEach(b => b.classList.remove('active'));
       if (el) el.classList.add('active');
