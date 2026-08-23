@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  TEACHER
+  CASHIER
+}
+
+enum GroupStatus {
+  ACTIVE
+  FULL
+  FINISHED
+}
+
+enum StudentStatus {
+  ACTIVE
+  FROZEN
+  FINISHED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+}
+
+enum Weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  password    String
+  role        Role      @default(MANAGER)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  teacher     Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId   Int?      @unique
+  createdById Int?
+  createdBy   User?     @relation("CreatedUsers", fields: [createdById], references: [id])
+  createdUsers User[]   @relation("CreatedUsers")
+}
+
+model Teacher {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int       @unique
+  name      String
+  phone     String?
+  photoUrl  String?
+  bio       String?
+  groups    Group[]
+}
+
+model Course {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique
+  title        String
+  description  String?
+  durationMonths Int    @default(3)
+  groups       Group[]
+}
+
+model Classroom {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  capacity Int
+  location String?
+  groups   Group[]
+}
+
+model Group {
+  id          Int              @id @default(autoincrement())
+  name        String
+  course      Course           @relation(fields: [courseId], references: [id])
+  courseId    Int
+  teacher     Teacher          @relation(fields: [teacherId], references: [id])
+  teacherId   Int
+  classroom   Classroom        @relation(fields: [classroomId], references: [id])
+  classroomId Int
+  startDate   DateTime
+  endDate     DateTime?
+  capacity    Int
+  monthlyFee  Int              @default(0)
+  status      GroupStatus      @default(ACTIVE)
+  lessons     LessonSchedule[]
+  students    Student[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model LessonSchedule {
+  id        Int      @id @default(autoincrement())
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   Int
+  weekday   Weekday
+  startTime String
+  endTime   String
+}
+
+model Student {
+  id           Int              @id @default(autoincrement())
+  studentId    String           @unique
+  firstName    String
+  lastName     String
+  gender       Gender
+  dateOfBirth  DateTime
+  phone        String
+  parentName   String?
+  parentPhone  String?
+  address      String?
+  status       StudentStatus   @default(ACTIVE)
+  photoUrl     String?
+  notes        String?
+  group        Group            @relation(fields: [groupId], references: [id])
+  groupId      Int
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  attendances  Attendance[]
+  payments     Payment[]
+}
+
+model Attendance {
+  id          Int              @id @default(autoincrement())
+  student     Student          @relation(fields: [studentId], references: [id])
+  studentId   Int
+  group       Group            @relation(fields: [groupId], references: [id])
+  groupId     Int
+  date        DateTime
+  status      AttendanceStatus
+  note        String?
+  createdAt   DateTime         @default(now())
+}
+
+model Payment {
+  id          Int              @id @default(autoincrement())
+  student     Student          @relation(fields: [studentId], references: [id])
+  studentId   Int
+  group       Group            @relation(fields: [groupId], references: [id])
+  groupId     Int
+  amount      Decimal
+  paidAt      DateTime
+  method      PaymentMethod
+  reference   String?
+  note        String?
+  createdAt   DateTime         @default(now())
+}

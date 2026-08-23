@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.env
+data/
+*.tmp
+node_modules/
+package.json
+package-lock.json
+mobile.zip
+*.zip
