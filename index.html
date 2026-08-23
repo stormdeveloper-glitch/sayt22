@@ -3809,8 +3809,47 @@
     <div class="load-bar">
       <div class="load-fill"></div>
     </div>
-    <div class="load-pct" id="loadPct">YUKLANMOQDA...</div>
+    <div class="load-pct" id="loadPct">YUKLANMOQDA... 0%</div>
   </div>
+
+  <script>
+    (function() {
+      var p = 0;
+      var el = document.getElementById('loadPct');
+      var fill = document.querySelector('.load-fill');
+      var t = setInterval(function() {
+        p += Math.floor(Math.random() * 8 + 4);
+        if (p > 100) p = 100;
+        if (el) el.textContent = 'YUKLANMOQDA... ' + p + '%';
+        if (fill) fill.style.width = p + '%';
+
+        if (p >= 100) {
+          clearInterval(t);
+          setTimeout(function() {
+            var ol = document.getElementById('loadingOverlay');
+            if (ol) {
+              ol.style.opacity = '0';
+              ol.style.transition = 'opacity 0.4s ease';
+              setTimeout(function() { ol.style.display = 'none'; }, 400);
+            }
+            var ls = document.getElementById('loginScreen');
+            if (ls) {
+              ls.style.display = 'flex';
+              ls.style.opacity = '0';
+              requestAnimationFrame(function() {
+                ls.style.transition = 'opacity 0.35s ease';
+                ls.style.opacity = '1';
+              });
+            }
+            if (typeof fillLoginDropdowns === 'function') {
+              try { fillLoginDropdowns(); } catch(e){}
+            }
+          }, 150);
+        }
+      }, 35);
+      window.__pctTimer = t;
+    })();
+  </script>
 
   <div id="toastEl"></div>
 
@@ -5300,13 +5339,99 @@
 
   <script>
     // ══════════════════════════════════════════════════
-    // DATA
+    // DATA & GLOBAL LOGIN HANDLERS
     // ══════════════════════════════════════════════════
+    const DEFAULT_STUDENTS = [
+      { id: 1001, name: "Bahodirjonov Sardor", pass: "1234", coins: 100, level: 2, streak: 5, ref: "REF1001", group: "D2", teacherId: 2001, teacherIds: [2001] },
+      { id: 1002, name: "Bahodirov Asadbek", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1002", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1003, name: "Farangiz", pass: "1234", coins: 25, level: 1, streak: 1, ref: "REF1003", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1004, name: "Farxodjon 08", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1004", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1005, name: "Ibrohim", pass: "1234", coins: 65, level: 1, streak: 3, ref: "REF1005", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1006, name: "Muhiddinov Nurillo", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1006", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1007, name: "Dadajonova Munavvara", pass: "1234", coins: 15, level: 1, streak: 1, ref: "REF1007", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1008, name: "Og'abek", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1008", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1009, name: "Omonov Alisher", pass: "1234", coins: 50, level: 1, streak: 2, ref: "REF1009", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1010, name: "Shavkatova Fotima", pass: "1234", coins: 50, level: 1, streak: 2, ref: "REF1010", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1011, name: "Shaxboz", pass: "1234", coins: 25, level: 1, streak: 1, ref: "REF1011", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1012, name: "Tojaliyev G'ayratjon", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1012", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1013, name: "Tolipjonov Asadbek", pass: "1234", coins: 26, level: 1, streak: 1, ref: "REF1013", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1014, name: "Tursunaliyev Abdulaziz", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1014", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1015, name: "Umaraliyev Ozodbek", pass: "1234", coins: 50, level: 1, streak: 2, ref: "REF1015", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1016, name: "Abdurazoqova Ra'noxon", pass: "1234", coins: 15, level: 1, streak: 1, ref: "REF1016", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1017, name: "Abdulhakimov Sardorbek", pass: "1234", coins: 35, level: 1, streak: 1, ref: "REF1017", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1018, name: "Ahmadjonova Shodiyona", pass: "1234", coins: 45, level: 1, streak: 2, ref: "REF1018", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1019, name: "Hamidov Abdulahat", pass: "1234", coins: 24, level: 1, streak: 1, ref: "REF1019", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1020, name: "Abdumo'minov Muhammadmuhtor", pass: "1234", coins: 10, level: 1, streak: 0, ref: "REF1020", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1021, name: "Hoshimov Abdulhafiz", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1021", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1022, name: "Hasanboyev Muhamqodir", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1022", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1023, name: "Nurmuhamadov Diyorbek", pass: "1234", coins: 10, level: 1, streak: 0, ref: "REF1023", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1024, name: "Mahamadov Ozodbek", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1024", group: "D1", teacherId: 2001, teacherIds: [2001] },
+      { id: 1025, name: "Shavkatov Abdulatif", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1025", group: "D1", teacherId: 2001, teacherIds: [2001] }
+    ];
+    const DEFAULT_TEACHERS = [
+      { id: 2001, name: "Valiyev Omadbek", subj: "IT", pass: "1234", code: "TCH-100" }
+    ];
+    const DEFAULT_ADMINS = [
+      { id: 3001, name: "Admin", pass: "admin123", code: "ADM-100", level: "admin" }
+    ];
+
     const DB = {
-      students: [],
-      teachers: [],
-      admins: []
+      students: [...DEFAULT_STUDENTS],
+      teachers: [...DEFAULT_TEACHERS],
+      admins: [...DEFAULT_ADMINS],
+      transactions: [], adminRequests: [], messages: [], groups: [],
+      chatFriends: [], chatGroups: [], pendingReqs: [],
+      pendingTelegramLinks: [], telegramProfiles: {}, tests: [], testResults: [], gamePlays: {}, practicePlays: {}, attendanceLog: [], pairHistory: []
     };
+
+    window.swTab = function(t) {
+      const s = document.getElementById('lgS');
+      const te = document.getElementById('lgT');
+      const a = document.getElementById('lgA');
+      if (s) s.style.display = t === 's' ? 'block' : 'none';
+      if (te) te.style.display = t === 't' ? 'block' : 'none';
+      if (a) a.style.display = t === 'a' ? 'block' : 'none';
+      ['S', 'T', 'A'].forEach(x => {
+        const btn = document.getElementById('tab' + x + 'Btn');
+        if (btn) btn.classList.toggle('active', x.toLowerCase() === t);
+      });
+    };
+
+    window.tpwd = function(id, icon) {
+      const inp = document.getElementById(id);
+      if (!inp) return;
+      const sh = inp.type === 'password';
+      inp.type = sh ? 'text' : 'password';
+      if (icon) {
+        icon.classList.toggle('fa-eye', !sh);
+        icon.classList.toggle('fa-eye-slash', sh);
+      }
+    };
+
+    window.fillLoginDropdowns = function() {
+      const ss = document.getElementById('lgSSel');
+      if (ss && DB && Array.isArray(DB.students)) {
+        ss.innerHTML = '<option value="">— tanlang —</option>';
+        DB.students.forEach(s => { ss.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
+      }
+      const ts = document.getElementById('lgTSel');
+      if (ts && DB && Array.isArray(DB.teachers)) {
+        ts.innerHTML = '<option value="">— tanlang —</option>';
+        DB.teachers.forEach(t => { ts.innerHTML += `<option value="${t.id}">${t.name}</option>`; });
+      }
+      const as = document.getElementById('lgASel');
+      if (as && DB && Array.isArray(DB.admins)) {
+        as.innerHTML = '<option value="">— tanlang —</option>';
+        DB.admins.forEach(a => { as.innerHTML += `<option value="${a.id}">${a.name}</option>`; });
+      }
+    };
+
+    // Darhol dropdownlarni to'ldirish
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', window.fillLoginDropdowns);
+    } else {
+      window.fillLoginDropdowns();
+    }
 
     // ══════════════════════════════════════════════════════════
     // 🏗️  API ADAPTER (BACKENDGA TAYYOR LAYER)
@@ -5696,15 +5821,18 @@
     }
 
     async function loadData() {
-      // 1) Avval backenddan urinib ko'ramiz
+      // 1) Avval backenddan urinib ko'ramiz (timeout bilan)
       try {
-        const res = await fetch('/api/data', { cache: 'no-store' });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch('/api/data', { cache: 'no-store', signal: controller.signal });
+        clearTimeout(timeoutId);
         if (res.ok) {
           const data = await res.json();
           if (hasRealData(data)) { applyLoadedData(data); return; }
         }
       } catch (e) {
-        console.warn('Backend topilmadi, localStorage/demo rejimga o\'tildi', e);
+        console.warn('Backend topilmadi yoki file:// rejimi, localStorage/demo rejimga o\'tildi', e);
       }
 
       // 2) Backend yo'q yoki bo'sh bo'lsa — localStorage'dan tiklaymiz
@@ -5719,8 +5847,11 @@
       }
 
       // 3) Hech narsa topilmasa — demo ma'lumot bilan boshlaymiz (tizim ishlab turishi uchun)
-      applyLoadedData(seedDemoData());
-      setTimeout(() => showToast('ℹ️ Demo rejim: backend topilmadi, vaqtinchalik ma\'lumot yuklandi'), 2600);
+      try {
+        applyLoadedData(seedDemoData());
+      } catch (e) {
+        console.warn('seedDemoData xatosi', e);
+      }
     }
 
     function saveData() {
@@ -5868,31 +5999,76 @@
 
     // ── Loading animation
     let pct = 0;
+    let isAppReady = false;
     const pctEl = document.getElementById('loadPct');
     const pctTimer = setInterval(() => {
-      pct = Math.min(pct + Math.floor(Math.random() * 8 + 3), 100);
+      pct = Math.min(pct + Math.floor(Math.random() * 12 + 6), 100);
       if (pctEl) pctEl.textContent = `YUKLANMOQDA... ${pct}%`;
       if (pct >= 100) clearInterval(pctTimer);
-    }, 80);
+    }, 60);
 
-    setTimeout(async () => {
-      await loadData();
+    function finishLoading() {
+      if (isAppReady) return;
+      isAppReady = true;
+      if (window.__pctTimer) clearInterval(window.__pctTimer);
+      if (pctTimer) clearInterval(pctTimer);
+      const el = document.getElementById('loadPct');
+      if (el) el.textContent = 'YUKLANMOQDA... 100%';
+
       const ol = document.getElementById('loadingOverlay');
-      ol.classList.add('hidden');
-      setTimeout(() => { ol.style.display = 'none'; }, 500);
+      if (ol) {
+        ol.style.opacity = '0';
+        ol.style.transition = 'opacity 0.4s ease';
+        setTimeout(() => { ol.style.display = 'none'; }, 400);
+      }
       const ls = document.getElementById('loginScreen');
-      ls.style.display = 'flex'; ls.style.opacity = '0';
-      requestAnimationFrame(() => { ls.style.transition = 'opacity .35s'; ls.style.opacity = '1'; });
-      fillLoginDropdowns();
-    }, 2400);
+      if (ls) {
+        ls.style.display = 'flex';
+        ls.style.opacity = '0';
+        requestAnimationFrame(() => {
+          ls.style.transition = 'opacity .35s';
+          ls.style.opacity = '1';
+        });
+      }
+      try {
+        fillLoginDropdowns();
+      } catch (e) {
+        console.error('fillLoginDropdowns xatolik:', e);
+      }
+    }
+
+    (async () => {
+      try {
+        await Promise.race([
+          loadData(),
+          new Promise(r => setTimeout(r, 1200))
+        ]);
+      } catch (e) {
+        console.warn('loadData xatosi:', e);
+      } finally {
+        setTimeout(finishLoading, 300);
+      }
+    })();
+
+    // Xavfsizlik: 2 sekunddan keyin har qanday holatda ekranni ochish
+    setTimeout(finishLoading, 2000);
 
     function fillLoginDropdowns() {
-      const ss = document.getElementById('lgSSel'); ss.innerHTML = '<option value="">— tanlang —</option>';
-      DB.students.forEach(s => { ss.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
-      const ts = document.getElementById('lgTSel'); ts.innerHTML = '<option value="">— tanlang —</option>';
-      DB.teachers.forEach(t => { ts.innerHTML += `<option value="${t.id}">${t.name}</option>`; });
-      const as = document.getElementById('lgASel'); as.innerHTML = '<option value="">— tanlang —</option>';
-      DB.admins.forEach(a => { as.innerHTML += `<option value="${a.id}">${a.name}</option>`; });
+      const ss = document.getElementById('lgSSel');
+      if (ss && DB && Array.isArray(DB.students)) {
+        ss.innerHTML = '<option value="">— tanlang —</option>';
+        DB.students.forEach(s => { ss.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
+      }
+      const ts = document.getElementById('lgTSel');
+      if (ts && DB && Array.isArray(DB.teachers)) {
+        ts.innerHTML = '<option value="">— tanlang —</option>';
+        DB.teachers.forEach(t => { ts.innerHTML += `<option value="${t.id}">${t.name}</option>`; });
+      }
+      const as = document.getElementById('lgASel');
+      if (as && DB && Array.isArray(DB.admins)) {
+        as.innerHTML = '<option value="">— tanlang —</option>';
+        DB.admins.forEach(a => { as.innerHTML += `<option value="${a.id}">${a.name}</option>`; });
+      }
     }
 
     function swTab(t) {
@@ -9095,7 +9271,7 @@ function mLoadLesson(id){
           <div class="txt2 fs12">${ls.desc}</div>
         </div>
         <div class="txt2 fs11" style="text-align:right;">
-          ${best.wpm?`<div>Eng yaxshi: <b>${best.wpm} WPM</b> · <b>${best.acc}%</b></div>`:'<div>Hali o'tilmagan</div>'}
+          ${best.wpm?`<div>Eng yaxshi: <b>${best.wpm} WPM</b> · <b>${best.acc}%</b></div>`:`<div>Hali o'tilmagan</div>`}
           <div style="margin-top:4px;">Min: ${ls.threshold.minAcc||0}% aniqlik${ls.threshold.minWPM?` · ${ls.threshold.minWPM} WPM`:''}</div>
         </div>
       </div>`;

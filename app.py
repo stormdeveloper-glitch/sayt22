@@ -20,6 +20,8 @@ import urllib.parse
 import urllib.request
 import uuid
 from pathlib import Path
+# DB utilities
+from data_database import init_data_db, get_all_data, save_data_dict, migrate_json_to_db
 from typing import Any, Optional
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -206,36 +208,19 @@ def normalize_data(data: Any) -> tuple[dict, bool]:
 
 
 def init_data_file() -> None:
-    """Fayl mavjud bo'lmasa, bo'sh bazani yaratadi."""
-    Config.DATA_DIR.mkdir(parents=True, exist_ok=True)
-    if not Config.DATA_FILE.exists():
-        empty_data, _ = normalize_data({})
-        with Config.DATA_FILE.open("w", encoding="utf-8") as fh:
-            json.dump(empty_data, fh, ensure_ascii=False, indent=2)
+    """Initialize the online database. If a legacy JSON file exists, migrate it."""
+    init_data_db()
+    migrate_json_to_db(Config.DATA_FILE)
 
 
 def read_data() -> dict:
-    with _data_lock:
-        init_data_file()
-        with Config.DATA_FILE.open("r", encoding="utf-8") as fh:
-            data = json.load(fh)
-        data, changed = normalize_data(data)
-        if changed:
-            tmp = Config.DATA_FILE.with_suffix(Config.DATA_FILE.suffix + ".tmp")
-            with tmp.open("w", encoding="utf-8") as fh:
-                json.dump(data, fh, ensure_ascii=False, indent=2)
-            os.replace(tmp, Config.DATA_FILE)
-        return data
+    """Fetch the complete dataset from the online database."""
+    return get_all_data()
 
 
 def write_data(data: dict) -> None:
-    """Atomik yozish: avval .tmp faylga yoziladi, keyin rename qilinadi."""
-    with _data_lock:
-        init_data_file()
-        tmp = Config.DATA_FILE.with_suffix(Config.DATA_FILE.suffix + ".tmp")
-        with tmp.open("w", encoding="utf-8") as fh:
-            json.dump(data, fh, ensure_ascii=False, indent=2)
-        os.replace(tmp, Config.DATA_FILE)
+    """Ma'lumotlarni online bazaga (app_data kaliti ostida) saqlash."""
+    save_data_dict("app_data", data)
 
 
 def find_account(data: dict, role: str, account_id: int) -> Optional[dict]:

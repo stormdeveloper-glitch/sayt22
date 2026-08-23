@@ -3731,8 +3731,47 @@
     <div class="load-bar">
       <div class="load-fill"></div>
     </div>
-    <div class="load-pct" id="loadPct">YUKLANMOQDA...</div>
+    <div class="load-pct" id="loadPct">YUKLANMOQDA... 0%</div>
   </div>
+
+  <script>
+    (function() {
+      var p = 0;
+      var el = document.getElementById('loadPct');
+      var fill = document.querySelector('.load-fill');
+      var t = setInterval(function() {
+        p += Math.floor(Math.random() * 8 + 4);
+        if (p > 100) p = 100;
+        if (el) el.textContent = 'YUKLANMOQDA... ' + p + '%';
+        if (fill) fill.style.width = p + '%';
+
+        if (p >= 100) {
+          clearInterval(t);
+          setTimeout(function() {
+            var ol = document.getElementById('loadingOverlay');
+            if (ol) {
+              ol.style.opacity = '0';
+              ol.style.transition = 'opacity 0.4s ease';
+              setTimeout(function() { ol.style.display = 'none'; }, 400);
+            }
+            var ls = document.getElementById('loginScreen');
+            if (ls) {
+              ls.style.display = 'flex';
+              ls.style.opacity = '0';
+              requestAnimationFrame(function() {
+                ls.style.transition = 'opacity 0.35s ease';
+                ls.style.opacity = '1';
+              });
+            }
+            if (typeof fillLoginDropdowns === 'function') {
+              try { fillLoginDropdowns(); } catch(e){}
+            }
+          }, 150);
+        }
+      }, 35);
+      window.__pctTimer = t;
+    })();
+  </script>
 
   <div id="toastEl"></div>
 
@@ -5376,15 +5415,18 @@
     }
 
     async function loadData() {
-      // 1) Avval backenddan urinib ko'ramiz
+      // 1) Avval backenddan urinib ko'ramiz (timeout bilan)
       try {
-        const res = await fetch('/api/data', { cache: 'no-store' });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch('/api/data', { cache: 'no-store', signal: controller.signal });
+        clearTimeout(timeoutId);
         if (res.ok) {
           const data = await res.json();
           if (hasRealData(data)) { applyLoadedData(data); return; }
         }
       } catch (e) {
-        console.warn('Backend topilmadi, localStorage/demo rejimga o\'tildi', e);
+        console.warn('Backend topilmadi yoki file:// rejimi, localStorage/demo rejimga o\'tildi', e);
       }
 
       // 2) Backend yo'q yoki bo'sh bo'lsa — localStorage'dan tiklaymiz
@@ -5399,8 +5441,11 @@
       }
 
       // 3) Hech narsa topilmasa — demo ma'lumot bilan boshlaymiz (tizim ishlab turishi uchun)
-      applyLoadedData(seedDemoData());
-      setTimeout(() => showToast('ℹ️ Demo rejim: backend topilmadi, vaqtinchalik ma\'lumot yuklandi'), 2600);
+      try {
+        applyLoadedData(seedDemoData());
+      } catch (e) {
+        console.warn('seedDemoData xatosi', e);
+      }
     }
 
     function saveData() {
@@ -5548,31 +5593,74 @@
 
     // ── Loading animation
     let pct = 0;
+    let isAppReady = false;
     const pctEl = document.getElementById('loadPct');
     const pctTimer = setInterval(() => {
-      pct = Math.min(pct + Math.floor(Math.random() * 8 + 3), 100);
+      pct = Math.min(pct + Math.floor(Math.random() * 12 + 6), 100);
       if (pctEl) pctEl.textContent = `YUKLANMOQDA... ${pct}%`;
       if (pct >= 100) clearInterval(pctTimer);
-    }, 80);
+    }, 60);
 
-    setTimeout(async () => {
-      await loadData();
+    function finishLoading() {
+      if (isAppReady) return;
+      isAppReady = true;
+      clearInterval(pctTimer);
+      if (pctEl) pctEl.textContent = 'YUKLANMOQDA... 100%';
+
       const ol = document.getElementById('loadingOverlay');
-      ol.classList.add('hidden');
-      setTimeout(() => { ol.style.display = 'none'; }, 500);
+      if (ol) {
+        ol.style.opacity = '0';
+        ol.style.transition = 'opacity 0.4s ease';
+        setTimeout(() => { ol.style.display = 'none'; }, 400);
+      }
       const ls = document.getElementById('loginScreen');
-      ls.style.display = 'flex'; ls.style.opacity = '0';
-      requestAnimationFrame(() => { ls.style.transition = 'opacity .35s'; ls.style.opacity = '1'; });
-      fillLoginDropdowns();
-    }, 2400);
+      if (ls) {
+        ls.style.display = 'flex';
+        ls.style.opacity = '0';
+        requestAnimationFrame(() => {
+          ls.style.transition = 'opacity .35s';
+          ls.style.opacity = '1';
+        });
+      }
+      try {
+        fillLoginDropdowns();
+      } catch (e) {
+        console.error('fillLoginDropdowns xatolik:', e);
+      }
+    }
+
+    (async () => {
+      try {
+        await Promise.race([
+          loadData(),
+          new Promise(r => setTimeout(r, 1200))
+        ]);
+      } catch (e) {
+        console.warn('loadData xatosi:', e);
+      } finally {
+        setTimeout(finishLoading, 300);
+      }
+    })();
+
+    // Xavfsizlik: 2 sekunddan keyin har qanday holatda ekranni ochish
+    setTimeout(finishLoading, 2000);
 
     function fillLoginDropdowns() {
-      const ss = document.getElementById('lgSSel'); ss.innerHTML = '<option value="">— tanlang —</option>';
-      DB.students.forEach(s => { ss.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
-      const ts = document.getElementById('lgTSel'); ts.innerHTML = '<option value="">— tanlang —</option>';
-      DB.teachers.forEach(t => { ts.innerHTML += `<option value="${t.id}">${t.name}</option>`; });
-      const as = document.getElementById('lgASel'); as.innerHTML = '<option value="">— tanlang —</option>';
-      DB.admins.forEach(a => { as.innerHTML += `<option value="${a.id}">${a.name}</option>`; });
+      const ss = document.getElementById('lgSSel');
+      if (ss && DB && Array.isArray(DB.students)) {
+        ss.innerHTML = '<option value="">— tanlang —</option>';
+        DB.students.forEach(s => { ss.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
+      }
+      const ts = document.getElementById('lgTSel');
+      if (ts && DB && Array.isArray(DB.teachers)) {
+        ts.innerHTML = '<option value="">— tanlang —</option>';
+        DB.teachers.forEach(t => { ts.innerHTML += `<option value="${t.id}">${t.name}</option>`; });
+      }
+      const as = document.getElementById('lgASel');
+      if (as && DB && Array.isArray(DB.admins)) {
+        as.innerHTML = '<option value="">— tanlang —</option>';
+        DB.admins.forEach(a => { as.innerHTML += `<option value="${a.id}">${a.name}</option>`; });
+      }
     }
 
     function swTab(t) {

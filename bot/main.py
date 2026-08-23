@@ -12,11 +12,18 @@ import asyncio
 import json
 import logging
 import os
+import sys
 import threading
 import time
 from html import escape
 from pathlib import Path
 from typing import Any, Iterable, Optional
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from data_database import get_all_data, save_data_dict
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ButtonStyle
@@ -197,26 +204,22 @@ def normalize_data(data: Any) -> dict:
 
 
 def init_data_file() -> None:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    if not DATA_FILE.exists():
-        write_data(default_data())
+    data = get_all_data()
+    if not data or not (data.get("students") or data.get("teachers") or data.get("admins")):
+        save_data_dict("app_data", default_data())
 
 
 def read_data() -> dict:
-    init_data_file()
-    with _DATA_LOCK:
-        with DATA_FILE.open("r", encoding="utf-8") as fh:
-            return normalize_data(json.load(fh))
+    raw = get_all_data()
+    if not raw or not (raw.get("students") or raw.get("teachers") or raw.get("admins")):
+        raw = default_data()
+        save_data_dict("app_data", raw)
+    return normalize_data(raw)
 
 
 def write_data(data: Any) -> dict:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
     normalized = normalize_data(data)
-    tmp_file = DATA_FILE.with_suffix(DATA_FILE.suffix + ".tmp")
-    with _DATA_LOCK:
-        with tmp_file.open("w", encoding="utf-8") as fh:
-            json.dump(normalized, fh, ensure_ascii=False, indent=2)
-        os.replace(tmp_file, DATA_FILE)
+    save_data_dict("app_data", normalized)
     return normalized
 
 
