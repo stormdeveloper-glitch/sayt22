@@ -3634,6 +3634,68 @@
       font-weight:900;
     }
     .fk-hand-label { text-align:center; font-size:9px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-top:4px; font-family:'JetBrains Mono',monospace; }
+    /* 15 darslik kartalari */
+    .lesson-card { padding: 12px 12px 10px; border-radius: 12px; border: 1.5px solid var(--bor2); background: var(--bg2); cursor: pointer; transition: .15s all; user-select: none; }
+    .lesson-card:hover { transform: translateY(-1px); border-color: var(--cyan); }
+    .lesson-card.active { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan)33, 0 6px 18px -6px var(--cyan)55; background: linear-gradient(180deg, var(--bg2), #00e5ff12); }
+    .lesson-card.locked { opacity: .55; cursor: not-allowed; filter: grayscale(.4); }
+    .lesson-card.passed { border-color: var(--ok); }
+    .lesson-card .lesson-head { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text3); font-weight: 700; margin-bottom: 5px; }
+    .lesson-card .lesson-idx { font-family: 'Orbitron', monospace; letter-spacing: .3px; }
+    .lesson-card .lesson-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .lesson-card .lesson-desc  { font-size: 11.5px; color: var(--text2); line-height: 1.4; }
+    .lesson-card .lesson-mini  { display:flex; justify-content: space-between; margin-top:8px; padding-top:7px; border-top: 1px dashed var(--bor); font-size: 11px; color: var(--text3); }
+    /* Sertifikat sahifasi */
+    .cert-wrap { background: linear-gradient(160deg, #ffffff 0%, #e6f9ff 55%, #fff4bf 100%); color:#000; padding: 50px 60px; border-radius: 20px; border: 8px double #b38726; max-width: 1050px; margin: 20px auto; font-family: 'Exo 2', sans-serif; position: relative; box-shadow: 0 30px 80px -30px #0008; }
+    .cert-wrap::before, .cert-wrap::after { content:""; position:absolute; width:60px; height:60px; border:3px solid #b38726; }
+    .cert-wrap::before { top: 24px; left: 24px; border-right:none; border-bottom:none; }
+    .cert-wrap::after  { bottom:24px; right:24px; border-left:none; border-top:none; }
+    .cert-logo { font-size: 14px; color: #777; letter-spacing: 2px; text-align:center; text-transform: uppercase; }
+    .cert-title { font-family: 'Orbitron', monospace; font-size: 46px; text-align:center; color:#005f73; margin: 14px 0 4px; letter-spacing: 3px; }
+    .cert-sub { text-align:center; color:#555; font-size: 14px; letter-spacing: 2px; margin-bottom: 28px; text-transform: uppercase; }
+    .cert-line { height:2px; background: linear-gradient(90deg, transparent, #b38726, transparent); margin: 10px 0 20px; }
+    .cert-given { text-align:center; font-size: 15px; color:#333; margin-bottom: 16px; }
+    .cert-name { text-align:center; font-size: 40px; font-weight: 800; color:#0a9396; font-family: 'Orbitron', monospace; margin: 10px 0; border-bottom: 2px solid #005f7333; padding-bottom: 14px; letter-spacing: 1px; }
+    .cert-course { text-align:center; font-size: 18px; color:#222; margin: 10px 0 24px; line-height: 1.6; }
+    .cert-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 700px; margin: 30px auto; }
+    .cert-stat { background: #005f730c; border: 1.5px solid #005f7344; padding: 16px; border-radius: 14px; text-align: center; }
+    .cert-stat-val { font-size: 28px; font-weight: 900; color: #005f73; font-family: 'Orbitron', monospace; }
+    .cert-stat-lbl { font-size: 12px; color: #444; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+    .cert-meta { display:flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; padding-top: 28px; border-top:1px dashed #005f7344; }
+    .cert-sign { text-align:center; flex: 1; }
+    .cert-sign .sline { width: 180px; height: 2px; background:#005f7377; margin: 0 auto 8px; }
+    .cert-sign .stxt  { font-size: 12px; color:#555; }
+    .cert-qr { text-align:center; }
+    .cert-qr img { width: 120px; height: 120px; border: 6px solid #fff; border-radius: 10px; box-shadow: 0 4px 18px #0003; }
+    .cert-qr .cert-id { font-size: 11px; color:#555; margin-top: 8px; letter-spacing: 1px; font-family: monospace; }
+    .cert-center { font-size: 12px; color:#555; text-align:center; margin-top: 18px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .cert-actions { text-align:center; margin: 16px 0 30px; display:flex; gap:12px; justify-content:center; flex-wrap: wrap; }
+    .btn.btn-gold { background: linear-gradient(180deg,#ffe57a,#ffcf33); color:#3b2a00; border-color:#e0a800; font-weight:700; }
+    .btn.btn-sm { padding: 6px 10px; font-size: 12px; }
+    @media print {
+      body > *:not(.cert-wrap-parent), .cert-actions { display:none !important; }
+      .cert-wrap-parent, .cert-wrap { display:block !important; }
+      .cert-wrap { box-shadow:none; border-radius: 0; }
+    }
+    .cert-wrap-parent { min-height: 100vh; }
+    /* Responsive typing */
+    @media (max-width: 900px) {
+      .typing-grid { grid-template-columns: 1fr !important; }
+      .type-arena { padding: 14px !important; }
+      .fk-key { min-width: 28px !important; height: 36px !important; font-size: 13px !important; }
+      .cert-wrap { padding: 22px 16px; }
+      .cert-title { font-size: 28px; }
+      .cert-name { font-size: 24px; }
+      .cert-stats { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .type-stats-row { grid-template-columns: repeat(5, 1fr) !important; }
+      .type-stat-val { font-size: 16px; }
+      .type-stat-lbl { font-size: 10px; }
+      .fk-key.space { min-width: 100px !important; }
+      .cert-stats { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+      .cert-meta { flex-direction: column; gap: 18px; align-items: center; }
+    }
     /* Race invite card in chat */
     .race-invite-card {
       background:linear-gradient(135deg, var(--cyan-dim), var(--gold-dim));
@@ -5245,6 +5307,248 @@
       teachers: [],
       admins: []
     };
+
+    // ══════════════════════════════════════════════════════════
+    // 🏗️  API ADAPTER (BACKENDGA TAYYOR LAYER)
+    // Hozir: localStorage + HTTP fetch (urinib ko'radi, bo'lmasa localStorage ishlaydi)
+    // Keyin: ApiService.impl = restImpl (JWT) / wsImpl (Socket.IO) / prImpl (Prisma orqali)
+    //        almashtirish kifoya — barcha UI kodlar ApiService.* ni chaqiradi, ichki realisiyasi farq qilmaydi
+    // ══════════════════════════════════════════════════════════
+    const ApiService = {
+      impl: 'localOrHttp',
+      _typingKey: 'tt_typingProgress_v1',
+      _certKey:   'tt_certificates_v1',
+      _groupKey:  'tt_groups_v1',
+      _hwKey:     'tt_homework_v1',
+      _raceKey:   'tt_races_v1',
+      _tenant:    'default-center',
+      _backendOnline: null,    // true → backend ishlayapti, localStorage ishlatilmaydi
+      _backendProbeAt: 0,     // cache probe timestamp (5 soniya)
+      _ramCache: { tp:{}, cert:{}, grp:{}, hw:{}, race:{} }, // RAM cache (backend online bo'lganda)
+
+      async _backendAlive(){
+        // 5 soniyadan ortiq probe bo'lmagan bo'lsa, tekshir
+        if (this._backendOnline!==null && (Date.now() - this._backendProbeAt) < 5000) return this._backendOnline;
+        this._backendProbeAt = Date.now();
+        try {
+          const res = await fetch('/api/data?_=' + Date.now(), { cache:'no-store', method:'HEAD' });
+          this._backendOnline = res.ok;
+        } catch(e){
+          // HEAD ishlamasa, GET bilan tekshir
+          try {
+            const r2 = await fetch('/api/data?_=' + Date.now(), { cache:'no-store' });
+            this._backendOnline = r2.ok;
+          } catch(e2){ this._backendOnline = false; }
+        }
+        return this._backendOnline;
+      },
+
+      setTenant(tid){ this._tenant = tid; },
+      tenant(){ return this._tenant; },
+
+      _localGet(k, fallback){
+        // Agar backend online bo'lsa → localni umuman o'qima (RAM dan kesh ol)
+        if (this._backendOnline) return fallback;
+        try { const r = localStorage.getItem(k); return r?JSON.parse(r):fallback; } catch(e){ return fallback; }
+      },
+      _localSet(k, v){
+        // Backend online bo'lsa → localStorage'ga YOZMA (faqat RAM)
+        if (this._backendOnline) return;
+        try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){ console.warn(k, e); }
+      },
+
+      async getTypingProgress(userId){
+        const alive = await this._backendAlive();
+        if (alive) {
+          try {
+            const res = await fetch(`/api/typing/progress?userId=${userId}&tenant=${this._tenant}`,{cache:'no-store'});
+            if (res.ok) { const d = (await res.json()).data || this._emptyProgress(userId); this._ramCache.tp[userId]=d; return d; }
+          } catch(e){}
+        }
+        const all = this._localGet(this._typingKey, {});
+        return all[userId] || this._emptyProgress(userId);
+      },
+      async saveTypingProgress(userId, lessonId, result){
+        const record = {
+          lessonId,
+          wpm: result.wpm, cpm: result.cpm, accuracy: result.accuracy,
+          errors: result.errors, elapsedSec: result.elapsedSec,
+          completed: result.completed, passed: result.passed,
+          attemptedAt: Date.now()
+        };
+        const alive = await this._backendAlive();
+        if (alive) {
+          try {
+            const res = await fetch('/api/typing/progress', {
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ userId, tenant:this._tenant, lessonId, record })
+            });
+            if (res.ok) { const d = (await res.json()).data; if (d) this._ramCache.tp[userId]=d; return d; }
+          } catch(e){}
+        }
+        const all = this._localGet(this._typingKey, {});
+        const cur = all[userId] || this._emptyProgress(userId);
+        const prev = cur[lessonId] || {};
+        cur[lessonId] = {
+          ...record,
+          bestWpm:   Math.max(prev.bestWpm||0, result.wpm||0),
+          bestAcc:   Math.max(prev.bestAcc||0, result.accuracy||0),
+          bestCpm:   Math.max(prev.bestCpm||0, result.cpm||0)
+        };
+        if (result.passed) {
+          cur.nextUnlockedLesson = Math.max(cur.nextUnlockedLesson||1, Number(lessonId) + 1);
+        }
+        all[userId] = cur;
+        this._localSet(this._typingKey, all);
+        return cur;
+      },
+      async getProgressSummary(userId){ return this.getTypingProgress(userId); },
+
+      _emptyProgress(userId){ return { userId, nextUnlockedLesson: 1 }; },
+
+      // --- Certificates ---
+      async getCertificates(userId){
+        const alive = await this._backendAlive();
+        if (alive) {
+          try { const r = await fetch(`/api/certificates?userId=${userId}&tenant=${this._tenant}`); if (r.ok) return (await r.json()).data || []; } catch(e){}
+        }
+        const all = this._localGet(this._certKey, {});
+        return all[userId] || [];
+      },
+      async saveCertificate(userId, cert){
+        const alive = await this._backendAlive();
+        const item = { id: cert.id || ('CERT-'+Date.now()+'-'+Math.floor(Math.random()*10000)), tenant:this._tenant, ...cert, issuedAt: cert.issuedAt||Date.now() };
+        if (alive) {
+          try {
+            const r = await fetch('/api/certificates', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId, tenant:this._tenant, certificate: item}) });
+            if (r.ok) return (await r.json()).data || item;
+          } catch(e){}
+        }
+        const all = this._localGet(this._certKey, {});
+        all[userId] = all[userId] || [];
+        all[userId].push(item);
+        this._localSet(this._certKey, all);
+        return item;
+      },
+
+      // --- Groups ---
+      async listGroups(teacherId){
+        const alive = await this._backendAlive();
+        if (alive) {
+          try { const r = await fetch(`/api/groups?tenant=${this._tenant}${teacherId?`&teacherId=${teacherId}`:''}`); if (r.ok) return (await r.json()).data||[]; } catch(e){}
+        }
+        const all = this._localGet(this._groupKey, []);
+        return teacherId ? all.filter(g=>String(g.teacherId)===String(teacherId) || (Array.isArray(g.teacherIds) && g.teacherIds.includes(teacherId))) : all;
+      },
+      async saveGroup(group){
+        group.id = group.id || ('GRP-'+Date.now());
+        group.tenant = group.tenant || this._tenant;
+        const alive = await this._backendAlive();
+        if (alive) {
+          try { const r = await fetch('/api/groups', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tenant:this._tenant, group}) }); if (r.ok) return (await r.json()).data; } catch(e){}
+        }
+        const all = this._localGet(this._groupKey, []);
+        const i = all.findIndex(g=>g.id===group.id);
+        if (i>=0) all[i] = { ...all[i], ...group }; else all.push(group);
+        this._localSet(this._groupKey, all);
+        return group;
+      },
+
+      // --- Homework / Vazifa ---
+      async listHomework({studentId, groupId}){
+        const alive = await this._backendAlive();
+        if (alive) {
+          try {
+            const r = await fetch(`/api/homework?tenant=${this._tenant}${studentId?`&studentId=${studentId}`:''}${groupId?`&groupId=${groupId}`:''}`);
+            if (r.ok) return (await r.json()).data||[];
+          } catch(e){}
+        }
+        const all = this._localGet(this._hwKey, []);
+        const sid = studentId ? String(studentId) : null;
+        const gid = groupId ? String(groupId) : null;
+        return all.filter(h => {
+          const okS = !sid || (Array.isArray(h.studentIds) && h.studentIds.map(String).includes(sid)) || String(h.studentId)===sid || String(h.groupId)===gid;
+          const okG = !gid || String(h.groupId)===gid;
+          return okS && okG;
+        });
+      },
+      async saveHomework(hw){
+        hw.id = hw.id || ('HW-'+Date.now());
+        hw.tenant = hw.tenant || this._tenant;
+        const alive = await this._backendAlive();
+        if (alive) {
+          try { const r = await fetch('/api/homework',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:this._tenant, homework:hw})}); if (r.ok) return (await r.json()).data; } catch(e){}
+        }
+        const all = this._localGet(this._hwKey, []);
+        const i = all.findIndex(h=>h.id===hw.id);
+        if (i>=0) all[i]={...all[i],...hw}; else all.push(hw);
+        this._localSet(this._hwKey, all);
+        return hw;
+      },
+      async submitHomework(homeworkId, studentId, submission){
+        const alive = await this._backendAlive();
+        if (alive) {
+          try { const r = await fetch('/api/homework/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:this._tenant, homeworkId, studentId, submission})}); if (r.ok) return (await r.json()).data; } catch(e){}
+        }
+        const all = this._localGet(this._hwKey, []);
+        const hw = all.find(h=>h.id===homeworkId);
+        if (hw){
+          hw.submissions = hw.submissions || {};
+          hw.submissions[String(studentId)] = { submittedAt: Date.now(), ...submission };
+          this._localSet(this._hwKey, all);
+        }
+        return submission;
+      },
+
+      // --- Typing Race (WS interface template) ---
+      race: {
+        async create(meta){
+          const code = 'R'+(1000+Math.floor(Math.random()*9000));
+          const race = { code, createdAt: Date.now(), status:'lobby', players:[], text: (TYPING_TEXTS?.medium?.[0]||TYPING_TEXTS?.easy?.[0]||''), startedAt:null, meta: meta||{} };
+          const alive = await ApiService._backendAlive();
+          if (alive) { try { const r = await fetch('/api/race/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,race})}); if (r.ok) return (await r.json()).data; } catch(e){} }
+          const all = ApiService._localGet(ApiService._raceKey,{});
+          all[code] = race; ApiService._localSet(ApiService._raceKey, all);
+          return race;
+        },
+        async join(code, player){
+          const alive = await ApiService._backendAlive();
+          if (alive) { try { const r = await fetch('/api/race/join',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,code,player})}); if (r.ok) return (await r.json()).data; } catch(e){} }
+          const all = ApiService._localGet(ApiService._raceKey,{});
+          const race = all[code];
+          if (!race) return null;
+          if (!race.players.find(p=>String(p.id)===String(player.id))) race.players.push({...player, progress:0, wpm:0, accuracy:100, done:false, finishedAt:null});
+          all[code] = race; ApiService._localSet(ApiService._raceKey, all);
+          return race;
+        },
+        async start(code){
+          const alive = await ApiService._backendAlive();
+          if (alive) { try { const r = await fetch('/api/race/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,code})}); if (r.ok) return (await r.json()).data; } catch(e){} }
+          const all = ApiService._localGet(ApiService._raceKey,{});
+          const race = all[code];
+          if (race){ race.status='running'; race.startedAt = Date.now(); ApiService._localSet(ApiService._raceKey,all); }
+          return race;
+        },
+        async pushProgress(code, playerId, p){
+          const alive = await ApiService._backendAlive();
+          if (alive) { try { const r = await fetch('/api/race/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,code,playerId,progress:p})}); if (r.ok) return (await r.json()).data; } catch(e){} }
+          const all = ApiService._localGet(ApiService._raceKey,{});
+          const race = all[code];
+          if (race){ const pl = race.players.find(x=>String(x.id)===String(playerId)); if (pl){ Object.assign(pl, p); ApiService._localSet(ApiService._raceKey,all); } }
+          return race;
+        },
+        async get(code){
+          const alive = await ApiService._backendAlive();
+          if (alive) { try { const r = await fetch(`/api/race?tenant=${ApiService._tenant}&code=${code}`); if (r.ok) return (await r.json()).data; } catch(e){} }
+          const all = ApiService._localGet(ApiService._raceKey,{});
+          return all[code] || null;
+        },
+        _subscriptions: {},
+        subscribe(code, cb){ (this._subscriptions[code]=this._subscriptions[code]||[]).push(cb); return ()=>{ this._subscriptions[code] = (this._subscriptions[code]||[]).filter(x=>x!==cb); }; },
+        publish(code, evt){ (this._subscriptions[code]||[]).forEach(cb=>{ try { cb(evt); } catch(e){} }); }
+      }
+    };
+    window.ApiService = ApiService;
 
     let saveTimer = null;
     const apiNum = (v, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
@@ -8564,75 +8868,249 @@ function mRenderFingerBoard(activeChar) {
       <div class="fk-hand-label">${activeFinger ? ('Hozir bosing: ' + FINGER_NAMES[activeFinger]) : 'Terishni boshlang'}</div>
     </div>`;
 }
+function mRenderHandsVisual(activeFinger) {
+  const F = FINGER_COLORS, N = FINGER_NAMES;
+  const dot = (id, label, isThumb=false) => {
+    const active = activeFinger === id;
+    const color = F[id];
+    return `<span class="hf-dot ${isThumb?'hf-thumb':''} ${active?'hf-active':''}" style="color:${color};border-color:${color}55;box-shadow:${active?'0 0 10px '+color:''};">${label}</span>`;
+  };
+  return `
+    <div class="hand-viz-row">
+      <div class="hand-group">
+        <div class="hand-lbl">👈 CHAP QO'L</div>
+        <div class="hand-fingers">
+          ${dot('lp','5')}${dot('lr','4')}${dot('lm','3')}${dot('li','2')}
+          <div style="width:14px;display:inline-block;"></div>
+          ${dot('th','☚',true)}
+        </div>
+      </div>
+      <div class="hand-group">
+        <div class="hand-lbl">O'NG QO'L 👉</div>
+        <div class="hand-fingers">
+          ${dot('th','☛',true)}
+          <div style="width:14px;display:inline-block;"></div>
+          ${dot('ri','2')}${dot('rm','3')}${dot('rr','4')}${dot('rp','5')}
+        </div>
+      </div>
+    </div>
+    <div class="hand-state-title">${activeFinger ? ('🔥 ' + (N[activeFinger] || '') + ' bilan bosing') : 'Barmoqlaringizni uy qatoriga qo\'ying'}</div>`;
+}
+window.mRenderHandsVisual = mRenderHandsVisual;
+
+// ═══════════════════════════════════════════════════════════
+// 15 BOSQICHLIK TYPING KURSI (Home Row → Yakuniy imtihon)
+// Har bir dars: id, nom, tavsif, mashq matni, minimal pass talablari
+// ═══════════════════════════════════════════════════════════
+const TYPING_COURSE = [
+  { id:1,  title:"1. Uy qatori (Home Row)",             desc:"Chap: A S D F  ·  O'ng: J K L ;  — asosiy uy qatorni mustahkamlash.",  threshold:{minAcc:80, minChars:200},
+    text:"asdf jkl; asdf jkl; asdf jkl; asdf jkl; a s d f j k l ; a s d f j k l ; fads jkl; fads jkl; asdf ;lkj asdf ;lkj aass ddff jjkk ll;; a s d f f d s a j k l ; ; l k j asdf jkl; asdf jkl;" },
+  { id:2,  title:"2. Chap qo'l",                        desc:"Chap qo'llar barmoqlari bilan Q W E R T ni mashq qiling.",              threshold:{minAcc:80, minChars:250},
+    text:"qaz qaz qaz wsx wsx wsx edc edc edc rfv rfv rfv tgb tgb tgb q w e r t a s d f g z x c v b qwert asdfg zxcvb qazwsx edcrfv tgb q w e r t a s d f g z x c v b qq ww ee rr tt aa ss dd ff gg zz xx cc vv bb qwert qwert asdfg asdfg zxcvb zxcvb;" },
+  { id:3,  title:"3. O'ng qo'l",                        desc:"O'ng qo'l barmoqlari Y U I O P ni mashq qiling.",              threshold:{minAcc:80, minChars:250},
+    text:"yhn yhn yhn ujm ujm ujm ik, ik, ik, ol. ol. ol. p;/ p;/ p;/ y u i o p h j k l ; n m , . / yhnujm ik,ol. p;/ y u i o p h j k l ; n m , . / yy uu ii oo pp hh jj kk ll ;; nn mm ,, .. // yuiop yuiop hjkl; hjkl; nm,./ nm,./;" },
+  { id:4,  title:"4. Yuqori qator",                     desc:"Yuqori qator: Q W E R T Y U I O P",                           threshold:{minAcc:78, minChars:300},
+    text:"q w e r t y u i o p q w e r t y u i o p qwerty qwerty uiop uiop qazwsx edcrfv tgbyhn ujmik, ol.p;/ qwertyuiop qwertyuiop asdfghjkl; zxcvbnm,./ qwert yuiop qwert yuiop asdf ghjkl zxc vbnm qwertyuiop asdfghjkl zxcvbnm;" },
+  { id:5,  title:"5. Pastki qator",                     desc:"Pastki qator: Z X C V B N M , . /",                           threshold:{minAcc:78, minChars:300},
+    text:"z x c v b n m , . / z x c v b n m , . / zxcvbnm zxcvbnm ,./ ,./ qaz wsx edc rfv tgb yhn ujm ik, ol. p;/ zxc vbnm ,./ qazwsxedc rfvtgbyhn ujmik,ol. p;/ z z x x c c v v b b n n m m ,, .. // zxcvbnm,./ zxcvbnm,./;" },
+  { id:6,  title:"6. Sonlar qatori",                    desc:"Yuqori sonlar: 1 2 3 4 5 6 7 8 9 0",                           threshold:{minAcc:75, minChars:300},
+    text:"1234567890 0987654321 1 2 3 4 5 6 7 8 9 0 11 22 33 44 55 66 77 88 99 00 123 321 456 654 789 987 1020 3040 5060 7080 9000 1234 5678 9012 3456 7890 1234567890 1234567890 a1s2d3f4g5h6 j7k8l9;0 z1x2c3v4b5 n6m7,8.9/0;" },
+  { id:7,  title:"7. Shift (Katta harf)",               desc:"Shift + harf — katta harf yozish.",                            threshold:{minAcc:78, minChars:280},
+    text:"Hello World! The Quick Brown Fox Jumps Over The Lazy Dog. AsDf GhJkL; ZxCv BnM,. QwEr Ty Ui Op. SHIFT keys make typing faster. Apple Banana Cherry Date Elderberry Fig Grape Honeydew Icecream Jackfruit Kiwi Lemon Mango Nectarine Orange Papaya Quince Raspberry Strawberry Tangerine;" },
+  { id:8,  title:"8. Caps Lock",                        desc:"Caps Lock — uzun uzun matnlar uchun katta harf rejimi.",         threshold:{minAcc:78, minChars:280},
+    text:"[CAPS ON] THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG. PROGRAMMING IS THE ART OF TELLING A COMPUTER WHAT TO DO. LEARN TO TYPE FAST AND ACCURATE FOR SUCCESS. EDUCATION IS THE MOST POWERFUL WEAPON WHICH YOU CAN USE TO CHANGE THE WORLD. [CAPS OFF] Welcome back to normal case." },
+  { id:9,  title:"9. Belgilar (: ; ! ? , .)",           desc:"Nuqtali, vergulli, undov belgilar.",                           threshold:{minAcc:75, minChars:300},
+    text:"Hello! How are you? I'm fine, thank you. Type: a; s; d; f; j; k; l; ;; !! ?? ,, .. !!??,. Salom! O'zbekiston — buyuk mamlakat. Bugun, ertaga, har doim: o'rgan, ishlab, yutuqga erish! So'zlar: gaplar, jumlalar, matnlar — hammasi sizning mehnatingizdir. Aytolmayman, qila olasiz!" },
+  { id:10, title:"10. Maxsus belgilar (@ # $ % & *)",  desc:"@ # $ % & * ( ) [ ] { } = + - _ maxsus belgilari.",              threshold:{minAcc:72, minChars:300},
+    text:"email@example.com #tag1 #tag2 $100 %50 & 7*8=56 (a+b)*(c-d) [1,2,3] {key:value} 2+2=4 a_b-c=d 100% @Teach #Edu $Money %Score&Rank *Star (x)[y]{z} === true && false || null let x = 100; const arr = [10,20,30]; user@mail.to && pass@#$%;" },
+  { id:11, title:"11. Aralash klavishlar",              desc:"Harf, son, belgi aralash mashq.",                                 threshold:{minAcc:75, minChars:350},
+    text:"User123 typed 500 WPM with 99.5% accuracy! Email: info@texno.uz; Phone: +99890-123-45-67. ID=USR_1001, order #TXN-2024-08/22, total: $1,234.56 & discount -20%. Password: kX9#pR$2vL!qZ (never share your secret). Let's type ~!@#$%^&*()_+{}|:<>?`-=[]\\;',./ together." },
+  { id:12, title:"12. So'zlar",                         desc:"O'zbekcha — eng ko'p ishlatiladigan so'zlar.",                    threshold:{minAcc:80, minChars:350},
+    text:"salom assalomu alaykum hayr rahmat tashakkur iltimos ism familiya otasi onasi aka uka opa singil bolalar ota ona ustoz talaba fan dars mashq kitob qalam daftar stol kursi uy maktab universitet dastur kompyuter telefon internet dasturlash algorithm malumot xotira protsessor ekran klaviatura sichqoncha monitor printer ozbekiston jizzax samarqand fargona toshkent navoiy buxoro xorazm qarshi andijon namangan sirdaryo jizzax qashqadaryo surxondaryo" },
+  { id:13, title:"13. Gaplar",                          desc:"O'zbekcha to'liq gaplar va jumlalar.",                            threshold:{minAcc:82, minChars:400},
+    text:"Bugun havo juda yaxshi, men parkda yurishga chiqdim. Ustozim yangi mavzuni chiroyli tushuntirdi. Talabalar darsga kech qolmaslik uchun ertalab uyg'onishdi. Kitob o'qish — insonning eng yaxshi do'sti. Bilim — zukko emas, balki mehnat orqali erishiladi. Har kuni bir-biriga kamaytirmasdan mashq qiling, tez orada natijaga erishasiz. O'zbekiston — mustaqil, tinch, taraqqiyot qilayotgan mamlakat." },
+  { id:14, title:"14. Tezlik mashqlari",                desc:"WPM oshirish uchun uzun va tez mashq.",                            threshold:{minAcc:85, minWPM:30, minChars:500},
+    text:"Zamonaviy hayotda tez va aniq klaviatura terish — mutlaq zarur. Har kuni kamida 15 daqiqa klaviatura mashq qiling, natijasi avvalo hisobga olinadi. Ko'proq o'qib, ko'proq tering: so'zlar, gaplar, jumlalar, darslik matnlari, iqtiboslar, turli xil ma'lumotlar. Xatolarni qaytarmang, lekin ularni tahlil qiling — qaysi barmoq, qaysi qator, qaysi harf orqali. Sabr, intizom, mehnat — muvaffaqiyat kaliti. Bugun sizning eng yaxshi raqibingiz kechagi sizingizdir. Yaxshi o'sib, kuchayib, bilimlaringizni ko'paytiring!" },
+  { id:15, title:"15. YAKUNIY IMTIHON",                 desc:"60 soniya, eng yaxshi matn. WPM≥30 va Accuracy≥85% → KURS MUVAFFAQIYATLI TUGATILDI ✅.", threshold:{exam:true, minWPM:30, minAcc:85, durationSec:60, minChars:500},
+    text:"YAKUNIY IMTIHON: Zamonaviy dunyoda bilim olish va undan foydalanish — har bir yoshning asosiy maqsadi bo'lishi kerak. Ta'lim tizimiga kirgan har bir talaba o'z kelajagi uchun mas'uliyatli bo'lishi, o'z qobiliyatlarini ochib berishi kerak. Klaviatura terish — eng ko'p ishlatiladigan ko'nikmalardan biri hisoblanadi. Bu imtihon sizning bilimingizni, tezligingizni va aniqligingizni sinovdan o'tkazadi. Sabr qiling, to'g'ri barmoqlarni ishlating, xatolarni kamaytiring va yuqori natija oling. Yaxshi omad, hurmatli talaba! Kelajakda ham shu qat'iyat bilan davom ettiring — siz muvaffaqiyatga erishasiz." }
+];
+window.TYPING_COURSE = TYPING_COURSE;
+
+let typingProgressCache = null; // UI tezligi uchun kesh (asl manba = ApiService)
+async function refreshTypingProgressCache(){ const s = mGetStudent(); typingProgressCache = s ? (await ApiService.getTypingProgress(s.id)) : null; return typingProgressCache; }
+function pCache(){ return typingProgressCache || { nextUnlockedLesson: 1 }; }
+function lessonUnlocked(id){ return Number(id) <= Number(pCache().nextUnlockedLesson||1); }
+function lessonPassed(id){ const c = pCache()[id]; return c?.passed || c?.completed; }
+function lessonBest(id){ const c = pCache()[id]; return c ? {wpm:c.bestWpm||0, acc:c.bestAcc||0, cpm:c.bestCpm||0} : {wpm:0,acc:0,cpm:0}; }
+
 let typingState = null;
 function renderTypingV2() {
   const wrap = document.getElementById('typingWrap'); if (!wrap) return;
   const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('BARMOQ POYGASI'); return; }
   mEnsureRich(s);
   typingState = null;
+
+  // Progressni ApiService dan yuklab, keshga olamiz
+  refreshTypingProgressCache().then(() => {
+    const lb = document.getElementById('lessonSidebar'); if (lb) lb.innerHTML = renderLessonSidebarInner();
+  });
+
   wrap.innerHTML = `
   <div class="pg-wrap">
-    <div class="pg-title"><i class="fas fa-keyboard"></i> BARMOQ POYGASI</div>
-    <div class="pg-sub">Avval darslikni o'qing, keyin poygada sinab ko'ring!</div>
+    <div class="pg-title"><i class="fas fa-keyboard"></i> KLAVIATURA KURSI (15-bosqich)</div>
+    <div class="pg-sub">Avval darslikni tanlang → boshlash → yakunlang → keyingi dars avtomatik ochiladi 🔓</div>
 
-    <div class="study-tabs mb-16">
-      <button class="st-tab active" id="typeSubTab-lesson" onclick="mTypingSubTab('lesson',this)"><i class="fas fa-book-open"></i> Darslik</button>
-      <button class="st-tab" id="typeSubTab-race" onclick="mTypingSubTab('race',this)"><i class="fas fa-flag-checkered"></i> Poyga</button>
-    </div>
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;" class="typing-grid">
+      <!-- DARSLAR RO'YXATI -->
+      <div class="scard" id="lessonSidebar" style="align-self:start;max-height:78vh;overflow:auto;">
+        ${renderLessonSidebarInner()}
+      </div>
 
-    <!-- DARSLIK QISMI -->
-    <div id="typeLessonPane">
-      <div class="scard mb-16">
-        <div class="sc-title mb-8"><i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Barmoqlar qaysi tugmani bosadi</div>
-        <p class="txt2 fs12 mb-12">Klaviaturada har bir barmoq ma'lum tugmalar ustunini boshqaradi. Pastdagi rangli sxemaga qarab, barmoqlaringizni to'g'ri joyga qo'ying va faqat o'sha barmoq bilan bosishga harakat qiling.</p>
-        <div id="typeLessonBoard"></div>
-        <div id="typeLessonHands"></div>
-      </div>
-      <div class="scard mb-16">
-        <div class="sc-title mb-8"><i class="fas fa-info-circle" style="color:var(--gold);"></i> Asosiy qoida — "Uy qatori"</div>
-        <p class="txt2 fs12">Barmoqlaringizni doim <b style="color:var(--text);">A S D F</b> (chap qo'l) va <b style="color:var(--text);">J K L</b> (o'ng qo'l) tugmalarida ushlab turing — bu "uy qatori" deb ataladi. Boshqa tugmani bosgandan so'ng, barmoq darhol shu qatorga qaytishi kerak. Ikkala bosh barmoq esa faqat <b>SPACE</b> (probel) tugmasi uchun ishlatiladi.</p>
-      </div>
-      <button class="btn btn-cyan" style="width:100%;justify-content:center;" onclick="mTypingSubTab('race', document.getElementById('typeSubTab-race'))"><i class="fas fa-flag-checkered"></i> Poygaga o'tish</button>
-    </div>
-
-    <!-- POYGA QISMI -->
-    <div id="typeRacePane" style="display:none;">
-      <div class="type-diff-row" id="typeDiffRow">
-        <span class="type-diff-btn active" onclick="mTypeSetDiff('easy',this)">Oson</span>
-        <span class="type-diff-btn" onclick="mTypeSetDiff('medium',this)">O'rta</span>
-        <span class="type-diff-btn" onclick="mTypeSetDiff('hard',this)">Qiyin</span>
-      </div>
-      <div class="type-arena">
-        <div class="type-stats-row">
-          <div class="type-stat"><div class="type-stat-val" id="typeWpm">0</div><div class="type-stat-lbl">So'z/daqiqa</div></div>
-          <div class="type-stat"><div class="type-stat-val" id="typeAcc">100%</div><div class="type-stat-lbl">Aniqlik</div></div>
-          <div class="type-stat"><div class="type-stat-val" id="typeTime">0.0s</div><div class="type-stat-lbl">Vaqt</div></div>
+      <!-- ASOSIY QISM -->
+      <div>
+        <div class="study-tabs mb-16">
+          <button class="st-tab active" id="typeSubTab-lesson" onclick="mTypingSubTab('lesson',this)"><i class="fas fa-book-open"></i> Darslik</button>
+          <button class="st-tab" id="typeSubTab-race" onclick="mTypingSubTab('race',this)"><i class="fas fa-flag-checkered"></i> Poyga / Bepul mashq</button>
+          <button class="st-tab" id="typeSubTab-race2" onclick="mTypingSubTab('exam',this)"><i class="fas fa-trophy"></i> YAKUNIY IMTIHON</button>
         </div>
-        <div class="type-track"><div class="type-track-fill" id="typeTrackFill"></div></div>
-        <div class="type-text-box" id="typeTextBox"></div>
-        <textarea class="type-input" id="typeInput" rows="3" placeholder="Boshlash uchun shu yerga bosing va teraing..." oninput="mTypeOnInput()" disabled></textarea>
 
-        <div class="mt-16">
-          <div class="sc-title" style="font-size:12.5px;margin-bottom:8px;">
-            <i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Qaysi barmoq bilan bosish kerak
+        <!-- DARSLIK QISMI -->
+        <div id="typeLessonPane">
+          <div class="scard mb-16">
+            <div class="sc-title mb-8"><i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Barmoqlar qaysi tugmani bosadi</div>
+            <p class="txt2 fs12 mb-12">Klaviaturada har bir barmoq ma'lum tugmalar ustunini boshqaradi. Pastdagi rangli sxemaga qarab, barmoqlaringizni to'g'ri joyga qo'ying.</p>
+            <div id="typeLessonBoard"></div>
+            <div id="typeLessonHands"></div>
           </div>
-          <div id="typeHandWrap"></div>
-          <div id="typeFingerBoardWrap"></div>
+          <div class="scard mb-16">
+            <div class="sc-title mb-8"><i class="fas fa-info-circle" style="color:var(--gold);"></i> Asosiy qoida — "Uy qatori"</div>
+            <p class="txt2 fs12">Barmoqlaringizni doim <b style="color:var(--text);">A S D F</b> (chap qo'l) va <b style="color:var(--text);">J K L</b> (o'ng qo'l) tugmalarida ushlab turing. Ikkala bosh barmoq esa faqat <b>SPACE</b> uchun ishlatiladi.</p>
+          </div>
+          <button class="btn btn-cyan" style="width:100%;justify-content:center;" onclick="mTypingSubTab('race', document.getElementById('typeSubTab-race'))"><i class="fas fa-flag-checkered"></i> Tanlangan darsni boshga o'tish</button>
         </div>
 
-        <div class="flex-center gap-10 mt-16">
-          <button class="btn" onclick="mTypeStart()"><i class="fas fa-flag-checkered"></i> Poygani boshlash</button>
-          <button class="btn btn-sm" style="border-color:var(--bor2);" onclick="mTypeStart()"><i class="fas fa-redo"></i> Qayta boshlash</button>
+        <!-- POYGA / MASHQ QISMI -->
+        <div id="typeRacePane" style="display:none;">
+          <div id="typeLessonHeader" class="scard mb-16"></div>
+          <div class="type-diff-row" id="typeDiffRow" style="margin-bottom:10px;">
+            <span class="type-diff-btn active" onclick="mTypeSetDiff('easy',this)">Oson</span>
+            <span class="type-diff-btn" onclick="mTypeSetDiff('medium',this)">O'rta</span>
+            <span class="type-diff-btn" onclick="mTypeSetDiff('hard',this)">Qiyin</span>
+          </div>
+          <div class="type-arena">
+            <div class="type-stats-row">
+              <div class="type-stat"><div class="type-stat-val" id="typeWpm">0</div><div class="type-stat-lbl">WPM</div></div>
+              <div class="type-stat"><div class="type-stat-val" id="typeCpm">0</div><div class="type-stat-lbl">CPM (harf/daq)</div></div>
+              <div class="type-stat"><div class="type-stat-val" id="typeAcc">100%</div><div class="type-stat-lbl">Aniqlik</div></div>
+              <div class="type-stat"><div class="type-stat-val" id="typeErr">0</div><div class="type-stat-lbl">Xatolar</div></div>
+              <div class="type-stat"><div class="type-stat-val" id="typeTime">0.0s</div><div class="type-stat-lbl">Vaqt</div></div>
+            </div>
+            <div class="type-track"><div class="type-track-fill" id="typeTrackFill"></div></div>
+            <div class="type-text-box" id="typeTextBox"></div>
+            <textarea class="type-input" id="typeInput" rows="3" placeholder="Boshlash uchun shu yerga bosing va teraing..." oninput="mTypeOnInput()" disabled></textarea>
+
+            <div class="mt-16">
+              <div class="sc-title" style="font-size:12.5px;margin-bottom:8px;">
+                <i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Qaysi barmoq bilan bosish kerak
+              </div>
+              <div id="typeHandWrap"></div>
+              <div id="typeFingerBoardWrap"></div>
+            </div>
+
+            <div class="flex-center gap-10 mt-16">
+              <button class="btn" onclick="mTypeStart()"><i class="fas fa-flag-checkered"></i> Boshlash</button>
+              <button class="btn btn-sm" style="border-color:var(--bor2);" onclick="mTypeStart()"><i class="fas fa-redo"></i> Qayta</button>
+            </div>
+          </div>
+          <div id="typeResultWrap"></div>
+        </div>
+
+        <!-- YAKUNIY IMTIHON -->
+        <div id="typeExamPane" style="display:none;">
+          <div class="scard mb-16">
+            <div class="sc-title mb-8"><i class="fas fa-trophy" style="color:var(--gold);"></i> YAKUNIY IMTIHON</div>
+            <p class="txt2 fs12 mb-12">O'tish talabi: <b style="color:var(--ok);">WPM ≥ 30</b> va <b style="color:var(--ok);">Aniqlik ≥ 85%</b>. Muvaffaqiyatli bo'lsangiz — SERTIFIKAT olasiz ✅.</p>
+            <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="mTypingSubTab('race', document.getElementById('typeSubTab-race')); mStartFinalExam();"><i class="fas fa-hourglass-start"></i> Imtihonni boshlash (60 soniya)</button>
+          </div>
         </div>
       </div>
-      <div id="typeResultWrap"></div>
     </div>
   </div>`;
 
-  // Darslik qismidagi statik sxemani chizamiz (aktiv tugmasiz)
+  // Statik sxemalarni chizamiz
   const lb = document.getElementById('typeLessonBoard'); if (lb) lb.innerHTML = mRenderFingerBoard(null);
   const lh = document.getElementById('typeLessonHands'); if (lh) lh.innerHTML = mRenderHandsVisual(null);
+  // Default: dars 1 tanlansin
+  if (lessonUnlocked(1)) setTimeout(()=>{ mLoadLesson(1); }, 150);
 }
+
+function renderLessonSidebarInner(){
+  const cards = TYPING_COURSE.map(ls => {
+    const unlocked = lessonUnlocked(ls.id);
+    const passed = lessonPassed(ls.id);
+    const best = lessonBest(ls.id);
+    const cls = unlocked ? (passed?'lesson-card passed':'lesson-card unlocked') : 'lesson-card locked';
+    const onclick = unlocked ? `onclick="mLoadLesson(${ls.id})"` : '';
+    const medal = ls.id===15 ? '👑' : '';
+    return `<div class="${cls}" ${onclick} id="lessonCard-${ls.id}">
+      <div class="lesson-head">
+        <span class="lesson-idx">${ls.id.toString().padStart(2,'0')} ${medal}</span>
+        <span>${passed?'✅':(unlocked?'🔓':'🔒')}</span>
+      </div>
+      <div class="lesson-title">${ls.title}</div>
+      <div class="lesson-desc">${ls.desc}</div>
+      ${passed || best.wpm? `
+        <div class="lesson-mini">
+          <span>🏃 ${best.wpm||0}</span>
+          <span>🎯 ${best.acc||0}%</span>
+        </div>`:''}
+    </div>`;
+  }).join('');
+  const unlockedCount = Math.min(TYPING_COURSE.length, Number(pCache().nextUnlockedLesson||1));
+  return `
+    <div class="sc-title mb-8"><i class="fas fa-list-ol" style="color:var(--cyan);"></i> 15 DARSLIK KURS</div>
+    <div class="progress-bar" style="margin-bottom:14px;">
+      <div class="progress-fill" style="width:${(passedLessonCount()/TYPING_COURSE.length*100).toFixed(0)}%;background:linear-gradient(90deg,#00e5ff,#00ff88);"></div>
+    </div>
+    <div class="txt2 fs11 mb-12">${passedLessonCount()} / ${TYPING_COURSE.length} tugallangan · ${unlockedCount-1} ta ochilgan</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">${cards}</div>
+  `;
+}
+function passedLessonCount(){ let c=0; TYPING_COURSE.forEach(ls=>{ if (lessonPassed(ls.id)) c++; }); return c; }
+
+function mLoadLesson(id){
+  const ls = TYPING_COURSE.find(x=>x.id===Number(id)); if (!ls) return;
+  document.querySelectorAll('.lesson-card').forEach(x=>x.classList.remove('active'));
+  const card = document.getElementById('lessonCard-'+id); if (card) card.classList.add('active');
+  // Dars boshlash uchun race pane ni ochamiz, matnni ls.text dan olamiz
+  mTypingSubTab('race', document.getElementById('typeSubTab-race'));
+  // Lesson header
+  const head = document.getElementById('typeLessonHeader');
+  if (head){
+    const best = lessonBest(id);
+    head.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div class="sc-title mb-4">📘 ${ls.title}</div>
+          <div class="txt2 fs12">${ls.desc}</div>
+        </div>
+        <div class="txt2 fs11" style="text-align:right;">
+          ${best.wpm?`<div>Eng yaxshi: <b>${best.wpm} WPM</b> · <b>${best.acc}%</b></div>`:'<div>Hali o'tilmagan</div>'}
+          <div style="margin-top:4px;">Min: ${ls.threshold.minAcc||0}% aniqlik${ls.threshold.minWPM?` · ${ls.threshold.minWPM} WPM`:''}</div>
+        </div>
+      </div>`;
+  }
+  // Typing matnini lesson matni o'rniga o'rnatamiz
+  setTimeout(()=>{ mTypeStart(null, ls.text, null, { lessonId: ls.id }); }, 50);
+}
+window.mLoadLesson = mLoadLesson;
+
+function mStartFinalExam(){
+  const exam = TYPING_COURSE[14];
+  mLoadLesson(15);
+}
+window.mStartFinalExam = mStartFinalExam;
+
 
 function mTypingSubTab(tab, el) {
   document.querySelectorAll('#typingWrap .st-tab').forEach(b => b.classList.remove('active'));
@@ -8649,23 +9127,60 @@ window.mTypingSubTab = mTypingSubTab;
       if (el) el.classList.add('active');
       mTypeStart(diff);
     }
-    function mTypeStart(diff, forcedText, raceId) {
+    function mTypeStart(diff, forcedText, raceId, opts) {
       diff = diff || typingState?.diff || 'easy';
-      const pool = TYPING_TEXTS[diff] || TYPING_TEXTS.easy;
-      const text = forcedText || pool[Math.floor(Math.random() * pool.length)];
-      typingState = { diff, text, startTime: null, finished: false, raceId: raceId || null };
+      const lessonId = opts?.lessonId || typingState?.lessonId || null;
+      const ls = lessonId ? TYPING_COURSE.find(x=>x.id===Number(lessonId)) : null;
+      const isExam = ls?.threshold?.exam;
+
+      // Matnni tanlaymiz: dars matni → forcedText → pool
+      let text = forcedText || ls?.text;
+      if (!text) {
+        const pool = TYPING_TEXTS[diff] || TYPING_TEXTS.easy;
+        text = pool[Math.floor(Math.random() * pool.length)];
+      }
+
+      typingState = {
+        diff, text,
+        startTime: null, finished: false,
+        raceId: raceId || null,
+        lessonId: lessonId || null,
+        isExam: !!isExam,
+        timerEndAt: isExam && ls?.threshold?.durationSec ? (Date.now() + ls.threshold.durationSec*1000) : null
+      };
       const box = document.getElementById('typeTextBox'); if (box) box.innerHTML = mTypeRenderText('');
       const fbWrap = document.getElementById('typeFingerBoardWrap');
       if (fbWrap) fbWrap.innerHTML = mRenderFingerBoard(text[0]);
+      const hw = document.getElementById('typeHandWrap'); if (hw) hw.innerHTML = mRenderHandsVisual(mFingerOf(text[0]));
       const input = document.getElementById('typeInput');
       if (input) { input.disabled = false; input.value = ''; input.focus(); }
       const fill = document.getElementById('typeTrackFill'); if (fill) fill.style.width = '0%';
-      ['typeWpm','typeAcc'].forEach(id=>{}); 
       const wpmEl = document.getElementById('typeWpm'); if (wpmEl) wpmEl.textContent = '0';
+      const cpmEl = document.getElementById('typeCpm'); if (cpmEl) cpmEl.textContent = '0';
+      const errEl = document.getElementById('typeErr'); if (errEl) errEl.textContent = '0';
       const accEl = document.getElementById('typeAcc'); if (accEl) accEl.textContent = '100%';
-      const timeEl = document.getElementById('typeTime'); if (timeEl) timeEl.textContent = '0.0s';
+      const timeEl = document.getElementById('typeTime'); if (timeEl) timeEl.textContent = isExam ? (ls.threshold.durationSec+'s (muddat)') : '0.0s';
       const rw = document.getElementById('typeResultWrap'); if (rw) rw.innerHTML = '';
+
+      // Exam timer: muddat tugaganda mTypeFinish chaqirilsin
+      if (typingState._timer) clearTimeout(typingState._timer);
+      if (isExam && ls?.threshold?.durationSec){
+        typingState._timer = setTimeout(()=>{
+          if (!typingState.finished) {
+            const inp = document.getElementById('typeInput'); const typed = inp? inp.value : '';
+            const target = typingState.text;
+            let correct = 0, errors = 0;
+            for (let i = 0; i < typed.length; i++) if (typed[i]===target[i]) correct++; else errors++;
+            const acc = typed.length ? Math.round(correct/typed.length*100):100;
+            const elapsed = ls.threshold.durationSec;
+            const wpm = Math.round(typed.length/5 / (elapsed/60));
+            const cpm = Math.round(typed.length / (elapsed/60));
+            mTypeFinish(wpm, acc, elapsed, { typed, errors, cpm });
+          }
+        }, ls.threshold.durationSec*1000);
+      }
     }
+
     function mTypeRenderText(typed) {
       if (!typingState) return '';
       const target = typingState.text;
@@ -8686,42 +9201,196 @@ window.mTypingSubTab = mTypingSubTab;
       if (!typingState || typingState.finished) return;
       const input = document.getElementById('typeInput'); if (!input) return;
       const typed = input.value;
+      const target = typingState.text;
       if (!typingState.startTime) typingState.startTime = Date.now();
       const box = document.getElementById('typeTextBox'); if (box) box.innerHTML = mTypeRenderText(typed);
       const fbWrap2 = document.getElementById('typeFingerBoardWrap');
-      if (fbWrap2) fbWrap2.innerHTML = mRenderFingerBoard(target[typed.length]);
-      const target = typingState.text;
-      let correct = 0; for (let i = 0; i < typed.length; i++) if (typed[i] === target[i]) correct++;
+      const nextChar = target[typed.length] || null;
+      if (fbWrap2) fbWrap2.innerHTML = mRenderFingerBoard(nextChar);
+      const hWrap = document.getElementById('typeHandWrap');
+      if (hWrap) hWrap.innerHTML = mRenderHandsVisual(mFingerOf(nextChar));
+      let correct = 0, errors = 0;
+      for (let i = 0; i < typed.length; i++) { if (typed[i] === target[i]) correct++; else errors++; }
       const acc = typed.length ? Math.round((correct / typed.length) * 100) : 100;
       const elapsedSec = (Date.now() - typingState.startTime) / 1000;
       const wpm = elapsedSec > 0 ? Math.round((typed.length / 5) / (elapsedSec / 60)) : 0;
+      const cpm = elapsedSec > 0 ? Math.round(typed.length / (elapsedSec / 60)) : 0;
       const wpmEl = document.getElementById('typeWpm'); if (wpmEl) wpmEl.textContent = String(wpm);
       const accEl = document.getElementById('typeAcc'); if (accEl) accEl.textContent = acc + '%';
       const timeEl = document.getElementById('typeTime'); if (timeEl) timeEl.textContent = elapsedSec.toFixed(1) + 's';
+      const cpmEl = document.getElementById('typeCpm'); if (cpmEl) cpmEl.textContent = String(cpm);
+      const errEl = document.getElementById('typeErr'); if (errEl) errEl.textContent = String(errors);
       const fill = document.getElementById('typeTrackFill'); if (fill) fill.style.width = mPct(typed.length, target.length) + '%';
       if (typed.length >= target.length) mTypeFinish(wpm, acc, elapsedSec);
     }
-    function mTypeFinish(wpm, acc, elapsedSec) {
+    async function mTypeFinish(wpm, acc, elapsedSec, extra) {
       if (!typingState || typingState.finished) return;
       typingState.finished = true;
+      if (typingState._timer) clearTimeout(typingState._timer);
       const input = document.getElementById('typeInput'); if (input) input.disabled = true;
-      const s = mGetStudent(); if (!s) return;
+
+      const s = mGetStudent();
+      const typed = extra?.typed ?? (input ? input.value : typingState.text);
+      const target = typingState.text;
+      const cpm = extra?.cpm ?? (elapsedSec>0 ? Math.round(typed.length/(elapsedSec/60)) : 0);
+      let errors = extra?.errors ?? 0;
+      if (!errors){ for (let i=0;i<typed.length;i++) if (typed[i]!==target[i]) errors++; }
+
+      // Reward
       let reward = 1;
       if (wpm >= 55 && acc >= 92) reward = 5;
       else if (wpm >= 40 && acc >= 85) reward = 3;
       else if (wpm >= 25 && acc >= 75) reward = 2;
-      mAwardCoins(s, reward, `BARMOQ POYGASIsi yakunlandi (${wpm} so'z/daq, ${acc}% aniqlik)`, 'achievement');
+      if (s) mAwardCoins(s, reward, `Typing (${wpm} WPM · ${acc}% · ${cpm} CPM)`, 'achievement');
       saveData();
+
+      const lessonId = typingState.lessonId;
+      const ls = lessonId ? TYPING_COURSE.find(x=>x.id===Number(lessonId)) : null;
+      const isExam = ls?.threshold?.exam;
+
+      // Pass/fail (dars imtihon talabiga ko'ra)
+      const th = ls?.threshold || {};
+      const accOk = !th.minAcc || acc >= th.minAcc;
+      const wpmOk = !th.minWPM || wpm >= th.minWPM;
+      const charsOk = !th.minChars || typed.length >= th.minChars;
+      const passed = (accOk && wpmOk && charsOk) || (isExam && accOk && wpmOk);
+
+      // Progressni saqlaymiz (ApiService: localStorage + /api/typing/progress POST)
+      let progressUpdate = null;
+      if (lessonId && s){
+        try {
+          progressUpdate = await ApiService.saveTypingProgress(s.id, lessonId, {
+            wpm, cpm, accuracy: acc, errors, elapsedSec,
+            completed: true, passed
+          });
+          typingProgressCache = progressUpdate || typingProgressCache;
+        } catch(e){ console.warn(e); }
+        const sb = document.getElementById('lessonSidebar');
+        if (sb) sb.innerHTML = renderLessonSidebarInner();
+      }
+
+      // Result karta
+      let nextCard = '';
+      if (lessonId && !isExam){
+        if (passed){
+          const nextLs = TYPING_COURSE.find(x=>x.id===Number(lessonId)+1);
+          nextCard = `<div class="flex-center gap-10 mt-10">
+            ${nextLs ? `<button class="btn btn-cyan" onclick="mLoadLesson(${nextLs.id})"><i class="fas fa-arrow-right"></i> Keyingi dars: ${nextLs.title}</button>` : ''}
+            <button class="btn btn-sm" onclick="mTypeStart(null,ls.text,null,{lessonId})"><i class="fas fa-redo"></i> Qaytadan o'tish</button>
+          </div>`;
+        } else {
+          const reasons = [];
+          if (!accOk) reasons.push(`Aniqlik ${acc}% (kerak ${th.minAcc}%)`);
+          if (!wpmOk) reasons.push(`WPM ${wpm} (kerak ${th.minWPM})`);
+          if (!charsOk) reasons.push(`Harflar ${typed.length} (kerak ${th.minChars})`);
+          nextCard = `<div class="flex-center gap-10 mt-10">
+            <div class="txt2 fs12" style="color:var(--bad);text-align:center;">${reasons.join(' · ')}</div>
+            <button class="btn btn-sm" onclick="mTypeStart(null,ls.text,null,{lessonId})"><i class="fas fa-redo"></i> Qayta urinib ko'ring</button>
+          </div>`;
+        }
+      }
+
+      // Imtihon → Sertifikat
+      let certCard = '';
+      if (isExam){
+        if (passed && s){
+          const cert = await ApiService.saveCertificate(s.id, {
+            studentId: s.id, studentName: s.name,
+            courseName: "KLAVIATURA KURSI · 15-bosqich",
+            wpm, accuracy: acc,
+            centerName: "Texno O'quv Markazi"
+          });
+          certCard = `
+            <div class="type-result-card" style="background:linear-gradient(135deg,#00e5ff10,#ffd60015);border-color:var(--gold)!important;">
+              <div style="font-size:15px;color:var(--gold);font-weight:700;margin-bottom:4px;">🎉 KURS MUVAFFAQIYATLI TUGATILDI!</div>
+              <div class="txt2 fs12" style="margin-bottom:10px;">${wpm} WPM · ${acc}% aniqlik · sertifikat tayyor</div>
+              <button class="btn btn-gold" onclick="showCertificatePage('${cert.id}')"><i class="fas fa-certificate"></i> Sertifikatni ochish / PDF yuklash</button>
+            </div>`;
+        } else {
+          certCard = `
+            <div class="type-result-card" style="border-color:var(--bad)!important;">
+              <div style="font-size:14px;color:var(--bad);font-weight:700;margin-bottom:4px;">Yakuniy imtihon yopiq.</div>
+              <div class="txt2 fs12" style="margin-bottom:10px;">WPM≥30 va Accuracy≥85% talab qilinadi. Sizda: ${wpm} WPM · ${acc}%</div>
+              <button class="btn" onclick="mStartFinalExam()"><i class="fas fa-redo"></i> Qayta topshirish</button>
+            </div>`;
+        }
+      }
+
       const rw = document.getElementById('typeResultWrap');
       if (rw) rw.innerHTML = `
         <div class="type-result-card">
-          <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">🏁 Poyga yakunlandi!</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">🏁 ${isExam?'Imtihon':'Mashq'} yakunlandi ${passed?'✅':'⏳'}</div>
           <div class="type-result-coins">+${reward} 💎</div>
-          <div class="txt2 fs12" style="margin-top:6px;">${wpm} so'z/daqiqa · ${acc}% aniqlik · ${elapsedSec.toFixed(1)} soniya</div>
-        </div>`;
-      mToast(`Siz ${reward} olmos yutib oldingiz!`, 'success', '🏆 Poyga yakunlandi');
+          <div class="txt2 fs12" style="margin-top:6px;">
+            ${wpm} WPM · ${cpm} CPM · ${acc}% aniqlik · ${errors} xato · ${elapsedSec.toFixed(1)} soniya · ${typed.length} harf
+          </div>
+        </div>
+        ${certCard}
+        ${nextCard}`;
+
+      if (s) mToast(`${isExam?'Imtihon':'Dars'} yakunlandi: ${wpm} WPM · ${acc}%`, passed?'success':'info', isExam?'🏆 Imtihon':'⌨️ Typing');
     }
     window.mTypeSetDiff = mTypeSetDiff; window.mTypeStart = mTypeStart; window.mTypeOnInput = mTypeOnInput;
+
+    // ══════════════════════════════════════════════════════════
+    // SERTIFIKAT SAHIFASI (Print → Save as PDF)
+    // ══════════════════════════════════════════════════════════
+    async function showCertificatePage(certIdOrObj) {
+      const s = mGetStudent();
+      let cert;
+      if (typeof certIdOrObj === 'object' && certIdOrObj) cert = certIdOrObj;
+      else {
+        const list = await ApiService.getCertificates(s?.id||0);
+        cert = list.find(c => c.id === certIdOrObj);
+      }
+      if (!cert){ mToast('Sertifikat topilmadi','error'); return; }
+      const date = new Date(cert.issuedAt||Date.now());
+      const dateStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`;
+      const url = location.protocol + '//' + location.host + '/cert/' + encodeURIComponent(cert.id);
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=2&data=${encodeURIComponent(url)}`;
+      // Boshqa barcha overlaylarni yashirish
+      const parent = document.createElement('div');
+      parent.className = 'cert-wrap-parent';
+      parent.id = 'certOverlay-' + Date.now();
+      parent.innerHTML = `
+        <div class="cert-actions">
+          <button class="btn btn-gold" onclick="window.print()"><i class="fas fa-print"></i> PRINT / PDF SAQLASH</button>
+          <button class="btn" onclick="document.getElementById('${parent.id}').remove(); if(typeof renderTypingV2==='function') showPage('typingpg');"><i class="fas fa-arrow-left"></i> ORQAGA</button>
+        </div>
+        <div class="cert-wrap">
+          <div class="cert-logo">${cert.centerName || "Texno O'quv Markazi"}</div>
+          <div class="cert-line"></div>
+          <div class="cert-title">SERTIFIKAT</div>
+          <div class="cert-sub">Muvaffaqiyatli tamomlanganlik to'g'risida</div>
+          <div class="cert-given">Ushbu sertifikat</div>
+          <div class="cert-name">${escHtml(cert.studentName||cert.student_name||'Talaba')}</div>
+          <div class="cert-course">${escHtml(cert.courseName||cert.course_name||'Kurs')} darslarini muvaffaqiyatli tugatganligi uchun berildi.</div>
+          <div class="cert-stats">
+            <div class="cert-stat"><div class="cert-stat-val">${cert.wpm||0}</div><div class="cert-stat-lbl">WPM · Tezlik</div></div>
+            <div class="cert-stat"><div class="cert-stat-val">${cert.accuracy||0}%</div><div class="cert-stat-lbl">Aniqlik</div></div>
+            <div class="cert-stat"><div class="cert-stat-val">${dateStr}</div><div class="cert-stat-lbl">Berilgan sana</div></div>
+          </div>
+          <div class="cert-meta">
+            <div class="cert-sign">
+              <div class="sline"></div>
+              <div class="stxt">Direktor / O'quv markazi rahbari</div>
+            </div>
+            <div class="cert-qr">
+              <img src="${qrUrl}" alt="QR">
+              <div class="cert-id">ID: ${cert.id}</div>
+            </div>
+            <div class="cert-sign">
+              <div class="sline"></div>
+              <div class="stxt">O'qituvchi / Mentor</div>
+            </div>
+          </div>
+          <div class="cert-center">${cert.centerName || "Texno O'quv Markazi"} · www.texno.uz</div>
+        </div>
+      `;
+      document.body.appendChild(parent);
+      parent.scrollIntoView({ behavior:'smooth' });
+    }
+    window.showCertificatePage = showCertificatePage;
 
     // ════════════════════════════════════════════════════════════
     // ──────── HAMYON: Olmosni pulga almashtirish + oylik chegirma ─────────
