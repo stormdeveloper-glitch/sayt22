@@ -116,6 +116,11 @@ else:
 # Yordamchi funksiyalar
 # --------------------------------------------------------------------------
 def n_int(value: Any, default: int = 0) -> int:
+    """Convert value to int safely."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
     try:
         return int(value)
     except (TypeError, ValueError):
@@ -123,12 +128,21 @@ def n_int(value: Any, default: int = 0) -> int:
 
 
 def coins_total(value: Any) -> int:
+    """Calculate total coins from dict or int."""
+    if isinstance(value, dict):
+        return sum(n_int(v) for v in value.values())
+    return n_int(value)
     if isinstance(value, dict):
         return sum(n_int(v) for v in value.values())
     return n_int(value)
 
 
 def normalize_data(data: Any) -> tuple[dict, bool]:
+    """Ensure data structure exists and add missing defaults for students."""
+    if not isinstance(data, dict):
+        data = {}
+
+    # Existing defaults handling (unchanged) ...
     """Ma'lumot bazasi strukturasini to'ldiradi va talabalar hisobini yangilaydi."""
     if not isinstance(data, dict):
         data = {}
@@ -143,6 +157,20 @@ def normalize_data(data: Any) -> tuple[dict, bool]:
         "pendingReqs": [], "pendingTelegramLinks": [],
         "tests": [], "plans": [], "submissions": [],
         "telegramProfiles": {},
+        # New student fields defaults
+        "studentDefaults": {
+            "firstName": "",
+            "lastName": "",
+            "phone": "",
+            "age": 0,
+            "class": "",
+            "school": "",
+            "typing": [],
+            "bestWpm": 0,
+            "bestAccuracy": 0,
+            "completedLessons": [],
+            "typingProgress": 0.0
+        }
     }
     changed = False
     for key, default_value in defaults.items():
