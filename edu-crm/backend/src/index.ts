@@ -28,20 +28,21 @@ async function shutdown(signal: string, server: any) {
 }
 
 async function bootstrap() {
+  let dbConnected = false;
   try {
     await prisma.$connect();
+    dbConnected = true;
     // eslint-disable-next-line no-console
     console.log('[OK] Prisma DB ulandi');
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('[FATAL] Prisma ulanib bo‘lmadi:', err);
-    process.exit(1);
+    console.warn("[WARN] Prisma ulanib bo'lmadi. DB so'rovlari ishlamaydi, lekin HTTP server ishga tushadi:", (err as Error).message);
   }
 
   const server = app.listen(port, () => {
     // eslint-disable-next-line no-console
     console.log(
-      `[OK] Edu-CRM server ishlaydi: http://localhost:${port}  (env=${nodeEnv})`,
+      `[OK] Edu-CRM server ishlaydi: http://localhost:${port}  (env=${nodeEnv}, db=${dbConnected ? 'online' : 'offline'})`,
     );
     // eslint-disable-next-line no-console
     console.log(`[OK] Health: http://localhost:${port}/health`);

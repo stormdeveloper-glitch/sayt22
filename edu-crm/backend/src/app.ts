@@ -10,12 +10,14 @@ import { authRouter } from './routes/auth';
 import { studentsRouter } from './routes/students';
 import { groupsRouter } from './routes/groups';
 import { teachersRouter } from './routes/teachers';
+import { usersRouter } from './routes/users';
 import { dashboardRouter } from './routes/dashboard';
 import { paymentRouter } from './routes/payments';
 import { attendanceRouter } from './routes/attendance';
 import { coursesRouter } from './routes/courses';
 import { classroomsRouter } from './routes/classrooms';
 import { errorHandler } from './middleware/errorHandler';
+import prisma from './lib/prisma';
 
 const { corsOrigin, rateLimitWindowMs, rateLimitMax, nodeEnv } = getConfig();
 
@@ -70,12 +72,30 @@ app.use(cookieParser());
 app.use(morgan(nodeEnv === 'production' ? 'combined' : 'dev'));
 
 // Root health check
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime(), env: nodeEnv });
+app.get('/health', async (_req, res) => {
+  let dbStatus = 'connecting';
+  let dbError: string | null = null;
+  try {
+    await prisma.$queryRaw`SELECT 1::int AS ping`.then(() => { dbStatus = 'online'; });
+  } catch (err) {
+    dbStatus = 'offline';
+    dbError = (err as Error).message;
+  }
+  res.status(dbStatus === 'online' ? 200 : 503).json({
+    status: dbStatus === 'online' ? 'ok' : 'degraded',
+    uptime: process.uptime(),
+    env: nodeEnv,
+    services: {
+      http: 'online',
+      db: dbStatus,
+    },
+    ...(dbError && nodeEnv !== 'production' ? { dbError } : {}),
+  });
 });
 
 // Routelar
 app.use('/api/auth', authLimiter, authRouter);
+app.use('/api/users', usersRouter);
 app.use('/api/students', studentsRouter);
 app.use('/api/groups', groupsRouter);
 app.use('/api/teachers', teachersRouter);

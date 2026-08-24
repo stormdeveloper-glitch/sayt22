@@ -9,12 +9,16 @@ interface Student {
   studentId: string;
   firstName: string;
   lastName: string;
+  gender?: string;
+  dateOfBirth?: string;
   phone: string;
   parentName?: string;
   parentPhone?: string;
   address?: string;
+  notes?: string;
+  photoUrl?: string | null;
   status: string;
-  group: { id: number; name: string; course: { title: string } };
+  group: { id: number; name: string; course: { id?: number; title: string } };
 }
 
 interface Course {
@@ -126,7 +130,7 @@ export function StudentsPage() {
       studentId: student.studentId,
       firstName: student.firstName,
       lastName: student.lastName,
-      gender: student.gender,
+      gender: student.gender ?? 'MALE',
       dateOfBirth: '',
       phone: student.phone,
       parentName: student.parentName ?? '',
@@ -137,7 +141,7 @@ export function StudentsPage() {
       groupId: student.group.id,
       status: student.status
     });
-    setSelectedCourseId(student.group.course.id);
+    setSelectedCourseId(student.group.course.id ?? null);
     setModalOpen(true);
   }
 

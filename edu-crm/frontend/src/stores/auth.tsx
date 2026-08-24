@@ -7,14 +7,14 @@ import {
   unwrapData,
 } from '../utils/api';
 
-export type UserRole = 'admin' | 'teacher' | 'student' | string;
+export type UserRole = 'ADMIN' | 'MANAGER' | 'TEACHER' | 'CASHIER' | (string & {});
 
 export interface User {
   id: number;
   email: string;
   role: UserRole;
-  name?: string;
-  phone?: string;
+  name?: string | null;
+  phone?: string | null;
 }
 
 export interface AuthContextValue {
@@ -54,17 +54,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  // Dastlabki yuklash: localStorage'dan olish + (agar kerak bo'lsa) /me so'rovi
   useEffect(() => {
     const storedToken = localStorage.getItem(STORAGE_KEY_TOKEN);
     const storedUser = parseStoredUser(localStorage.getItem(STORAGE_KEY_USER));
 
-    if (storedToken) {
-      setToken(storedToken);
-    }
-    if (storedUser) {
-      setUser(storedUser);
-    }
+    if (storedToken) setToken(storedToken);
+    if (storedUser) setUser(storedUser);
     setLoading(false);
   }, []);
 
@@ -76,7 +71,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         { email, password },
         { headers: { 'Content-Type': 'application/json' } },
       );
-      const { token: newToken, user: newUser } = unwrapData<LoginResponse>(res) ?? res.data;
+      const payload = unwrapData<LoginResponse>(res) as LoginResponse | null;
+      const { token: newToken, user: newUser }: LoginResponse = payload ?? (res.data as LoginResponse);
 
       localStorage.setItem(STORAGE_KEY_TOKEN, newToken);
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(newUser));
@@ -114,7 +110,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user, token, loading, loginError, login, logout, clearLoginError],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth(): AuthContextValue {

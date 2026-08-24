@@ -64,8 +64,9 @@ function extractErrorMessage(error: unknown): string {
 }
 
 // Global axios instance — barcha API so'rovlari shu orqali yuboriladi
+const VITE_BASE = (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_API_BASE_URL;
 export const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/',
+  baseURL: VITE_BASE || '/',
   timeout: 30_000,
   withCredentials: false,
   headers: {

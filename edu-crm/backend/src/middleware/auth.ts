@@ -6,7 +6,7 @@ const config = getConfig();
 
 export type JwtPayload = {
   userId: number;
-  role: 'admin' | 'teacher' | 'student' | (string & {});
+  role: 'ADMIN' | 'MANAGER' | 'TEACHER' | 'CASHIER' | (string & {});
 };
 
 declare global {
@@ -65,7 +65,7 @@ export function authorize(roles: JwtPayload['role'][]) {
 
 export function issueToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
   return jwt.sign(payload, config.jwtSecret, {
-    expiresIn: config.jwtExpiresIn,
+    expiresIn: config.jwtExpiresIn as any,
     algorithm: 'HS256',
   });
 }

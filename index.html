@@ -2975,16 +2975,16 @@
     .buy-btn.owned { background: rgba(0,255,136,.15); color: var(--green); box-shadow: none; }
     .buy-btn.gold { background: linear-gradient(90deg, var(--gold), var(--orange)); color: #1a1100; }
 
-    /* === CHAT ENHANCEMENTS (Telegram uslubi) === */
-    .chat-msg {
+    /* === CHAT ENHANCEMENTS (Telegram uslubi) — ESKI, ISHLATILMAYDIGAN BLOK, nom to'qnashuvi oldini olish uchun prefiks qo'shildi === */
+    ._unused_chat_msg_old {
       position: relative; padding: 8px 44px 8px 12px;
       border-radius: 14px;
       max-width: 78%;
       word-wrap: break-word;
       line-height: 1.45;
     }
-    .chat-msg.me { margin-left: auto; background: linear-gradient(135deg, var(--cyan), #00a0bd); color: #001a20; border-bottom-right-radius: 4px; }
-    .chat-msg.them { background: var(--card2); border: 1px solid var(--bor); border-bottom-left-radius: 4px; }
+    ._unused_chat_msg_old.me { margin-left: auto; background: linear-gradient(135deg, var(--cyan), #00a0bd); color: #001a20; border-bottom-right-radius: 4px; }
+    ._unused_chat_msg_old.them { background: var(--card2); border: 1px solid var(--bor); border-bottom-left-radius: 4px; }
     .msg-tools {
       position: absolute; top: 2px; right: 4px;
       display: flex; gap: 2px; opacity: 0; transition: opacity var(--tr-fast);
@@ -3034,45 +3034,46 @@
     .pin-row i { color: var(--gold); }
     .pin-txt { font-size: 12px; color: var(--text2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pinned-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px var(--gold-glow2); }
-    .chat-action-bar {
+    ._unused_chat_action_bar {
       display: flex; align-items: center; gap: 6px; padding: 8px 12px;
       border-top: 1px solid var(--bor);
       background: var(--bg2);
     }
-    .chat-btn {
+    /* eski, ishlatilmaydigan Telegram-uslub bloki — nom to'qnashuvi oldini olish uchun o'chirildi */
+    ._unused_chat_btn {
       width: 36px; height: 36px; border-radius: 50%;
       border: 0; cursor: pointer; background: transparent;
       color: var(--text2); transition: all var(--tr-fast);
       display: flex; align-items: center; justify-content: center; font-size: 16px;
     }
-    .chat-btn:hover { color: var(--cyan); background: var(--cyan-dim); }
-    .chat-inp-wrap {
+    ._unused_chat_btn:hover { color: var(--cyan); background: var(--cyan-dim); }
+    ._unused_chat_inp_wrap {
       flex: 1; display: flex; align-items: center;
       background: var(--card);
       border: 1px solid var(--bor);
       border-radius: 999px; padding: 0 8px 0 14px;
       transition: all var(--tr-fast);
     }
-    .chat-inp-wrap:focus-within { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-dim); }
-    .chat-inp {
+    ._unused_chat_inp_wrap:focus-within { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-dim); }
+    ._unused_chat_inp {
       flex: 1; background: transparent; border: 0; outline: none;
       color: var(--text); font: inherit; font-size: 13.5px;
       padding: 10px 6px;
     }
-    .send-btn {
+    ._unused_send_btn {
       width: 36px; height: 36px; border-radius: 50%; border: 0;
       background: linear-gradient(135deg, var(--cyan), var(--cyan2));
       color: #001820; cursor: pointer;
       display: flex; align-items: center; justify-content: center; font-size: 15px;
       transition: all var(--tr);
     }
-    .send-btn:hover { transform: scale(1.08) rotate(-6deg); box-shadow: 0 4px 14px var(--cyan-glow); }
-    .emoji-panel {
+    ._unused_send_btn:hover { transform: scale(1.08) rotate(-6deg); box-shadow: 0 4px 14px var(--cyan-glow); }
+    ._unused_emoji_panel {
       display: grid; grid-template-columns: repeat(8, 1fr);
       padding: 10px; gap: 2px;
       max-height: 200px; overflow-y: auto;
     }
-    .emoji-btn {
+    ._unused_emoji_btn {
       background: transparent; border: 0; cursor: pointer;
       font-size: 20px; padding: 6px; border-radius: 8px;
       transition: all var(--tr-fast);
@@ -3536,260 +3537,6 @@
     /* Typography polishing */
     .tx-wrap-head { font-family: 'Orbitron', monospace; letter-spacing: 1.5px; }
 
-    /* ════════════ BARMOQ POYGASI (Typing Race) ════════════ */
-    .type-arena {
-      background: linear-gradient(160deg, var(--card2), var(--card));
-      border: 1px solid var(--bor);
-      border-radius: 16px;
-      padding: 18px;
-      position: relative;
-      overflow: hidden;
-    }
-    .type-arena::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(circle at 15% 0%, var(--cyan-dim), transparent 60%);
-      pointer-events: none;
-    }
-    .type-stats-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-    .type-stat {
-      flex: 1; min-width: 84px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--bor2);
-      border-radius: 10px;
-      padding: 10px 12px;
-      text-align: center;
-    }
-    .type-stat-val { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 800; color: var(--cyan); text-shadow: 0 0 14px var(--cyan-glow); }
-    .type-stat-lbl { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
-    .type-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; margin-bottom: 16px; position: relative; }
-    .type-track-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--cyan), var(--purple)); width: 0%; transition: width .15s ease; box-shadow: 0 0 12px var(--cyan-glow); }
-    .type-text-box {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 16px;
-      line-height: 1.9;
-      letter-spacing: .2px;
-      padding: 16px;
-      background: var(--bg3);
-      border: 1px solid var(--bor);
-      border-radius: 12px;
-      user-select: none;
-      min-height: 110px;
-      position: relative;
-      z-index: 1;
-    }
-    .type-text-box span.tc-ok { color: var(--green); }
-    .type-text-box span.tc-bad { color: var(--red); background: var(--red-dim); border-radius: 3px; }
-    .type-text-box span.tc-pending { color: var(--text2); }
-    .type-text-box span.tc-cursor { border-left: 2px solid var(--gold); animation: typeCursor .8s step-end infinite; }
-    @keyframes typeCursor { 50% { border-color: transparent; } }
-    .type-input {
-      width: 100%; margin-top: 14px;
-      background: var(--bg3);
-      border: 1.5px solid var(--bor);
-      border-radius: 12px;
-      padding: 14px 16px;
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 15px;
-      resize: none;
-      outline: none;
-      transition: border-color .2s;
-    }
-    .type-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-dim); }
-    .type-input:disabled { opacity: .5; }
-    .type-result-card {
-      margin-top: 16px; padding: 18px; border-radius: 14px; text-align: center;
-      background: linear-gradient(135deg, var(--gold-dim), var(--cyan-dim));
-      border: 1px solid var(--gold-glow);
-    }
-    .type-result-coins { font-family: 'Orbitron', monospace; font-size: 26px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); }
-    .type-diff-row { display: flex; gap: 8px; margin: 12px 0 16px; flex-wrap: wrap; }
-    .type-diff-btn {
-      padding: 7px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; cursor: pointer;
-      background: rgba(255,255,255,.04); border: 1px solid var(--bor2); color: var(--text2);
-      transition: all .2s;
-    }
-        /* ═══ BARMOQ KLAVIATURA GUIDE ═══ */
-    .fk-legend { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
-    .fk-leg-item { display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--text2); font-family:'JetBrains Mono',monospace; }
-    .fk-leg-dot { width:12px; height:12px; border-radius:4px; display:inline-block; }
-    .fk-board { display:flex; flex-direction:column; gap:5px; padding:14px; background:var(--bg3); border:1px solid var(--bor); border-radius:12px; margin-bottom:14px; }
-    .fk-row { display:flex; gap:5px; justify-content:center; }
-    .fk-key {
-      min-width:32px; height:36px; padding:0 4px;
-      border-radius:7px; display:flex; align-items:center; justify-content:center;
-      font-size:12px; font-weight:700; font-family:'JetBrains Mono',monospace;
-      background:rgba(255,255,255,.04); color:var(--text2);
-      border:1px solid rgba(255,255,255,.06);
-      transition:all .15s;
-    }
-    .fk-key.wide { min-width:60px; }
-    .fk-key.space { min-width:180px; }
-    .fk-key.fk-active {
-      transform:scale(1.12) translateY(-2px);
-      box-shadow:0 4px 14px rgba(0,229,255,.4);
-      border-color:#fff;
-      color:#000 !important;
-      font-weight:900;
-    }
-    .fk-hand-label { text-align:center; font-size:9px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-top:4px; font-family:'JetBrains Mono',monospace; }
-    /* 15 darslik kartalari */
-    .lesson-card { padding: 12px 12px 10px; border-radius: 12px; border: 1.5px solid var(--bor2); background: var(--bg2); cursor: pointer; transition: .15s all; user-select: none; }
-    .lesson-card:hover { transform: translateY(-1px); border-color: var(--cyan); }
-    .lesson-card.active { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan)33, 0 6px 18px -6px var(--cyan)55; background: linear-gradient(180deg, var(--bg2), #00e5ff12); }
-    .lesson-card.locked { opacity: .55; cursor: not-allowed; filter: grayscale(.4); }
-    .lesson-card.passed { border-color: var(--ok); }
-    .lesson-card .lesson-head { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text3); font-weight: 700; margin-bottom: 5px; }
-    .lesson-card .lesson-idx { font-family: 'Orbitron', monospace; letter-spacing: .3px; }
-    .lesson-card .lesson-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .lesson-card .lesson-desc  { font-size: 11.5px; color: var(--text2); line-height: 1.4; }
-    .lesson-card .lesson-mini  { display:flex; justify-content: space-between; margin-top:8px; padding-top:7px; border-top: 1px dashed var(--bor); font-size: 11px; color: var(--text3); }
-    /* Sertifikat sahifasi */
-    .cert-wrap { background: linear-gradient(160deg, #ffffff 0%, #e6f9ff 55%, #fff4bf 100%); color:#000; padding: 50px 60px; border-radius: 20px; border: 8px double #b38726; max-width: 1050px; margin: 20px auto; font-family: 'Exo 2', sans-serif; position: relative; box-shadow: 0 30px 80px -30px #0008; }
-    .cert-wrap::before, .cert-wrap::after { content:""; position:absolute; width:60px; height:60px; border:3px solid #b38726; }
-    .cert-wrap::before { top: 24px; left: 24px; border-right:none; border-bottom:none; }
-    .cert-wrap::after  { bottom:24px; right:24px; border-left:none; border-top:none; }
-    .cert-logo { font-size: 14px; color: #777; letter-spacing: 2px; text-align:center; text-transform: uppercase; }
-    .cert-title { font-family: 'Orbitron', monospace; font-size: 46px; text-align:center; color:#005f73; margin: 14px 0 4px; letter-spacing: 3px; }
-    .cert-sub { text-align:center; color:#555; font-size: 14px; letter-spacing: 2px; margin-bottom: 28px; text-transform: uppercase; }
-    .cert-line { height:2px; background: linear-gradient(90deg, transparent, #b38726, transparent); margin: 10px 0 20px; }
-    .cert-given { text-align:center; font-size: 15px; color:#333; margin-bottom: 16px; }
-    .cert-name { text-align:center; font-size: 40px; font-weight: 800; color:#0a9396; font-family: 'Orbitron', monospace; margin: 10px 0; border-bottom: 2px solid #005f7333; padding-bottom: 14px; letter-spacing: 1px; }
-    .cert-course { text-align:center; font-size: 18px; color:#222; margin: 10px 0 24px; line-height: 1.6; }
-    .cert-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 700px; margin: 30px auto; }
-    .cert-stat { background: #005f730c; border: 1.5px solid #005f7344; padding: 16px; border-radius: 14px; text-align: center; }
-    .cert-stat-val { font-size: 28px; font-weight: 900; color: #005f73; font-family: 'Orbitron', monospace; }
-    .cert-stat-lbl { font-size: 12px; color: #444; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
-    .cert-meta { display:flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; padding-top: 28px; border-top:1px dashed #005f7344; }
-    .cert-sign { text-align:center; flex: 1; }
-    .cert-sign .sline { width: 180px; height: 2px; background:#005f7377; margin: 0 auto 8px; }
-    .cert-sign .stxt  { font-size: 12px; color:#555; }
-    .cert-qr { text-align:center; }
-    .cert-qr img { width: 120px; height: 120px; border: 6px solid #fff; border-radius: 10px; box-shadow: 0 4px 18px #0003; }
-    .cert-qr .cert-id { font-size: 11px; color:#555; margin-top: 8px; letter-spacing: 1px; font-family: monospace; }
-    .cert-center { font-size: 12px; color:#555; text-align:center; margin-top: 18px; letter-spacing: 1.5px; text-transform: uppercase; }
-    .cert-actions { text-align:center; margin: 16px 0 30px; display:flex; gap:12px; justify-content:center; flex-wrap: wrap; }
-    .btn.btn-gold { background: linear-gradient(180deg,#ffe57a,#ffcf33); color:#3b2a00; border-color:#e0a800; font-weight:700; }
-    .btn.btn-sm { padding: 6px 10px; font-size: 12px; }
-    @media print {
-      body > *:not(.cert-wrap-parent), .cert-actions { display:none !important; }
-      .cert-wrap-parent, .cert-wrap { display:block !important; }
-      .cert-wrap { box-shadow:none; border-radius: 0; }
-    }
-    .cert-wrap-parent { min-height: 100vh; }
-    /* Responsive typing */
-    @media (max-width: 900px) {
-      .typing-grid { grid-template-columns: 1fr !important; }
-      .type-arena { padding: 14px !important; }
-      .fk-key { min-width: 28px !important; height: 36px !important; font-size: 13px !important; }
-      .cert-wrap { padding: 22px 16px; }
-      .cert-title { font-size: 28px; }
-      .cert-name { font-size: 24px; }
-      .cert-stats { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 480px) {
-      .type-stats-row { grid-template-columns: repeat(5, 1fr) !important; }
-      .type-stat-val { font-size: 16px; }
-      .type-stat-lbl { font-size: 10px; }
-      .fk-key.space { min-width: 100px !important; }
-      .cert-stats { grid-template-columns: 1fr 1fr !important; gap: 10px; }
-      .cert-meta { flex-direction: column; gap: 18px; align-items: center; }
-    }
-    /* Race invite card in chat */
-    .race-invite-card {
-      background:linear-gradient(135deg, var(--cyan-dim), var(--gold-dim));
-      border:1px solid rgba(0,229,255,.25);
-      border-radius:12px; padding:12px 14px; min-width:220px;
-    }
-    .race-invite-card .ric-title { font-weight:800; font-size:12.5px; margin-bottom:6px; }
-    .race-invite-card .ric-btn {
-      margin-top:8px; width:100%; padding:7px; border-radius:8px; border:0;
-      background:var(--cyan); color:#001a20; font-weight:800; font-size:12px; cursor:pointer;
-    }
-    .race-invite-card .ric-btn.done { background:rgba(0,255,136,.2); color:var(--green); cursor:default; }
-
-    /* ════════════ WALLET / HAMYON (Exchange + Discount) ════════════ */
-    .wallet-hero {
-      background: linear-gradient(135deg, #10203a, #0a1830 60%, #1a1030);
-      border: 1px solid var(--bor);
-      border-radius: 18px;
-      padding: 22px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-    .wallet-hero::before {
-      content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px;
-      border-radius: 50%; background: radial-gradient(circle, var(--gold-glow), transparent 70%);
-    }
-    .wallet-bal-lbl { font-size: 11px; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; }
-    .wallet-bal-val { font-family: 'Orbitron', monospace; font-size: 32px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); margin: 4px 0 14px; }
-    .wallet-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .wallet-pill { flex: 1; min-width: 130px; background: rgba(255,255,255,.05); border: 1px solid var(--bor2); border-radius: 12px; padding: 10px 14px; }
-    .wallet-pill-lbl { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
-    .wallet-pill-val { font-size: 16px; font-weight: 800; margin-top: 2px; }
-    .exch-box { background: var(--card2); border: 1px solid var(--bor); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
-    .exch-input-row { display: flex; gap: 8px; margin-top: 10px; }
-    .exch-input-row input {
-      flex: 1; background: var(--bg3); border: 1.5px solid var(--bor); border-radius: 10px;
-      padding: 11px 14px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 14px; outline: none;
-    }
-    .exch-input-row input:focus { border-color: var(--cyan); }
-    .exch-quick { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-    .exch-quick span { padding: 5px 11px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid var(--bor2); font-size: 11px; cursor: pointer; color: var(--text2); }
-    .exch-quick span:hover { border-color: var(--cyan); color: var(--cyan); }
-    .disc-meter { height: 10px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; margin: 10px 0; }
-    .disc-meter-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--green), var(--cyan)); }
-
-    /* ════════════ CHAT — ZAMONAVIY YANGILANISH ════════════ */
-    #chatpg .clist, .chat-wrap, .thread-panel { backdrop-filter: blur(6px); }
-    .chat-msg { animation: chatIn .25s ease; }
-    @keyframes chatIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .mbubble {
-      box-shadow: 0 4px 18px rgba(0,0,0,.22);
-      backdrop-filter: blur(3px);
-    }
-    .chat-msg.me .mbubble {
-      background: linear-gradient(135deg, var(--cyan), #009fc0 90%);
-      box-shadow: 0 4px 20px var(--cyan-glow);
-    }
-    .chat-msg.them .mbubble {
-      background: linear-gradient(160deg, var(--card3), var(--card2));
-      border: 1px solid var(--bor2);
-    }
-    .thread-input, .chat-input-bar, .msg-input-wrap {
-      backdrop-filter: blur(10px);
-      background: rgba(13,22,40,.7) !important;
-    }
-    .chat-msg .mc-avatar, .thread-head .ph-av, .clist .c-av {
-      box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px rgba(0,229,255,.35);
-      transition: box-shadow .2s;
-    }
-    .typing-dots { display: inline-flex; gap: 3px; align-items: center; padding: 8px 12px; }
-    .typing-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); opacity: .5; animation: typingDot 1.1s infinite; }
-    .typing-dots span:nth-child(2) { animation-delay: .15s; }
-    .typing-dots span:nth-child(3) { animation-delay: .3s; }
-    @keyframes typingDot { 0%,60%,100% { transform: translateY(0); opacity:.4; } 30% { transform: translateY(-4px); opacity:1; } }
-    .clist .c-item { transition: background .18s, transform .18s; border-radius: 12px; }
-    .clist .c-item:hover { background: rgba(0,229,255,.05); transform: translateX(2px); }
-    .hand-viz-row { display:flex; justify-content:center; gap:34px; margin:14px 0; flex-wrap:wrap; }
-.hand-group { text-align:center; }
-.hand-fingers { display:flex; align-items:flex-end; gap:5px; }
-.hf-dot {
-  width:30px; height:30px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:9px; font-weight:800; font-family:'JetBrains Mono',monospace;
-  border:1.5px solid transparent; transition:all .18s;
-  opacity:.55;
-}
-.hf-dot.hf-thumb { width:26px; height:26px; margin-top:10px; }
-.hf-dot.hf-active {
-  opacity:1; transform:scale(1.28) translateY(-4px);
-  box-shadow:0 0 14px currentColor; border-color:#fff;
-}
-.hand-lbl { font-size:9.5px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-top:6px; font-family:'JetBrains Mono',monospace; }
-.hand-state-title { text-align:center; font-size:13px; font-weight:800; color:var(--gold); margin-top:4px; min-height:18px; }
   </style>
 </head>
 
@@ -4604,11 +4351,22 @@
               <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
                 <div><label
                     style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Ism
-                    familiya</label><input type="text" id="nsName" class="form-control" placeholder="Ism familiya"
+                    familiya <span style="color:var(--red);">*</span></label><input type="text" id="nsName" class="form-control" placeholder="Ism familiya"
                     style="width:200px;"></div>
                 <div><label
-                    style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Telefon</label><input
-                    type="tel" id="nsPhone" class="form-control" placeholder="+998..." style="width:160px;"></div>
+                    style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Telefon
+                    raqam <span style="color:var(--red);">*</span></label><input
+                    type="tel" id="nsPhone" class="form-control" placeholder="+998901234567" style="width:170px;"></div>
+                <div><label
+                    style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Guruh
+                    <span style="color:var(--red);">*</span></label>
+                  <select id="nsGrp" class="form-control" style="width:140px;" onchange="onNsGrpChange()">
+                    <option value="">— Tanlang —</option>
+                  </select></div>
+                <div><label
+                    style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">O'qituvchi</label>
+                  <div id="nsTeacherView" class="form-control" style="width:150px;display:flex;align-items:center;color:var(--text3);background:rgba(0,0,0,.15);cursor:default;">— avtomatik —</div>
+                </div>
                 <div><label
                     style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;">Parol</label><input
                     type="text" id="nsPass" class="form-control" placeholder="Parol" style="width:120px;"></div>
@@ -4626,13 +4384,14 @@
                   <thead>
                     <tr>
                       <th>№</th>
-                      <th>Ism</th>
+                      <th>O'quvchi</th>
+                      <th>Telefon</th>
                       <th>Guruh</th>
+                      <th>O'qituvchi</th>
                       <th>Tanga</th>
-                      <th>Parol </th>
+                      <th>Parol</th>
                       <th>Holat</th>
-                      <th>Sabab/Izoh</th>
-                      <th>Holat</th>
+                      <th>Amal</th>
                     </tr>
                   </thead>
                   <tbody id="stBody"></tbody>
@@ -4959,7 +4718,12 @@
               </div>
               <div class="form-group"><label>NOMI</label><input class="form-control" id="matTitle" placeholder="Masalan: Informatika 9-sinf"></div>
               <div class="form-group"><label>TAVSIF / IZOH</label><textarea class="form-control" id="matDesc" rows="2" placeholder="Qisqacha tavsif"></textarea></div>
-              <div class="form-group"><label>HAVOLA (ixtiyoriy)</label><input class="form-control" id="matLink" placeholder="https://..."></div>
+              <div class="form-group"><label>HAVOLA (ixtiyoriy — masalan Google Drive, YouTube)</label><input class="form-control" id="matLink" placeholder="https://..."></div>
+              <div class="form-group">
+                <label>FAYL YUKLASH (PDF, Word, rasm — ixtiyoriy, max 8MB)</label>
+                <input type="file" class="form-control" id="matFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*">
+                <div id="matFileInfo" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:'JetBrains Mono',monospace;"></div>
+              </div>
               <button class="btn btn-gold" onclick="addMaterial()"><i class="fas fa-plus"></i> Qo'shish</button>
             </div>
           </div>
@@ -5179,16 +4943,6 @@
           <div id="notifWrap"></div>
         </div>
 
-        <!-- YANGI: BARMOQ POYGASI -->
-        <div class="page" id="typingpg">
-          <div id="typingWrap"></div>
-        </div>
-
-        <!-- YANGI: HAMYON (Olmos almashtirish + chegirma) -->
-        <div class="page" id="walletpg">
-          <div id="walletWrap"></div>
-        </div>
-
         <!-- ADMIN PAGES -->
         <div class="page" id="admpg">
           <div class="ph">
@@ -5339,341 +5093,13 @@
 
   <script>
     // ══════════════════════════════════════════════════
-    // DATA & GLOBAL LOGIN HANDLERS
+    // DATA
     // ══════════════════════════════════════════════════
-    const DEFAULT_STUDENTS = [
-      { id: 1001, name: "Bahodirjonov Sardor", pass: "1234", coins: 100, level: 2, streak: 5, ref: "REF1001", group: "D2", teacherId: 2001, teacherIds: [2001] },
-      { id: 1002, name: "Bahodirov Asadbek", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1002", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1003, name: "Farangiz", pass: "1234", coins: 25, level: 1, streak: 1, ref: "REF1003", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1004, name: "Farxodjon 08", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1004", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1005, name: "Ibrohim", pass: "1234", coins: 65, level: 1, streak: 3, ref: "REF1005", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1006, name: "Muhiddinov Nurillo", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1006", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1007, name: "Dadajonova Munavvara", pass: "1234", coins: 15, level: 1, streak: 1, ref: "REF1007", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1008, name: "Og'abek", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1008", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1009, name: "Omonov Alisher", pass: "1234", coins: 50, level: 1, streak: 2, ref: "REF1009", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1010, name: "Shavkatova Fotima", pass: "1234", coins: 50, level: 1, streak: 2, ref: "REF1010", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1011, name: "Shaxboz", pass: "1234", coins: 25, level: 1, streak: 1, ref: "REF1011", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1012, name: "Tojaliyev G'ayratjon", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1012", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1013, name: "Tolipjonov Asadbek", pass: "1234", coins: 26, level: 1, streak: 1, ref: "REF1013", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1014, name: "Tursunaliyev Abdulaziz", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1014", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1015, name: "Umaraliyev Ozodbek", pass: "1234", coins: 50, level: 1, streak: 2, ref: "REF1015", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1016, name: "Abdurazoqova Ra'noxon", pass: "1234", coins: 15, level: 1, streak: 1, ref: "REF1016", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1017, name: "Abdulhakimov Sardorbek", pass: "1234", coins: 35, level: 1, streak: 1, ref: "REF1017", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1018, name: "Ahmadjonova Shodiyona", pass: "1234", coins: 45, level: 1, streak: 2, ref: "REF1018", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1019, name: "Hamidov Abdulahat", pass: "1234", coins: 24, level: 1, streak: 1, ref: "REF1019", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1020, name: "Abdumo'minov Muhammadmuhtor", pass: "1234", coins: 10, level: 1, streak: 0, ref: "REF1020", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1021, name: "Hoshimov Abdulhafiz", pass: "1234", coins: 0, level: 1, streak: 0, ref: "REF1021", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1022, name: "Hasanboyev Muhamqodir", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1022", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1023, name: "Nurmuhamadov Diyorbek", pass: "1234", coins: 10, level: 1, streak: 0, ref: "REF1023", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1024, name: "Mahamadov Ozodbek", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1024", group: "D1", teacherId: 2001, teacherIds: [2001] },
-      { id: 1025, name: "Shavkatov Abdulatif", pass: "1234", coins: 5, level: 1, streak: 0, ref: "REF1025", group: "D1", teacherId: 2001, teacherIds: [2001] }
-    ];
-    const DEFAULT_TEACHERS = [
-      { id: 2001, name: "Valiyev Omadbek", subj: "IT", pass: "1234", code: "TCH-100" }
-    ];
-    const DEFAULT_ADMINS = [
-      { id: 3001, name: "Admin", pass: "admin123", code: "ADM-100", level: "admin" }
-    ];
-
     const DB = {
-      students: [...DEFAULT_STUDENTS],
-      teachers: [...DEFAULT_TEACHERS],
-      admins: [...DEFAULT_ADMINS],
-      transactions: [], adminRequests: [], messages: [], groups: [],
-      chatFriends: [], chatGroups: [], pendingReqs: [],
-      pendingTelegramLinks: [], telegramProfiles: {}, tests: [], testResults: [], gamePlays: {}, practicePlays: {}, attendanceLog: [], pairHistory: []
+      students: [],
+      teachers: [],
+      admins: []
     };
-
-    window.swTab = function(t) {
-      const s = document.getElementById('lgS');
-      const te = document.getElementById('lgT');
-      const a = document.getElementById('lgA');
-      if (s) s.style.display = t === 's' ? 'block' : 'none';
-      if (te) te.style.display = t === 't' ? 'block' : 'none';
-      if (a) a.style.display = t === 'a' ? 'block' : 'none';
-      ['S', 'T', 'A'].forEach(x => {
-        const btn = document.getElementById('tab' + x + 'Btn');
-        if (btn) btn.classList.toggle('active', x.toLowerCase() === t);
-      });
-    };
-
-    window.tpwd = function(id, icon) {
-      const inp = document.getElementById(id);
-      if (!inp) return;
-      const sh = inp.type === 'password';
-      inp.type = sh ? 'text' : 'password';
-      if (icon) {
-        icon.classList.toggle('fa-eye', !sh);
-        icon.classList.toggle('fa-eye-slash', sh);
-      }
-    };
-
-    window.fillLoginDropdowns = function() {
-      const ss = document.getElementById('lgSSel');
-      if (ss && DB && Array.isArray(DB.students)) {
-        ss.innerHTML = '<option value="">— tanlang —</option>';
-        DB.students.forEach(s => { ss.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
-      }
-      const ts = document.getElementById('lgTSel');
-      if (ts && DB && Array.isArray(DB.teachers)) {
-        ts.innerHTML = '<option value="">— tanlang —</option>';
-        DB.teachers.forEach(t => { ts.innerHTML += `<option value="${t.id}">${t.name}</option>`; });
-      }
-      const as = document.getElementById('lgASel');
-      if (as && DB && Array.isArray(DB.admins)) {
-        as.innerHTML = '<option value="">— tanlang —</option>';
-        DB.admins.forEach(a => { as.innerHTML += `<option value="${a.id}">${a.name}</option>`; });
-      }
-    };
-
-    // Darhol dropdownlarni to'ldirish
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', window.fillLoginDropdowns);
-    } else {
-      window.fillLoginDropdowns();
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // 🏗️  API ADAPTER (BACKENDGA TAYYOR LAYER)
-    // Hozir: localStorage + HTTP fetch (urinib ko'radi, bo'lmasa localStorage ishlaydi)
-    // Keyin: ApiService.impl = restImpl (JWT) / wsImpl (Socket.IO) / prImpl (Prisma orqali)
-    //        almashtirish kifoya — barcha UI kodlar ApiService.* ni chaqiradi, ichki realisiyasi farq qilmaydi
-    // ══════════════════════════════════════════════════════════
-    const ApiService = {
-      impl: 'localOrHttp',
-      _typingKey: 'tt_typingProgress_v1',
-      _certKey:   'tt_certificates_v1',
-      _groupKey:  'tt_groups_v1',
-      _hwKey:     'tt_homework_v1',
-      _raceKey:   'tt_races_v1',
-      _tenant:    'default-center',
-      _backendOnline: null,    // true → backend ishlayapti, localStorage ishlatilmaydi
-      _backendProbeAt: 0,     // cache probe timestamp (5 soniya)
-      _ramCache: { tp:{}, cert:{}, grp:{}, hw:{}, race:{} }, // RAM cache (backend online bo'lganda)
-
-      async _backendAlive(){
-        // 5 soniyadan ortiq probe bo'lmagan bo'lsa, tekshir
-        if (this._backendOnline!==null && (Date.now() - this._backendProbeAt) < 5000) return this._backendOnline;
-        this._backendProbeAt = Date.now();
-        try {
-          const res = await fetch('/api/data?_=' + Date.now(), { cache:'no-store', method:'HEAD' });
-          this._backendOnline = res.ok;
-        } catch(e){
-          // HEAD ishlamasa, GET bilan tekshir
-          try {
-            const r2 = await fetch('/api/data?_=' + Date.now(), { cache:'no-store' });
-            this._backendOnline = r2.ok;
-          } catch(e2){ this._backendOnline = false; }
-        }
-        return this._backendOnline;
-      },
-
-      setTenant(tid){ this._tenant = tid; },
-      tenant(){ return this._tenant; },
-
-      _localGet(k, fallback){
-        // Agar backend online bo'lsa → localni umuman o'qima (RAM dan kesh ol)
-        if (this._backendOnline) return fallback;
-        try { const r = localStorage.getItem(k); return r?JSON.parse(r):fallback; } catch(e){ return fallback; }
-      },
-      _localSet(k, v){
-        // Backend online bo'lsa → localStorage'ga YOZMA (faqat RAM)
-        if (this._backendOnline) return;
-        try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){ console.warn(k, e); }
-      },
-
-      async getTypingProgress(userId){
-        const alive = await this._backendAlive();
-        if (alive) {
-          try {
-            const res = await fetch(`/api/typing/progress?userId=${userId}&tenant=${this._tenant}`,{cache:'no-store'});
-            if (res.ok) { const d = (await res.json()).data || this._emptyProgress(userId); this._ramCache.tp[userId]=d; return d; }
-          } catch(e){}
-        }
-        const all = this._localGet(this._typingKey, {});
-        return all[userId] || this._emptyProgress(userId);
-      },
-      async saveTypingProgress(userId, lessonId, result){
-        const record = {
-          lessonId,
-          wpm: result.wpm, cpm: result.cpm, accuracy: result.accuracy,
-          errors: result.errors, elapsedSec: result.elapsedSec,
-          completed: result.completed, passed: result.passed,
-          attemptedAt: Date.now()
-        };
-        const alive = await this._backendAlive();
-        if (alive) {
-          try {
-            const res = await fetch('/api/typing/progress', {
-              method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({ userId, tenant:this._tenant, lessonId, record })
-            });
-            if (res.ok) { const d = (await res.json()).data; if (d) this._ramCache.tp[userId]=d; return d; }
-          } catch(e){}
-        }
-        const all = this._localGet(this._typingKey, {});
-        const cur = all[userId] || this._emptyProgress(userId);
-        const prev = cur[lessonId] || {};
-        cur[lessonId] = {
-          ...record,
-          bestWpm:   Math.max(prev.bestWpm||0, result.wpm||0),
-          bestAcc:   Math.max(prev.bestAcc||0, result.accuracy||0),
-          bestCpm:   Math.max(prev.bestCpm||0, result.cpm||0)
-        };
-        if (result.passed) {
-          cur.nextUnlockedLesson = Math.max(cur.nextUnlockedLesson||1, Number(lessonId) + 1);
-        }
-        all[userId] = cur;
-        this._localSet(this._typingKey, all);
-        return cur;
-      },
-      async getProgressSummary(userId){ return this.getTypingProgress(userId); },
-
-      _emptyProgress(userId){ return { userId, nextUnlockedLesson: 1 }; },
-
-      // --- Certificates ---
-      async getCertificates(userId){
-        const alive = await this._backendAlive();
-        if (alive) {
-          try { const r = await fetch(`/api/certificates?userId=${userId}&tenant=${this._tenant}`); if (r.ok) return (await r.json()).data || []; } catch(e){}
-        }
-        const all = this._localGet(this._certKey, {});
-        return all[userId] || [];
-      },
-      async saveCertificate(userId, cert){
-        const alive = await this._backendAlive();
-        const item = { id: cert.id || ('CERT-'+Date.now()+'-'+Math.floor(Math.random()*10000)), tenant:this._tenant, ...cert, issuedAt: cert.issuedAt||Date.now() };
-        if (alive) {
-          try {
-            const r = await fetch('/api/certificates', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId, tenant:this._tenant, certificate: item}) });
-            if (r.ok) return (await r.json()).data || item;
-          } catch(e){}
-        }
-        const all = this._localGet(this._certKey, {});
-        all[userId] = all[userId] || [];
-        all[userId].push(item);
-        this._localSet(this._certKey, all);
-        return item;
-      },
-
-      // --- Groups ---
-      async listGroups(teacherId){
-        const alive = await this._backendAlive();
-        if (alive) {
-          try { const r = await fetch(`/api/groups?tenant=${this._tenant}${teacherId?`&teacherId=${teacherId}`:''}`); if (r.ok) return (await r.json()).data||[]; } catch(e){}
-        }
-        const all = this._localGet(this._groupKey, []);
-        return teacherId ? all.filter(g=>String(g.teacherId)===String(teacherId) || (Array.isArray(g.teacherIds) && g.teacherIds.includes(teacherId))) : all;
-      },
-      async saveGroup(group){
-        group.id = group.id || ('GRP-'+Date.now());
-        group.tenant = group.tenant || this._tenant;
-        const alive = await this._backendAlive();
-        if (alive) {
-          try { const r = await fetch('/api/groups', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tenant:this._tenant, group}) }); if (r.ok) return (await r.json()).data; } catch(e){}
-        }
-        const all = this._localGet(this._groupKey, []);
-        const i = all.findIndex(g=>g.id===group.id);
-        if (i>=0) all[i] = { ...all[i], ...group }; else all.push(group);
-        this._localSet(this._groupKey, all);
-        return group;
-      },
-
-      // --- Homework / Vazifa ---
-      async listHomework({studentId, groupId}){
-        const alive = await this._backendAlive();
-        if (alive) {
-          try {
-            const r = await fetch(`/api/homework?tenant=${this._tenant}${studentId?`&studentId=${studentId}`:''}${groupId?`&groupId=${groupId}`:''}`);
-            if (r.ok) return (await r.json()).data||[];
-          } catch(e){}
-        }
-        const all = this._localGet(this._hwKey, []);
-        const sid = studentId ? String(studentId) : null;
-        const gid = groupId ? String(groupId) : null;
-        return all.filter(h => {
-          const okS = !sid || (Array.isArray(h.studentIds) && h.studentIds.map(String).includes(sid)) || String(h.studentId)===sid || String(h.groupId)===gid;
-          const okG = !gid || String(h.groupId)===gid;
-          return okS && okG;
-        });
-      },
-      async saveHomework(hw){
-        hw.id = hw.id || ('HW-'+Date.now());
-        hw.tenant = hw.tenant || this._tenant;
-        const alive = await this._backendAlive();
-        if (alive) {
-          try { const r = await fetch('/api/homework',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:this._tenant, homework:hw})}); if (r.ok) return (await r.json()).data; } catch(e){}
-        }
-        const all = this._localGet(this._hwKey, []);
-        const i = all.findIndex(h=>h.id===hw.id);
-        if (i>=0) all[i]={...all[i],...hw}; else all.push(hw);
-        this._localSet(this._hwKey, all);
-        return hw;
-      },
-      async submitHomework(homeworkId, studentId, submission){
-        const alive = await this._backendAlive();
-        if (alive) {
-          try { const r = await fetch('/api/homework/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:this._tenant, homeworkId, studentId, submission})}); if (r.ok) return (await r.json()).data; } catch(e){}
-        }
-        const all = this._localGet(this._hwKey, []);
-        const hw = all.find(h=>h.id===homeworkId);
-        if (hw){
-          hw.submissions = hw.submissions || {};
-          hw.submissions[String(studentId)] = { submittedAt: Date.now(), ...submission };
-          this._localSet(this._hwKey, all);
-        }
-        return submission;
-      },
-
-      // --- Typing Race (WS interface template) ---
-      race: {
-        async create(meta){
-          const code = 'R'+(1000+Math.floor(Math.random()*9000));
-          const race = { code, createdAt: Date.now(), status:'lobby', players:[], text: (TYPING_TEXTS?.medium?.[0]||TYPING_TEXTS?.easy?.[0]||''), startedAt:null, meta: meta||{} };
-          const alive = await ApiService._backendAlive();
-          if (alive) { try { const r = await fetch('/api/race/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,race})}); if (r.ok) return (await r.json()).data; } catch(e){} }
-          const all = ApiService._localGet(ApiService._raceKey,{});
-          all[code] = race; ApiService._localSet(ApiService._raceKey, all);
-          return race;
-        },
-        async join(code, player){
-          const alive = await ApiService._backendAlive();
-          if (alive) { try { const r = await fetch('/api/race/join',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,code,player})}); if (r.ok) return (await r.json()).data; } catch(e){} }
-          const all = ApiService._localGet(ApiService._raceKey,{});
-          const race = all[code];
-          if (!race) return null;
-          if (!race.players.find(p=>String(p.id)===String(player.id))) race.players.push({...player, progress:0, wpm:0, accuracy:100, done:false, finishedAt:null});
-          all[code] = race; ApiService._localSet(ApiService._raceKey, all);
-          return race;
-        },
-        async start(code){
-          const alive = await ApiService._backendAlive();
-          if (alive) { try { const r = await fetch('/api/race/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,code})}); if (r.ok) return (await r.json()).data; } catch(e){} }
-          const all = ApiService._localGet(ApiService._raceKey,{});
-          const race = all[code];
-          if (race){ race.status='running'; race.startedAt = Date.now(); ApiService._localSet(ApiService._raceKey,all); }
-          return race;
-        },
-        async pushProgress(code, playerId, p){
-          const alive = await ApiService._backendAlive();
-          if (alive) { try { const r = await fetch('/api/race/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tenant:ApiService._tenant,code,playerId,progress:p})}); if (r.ok) return (await r.json()).data; } catch(e){} }
-          const all = ApiService._localGet(ApiService._raceKey,{});
-          const race = all[code];
-          if (race){ const pl = race.players.find(x=>String(x.id)===String(playerId)); if (pl){ Object.assign(pl, p); ApiService._localSet(ApiService._raceKey,all); } }
-          return race;
-        },
-        async get(code){
-          const alive = await ApiService._backendAlive();
-          if (alive) { try { const r = await fetch(`/api/race?tenant=${ApiService._tenant}&code=${code}`); if (r.ok) return (await r.json()).data; } catch(e){} }
-          const all = ApiService._localGet(ApiService._raceKey,{});
-          return all[code] || null;
-        },
-        _subscriptions: {},
-        subscribe(code, cb){ (this._subscriptions[code]=this._subscriptions[code]||[]).push(cb); return ()=>{ this._subscriptions[code] = (this._subscriptions[code]||[]).filter(x=>x!==cb); }; },
-        publish(code, evt){ (this._subscriptions[code]||[]).forEach(cb=>{ try { cb(evt); } catch(e){} }); }
-      }
-    };
-    window.ApiService = ApiService;
 
     let saveTimer = null;
     const apiNum = (v, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
@@ -5766,7 +5192,11 @@
         gamePlays: DB.gamePlays || {},
         practicePlays: DB.practicePlays || {},
         attendanceLog: DB.attendanceLog || [],
-        pairHistory: DB.pairHistory || []
+        pairHistory: DB.pairHistory || [],
+        materials: DB.materials || [],
+        homeworks: DB.homeworks || [],
+        homeworkSubmissions: DB.homeworkSubmissions || [],
+        lessonPlans: DB.lessonPlans || []
       };
     }
     const LOCAL_KEY = 'teacherTexnoData';
@@ -5818,6 +5248,10 @@
       DB.practicePlays = data.practicePlays && typeof data.practicePlays === 'object' ? data.practicePlays : {};
       DB.attendanceLog = Array.isArray(data.attendanceLog) ? data.attendanceLog : [];
       DB.pairHistory = Array.isArray(data.pairHistory) ? data.pairHistory : [];
+      DB.materials = Array.isArray(data.materials) ? data.materials : [];
+      DB.homeworks = Array.isArray(data.homeworks) ? data.homeworks : [];
+      DB.homeworkSubmissions = Array.isArray(data.homeworkSubmissions) ? data.homeworkSubmissions : [];
+      DB.lessonPlans = Array.isArray(data.lessonPlans) ? data.lessonPlans : [];
     }
 
     async function loadData() {
@@ -6010,10 +5444,8 @@
     function finishLoading() {
       if (isAppReady) return;
       isAppReady = true;
-      if (window.__pctTimer) clearInterval(window.__pctTimer);
-      if (pctTimer) clearInterval(pctTimer);
-      const el = document.getElementById('loadPct');
-      if (el) el.textContent = 'YUKLANMOQDA... 100%';
+      clearInterval(pctTimer);
+      if (pctEl) pctEl.textContent = 'YUKLANMOQDA... 100%';
 
       const ol = document.getElementById('loadingOverlay');
       if (ol) {
@@ -6164,6 +5596,7 @@
       refreshTelegramLinkUI();
       renderLbMini(); renderActList(); renderFullLb();
       renderStudentTests(); refreshDailyGameBtn(); renderMyAttendance(); refreshPracticeBtn();
+      renderStudentHomeworks(); renderStudentLessonTopic(); renderMaterialsStudent();
     }
     function renderMyAttendance() {
       const card = document.getElementById('myAttendanceCard'); if (!card) return;
@@ -6202,6 +5635,8 @@
       refreshTelegramLinkUI();
       renderTopStudents(); renderRankList(); renderStTable(); renderTBody(); renderPayReport();
       renderTeacherTests(); renderTestResults(); fillRpGroupSel(); renderAttendanceStats();
+      fillNewStudentGroup(); renderGrpList();
+      fillHwSelects(); renderHwTeacherList(); renderMaterialsTeacher(); renderLessonPlans();
     }
     function initA() {
       document.getElementById('adm_t').textContent = DB.students.length;
@@ -6213,6 +5648,7 @@
       document.getElementById('tp_code').textContent = curUser.code || 'ADM-???';
       refreshTelegramLinkUI();
       renderStTable(); renderTBody(); renderPayReport();
+      fillNewStudentGroup(); renderGrpList();
     }
     function getLevelName(l) { return ["Starter", "Beginner", "Advanced", "Pro", "Expert", "Master"][l - 1] || "Legend"; }
     function getColor(idx) { return COLORS[idx % COLORS.length]; }
@@ -6274,16 +5710,34 @@
       <span style="color:var(--gold);font-weight:600;font-family:'JetBrains Mono',monospace;">${s.coins}🪙</span>
     </div>`).join('');
     }
+    function getTeacherNameById(id) {
+      if (id === null || id === undefined || id === '') return '—';
+      const t = DB.teachers.find(x => String(x.id) === String(id));
+      return t ? t.name : '—';
+    }
     function renderStTable() {
-      document.getElementById('stBody').innerHTML = DB.students.map((s, i) => `
+      let list = DB.students;
+      if (curUser?.role === 'teacher') {
+        list = list.filter(s => studentTeacherIds(s).includes(String(curUser.id)));
+      }
+      document.getElementById('stBody').innerHTML = list.map((s, i) => {
+        const tId = primaryTeacherIdOf(s);
+        const teacherName = getTeacherNameById(tId);
+        const phoneDisplay = s.phone ? s.phone : '<span style="color:var(--text3);">—</span>';
+        return `
     <tr>
       <td style="font-family:'JetBrains Mono',monospace;color:var(--text3);">${i + 1}</td>
       <td><strong>${s.name}</strong><br><span style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">ID:${s.id}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">${phoneDisplay}</td>
       <td style="font-size:12px;">${s.group || '—'}</td>
+      <td style="font-size:12px;color:var(--cyan);">${teacherName}</td>
       <td style="font-family:'Orbitron',monospace;font-weight:700;color:var(--gold);">${s.coins || 0}</td>
       <td><code style="background:var(--card2);padding:2px 6px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);">${s.pass}</code></td>
       <td><span class="badge ${s.streak > 0 ? 'gr' : 'br'}">${s.streak > 0 ? 'FAOL' : 'NOFAOL'}</span></td>
-    </tr>`).join('');
+      <td><button class="btn btn-xs" onclick="editStud(${s.id})"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-xs btn-danger" onclick="deleteStud(${s.id})"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+      }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:16px;font-family:'JetBrains Mono',monospace;">// Talaba yo'q</td></tr>`;
     }
     function renderTBody() {
       document.getElementById('tBody').innerHTML = DB.teachers.map((t, i) => {
@@ -6385,17 +5839,158 @@
       DB.transactions.push({ studentId: s.id, type, amount: amt, reason: reasonLabel, date: Date.now() });
       if (autosave) { saveData(); updateCoinsDisplay(); renderStTable(); renderRankList(); updateCpgStats(); }
     }
+    function fillNewStudentGroup() {
+      const sel = document.getElementById('nsGrp');
+      if (!sel) return;
+      const curVal = sel.value;
+      const groups = [...new Set(DB.students.map(s => s.group).filter(Boolean))];
+      const savedGroups = (Array.isArray(DB.groups) ? DB.groups : []).map(g => g.name).filter(Boolean);
+      const defaults = ['A1', 'A2', 'B1', 'B2', 'C1', 'D1', 'D2', 'D3'];
+      const all = [...new Set([...groups, ...savedGroups, ...defaults])].sort();
+      sel.innerHTML = '<option value="">— Tanlang —</option>' + all.map(g => `<option value="${g}">${g}</option>`).join('');
+      if (curVal) sel.value = curVal;
+      onNsGrpChange();
+    }
+    // Guruh tanlanganda unga biriktirilgan o'qituvchini avtomatik ko'rsatadi
+    function onNsGrpChange() {
+      const sel = document.getElementById('nsGrp');
+      const view = document.getElementById('nsTeacherView');
+      if (!sel || !view) return;
+      const g = sel.value;
+      if (!g) { view.textContent = '— avtomatik —'; return; }
+      const tid = getGroupTeacherId(g);
+      if (tid) {
+        view.textContent = getTeacherNameById(tid);
+      } else if (curUser?.role === 'teacher') {
+        view.textContent = curUser.name + ' (siz)';
+      } else {
+        view.textContent = '— tayinlanmagan —';
+      }
+    }
+    // Telefon raqamni tekshiradi: +998901234567, 998901234567 yoki 901234567 formatlarini qabul qiladi
+    function isValidPhone(raw) {
+      const cleaned = String(raw || '').replace(/[\s\-\(\)]/g, '');
+      return /^(\+?998)?\d{9}$/.test(cleaned);
+    }
+    function normalizePhone(raw) {
+      const cleaned = String(raw || '').replace(/[\s\-\(\)]/g, '');
+      const digits = cleaned.replace(/^\+?998/, '');
+      return '+998' + digits;
+    }
     function addStud() {
       const n = document.getElementById('nsName').value.trim();
-      const p = document.getElementById('nsPhone').value.trim();
+      const pRaw = document.getElementById('nsPhone').value.trim();
+      const g = document.getElementById('nsGrp').value.trim();
       const pass = document.getElementById('nsPass').value || '1234';
       if (!n) { showToast('❗ Ism kiriting'); return; }
-      const teacherId = curUser?.role === 'teacher' ? curUser.id : null;
-      DB.students.push({ id: Date.now(), name: n, phone: p, pass, coins: 0, level: 1, streak: 0, ref: 'NEW' + Math.floor(Math.random() * 9000 + 1000), group: 'Yangi', teacherId, teacherIds: teacherId ? [teacherId] : [] });
+      if (!pRaw) { showToast('❗ Telefon raqam kiriting (majburiy)'); return; }
+      if (!isValidPhone(pRaw)) { showToast('❗ Telefon raqam noto\'g\'ri. Namuna: +998901234567'); return; }
+      if (!g) { showToast('❗ Guruh tanlang (majburiy)'); return; }
+      const p = normalizePhone(pRaw);
+      if (DB.students.some(s => s.phone === p)) { showToast('❗ Bu telefon raqam allaqachon ro\'yxatdan o\'tgan'); return; }
+      let teacherId = curUser?.role === 'teacher' ? curUser.id : getGroupTeacherId(g);
+      teacherId = teacherId ? Number(teacherId) || teacherId : null;
+      if (curUser?.role === 'teacher') setGroupTeacher(g, curUser.id);
+      DB.students.push({ id: Date.now(), name: n, phone: p, pass, coins: 0, level: 1, streak: 0, ref: 'NEW' + Math.floor(Math.random() * 9000 + 1000), group: g, teacherId, teacherIds: teacherId ? [teacherId] : [] });
       document.getElementById('nsName').value = ''; document.getElementById('nsPhone').value = ''; document.getElementById('nsPass').value = '';
       saveData();
-      renderStTable(); fillCoinSelects(); fillLoginDropdowns(); showToast('✅ ' + n + " qo'shildi!");
+      renderStTable(); fillCoinSelects(); fillLoginDropdowns(); onNsGrpChange();
+      // Reyting va statistikalarni real vaqtda yangilash
+      if (curUser?.role === 'teacher') { renderTopStudents(); renderRankList(); renderPayReport(); renderTBody(); }
+      if (curUser?.role === 'admin') {
+        const adT = document.getElementById('adm_t'); if (adT) adT.textContent = DB.students.length;
+        const adC = document.getElementById('adm_c'); if (adC) adC.textContent = DB.students.reduce((s, x) => s + x.coins, 0);
+        renderPayReport(); renderTBody();
+      }
+      showToast('✅ ' + n + " qo'shildi!");
     }
+    function editStud(id) {
+      const s = DB.students.find(x => x.id === id); if (!s) return;
+      openGlobalModal(`
+        <div class="modal-title">✏️ Talabani tahrirlash</div>
+        <div class="form-group"><label>Ism familiya</label><input class="form-control" id="edName" value="${String(s.name || '').replace(/"/g, '&quot;')}"></div>
+        <div class="form-group"><label>Telefon</label><input class="form-control" id="edPhone" value="${s.phone || ''}"></div>
+        <div class="form-group"><label>Guruh</label><input class="form-control" id="edGrp" value="${s.group || ''}"></div>
+        <div class="form-group"><label>Parol</label><input class="form-control" id="edPass" value="${s.pass || ''}"></div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-cyan" style="flex:1;" onclick="saveStudEdit(${id})"><i class="fas fa-check"></i> Saqlash</button>
+        </div>`);
+    }
+    function saveStudEdit(id) {
+      const s = DB.students.find(x => x.id === id); if (!s) return;
+      const name = document.getElementById('edName').value.trim();
+      const phone = document.getElementById('edPhone').value.trim();
+      const group = document.getElementById('edGrp').value.trim();
+      const pass = document.getElementById('edPass').value.trim();
+      if (!name) { showToast('❗ Ism kiritilmagan'); return; }
+      s.name = name; s.phone = phone || s.phone; s.group = group || s.group; s.pass = pass || s.pass;
+      saveData(); renderStTable(); fillCoinSelects(); if (typeof fillHwSelects === 'function') fillHwSelects();
+      closeGlobalModal();
+      showToast("✅ Talaba ma'lumotlari yangilandi");
+    }
+    function deleteStud(id) {
+      const s = DB.students.find(x => x.id === id); if (!s) return;
+      openGlobalModal(`
+        <div class="modal-title">🗑️ ${String(s.name || '').replace(/</g, '&lt;')}ni o'chirish</div>
+        <p style="color:var(--text2);margin:10px 0 18px;">Bu amalni bekor qilib bo'lmaydi. Rostdan ham o'chirmoqchimisiz?</p>
+        <div style="display:flex;gap:8px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-danger" style="flex:1;" onclick="confirmDeleteStud(${id})"><i class="fas fa-trash"></i> O'chirish</button>
+        </div>`);
+    }
+    function confirmDeleteStud(id) {
+      DB.students = DB.students.filter(x => x.id !== id);
+      saveData(); renderStTable(); fillCoinSelects(); if (typeof fillHwSelects === 'function') fillHwSelects(); fillLoginDropdowns();
+      closeGlobalModal();
+      showToast("🗑️ Talaba o'chirildi");
+    }
+    window.editStud = editStud; window.saveStudEdit = saveStudEdit;
+    window.deleteStud = deleteStud; window.confirmDeleteStud = confirmDeleteStud;
+
+    function editGroupName(oldName) {
+      openGlobalModal(`
+        <div class="modal-title">✏️ Guruh nomini tahrirlash</div>
+        <div class="form-group"><label>Yangi nom</label><input class="form-control" id="edGrpName" value="${String(oldName || '').replace(/"/g, '&quot;')}"></div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-cyan" style="flex:1;" onclick="saveGroupEdit('${String(oldName || '').replace(/'/g, "\\'")}')"><i class="fas fa-check"></i> Saqlash</button>
+        </div>`);
+    }
+    function saveGroupEdit(oldName) {
+      const newName = document.getElementById('edGrpName').value.trim();
+      if (!newName) { showToast("❗ Guruh nomi bo'sh bo'lmasin"); return; }
+      const g = (DB.groups || []).find(x => x.name === oldName);
+      if (g) g.name = newName;
+      DB.students.forEach(s => { if (s.group === oldName) s.group = newName; });
+      (DB.homeworks || []).forEach(h => { if (h.targetGroup === oldName) h.targetGroup = newName; });
+      (DB.lessonPlans || []).forEach(p => { if (p.group === oldName) p.group = newName; });
+      (DB.materials || []).forEach(m => { if (m.group === oldName) m.group = newName; });
+      saveData(); renderGrpList(); renderStTable(); fillNewStudentGroup();
+      if (typeof fillHwSelects === 'function') fillHwSelects();
+      if (typeof fillRpGroupSel === 'function') fillRpGroupSel();
+      closeGlobalModal();
+      showToast('✅ Guruh nomi yangilandi');
+    }
+    function deleteGroupTG(name) {
+      const inUse = DB.students.some(s => s.group === name);
+      openGlobalModal(`
+        <div class="modal-title">🗑️ "${String(name || '').replace(/</g, '&lt;')}" guruhini o'chirish</div>
+        <p style="color:var(--text2);margin:10px 0 18px;">${inUse ? "⚠️ Bu guruhda talabalar bor. Guruh o'chirilsa, ular guruhsiz qoladi." : "Rostdan ham o'chirmoqchimisiz?"}</p>
+        <div style="display:flex;gap:8px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-danger" style="flex:1;" onclick="confirmDeleteGroup('${String(name || '').replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i> O'chirish</button>
+        </div>`);
+    }
+    function confirmDeleteGroup(name) {
+      DB.groups = (DB.groups || []).filter(x => x.name !== name);
+      saveData(); renderGrpList(); fillNewStudentGroup();
+      closeGlobalModal();
+      showToast("🗑️ Guruh o'chirildi (talabalar saqlanib qoldi)");
+    }
+    window.editGroupName = editGroupName; window.saveGroupEdit = saveGroupEdit;
+    window.deleteGroupTG = deleteGroupTG; window.confirmDeleteGroup = confirmDeleteGroup;
+
     function addTeacher() {
       const n = document.getElementById('ntName').value.trim();
       const s = document.getElementById('ntSubj').value.trim();
@@ -6596,17 +6191,72 @@
     // ══════════════════════════════════
     // DARSLIK VA KITOBLAR
     // ══════════════════════════════════
-    function addMaterial() {
+    const MAT_MAX_BYTES = 8 * 1024 * 1024; // 8MB
+    function humanFileSize(bytes) {
+      if (!bytes) return '';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+    document.addEventListener('change', function (e) {
+      if (e.target && e.target.id === 'matFile') {
+        const f = e.target.files[0];
+        const info = document.getElementById('matFileInfo');
+        if (!f) { if (info) info.textContent = ''; return; }
+        if (f.size > MAT_MAX_BYTES) {
+          if (info) { info.textContent = "❗ Fayl juda katta (max 8MB). Iltimos, kichikroq fayl tanlang yoki HAVOLA maydonidan foydalaning."; info.style.color = 'var(--red)'; }
+          e.target.value = '';
+          return;
+        }
+        if (info) { info.textContent = '📎 ' + f.name + ' · ' + humanFileSize(f.size); info.style.color = 'var(--green)'; }
+      }
+    });
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = () => reject(new Error('Fayl o\'qib bo\'lmadi'));
+        r.readAsDataURL(file);
+      });
+    }
+    async function addMaterial() {
       const group = document.getElementById('matGroup').value.trim();
       const type = document.getElementById('matType').value;
       const title = document.getElementById('matTitle').value.trim();
       const desc = document.getElementById('matDesc').value.trim();
       const link = document.getElementById('matLink').value.trim();
+      const fileInput = document.getElementById('matFile');
+      const file = fileInput && fileInput.files[0];
       if (!title) { showToast('❗ Nomini kiriting'); return; }
+      if (!link && !file) { showToast('❗ Havola kiriting yoki fayl yuklang'); return; }
+      let fileData = '', fileName = '', fileSize = 0;
+      if (file) {
+        if (file.size > MAT_MAX_BYTES) { showToast('❗ Fayl juda katta (max 8MB)'); return; }
+        try {
+          showToast('⏳ Fayl yuklanmoqda...');
+          fileData = await readFileAsDataURL(file);
+          fileName = file.name; fileSize = file.size;
+        } catch (e) {
+          showToast('❌ Faylni o\'qib bo\'lmadi'); return;
+        }
+      }
       DB.materials = DB.materials || [];
-      DB.materials.push({ id: 'mat' + Date.now(), teacherId: curUser.id, group: group || '', type, title, desc, link, createdAt: Date.now() });
+      DB.materials.push({ id: 'mat' + Date.now(), teacherId: curUser.id, group: group || '', type, title, desc, link, fileData, fileName, fileSize, createdAt: Date.now() });
+      // saveData() localStorage xatosini kechiktirib (setTimeout ichida) ko'rsatadi,
+      // shu uchun bu yerda oldindan sinab ko'ramiz — xotira to'lib qolsa darhol bilib olamiz
+      try {
+        localStorage.setItem('__mat_test__', JSON.stringify(toApiData()));
+        localStorage.removeItem('__mat_test__');
+      } catch (e) {
+        DB.materials.pop();
+        showToast('❗ Xotira to\'lib qoldi — fayl juda katta. Havoladan foydalaning yoki kichikroq fayl yuklang.');
+        return;
+      }
       ['matGroup', 'matTitle', 'matDesc', 'matLink'].forEach(id => document.getElementById(id).value = '');
-      saveData(); renderMaterialsTeacher();
+      if (fileInput) fileInput.value = '';
+      const info = document.getElementById('matFileInfo'); if (info) info.textContent = '';
+      saveData();
+      renderMaterialsTeacher();
       showToast('✅ "' + title + '" qo\'shildi');
     }
     function deleteMaterial(id) {
@@ -6615,19 +6265,29 @@
       showToast("🗑️ Material o'chirildi");
     }
     const MAT_ICONS = { darslik: '📘', kitob: '📚', material: '📄' };
+    function matFileIcon(name) {
+      const ext = String(name || '').split('.').pop().toLowerCase();
+      if (ext === 'pdf') return 'fa-file-pdf';
+      if (['doc', 'docx'].includes(ext)) return 'fa-file-word';
+      if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'fa-file-image';
+      return 'fa-file';
+    }
     function renderMaterialsTeacher() {
       const el = document.getElementById('matTeacherList'); if (!el) return;
       const mine = (DB.materials || []).filter(m => m.teacherId === curUser.id).sort((a, b) => b.createdAt - a.createdAt);
       if (!mine.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;font-family:\'JetBrains Mono\',monospace;">// Material yo\'q</div>'; return; }
       el.innerHTML = mine.map(m => `
         <div class="req-card">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-            <div style="display:flex;gap:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+            <div style="display:flex;gap:8px;flex:1;min-width:200px;">
               <span style="font-size:20px;">${MAT_ICONS[m.type] || '📄'}</span>
               <div>
-                <div style="font-weight:700;font-size:13px;">${m.title}</div>
-                <div style="font-size:11px;color:var(--text3);">${m.group ? m.group + ' guruhi' : 'Barcha guruhlar'}${m.desc ? ' · ' + m.desc.slice(0, 40) : ''}</div>
-                ${m.link ? `<a href="${m.link}" target="_blank" style="font-size:11px;color:var(--cyan);">🔗 Havola</a>` : ''}
+                <div style="font-weight:700;font-size:13px;">${String(m.title || '').replace(/</g, '&lt;')}</div>
+                <div style="font-size:11px;color:var(--text3);">${m.group ? m.group + ' guruhi' : 'Barcha guruhlar'}${m.desc ? ' · ' + String(m.desc).slice(0, 40).replace(/</g, '&lt;') : ''}</div>
+                <div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;">
+                  ${m.link ? `<a href="${m.link}" target="_blank" style="font-size:11px;color:var(--cyan);"><i class="fas fa-link"></i> Havola</a>` : ''}
+                  ${m.fileData ? `<a href="${m.fileData}" download="${String(m.fileName || 'fayl').replace(/"/g, '')}" style="font-size:11px;color:var(--gold);"><i class="fas ${matFileIcon(m.fileName)}"></i> ${String(m.fileName || 'Fayl').replace(/</g, '&lt;')} (${humanFileSize(m.fileSize)})</a>` : ''}
+                </div>
               </div>
             </div>
             <button class="btn btn-xs btn-danger" onclick="deleteMaterial('${m.id}')"><i class="fas fa-trash"></i></button>
@@ -6643,10 +6303,13 @@
         <div class="card">
           <div class="cb" style="display:flex;gap:12px;align-items:flex-start;">
             <span style="font-size:32px;">${MAT_ICONS[m.type] || '📄'}</span>
-            <div style="flex:1;">
-              <div style="font-weight:700;font-size:14px;">${m.title}</div>
-              ${m.desc ? `<div style="font-size:12px;color:var(--text2);margin-top:4px;">${m.desc}</div>` : ''}
-              ${m.link ? `<a href="${m.link}" target="_blank" class="btn btn-xs btn-cyan" style="margin-top:8px;display:inline-flex;"><i class="fas fa-external-link-alt"></i> Ochish</a>` : ''}
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:14px;">${String(m.title || '').replace(/</g, '&lt;')}</div>
+              ${m.desc ? `<div style="font-size:12px;color:var(--text2);margin-top:4px;">${String(m.desc).replace(/</g, '&lt;')}</div>` : ''}
+              <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+                ${m.link ? `<a href="${m.link}" target="_blank" class="btn btn-xs btn-cyan" style="display:inline-flex;"><i class="fas fa-external-link-alt"></i> Havolani ochish</a>` : ''}
+                ${m.fileData ? `<a href="${m.fileData}" download="${String(m.fileName || 'fayl').replace(/"/g, '')}" class="btn btn-xs btn-gold" style="display:inline-flex;"><i class="fas ${matFileIcon(m.fileName)}"></i> Yuklab olish (${humanFileSize(m.fileSize)})</a>` : ''}
+              </div>
             </div>
           </div>
         </div>`).join('');
@@ -6838,15 +6501,45 @@
         if (u) { curUser.coins = u.coins; document.getElementById('tbCoins').textContent = '🪙 ' + u.coins; }
       }
     }
+    // Guruh nomi bo'yicha unga biriktirilgan o'qituvchi ID sini topadi.
+    // Avval DB.groups yozuvidan, topilmasa shu guruhdagi talabalarning eng ko'p ishlatilgan teacherId'sidan aniqlaydi.
+    function getGroupTeacherId(groupName) {
+      if (!groupName) return null;
+      DB.groups = Array.isArray(DB.groups) ? DB.groups : [];
+      const g = DB.groups.find(x => String(x.name).toLowerCase() === String(groupName).toLowerCase());
+      if (g && g.teacherId) return g.teacherId;
+      const counts = {};
+      DB.students.filter(s => s.group === groupName).forEach(s => {
+        const tid = primaryTeacherIdOf(s);
+        if (tid) counts[tid] = (counts[tid] || 0) + 1;
+      });
+      const best = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      return best ? best[0] : null;
+    }
+    // Guruhga o'qituvchini biriktiradi (yozuv mavjud bo'lmasa yaratadi)
+    function setGroupTeacher(groupName, teacherId) {
+      if (!groupName || !teacherId) return;
+      DB.groups = Array.isArray(DB.groups) ? DB.groups : [];
+      let g = DB.groups.find(x => String(x.name).toLowerCase() === String(groupName).toLowerCase());
+      if (!g) { g = { id: Date.now(), name: groupName, status: 'active', teacherId }; DB.groups.push(g); }
+      else if (!g.teacherId) { g.teacherId = teacherId; }
+    }
+    function renderGrpList() {
+      const gl = document.getElementById('grpList'); if (!gl) return;
+      const groups = Array.isArray(DB.groups) ? DB.groups : [];
+      if (!groups.length) { gl.innerHTML = "Guruhlar yo'q"; return; }
+      gl.innerHTML = groups.map(g => `<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cyan-dim);border:1px solid rgba(0,229,255,.2);border-radius:8px;margin-bottom:6px;font-size:13px;"><i class="fas fa-layer-group" style="color:var(--cyan);"></i> ${g.name} <span style="color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace;">${g.teacherId ? ('· ' + getTeacherNameById(g.teacherId)) : ''}</span><span class="badge gr" style="margin-left:auto;">FAOL</span><button class="btn btn-xs" onclick="editGroupName('${String(g.name).replace(/'/g, "\\'")}')"><i class="fas fa-edit"></i></button><button class="btn btn-xs btn-danger" onclick="deleteGroupTG('${String(g.name).replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button></div>`).join('');
+    }
     function createTGrp() {
       const n = document.getElementById('newGrpName').value.trim();
       if (!n) { showToast('❗ Guruh nomi kiriting'); return; }
       DB.groups = Array.isArray(DB.groups) ? DB.groups : [];
-      DB.groups.push({ id: Date.now(), name: n, status: 'active' });
+      if (DB.groups.find(x => String(x.name).toLowerCase() === n.toLowerCase())) { showToast('❗ Bu guruh allaqachon mavjud'); return; }
+      const teacherId = curUser?.role === 'teacher' ? curUser.id : null;
+      DB.groups.push({ id: Date.now(), name: n, status: 'active', teacherId });
       saveData();
-      const gl = document.getElementById('grpList');
-      if (gl.textContent.includes("yo'q")) gl.innerHTML = '';
-      gl.innerHTML += `<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cyan-dim);border:1px solid rgba(0,229,255,.2);border-radius:8px;margin-bottom:6px;font-size:13px;"><i class="fas fa-layer-group" style="color:var(--cyan);"></i> ${n} <span class="badge gr" style="margin-left:auto;">FAOL</span></div>`;
+      renderGrpList();
+      fillNewStudentGroup();
       document.getElementById('newGrpName').value = ''; showToast('✅ ' + n + ' guruhi yaratildi!');
     }
     function cpRef() {
@@ -7009,7 +6702,15 @@
         const pg = document.getElementById(id); if (pg) pg.classList.add('active');
       }
       if (id === 'cpg') { try { fillCoinSelects(); updateCpgStats(); } catch (e) { console.warn('CPG render:', e); } }
-      if (id === 'grppg') { try { fillRpGroupSel(); renderAttendanceStats(); document.getElementById('rpResult').innerHTML = ''; } catch (e) { console.warn('GRPPG render:', e); } }
+      if (id === 'grppg') { try { fillRpGroupSel(); renderAttendanceStats(); renderGrpList(); document.getElementById('rpResult').innerHTML = ''; } catch (e) { console.warn('GRPPG render:', e); } }
+      if (id === 'stpg') { try { fillNewStudentGroup(); renderStTable(); } catch (e) { console.warn('STPG render:', e); } }
+      if (id === 'hwmgrpg') { try { fillHwSelects(); renderHwTeacherList(); } catch (e) { console.warn('HWMGR render:', e); } }
+      if (id === 'matmgrpg') { try { renderMaterialsTeacher(); } catch (e) { console.warn('MAT render:', e); } }
+      if (id === 'lpg') { try { renderLessonPlans(); } catch (e) { console.warn('LP render:', e); } }
+      if (id === 'testmgrpg') { try { renderTeacherTests(); renderTestResults(); } catch (e) { console.warn('TESTMGR render:', e); } }
+      if (id === 'hwspg') { try { renderStudentHomeworks(); } catch (e) { console.warn('HWS render:', e); } }
+      if (id === 'slpg') { try { renderStudentLessonTopic(); } catch (e) { console.warn('SLPG render:', e); } }
+      if (id === 'matpg') { try { renderMaterialsStudent(); } catch (e) { console.warn('MATPG render:', e); } }
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
       if (title) document.getElementById('tbTitle').textContent = title;
@@ -7262,19 +6963,6 @@
       ${toolsHTML}
       <span class="mts">${mTime} ${readIcon}</span>
     </div>`;
-          } else if (mType === 'race_invite') {
-        const already = (DB.raceChallenges && DB.raceChallenges[m.raceId] && DB.raceChallenges[m.raceId].results && Object.keys(DB.raceChallenges[m.raceId].results).length >= 2);
-        bubbleInner = `<div class="mbubble" style="padding:2px;">
-      <div class="race-invite-card">
-        <div class="ric-title">🏁 Barmoq poygasiga taklif!</div>
-        <div class="fs11 txt2">Daraja: ${m.diff === 'hard' ? 'Qiyin' : m.diff === 'medium' ? "O'rta" : 'Oson'}</div>
-        ${mine
-          ? `<button class="ric-btn done">Taklif yuborildi</button>`
-          : `<button class="ric-btn" onclick="acceptRaceInvite('${m.raceId}')"><i class="fas fa-flag-checkered"></i> Qabul qilish va boshlash</button>`}
-      </div>
-      <span class="mts">${mTime}</span> 
-    </div>`;
-      } else if (mType === 'file') {
       } else if (mType === 'file') {
         bubbleInner = `<div class="mbubble">
       ${rplyHTML}
@@ -8125,11 +7813,18 @@
       return s;
     }
 
-    if (typeof window.escHtml !== 'function') {
-      window.escHtml = function(str) { const d = document.createElement('div'); d.textContent = String(str==null?'':str); return d.innerHTML; };
-    }
     function mFormatTime(ts) { try { const d = new Date(Number(ts)||0); const n = Date.now(); const diff = (n - d.getTime())/1000; if (diff < 60) return 'Hozir'; if (diff < 3600) return Math.round(diff/60)+' daqiqa avval'; if (diff < 86400) return Math.round(diff/3600)+' soat avval'; if (diff < 604800) return Math.round(diff/86400)+' kun avval'; return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear(); } catch(e){return '';} }
     function mPct(v,mx){ return Math.max(0, Math.min(100, Math.round((Number(v)||0)/(Number(mx)||1)*100))); }
+
+    // ──────── escHtml / medals (YO'Q EDI — QO'SHILDI) ────────
+    // Xavfsiz HTML escape: XSS oldini oladi va "escHtml is not defined" xatosini tuzatadi
+    function escHtml(str) {
+      return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    // Reyting jadvalida 1/2/3-o'rin uchun medal belgilari — "medals is not defined" xatosini tuzatadi
+    const medals = ['🥇', '🥈', '🥉'];
 
     // ──────── Toast / Modal ────────
     function mToast(msg, type='', title='') {
@@ -8943,7 +8638,7 @@
       const s = mGetStudent(); if (!s) { showToast('Avval tizimga kiring','error'); return; }
       mEnsureRich(s);
       const curCoins = Number(s.totalCoins)||0;
-      if (curCoins < coins) { mToast(`Tanga yetarli emas! ${coins-coins} tanga kerak.`,'error','❌ Xatolik'); return; }
+      if (curCoins < coins) { mToast(`Tanga yetarli emas!`,'error','❌ Xatolik'); return; }
       s.totalCoins = curCoins - coins;
       const teacherId = s.teacherId || 1;
       if (typeof s.coins !== 'object' || !s.coins) s.coins = {};
@@ -8958,738 +8653,12 @@
     }
     window.buyProduct = buyProduct;
 
-    // ════════════════════════════════════════════════════════════
-    // ──────── Umumiy: tanga (olmos) berish helper ─────────
-    // ════════════════════════════════════════════════════════════
-    function mAwardCoins(s, amount, reason, notifType) {
-      if (!s || !amount) return;
-      amount = Math.round(Number(amount) || 0); if (amount <= 0) return;
-      mEnsureRich(s);
-      s.totalCoins = (Number(s.totalCoins) || 0) + amount;
-      const teacherId = s.teacherId || 1;
-      if (typeof s.coins !== 'object' || !s.coins) s.coins = {};
-      s.coins[teacherId] = (Number(s.coins[teacherId]) || 0) + amount;
-      DB.transactions = DB.transactions || [];
-      DB.transactions.push({ studentId: s.id, type: 'reward', coins: amount, reason: reason || 'Mukofot', time: Date.now(), id: (DB.transactions.at(-1)?.id || 0) + 1 });
-      mPushNotif(s.id, notifType || 'achievement', reason + ` (+${amount} 💎)`);
-    }
-
-    // ════════════════════════════════════════════════════════════
-    // ──────── BARMOQ POYGASI (Kompyuter typing musobaqasi) ─────────
-    // ════════════════════════════════════════════════════════════
-    const TYPING_TEXTS = {
-      easy: [
-        "Bugun havo juda yaxshi, quyosh charaqlab turibdi va osmon musaffo.",
-        "Kitob o'qish inson bilimini oshiradi va tafakkurni rivojlantiradi.",
-        "Maktabda o'qituvchimiz bizga yangi mavzuni tushuntirib berdi.",
-        "Do'stlik inson hayotidagi eng qimmatli boylikdir, uni asrash kerak.",
-        "Har kuni ertalab sport bilan shug'ullanish sog'lig'imiz uchun foydali."
-      ],
-      medium: [
-        "O'zbekiston Markaziy Osiyoning qadimiy va boy tarixga ega mamlakatlaridan biri hisoblanadi.",
-        "Zamonaviy texnologiyalar hayotimizning barcha sohalariga chuqur kirib bormoqda va uni o'zgartirmoqda.",
-        "Ta'lim tizimidagi islohotlar yosh avlodning bilim darajasini oshirishga qaratilgan bo'lishi kerak.",
-        "Har bir talaba o'z maqsadiga erishish uchun muntazam ravishda mehnat qilishi va sabr-toqatli bo'lishi lozim.",
-        "Kompyuter savodxonligi bugungi kunda har bir mutaxassis uchun zarur bo'lgan asosiy ko'nikmalardan biridir."
-      ],
-      hard: [
-        "Sun'iy intellekt texnologiyalarining jadal rivojlanishi ta'lim, tibbiyot va iqtisodiyot sohalarida tub o'zgarishlarni yuzaga keltirmoqda.",
-        "Mustaqil fikrlash qobiliyatini rivojlantirish uchun talaba nafaqat nazariy bilimlarni, balki amaliy tajribani ham muntazam oshirib borishi zarur.",
-        "Dasturlash tilini puxta o'zlashtirish qat'iyat, izchillik va har kunlik mashq qilishni talab etadigan uzoq muddatli jarayondir.",
-        "Raqamli iqtisodiyot sharoitida axborot xavfsizligi masalalari davlat va jamiyat oldida turgan eng dolzarb muammolardan biriga aylanmoqda.",
-        "Yoshlarning ijodiy va tanqidiy tafakkurini shakllantirishda zamonaviy pedagogik metodlarni qo'llash muhim ahamiyatga ega."
-      ]
-    };
-    // ═══════════ BARMOQ-TUGMA XARITASI ═══════════
-const FINGER_COLORS = {
-  lp:'#ff5577', lr:'#ffaa00', lm:'#00ff88', li:'#00e5ff',
-  ri:'#00e5ff', rm:'#00ff88', rr:'#ffaa00', rp:'#ff5577', th:'#bf5fff'
-};
-const FINGER_NAMES = {
-  lp:"Chap jimjiloq", lr:"Chap nomsiz", lm:"Chap o'rta", li:"Chap ko'rsatkich",
-  ri:"O'ng ko'rsatkich", rm:"O'ng o'rta", rr:"O'ng nomsiz", rp:"O'ng jimjiloq", th:"Bosh barmoq (space)"
-};
-const KB_ROWS = [
-  [['q','lp'],['w','lr'],['e','lm'],['r','li'],['t','li'],['y','ri'],['u','ri'],['i','rm'],['o','rr'],['p','rp']],
-  [['a','lp'],['s','lr'],['d','lm'],['f','li'],['g','li'],['h','ri'],['j','ri'],['k','rm'],['l','rr']],
-  [['z','lp'],['x','lr'],['c','lm'],['v','li'],['b','li'],['n','ri'],['m','ri']],
-];
-function mFingerOf(ch) {
-  if (!ch) return null;
-  const c = ch.toLowerCase();
-  if (c === ' ') return 'th';
-  for (const row of KB_ROWS) { const f = row.find(k => k[0] === c); if (f) return f[1]; }
-  return null;
-}
-function mRenderFingerBoard(activeChar) {
-  const activeFinger = mFingerOf(activeChar);
-  const activeKey = activeChar ? activeChar.toLowerCase() : null;
-  const legend = Object.keys(FINGER_NAMES).map(f =>
-    `<div class="fk-leg-item"><span class="fk-leg-dot" style="background:${FINGER_COLORS[f]};"></span>${FINGER_NAMES[f]}</div>`
-  ).join('');
-  const rows = KB_ROWS.map(row => `<div class="fk-row">${
-    row.map(([k,f]) => {
-      const isActive = activeKey === k;
-      const bg = isActive ? FINGER_COLORS[f] : FINGER_COLORS[f] + '22';
-      const col = isActive ? '#000' : FINGER_COLORS[f];
-      return `<div class="fk-key ${isActive?'fk-active':''}" style="background:${bg};color:${col};border-color:${FINGER_COLORS[f]}55;">${k.toUpperCase()}</div>`;
-    }).join('')
-  }</div>`).join('');
-  const spaceActive = activeKey === ' ';
-  return `
-    <div class="fk-legend">${legend}</div>
-    <div class="fk-board">
-      ${rows}
-      <div class="fk-row"><div class="fk-key space ${spaceActive?'fk-active':''}" style="background:${spaceActive?FINGER_COLORS.th:FINGER_COLORS.th+'22'};color:${spaceActive?'#000':FINGER_COLORS.th};border-color:${FINGER_COLORS.th}55;">SPACE</div></div>
-      <div class="fk-hand-label">${activeFinger ? ('Hozir bosing: ' + FINGER_NAMES[activeFinger]) : 'Terishni boshlang'}</div>
-    </div>`;
-}
-function mRenderHandsVisual(activeFinger) {
-  const F = FINGER_COLORS, N = FINGER_NAMES;
-  const dot = (id, label, isThumb=false) => {
-    const active = activeFinger === id;
-    const color = F[id];
-    return `<span class="hf-dot ${isThumb?'hf-thumb':''} ${active?'hf-active':''}" style="color:${color};border-color:${color}55;box-shadow:${active?'0 0 10px '+color:''};">${label}</span>`;
-  };
-  return `
-    <div class="hand-viz-row">
-      <div class="hand-group">
-        <div class="hand-lbl">👈 CHAP QO'L</div>
-        <div class="hand-fingers">
-          ${dot('lp','5')}${dot('lr','4')}${dot('lm','3')}${dot('li','2')}
-          <div style="width:14px;display:inline-block;"></div>
-          ${dot('th','☚',true)}
-        </div>
-      </div>
-      <div class="hand-group">
-        <div class="hand-lbl">O'NG QO'L 👉</div>
-        <div class="hand-fingers">
-          ${dot('th','☛',true)}
-          <div style="width:14px;display:inline-block;"></div>
-          ${dot('ri','2')}${dot('rm','3')}${dot('rr','4')}${dot('rp','5')}
-        </div>
-      </div>
-    </div>
-    <div class="hand-state-title">${activeFinger ? ('🔥 ' + (N[activeFinger] || '') + ' bilan bosing') : 'Barmoqlaringizni uy qatoriga qo\'ying'}</div>`;
-}
-window.mRenderHandsVisual = mRenderHandsVisual;
-
-// ═══════════════════════════════════════════════════════════
-// 15 BOSQICHLIK TYPING KURSI (Home Row → Yakuniy imtihon)
-// Har bir dars: id, nom, tavsif, mashq matni, minimal pass talablari
-// ═══════════════════════════════════════════════════════════
-const TYPING_COURSE = [
-  { id:1,  title:"1. Uy qatori (Home Row)",             desc:"Chap: A S D F  ·  O'ng: J K L ;  — asosiy uy qatorni mustahkamlash.",  threshold:{minAcc:80, minChars:200},
-    text:"asdf jkl; asdf jkl; asdf jkl; asdf jkl; a s d f j k l ; a s d f j k l ; fads jkl; fads jkl; asdf ;lkj asdf ;lkj aass ddff jjkk ll;; a s d f f d s a j k l ; ; l k j asdf jkl; asdf jkl;" },
-  { id:2,  title:"2. Chap qo'l",                        desc:"Chap qo'llar barmoqlari bilan Q W E R T ni mashq qiling.",              threshold:{minAcc:80, minChars:250},
-    text:"qaz qaz qaz wsx wsx wsx edc edc edc rfv rfv rfv tgb tgb tgb q w e r t a s d f g z x c v b qwert asdfg zxcvb qazwsx edcrfv tgb q w e r t a s d f g z x c v b qq ww ee rr tt aa ss dd ff gg zz xx cc vv bb qwert qwert asdfg asdfg zxcvb zxcvb;" },
-  { id:3,  title:"3. O'ng qo'l",                        desc:"O'ng qo'l barmoqlari Y U I O P ni mashq qiling.",              threshold:{minAcc:80, minChars:250},
-    text:"yhn yhn yhn ujm ujm ujm ik, ik, ik, ol. ol. ol. p;/ p;/ p;/ y u i o p h j k l ; n m , . / yhnujm ik,ol. p;/ y u i o p h j k l ; n m , . / yy uu ii oo pp hh jj kk ll ;; nn mm ,, .. // yuiop yuiop hjkl; hjkl; nm,./ nm,./;" },
-  { id:4,  title:"4. Yuqori qator",                     desc:"Yuqori qator: Q W E R T Y U I O P",                           threshold:{minAcc:78, minChars:300},
-    text:"q w e r t y u i o p q w e r t y u i o p qwerty qwerty uiop uiop qazwsx edcrfv tgbyhn ujmik, ol.p;/ qwertyuiop qwertyuiop asdfghjkl; zxcvbnm,./ qwert yuiop qwert yuiop asdf ghjkl zxc vbnm qwertyuiop asdfghjkl zxcvbnm;" },
-  { id:5,  title:"5. Pastki qator",                     desc:"Pastki qator: Z X C V B N M , . /",                           threshold:{minAcc:78, minChars:300},
-    text:"z x c v b n m , . / z x c v b n m , . / zxcvbnm zxcvbnm ,./ ,./ qaz wsx edc rfv tgb yhn ujm ik, ol. p;/ zxc vbnm ,./ qazwsxedc rfvtgbyhn ujmik,ol. p;/ z z x x c c v v b b n n m m ,, .. // zxcvbnm,./ zxcvbnm,./;" },
-  { id:6,  title:"6. Sonlar qatori",                    desc:"Yuqori sonlar: 1 2 3 4 5 6 7 8 9 0",                           threshold:{minAcc:75, minChars:300},
-    text:"1234567890 0987654321 1 2 3 4 5 6 7 8 9 0 11 22 33 44 55 66 77 88 99 00 123 321 456 654 789 987 1020 3040 5060 7080 9000 1234 5678 9012 3456 7890 1234567890 1234567890 a1s2d3f4g5h6 j7k8l9;0 z1x2c3v4b5 n6m7,8.9/0;" },
-  { id:7,  title:"7. Shift (Katta harf)",               desc:"Shift + harf — katta harf yozish.",                            threshold:{minAcc:78, minChars:280},
-    text:"Hello World! The Quick Brown Fox Jumps Over The Lazy Dog. AsDf GhJkL; ZxCv BnM,. QwEr Ty Ui Op. SHIFT keys make typing faster. Apple Banana Cherry Date Elderberry Fig Grape Honeydew Icecream Jackfruit Kiwi Lemon Mango Nectarine Orange Papaya Quince Raspberry Strawberry Tangerine;" },
-  { id:8,  title:"8. Caps Lock",                        desc:"Caps Lock — uzun uzun matnlar uchun katta harf rejimi.",         threshold:{minAcc:78, minChars:280},
-    text:"[CAPS ON] THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG. PROGRAMMING IS THE ART OF TELLING A COMPUTER WHAT TO DO. LEARN TO TYPE FAST AND ACCURATE FOR SUCCESS. EDUCATION IS THE MOST POWERFUL WEAPON WHICH YOU CAN USE TO CHANGE THE WORLD. [CAPS OFF] Welcome back to normal case." },
-  { id:9,  title:"9. Belgilar (: ; ! ? , .)",           desc:"Nuqtali, vergulli, undov belgilar.",                           threshold:{minAcc:75, minChars:300},
-    text:"Hello! How are you? I'm fine, thank you. Type: a; s; d; f; j; k; l; ;; !! ?? ,, .. !!??,. Salom! O'zbekiston — buyuk mamlakat. Bugun, ertaga, har doim: o'rgan, ishlab, yutuqga erish! So'zlar: gaplar, jumlalar, matnlar — hammasi sizning mehnatingizdir. Aytolmayman, qila olasiz!" },
-  { id:10, title:"10. Maxsus belgilar (@ # $ % & *)",  desc:"@ # $ % & * ( ) [ ] { } = + - _ maxsus belgilari.",              threshold:{minAcc:72, minChars:300},
-    text:"email@example.com #tag1 #tag2 $100 %50 & 7*8=56 (a+b)*(c-d) [1,2,3] {key:value} 2+2=4 a_b-c=d 100% @Teach #Edu $Money %Score&Rank *Star (x)[y]{z} === true && false || null let x = 100; const arr = [10,20,30]; user@mail.to && pass@#$%;" },
-  { id:11, title:"11. Aralash klavishlar",              desc:"Harf, son, belgi aralash mashq.",                                 threshold:{minAcc:75, minChars:350},
-    text:"User123 typed 500 WPM with 99.5% accuracy! Email: info@texno.uz; Phone: +99890-123-45-67. ID=USR_1001, order #TXN-2024-08/22, total: $1,234.56 & discount -20%. Password: kX9#pR$2vL!qZ (never share your secret). Let's type ~!@#$%^&*()_+{}|:<>?`-=[]\\;',./ together." },
-  { id:12, title:"12. So'zlar",                         desc:"O'zbekcha — eng ko'p ishlatiladigan so'zlar.",                    threshold:{minAcc:80, minChars:350},
-    text:"salom assalomu alaykum hayr rahmat tashakkur iltimos ism familiya otasi onasi aka uka opa singil bolalar ota ona ustoz talaba fan dars mashq kitob qalam daftar stol kursi uy maktab universitet dastur kompyuter telefon internet dasturlash algorithm malumot xotira protsessor ekran klaviatura sichqoncha monitor printer ozbekiston jizzax samarqand fargona toshkent navoiy buxoro xorazm qarshi andijon namangan sirdaryo jizzax qashqadaryo surxondaryo" },
-  { id:13, title:"13. Gaplar",                          desc:"O'zbekcha to'liq gaplar va jumlalar.",                            threshold:{minAcc:82, minChars:400},
-    text:"Bugun havo juda yaxshi, men parkda yurishga chiqdim. Ustozim yangi mavzuni chiroyli tushuntirdi. Talabalar darsga kech qolmaslik uchun ertalab uyg'onishdi. Kitob o'qish — insonning eng yaxshi do'sti. Bilim — zukko emas, balki mehnat orqali erishiladi. Har kuni bir-biriga kamaytirmasdan mashq qiling, tez orada natijaga erishasiz. O'zbekiston — mustaqil, tinch, taraqqiyot qilayotgan mamlakat." },
-  { id:14, title:"14. Tezlik mashqlari",                desc:"WPM oshirish uchun uzun va tez mashq.",                            threshold:{minAcc:85, minWPM:30, minChars:500},
-    text:"Zamonaviy hayotda tez va aniq klaviatura terish — mutlaq zarur. Har kuni kamida 15 daqiqa klaviatura mashq qiling, natijasi avvalo hisobga olinadi. Ko'proq o'qib, ko'proq tering: so'zlar, gaplar, jumlalar, darslik matnlari, iqtiboslar, turli xil ma'lumotlar. Xatolarni qaytarmang, lekin ularni tahlil qiling — qaysi barmoq, qaysi qator, qaysi harf orqali. Sabr, intizom, mehnat — muvaffaqiyat kaliti. Bugun sizning eng yaxshi raqibingiz kechagi sizingizdir. Yaxshi o'sib, kuchayib, bilimlaringizni ko'paytiring!" },
-  { id:15, title:"15. YAKUNIY IMTIHON",                 desc:"60 soniya, eng yaxshi matn. WPM≥30 va Accuracy≥85% → KURS MUVAFFAQIYATLI TUGATILDI ✅.", threshold:{exam:true, minWPM:30, minAcc:85, durationSec:60, minChars:500},
-    text:"YAKUNIY IMTIHON: Zamonaviy dunyoda bilim olish va undan foydalanish — har bir yoshning asosiy maqsadi bo'lishi kerak. Ta'lim tizimiga kirgan har bir talaba o'z kelajagi uchun mas'uliyatli bo'lishi, o'z qobiliyatlarini ochib berishi kerak. Klaviatura terish — eng ko'p ishlatiladigan ko'nikmalardan biri hisoblanadi. Bu imtihon sizning bilimingizni, tezligingizni va aniqligingizni sinovdan o'tkazadi. Sabr qiling, to'g'ri barmoqlarni ishlating, xatolarni kamaytiring va yuqori natija oling. Yaxshi omad, hurmatli talaba! Kelajakda ham shu qat'iyat bilan davom ettiring — siz muvaffaqiyatga erishasiz." }
-];
-window.TYPING_COURSE = TYPING_COURSE;
-
-let typingProgressCache = null; // UI tezligi uchun kesh (asl manba = ApiService)
-async function refreshTypingProgressCache(){ const s = mGetStudent(); typingProgressCache = s ? (await ApiService.getTypingProgress(s.id)) : null; return typingProgressCache; }
-function pCache(){ return typingProgressCache || { nextUnlockedLesson: 1 }; }
-function lessonUnlocked(id){ return Number(id) <= Number(pCache().nextUnlockedLesson||1); }
-function lessonPassed(id){ const c = pCache()[id]; return c?.passed || c?.completed; }
-function lessonBest(id){ const c = pCache()[id]; return c ? {wpm:c.bestWpm||0, acc:c.bestAcc||0, cpm:c.bestCpm||0} : {wpm:0,acc:0,cpm:0}; }
-
-let typingState = null;
-function renderTypingV2() {
-  const wrap = document.getElementById('typingWrap'); if (!wrap) return;
-  const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('BARMOQ POYGASI'); return; }
-  mEnsureRich(s);
-  typingState = null;
-
-  // Progressni ApiService dan yuklab, keshga olamiz
-  refreshTypingProgressCache().then(() => {
-    const lb = document.getElementById('lessonSidebar'); if (lb) lb.innerHTML = renderLessonSidebarInner();
-  });
-
-  wrap.innerHTML = `
-  <div class="pg-wrap">
-    <div class="pg-title"><i class="fas fa-keyboard"></i> KLAVIATURA KURSI (15-bosqich)</div>
-    <div class="pg-sub">Avval darslikni tanlang → boshlash → yakunlang → keyingi dars avtomatik ochiladi 🔓</div>
-
-    <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;" class="typing-grid">
-      <!-- DARSLAR RO'YXATI -->
-      <div class="scard" id="lessonSidebar" style="align-self:start;max-height:78vh;overflow:auto;">
-        ${renderLessonSidebarInner()}
-      </div>
-
-      <!-- ASOSIY QISM -->
-      <div>
-        <div class="study-tabs mb-16">
-          <button class="st-tab active" id="typeSubTab-lesson" onclick="mTypingSubTab('lesson',this)"><i class="fas fa-book-open"></i> Darslik</button>
-          <button class="st-tab" id="typeSubTab-race" onclick="mTypingSubTab('race',this)"><i class="fas fa-flag-checkered"></i> Poyga / Bepul mashq</button>
-          <button class="st-tab" id="typeSubTab-race2" onclick="mTypingSubTab('exam',this)"><i class="fas fa-trophy"></i> YAKUNIY IMTIHON</button>
-        </div>
-
-        <!-- DARSLIK QISMI -->
-        <div id="typeLessonPane">
-          <div class="scard mb-16">
-            <div class="sc-title mb-8"><i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Barmoqlar qaysi tugmani bosadi</div>
-            <p class="txt2 fs12 mb-12">Klaviaturada har bir barmoq ma'lum tugmalar ustunini boshqaradi. Pastdagi rangli sxemaga qarab, barmoqlaringizni to'g'ri joyga qo'ying.</p>
-            <div id="typeLessonBoard"></div>
-            <div id="typeLessonHands"></div>
-          </div>
-          <div class="scard mb-16">
-            <div class="sc-title mb-8"><i class="fas fa-info-circle" style="color:var(--gold);"></i> Asosiy qoida — "Uy qatori"</div>
-            <p class="txt2 fs12">Barmoqlaringizni doim <b style="color:var(--text);">A S D F</b> (chap qo'l) va <b style="color:var(--text);">J K L</b> (o'ng qo'l) tugmalarida ushlab turing. Ikkala bosh barmoq esa faqat <b>SPACE</b> uchun ishlatiladi.</p>
-          </div>
-          <button class="btn btn-cyan" style="width:100%;justify-content:center;" onclick="mTypingSubTab('race', document.getElementById('typeSubTab-race'))"><i class="fas fa-flag-checkered"></i> Tanlangan darsni boshga o'tish</button>
-        </div>
-
-        <!-- POYGA / MASHQ QISMI -->
-        <div id="typeRacePane" style="display:none;">
-          <div id="typeLessonHeader" class="scard mb-16"></div>
-          <div class="type-diff-row" id="typeDiffRow" style="margin-bottom:10px;">
-            <span class="type-diff-btn active" onclick="mTypeSetDiff('easy',this)">Oson</span>
-            <span class="type-diff-btn" onclick="mTypeSetDiff('medium',this)">O'rta</span>
-            <span class="type-diff-btn" onclick="mTypeSetDiff('hard',this)">Qiyin</span>
-          </div>
-          <div class="type-arena">
-            <div class="type-stats-row">
-              <div class="type-stat"><div class="type-stat-val" id="typeWpm">0</div><div class="type-stat-lbl">WPM</div></div>
-              <div class="type-stat"><div class="type-stat-val" id="typeCpm">0</div><div class="type-stat-lbl">CPM (harf/daq)</div></div>
-              <div class="type-stat"><div class="type-stat-val" id="typeAcc">100%</div><div class="type-stat-lbl">Aniqlik</div></div>
-              <div class="type-stat"><div class="type-stat-val" id="typeErr">0</div><div class="type-stat-lbl">Xatolar</div></div>
-              <div class="type-stat"><div class="type-stat-val" id="typeTime">0.0s</div><div class="type-stat-lbl">Vaqt</div></div>
-            </div>
-            <div class="type-track"><div class="type-track-fill" id="typeTrackFill"></div></div>
-            <div class="type-text-box" id="typeTextBox"></div>
-            <textarea class="type-input" id="typeInput" rows="3" placeholder="Boshlash uchun shu yerga bosing va teraing..." oninput="mTypeOnInput()" disabled></textarea>
-
-            <div class="mt-16">
-              <div class="sc-title" style="font-size:12.5px;margin-bottom:8px;">
-                <i class="fas fa-hand-point-up" style="color:var(--cyan);"></i> Qaysi barmoq bilan bosish kerak
-              </div>
-              <div id="typeHandWrap"></div>
-              <div id="typeFingerBoardWrap"></div>
-            </div>
-
-            <div class="flex-center gap-10 mt-16">
-              <button class="btn" onclick="mTypeStart()"><i class="fas fa-flag-checkered"></i> Boshlash</button>
-              <button class="btn btn-sm" style="border-color:var(--bor2);" onclick="mTypeStart()"><i class="fas fa-redo"></i> Qayta</button>
-            </div>
-          </div>
-          <div id="typeResultWrap"></div>
-        </div>
-
-        <!-- YAKUNIY IMTIHON -->
-        <div id="typeExamPane" style="display:none;">
-          <div class="scard mb-16">
-            <div class="sc-title mb-8"><i class="fas fa-trophy" style="color:var(--gold);"></i> YAKUNIY IMTIHON</div>
-            <p class="txt2 fs12 mb-12">O'tish talabi: <b style="color:var(--ok);">WPM ≥ 30</b> va <b style="color:var(--ok);">Aniqlik ≥ 85%</b>. Muvaffaqiyatli bo'lsangiz — SERTIFIKAT olasiz ✅.</p>
-            <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="mTypingSubTab('race', document.getElementById('typeSubTab-race')); mStartFinalExam();"><i class="fas fa-hourglass-start"></i> Imtihonni boshlash (60 soniya)</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-
-  // Statik sxemalarni chizamiz
-  const lb = document.getElementById('typeLessonBoard'); if (lb) lb.innerHTML = mRenderFingerBoard(null);
-  const lh = document.getElementById('typeLessonHands'); if (lh) lh.innerHTML = mRenderHandsVisual(null);
-  // Default: dars 1 tanlansin
-  if (lessonUnlocked(1)) setTimeout(()=>{ mLoadLesson(1); }, 150);
-}
-
-function renderLessonSidebarInner(){
-  const cards = TYPING_COURSE.map(ls => {
-    const unlocked = lessonUnlocked(ls.id);
-    const passed = lessonPassed(ls.id);
-    const best = lessonBest(ls.id);
-    const cls = unlocked ? (passed?'lesson-card passed':'lesson-card unlocked') : 'lesson-card locked';
-    const onclick = unlocked ? `onclick="mLoadLesson(${ls.id})"` : '';
-    const medal = ls.id===15 ? '👑' : '';
-    return `<div class="${cls}" ${onclick} id="lessonCard-${ls.id}">
-      <div class="lesson-head">
-        <span class="lesson-idx">${ls.id.toString().padStart(2,'0')} ${medal}</span>
-        <span>${passed?'✅':(unlocked?'🔓':'🔒')}</span>
-      </div>
-      <div class="lesson-title">${ls.title}</div>
-      <div class="lesson-desc">${ls.desc}</div>
-      ${passed || best.wpm? `
-        <div class="lesson-mini">
-          <span>🏃 ${best.wpm||0}</span>
-          <span>🎯 ${best.acc||0}%</span>
-        </div>`:''}
-    </div>`;
-  }).join('');
-  const unlockedCount = Math.min(TYPING_COURSE.length, Number(pCache().nextUnlockedLesson||1));
-  return `
-    <div class="sc-title mb-8"><i class="fas fa-list-ol" style="color:var(--cyan);"></i> 15 DARSLIK KURS</div>
-    <div class="progress-bar" style="margin-bottom:14px;">
-      <div class="progress-fill" style="width:${(passedLessonCount()/TYPING_COURSE.length*100).toFixed(0)}%;background:linear-gradient(90deg,#00e5ff,#00ff88);"></div>
-    </div>
-    <div class="txt2 fs11 mb-12">${passedLessonCount()} / ${TYPING_COURSE.length} tugallangan · ${unlockedCount-1} ta ochilgan</div>
-    <div style="display:flex;flex-direction:column;gap:8px;">${cards}</div>
-  `;
-}
-function passedLessonCount(){ let c=0; TYPING_COURSE.forEach(ls=>{ if (lessonPassed(ls.id)) c++; }); return c; }
-
-function mLoadLesson(id){
-  const ls = TYPING_COURSE.find(x=>x.id===Number(id)); if (!ls) return;
-  document.querySelectorAll('.lesson-card').forEach(x=>x.classList.remove('active'));
-  const card = document.getElementById('lessonCard-'+id); if (card) card.classList.add('active');
-  // Dars boshlash uchun race pane ni ochamiz, matnni ls.text dan olamiz
-  mTypingSubTab('race', document.getElementById('typeSubTab-race'));
-  // Lesson header
-  const head = document.getElementById('typeLessonHeader');
-  if (head){
-    const best = lessonBest(id);
-    head.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div class="sc-title mb-4">📘 ${ls.title}</div>
-          <div class="txt2 fs12">${ls.desc}</div>
-        </div>
-        <div class="txt2 fs11" style="text-align:right;">
-          ${best.wpm?`<div>Eng yaxshi: <b>${best.wpm} WPM</b> · <b>${best.acc}%</b></div>`:`<div>Hali o'tilmagan</div>`}
-          <div style="margin-top:4px;">Min: ${ls.threshold.minAcc||0}% aniqlik${ls.threshold.minWPM?` · ${ls.threshold.minWPM} WPM`:''}</div>
-        </div>
-      </div>`;
-  }
-  // Typing matnini lesson matni o'rniga o'rnatamiz
-  setTimeout(()=>{ mTypeStart(null, ls.text, null, { lessonId: ls.id }); }, 50);
-}
-window.mLoadLesson = mLoadLesson;
-
-function mStartFinalExam(){
-  const exam = TYPING_COURSE[14];
-  mLoadLesson(15);
-}
-window.mStartFinalExam = mStartFinalExam;
-
-
-function mTypingSubTab(tab, el) {
-  document.querySelectorAll('#typingWrap .st-tab').forEach(b => b.classList.remove('active'));
-  if (el) el.classList.add('active');
-  const lessonPane = document.getElementById('typeLessonPane');
-  const racePane = document.getElementById('typeRacePane');
-  if (lessonPane) lessonPane.style.display = tab === 'lesson' ? 'block' : 'none';
-  if (racePane) racePane.style.display = tab === 'race' ? 'block' : 'none';
-  if (tab === 'race' && !typingState) mTypeStart();
-}
-window.mTypingSubTab = mTypingSubTab;
-    function mTypeSetDiff(diff, el) {
-      document.querySelectorAll('#typeDiffRow .type-diff-btn').forEach(b => b.classList.remove('active'));
-      if (el) el.classList.add('active');
-      mTypeStart(diff);
-    }
-    function mTypeStart(diff, forcedText, raceId, opts) {
-      diff = diff || typingState?.diff || 'easy';
-      const lessonId = opts?.lessonId || typingState?.lessonId || null;
-      const ls = lessonId ? TYPING_COURSE.find(x=>x.id===Number(lessonId)) : null;
-      const isExam = ls?.threshold?.exam;
-
-      // Matnni tanlaymiz: dars matni → forcedText → pool
-      let text = forcedText || ls?.text;
-      if (!text) {
-        const pool = TYPING_TEXTS[diff] || TYPING_TEXTS.easy;
-        text = pool[Math.floor(Math.random() * pool.length)];
-      }
-
-      typingState = {
-        diff, text,
-        startTime: null, finished: false,
-        raceId: raceId || null,
-        lessonId: lessonId || null,
-        isExam: !!isExam,
-        timerEndAt: isExam && ls?.threshold?.durationSec ? (Date.now() + ls.threshold.durationSec*1000) : null
-      };
-      const box = document.getElementById('typeTextBox'); if (box) box.innerHTML = mTypeRenderText('');
-      const fbWrap = document.getElementById('typeFingerBoardWrap');
-      if (fbWrap) fbWrap.innerHTML = mRenderFingerBoard(text[0]);
-      const hw = document.getElementById('typeHandWrap'); if (hw) hw.innerHTML = mRenderHandsVisual(mFingerOf(text[0]));
-      const input = document.getElementById('typeInput');
-      if (input) { input.disabled = false; input.value = ''; input.focus(); }
-      const fill = document.getElementById('typeTrackFill'); if (fill) fill.style.width = '0%';
-      const wpmEl = document.getElementById('typeWpm'); if (wpmEl) wpmEl.textContent = '0';
-      const cpmEl = document.getElementById('typeCpm'); if (cpmEl) cpmEl.textContent = '0';
-      const errEl = document.getElementById('typeErr'); if (errEl) errEl.textContent = '0';
-      const accEl = document.getElementById('typeAcc'); if (accEl) accEl.textContent = '100%';
-      const timeEl = document.getElementById('typeTime'); if (timeEl) timeEl.textContent = isExam ? (ls.threshold.durationSec+'s (muddat)') : '0.0s';
-      const rw = document.getElementById('typeResultWrap'); if (rw) rw.innerHTML = '';
-
-      // Exam timer: muddat tugaganda mTypeFinish chaqirilsin
-      if (typingState._timer) clearTimeout(typingState._timer);
-      if (isExam && ls?.threshold?.durationSec){
-        typingState._timer = setTimeout(()=>{
-          if (!typingState.finished) {
-            const inp = document.getElementById('typeInput'); const typed = inp? inp.value : '';
-            const target = typingState.text;
-            let correct = 0, errors = 0;
-            for (let i = 0; i < typed.length; i++) if (typed[i]===target[i]) correct++; else errors++;
-            const acc = typed.length ? Math.round(correct/typed.length*100):100;
-            const elapsed = ls.threshold.durationSec;
-            const wpm = Math.round(typed.length/5 / (elapsed/60));
-            const cpm = Math.round(typed.length / (elapsed/60));
-            mTypeFinish(wpm, acc, elapsed, { typed, errors, cpm });
-          }
-        }, ls.threshold.durationSec*1000);
-      }
-    }
-
-    function mTypeRenderText(typed) {
-      if (!typingState) return '';
-      const target = typingState.text;
-      let html = '';
-      for (let i = 0; i < target.length; i++) {
-        const ch = target[i] === ' ' ? '&nbsp;' : escHtml(target[i]);
-        if (i < typed.length) {
-          html += `<span class="${typed[i] === target[i] ? 'tc-ok' : 'tc-bad'}">${ch}</span>`;
-        } else if (i === typed.length) {
-          html += `<span class="tc-pending tc-cursor">${ch}</span>`;
-        } else {
-          html += `<span class="tc-pending">${ch}</span>`;
-        }
-      }
-      return html;
-    }
-    function mTypeOnInput() {
-      if (!typingState || typingState.finished) return;
-      const input = document.getElementById('typeInput'); if (!input) return;
-      const typed = input.value;
-      const target = typingState.text;
-      if (!typingState.startTime) typingState.startTime = Date.now();
-      const box = document.getElementById('typeTextBox'); if (box) box.innerHTML = mTypeRenderText(typed);
-      const fbWrap2 = document.getElementById('typeFingerBoardWrap');
-      const nextChar = target[typed.length] || null;
-      if (fbWrap2) fbWrap2.innerHTML = mRenderFingerBoard(nextChar);
-      const hWrap = document.getElementById('typeHandWrap');
-      if (hWrap) hWrap.innerHTML = mRenderHandsVisual(mFingerOf(nextChar));
-      let correct = 0, errors = 0;
-      for (let i = 0; i < typed.length; i++) { if (typed[i] === target[i]) correct++; else errors++; }
-      const acc = typed.length ? Math.round((correct / typed.length) * 100) : 100;
-      const elapsedSec = (Date.now() - typingState.startTime) / 1000;
-      const wpm = elapsedSec > 0 ? Math.round((typed.length / 5) / (elapsedSec / 60)) : 0;
-      const cpm = elapsedSec > 0 ? Math.round(typed.length / (elapsedSec / 60)) : 0;
-      const wpmEl = document.getElementById('typeWpm'); if (wpmEl) wpmEl.textContent = String(wpm);
-      const accEl = document.getElementById('typeAcc'); if (accEl) accEl.textContent = acc + '%';
-      const timeEl = document.getElementById('typeTime'); if (timeEl) timeEl.textContent = elapsedSec.toFixed(1) + 's';
-      const cpmEl = document.getElementById('typeCpm'); if (cpmEl) cpmEl.textContent = String(cpm);
-      const errEl = document.getElementById('typeErr'); if (errEl) errEl.textContent = String(errors);
-      const fill = document.getElementById('typeTrackFill'); if (fill) fill.style.width = mPct(typed.length, target.length) + '%';
-      if (typed.length >= target.length) mTypeFinish(wpm, acc, elapsedSec);
-    }
-    async function mTypeFinish(wpm, acc, elapsedSec, extra) {
-      if (!typingState || typingState.finished) return;
-      typingState.finished = true;
-      if (typingState._timer) clearTimeout(typingState._timer);
-      const input = document.getElementById('typeInput'); if (input) input.disabled = true;
-
-      const s = mGetStudent();
-      const typed = extra?.typed ?? (input ? input.value : typingState.text);
-      const target = typingState.text;
-      const cpm = extra?.cpm ?? (elapsedSec>0 ? Math.round(typed.length/(elapsedSec/60)) : 0);
-      let errors = extra?.errors ?? 0;
-      if (!errors){ for (let i=0;i<typed.length;i++) if (typed[i]!==target[i]) errors++; }
-
-      // Reward
-      let reward = 1;
-      if (wpm >= 55 && acc >= 92) reward = 5;
-      else if (wpm >= 40 && acc >= 85) reward = 3;
-      else if (wpm >= 25 && acc >= 75) reward = 2;
-      if (s) mAwardCoins(s, reward, `Typing (${wpm} WPM · ${acc}% · ${cpm} CPM)`, 'achievement');
-      saveData();
-
-      const lessonId = typingState.lessonId;
-      const ls = lessonId ? TYPING_COURSE.find(x=>x.id===Number(lessonId)) : null;
-      const isExam = ls?.threshold?.exam;
-
-      // Pass/fail (dars imtihon talabiga ko'ra)
-      const th = ls?.threshold || {};
-      const accOk = !th.minAcc || acc >= th.minAcc;
-      const wpmOk = !th.minWPM || wpm >= th.minWPM;
-      const charsOk = !th.minChars || typed.length >= th.minChars;
-      const passed = (accOk && wpmOk && charsOk) || (isExam && accOk && wpmOk);
-
-      // Progressni saqlaymiz (ApiService: localStorage + /api/typing/progress POST)
-      let progressUpdate = null;
-      if (lessonId && s){
-        try {
-          progressUpdate = await ApiService.saveTypingProgress(s.id, lessonId, {
-            wpm, cpm, accuracy: acc, errors, elapsedSec,
-            completed: true, passed
-          });
-          typingProgressCache = progressUpdate || typingProgressCache;
-        } catch(e){ console.warn(e); }
-        const sb = document.getElementById('lessonSidebar');
-        if (sb) sb.innerHTML = renderLessonSidebarInner();
-      }
-
-      // Result karta
-      let nextCard = '';
-      if (lessonId && !isExam){
-        if (passed){
-          const nextLs = TYPING_COURSE.find(x=>x.id===Number(lessonId)+1);
-          nextCard = `<div class="flex-center gap-10 mt-10">
-            ${nextLs ? `<button class="btn btn-cyan" onclick="mLoadLesson(${nextLs.id})"><i class="fas fa-arrow-right"></i> Keyingi dars: ${nextLs.title}</button>` : ''}
-            <button class="btn btn-sm" onclick="mTypeStart(null,ls.text,null,{lessonId})"><i class="fas fa-redo"></i> Qaytadan o'tish</button>
-          </div>`;
-        } else {
-          const reasons = [];
-          if (!accOk) reasons.push(`Aniqlik ${acc}% (kerak ${th.minAcc}%)`);
-          if (!wpmOk) reasons.push(`WPM ${wpm} (kerak ${th.minWPM})`);
-          if (!charsOk) reasons.push(`Harflar ${typed.length} (kerak ${th.minChars})`);
-          nextCard = `<div class="flex-center gap-10 mt-10">
-            <div class="txt2 fs12" style="color:var(--bad);text-align:center;">${reasons.join(' · ')}</div>
-            <button class="btn btn-sm" onclick="mTypeStart(null,ls.text,null,{lessonId})"><i class="fas fa-redo"></i> Qayta urinib ko'ring</button>
-          </div>`;
-        }
-      }
-
-      // Imtihon → Sertifikat
-      let certCard = '';
-      if (isExam){
-        if (passed && s){
-          const cert = await ApiService.saveCertificate(s.id, {
-            studentId: s.id, studentName: s.name,
-            courseName: "KLAVIATURA KURSI · 15-bosqich",
-            wpm, accuracy: acc,
-            centerName: "Texno O'quv Markazi"
-          });
-          certCard = `
-            <div class="type-result-card" style="background:linear-gradient(135deg,#00e5ff10,#ffd60015);border-color:var(--gold)!important;">
-              <div style="font-size:15px;color:var(--gold);font-weight:700;margin-bottom:4px;">🎉 KURS MUVAFFAQIYATLI TUGATILDI!</div>
-              <div class="txt2 fs12" style="margin-bottom:10px;">${wpm} WPM · ${acc}% aniqlik · sertifikat tayyor</div>
-              <button class="btn btn-gold" onclick="showCertificatePage('${cert.id}')"><i class="fas fa-certificate"></i> Sertifikatni ochish / PDF yuklash</button>
-            </div>`;
-        } else {
-          certCard = `
-            <div class="type-result-card" style="border-color:var(--bad)!important;">
-              <div style="font-size:14px;color:var(--bad);font-weight:700;margin-bottom:4px;">Yakuniy imtihon yopiq.</div>
-              <div class="txt2 fs12" style="margin-bottom:10px;">WPM≥30 va Accuracy≥85% talab qilinadi. Sizda: ${wpm} WPM · ${acc}%</div>
-              <button class="btn" onclick="mStartFinalExam()"><i class="fas fa-redo"></i> Qayta topshirish</button>
-            </div>`;
-        }
-      }
-
-      const rw = document.getElementById('typeResultWrap');
-      if (rw) rw.innerHTML = `
-        <div class="type-result-card">
-          <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">🏁 ${isExam?'Imtihon':'Mashq'} yakunlandi ${passed?'✅':'⏳'}</div>
-          <div class="type-result-coins">+${reward} 💎</div>
-          <div class="txt2 fs12" style="margin-top:6px;">
-            ${wpm} WPM · ${cpm} CPM · ${acc}% aniqlik · ${errors} xato · ${elapsedSec.toFixed(1)} soniya · ${typed.length} harf
-          </div>
-        </div>
-        ${certCard}
-        ${nextCard}`;
-
-      if (s) mToast(`${isExam?'Imtihon':'Dars'} yakunlandi: ${wpm} WPM · ${acc}%`, passed?'success':'info', isExam?'🏆 Imtihon':'⌨️ Typing');
-    }
-    window.mTypeSetDiff = mTypeSetDiff; window.mTypeStart = mTypeStart; window.mTypeOnInput = mTypeOnInput;
-
-    // ══════════════════════════════════════════════════════════
-    // SERTIFIKAT SAHIFASI (Print → Save as PDF)
-    // ══════════════════════════════════════════════════════════
-    async function showCertificatePage(certIdOrObj) {
-      const s = mGetStudent();
-      let cert;
-      if (typeof certIdOrObj === 'object' && certIdOrObj) cert = certIdOrObj;
-      else {
-        const list = await ApiService.getCertificates(s?.id||0);
-        cert = list.find(c => c.id === certIdOrObj);
-      }
-      if (!cert){ mToast('Sertifikat topilmadi','error'); return; }
-      const date = new Date(cert.issuedAt||Date.now());
-      const dateStr = `${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`;
-      const url = location.protocol + '//' + location.host + '/cert/' + encodeURIComponent(cert.id);
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=2&data=${encodeURIComponent(url)}`;
-      // Boshqa barcha overlaylarni yashirish
-      const parent = document.createElement('div');
-      parent.className = 'cert-wrap-parent';
-      parent.id = 'certOverlay-' + Date.now();
-      parent.innerHTML = `
-        <div class="cert-actions">
-          <button class="btn btn-gold" onclick="window.print()"><i class="fas fa-print"></i> PRINT / PDF SAQLASH</button>
-          <button class="btn" onclick="document.getElementById('${parent.id}').remove(); if(typeof renderTypingV2==='function') showPage('typingpg');"><i class="fas fa-arrow-left"></i> ORQAGA</button>
-        </div>
-        <div class="cert-wrap">
-          <div class="cert-logo">${cert.centerName || "Texno O'quv Markazi"}</div>
-          <div class="cert-line"></div>
-          <div class="cert-title">SERTIFIKAT</div>
-          <div class="cert-sub">Muvaffaqiyatli tamomlanganlik to'g'risida</div>
-          <div class="cert-given">Ushbu sertifikat</div>
-          <div class="cert-name">${escHtml(cert.studentName||cert.student_name||'Talaba')}</div>
-          <div class="cert-course">${escHtml(cert.courseName||cert.course_name||'Kurs')} darslarini muvaffaqiyatli tugatganligi uchun berildi.</div>
-          <div class="cert-stats">
-            <div class="cert-stat"><div class="cert-stat-val">${cert.wpm||0}</div><div class="cert-stat-lbl">WPM · Tezlik</div></div>
-            <div class="cert-stat"><div class="cert-stat-val">${cert.accuracy||0}%</div><div class="cert-stat-lbl">Aniqlik</div></div>
-            <div class="cert-stat"><div class="cert-stat-val">${dateStr}</div><div class="cert-stat-lbl">Berilgan sana</div></div>
-          </div>
-          <div class="cert-meta">
-            <div class="cert-sign">
-              <div class="sline"></div>
-              <div class="stxt">Direktor / O'quv markazi rahbari</div>
-            </div>
-            <div class="cert-qr">
-              <img src="${qrUrl}" alt="QR">
-              <div class="cert-id">ID: ${cert.id}</div>
-            </div>
-            <div class="cert-sign">
-              <div class="sline"></div>
-              <div class="stxt">O'qituvchi / Mentor</div>
-            </div>
-          </div>
-          <div class="cert-center">${cert.centerName || "Texno O'quv Markazi"} · www.texno.uz</div>
-        </div>
-      `;
-      document.body.appendChild(parent);
-      parent.scrollIntoView({ behavior:'smooth' });
-    }
-    window.showCertificatePage = showCertificatePage;
-
-    // ════════════════════════════════════════════════════════════
-    // ──────── HAMYON: Olmosni pulga almashtirish + oylik chegirma ─────────
-    // ════════════════════════════════════════════════════════════
-    const DIAMOND_TO_SOM_RATE = 1; // 1 olmos = 1 so'm (10 000 olmos = 10 000 so'm)
-    const DISCOUNT_PER_1000 = 1;   // har 1000 olmosga 1% chegirma
-    const DISCOUNT_MAX = 30;       // maksimal chegirma foizi
-    function mCurMonthKey() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
-    function mCalcDiscount(s) {
-      mEnsureRich(s);
-      const mk = mCurMonthKey();
-      if (s.discountMonth !== mk) {
-        s.discountMonth = mk;
-        s.discountPercent = Math.min(DISCOUNT_MAX, Math.floor((Number(s.totalCoins)||0) / 1000) * DISCOUNT_PER_1000);
-      }
-      return Number(s.discountPercent) || 0;
-    }
-    function renderWalletV2() {
-      const wrap = document.getElementById('walletWrap'); if (!wrap) return;
-      const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('HAMYON'); return; }
-      mEnsureRich(s);
-      const coins = Number(s.totalCoins) || 0;
-      const somBalance = Number(s.walletSom) || 0;
-      const discount = mCalcDiscount(s);
-      const nextTierIn = Math.max(0, 1000 - (coins % 1000));
-      wrap.innerHTML = `
-      <div class="pg-wrap">
-        <div class="pg-title"><i class="fas fa-wallet"></i> HAMYON</div>
-        <div class="pg-sub">Olmoslaringizni pulga almashtiring va o'quv markazda chegirmaga ega bo'ling</div>
-
-        <div class="wallet-hero">
-          <div class="wallet-bal-lbl">Mavjud olmoslar</div>
-          <div class="wallet-bal-val">💎 ${coins.toLocaleString('ru-RU')}</div>
-          <div class="wallet-row">
-            <div class="wallet-pill"><div class="wallet-pill-lbl">Hamyondagi pul</div><div class="wallet-pill-val" style="color:var(--green);">${somBalance.toLocaleString('ru-RU')} so'm</div></div>
-            <div class="wallet-pill"><div class="wallet-pill-lbl">Oylik chegirma</div><div class="wallet-pill-val" style="color:var(--gold);">${discount}%</div></div>
-          </div>
-        </div>
-
-        <div class="exch-box">
-          <div class="sc-title mb-8"><i class="fas fa-exchange-alt" style="color:var(--cyan);"></i> Olmosni pulga almashtirish</div>
-          <div class="txt2 fs12">Kurs: <b style="color:var(--text);">1 olmos = ${DIAMOND_TO_SOM_RATE} so'm</b> (masalan, 10 000 💎 = 10 000 so'm)</div>
-          <div class="exch-input-row">
-            <input type="number" id="exchAmount" min="1" max="${coins}" placeholder="Olmos miqdori (masalan 10000)">
-            <button class="btn" onclick="mExchangeDiamonds()"><i class="fas fa-check"></i> Almashtirish</button>
-          </div>
-          <div class="exch-quick">
-            <span onclick="document.getElementById('exchAmount').value=1000">1 000 💎</span>
-            <span onclick="document.getElementById('exchAmount').value=5000">5 000 💎</span>
-            <span onclick="document.getElementById('exchAmount').value=10000">10 000 💎</span>
-            <span onclick="document.getElementById('exchAmount').value=${coins}">Barchasi (${coins})</span>
-          </div>
-        </div>
-
-        <div class="exch-box">
-          <div class="sc-title mb-8"><i class="fas fa-percentage" style="color:var(--gold);"></i> O'quv markaz uchun oylik chegirma</div>
-          <div class="txt2 fs12">Har 1000 💎 balansingiz uchun o'quv markaz to'lovidan <b style="color:var(--text);">${DISCOUNT_PER_1000}% chegirma</b> beriladi (maksimal ${DISCOUNT_MAX}%). Chegirma har oy avtomatik qayta hisoblanadi.</div>
-          <div class="disc-meter"><div class="disc-meter-fill" style="width:${mPct(discount, DISCOUNT_MAX)}%;"></div></div>
-          <div class="flex-center" style="justify-content:space-between;">
-            <span class="txt2 fs12">Joriy chegirma: <b style="color:var(--gold);">${discount}%</b></span>
-            ${discount < DISCOUNT_MAX ? `<span class="txt2 fs12">Keyingi foiz uchun: <b style="color:var(--cyan);">${nextTierIn} 💎</b> kerak</span>` : `<span class="txt2 fs12" style="color:var(--green);">Maksimal chegirmadasiz! 🎉</span>`}
-          </div>
-        </div>
-      </div>`;
-    }
-    function mExchangeDiamonds() {
-      const s = mGetStudent(); if (!s) { mToast('Avval tizimga kiring','error'); return; }
-      mEnsureRich(s);
-      const input = document.getElementById('exchAmount');
-      const amount = Math.floor(Number(input?.value) || 0);
-      const coins = Number(s.totalCoins) || 0;
-      if (amount <= 0) { mToast('Miqdorni to\'g\'ri kiriting','error','❌ Xatolik'); return; }
-      if (amount > coins) { mToast(`Yetarli olmos yo'q! Sizda ${coins} 💎 bor.`,'error','❌ Xatolik'); return; }
-      const somGain = Math.round(amount * DIAMOND_TO_SOM_RATE);
-      s.totalCoins = coins - amount;
-      const teacherId = s.teacherId || 1;
-      if (typeof s.coins !== 'object' || !s.coins) s.coins = {};
-      s.coins[teacherId] = Math.max(0, (Number(s.coins[teacherId])||0) - amount);
-      s.walletSom = (Number(s.walletSom) || 0) + somGain;
-      DB.transactions = DB.transactions || [];
-      DB.transactions.push({ studentId: s.id, type: 'exchange', coins: -amount, som: somGain, reason: 'Olmosni pulga almashtirish', time: Date.now(), id: (DB.transactions.at(-1)?.id||0)+1 });
-      mPushNotif(s.id, 'announcement', `${amount} 💎 → ${somGain.toLocaleString('ru-RU')} so'mga almashtirildi`);
-      saveData();
-      mToast(`${somGain.toLocaleString('ru-RU')} so'm hamyoningizga qo'shildi!`, 'success', '💰 Almashtirildi');
-      renderWalletV2();
-    }
-    window.mExchangeDiamonds = mExchangeDiamonds;
-
-    // ════════════════════════════════════════════════════════════
-    // ──────── OYLIK REYTING MUKOFOTI: TOP-5 ga 10 tadan olmos ─────────
-    // ════════════════════════════════════════════════════════════
-    function mCheckMonthlyRewards() {
-      try {
-        const mk = mCurMonthKey();
-        if (!DB.students || !DB.students.length) return;
-        if (DB.lastRewardMonth === mk) return;
-        const isFirstRun = !DB.lastRewardMonth;
-        DB.lastRewardMonth = mk;
-        if (isFirstRun) { saveData(); return; } // birinchi marta ishga tushganda oldingi oy ma'lumoti yo'q
-        const ranked = mGetRanked('overall').slice(0, 5);
-        const REWARD = 10;
-        ranked.forEach((r, i) => {
-          const st = DB.students.find(x => x.id === r.id); if (!st) return;
-          mAwardCoins(st, REWARD, `Oylik reytingda ${i+1}-o'rinni egalladingiz! 🏆`, 'rank_up');
-        });
-        saveData();
-        const cur = mGetStudent();
-        if (cur && ranked.some(r => r.id === cur.id)) {
-          const pos = ranked.findIndex(r => r.id === cur.id) + 1;
-          mToast(`Oylik reytingda ${pos}-o'rinni egallab, ${REWARD} olmos yutib oldingiz!`, 'success', '🏆 Tabriklaymiz!');
-        }
-      } catch (e) { console.warn('mCheckMonthlyRewards:', e); }
-    }
-    window.mCheckMonthlyRewards = mCheckMonthlyRewards;
-
     // ──────── Nav Hooks + Init ─────────
-    // showPage'ni override qilmasdan, so'ngida renderlarni chaqiramiz
     const _origShowPage = window.showPage;
     window.showPage = function(id, navEl, title) {
       const result = typeof _origShowPage === 'function' ? _origShowPage.apply(this, arguments) : undefined;
       const pageId = String(id||'');
       try {
-        // Sidebar nav-item active emas, ehtimol sidebar'ni emas, bottom-item'ni active qilamiz
         mSetBnActive(pageId);
         if (pageId === 'dpg') renderDashboardV2();
         else if (pageId === 'studypg') renderStudyV2();
@@ -9698,24 +8667,18 @@ window.mTypingSubTab = mTypingSubTab;
         else if (pageId === 'achpg') renderAchievementsV2();
         else if (pageId === 'vippg') renderVIPV2();
         else if (pageId === 'notifpg') renderNotifSettingsV2();
-        else if (pageId === 'typingpg') renderTypingV2();
-        else if (pageId === 'walletpg') renderWalletV2();
         else if (pageId === 'rpg') renderRankingV2();
         else if (pageId === 'ppg') renderProfileV2();
         else if (pageId === 'marketpg') setTimeout(renderMarketV2, 30);
-        // Notif panelni har doim yangilab turamiz
         if (curUser?.role === 'student') renderNotifPanel();
       } catch(e) { console.warn('Page render error:', e); }
       return result;
     };
 
-    // Hozirgi initS hook (agar bo'lsa) orqali keyinroq render
     function modernBootstrapAfterInit() {
       try {
-        mCheckMonthlyRewards();
         if (curUser?.role === 'student') {
           const s = mGetStudent(); if (s) { mEnsureRich(s); mSeedStudentDemo(s); }
-          // Sidebarga study/achievements/progress/scores/vip/notif larni qo'shish (agar bo'lmasa)
           const sNav = document.getElementById('sNav');
           if (sNav && !sNav.dataset.v2Added) {
             sNav.dataset.v2Added = '1';
@@ -9724,15 +8687,10 @@ window.mTypingSubTab = mTypingSubTab;
               { onclick:"showPage('scorespg',this,'NATIJALAR')", icon:'fas fa-chart-bar', label:'Natijalar' },
               { onclick:"showPage('progresspg',this,'RIVOJLANISH')", icon:'fas fa-chart-line', label:'Rivojlanish' },
               { onclick:"showPage('achpg',this,'YUTUQLAR')", icon:'fas fa-medal', label:'Yutuqlar' },
-              { onclick:"showPage('typingpg',this,'BARMOQ POYGASI')", icon:'fas fa-keyboard', label:'BARMOQ POYGASI' },
-              { onclick:"showPage('walletpg',this,'HAMYON')", icon:'fas fa-wallet', label:'Hamyon' },
               { onclick:"showPage('vippg',this,'VIP / PREMIUM')", icon:'fas fa-crown', label:'VIP / Premium' },
               { onclick:"showPage('notifpg',this,'SOZLAMALAR')", icon:'fas fa-bell', label:'Sozlamalar' },
             ];
             const existing = new Set([...sNav.querySelectorAll('.nav-item')].map(n => String(n.textContent||'').trim().toLowerCase()));
-            const navSec = document.createElement('div'); navSec.className='nav-sec'; navSec.textContent='Zamonaviy';
-            // Market'ning oldiga insert qilishga harakat qilamiz
-            let anchor = sNav.querySelector('.nav-sec')?.nextSibling;
             extraItems.forEach(item => {
               if (existing.has(item.label.toLowerCase())) return;
               const el = document.createElement('div'); el.className='nav-item';
@@ -9741,12 +8699,9 @@ window.mTypingSubTab = mTypingSubTab;
               sNav.appendChild(el);
             });
           }
-          // Bosh sahifani render qilamiz (agar dpg active bo'lsa)
           const dpg = document.getElementById('dpg');
           if (dpg && dpg.classList.contains('active')) renderDashboardV2();
-          // Bottom-nav ko'rsatamiz
           const bn = document.getElementById('bottomNav'); if (bn) bn.style.display='';
-          // Notif panelni yangilaymiz
           renderNotifPanel();
         } else {
           const bn = document.getElementById('bottomNav'); if (bn) bn.style.display='none';
@@ -9754,14 +8709,12 @@ window.mTypingSubTab = mTypingSubTab;
       } catch(e) { console.warn('modernBootstrapAfterInit:', e); }
     }
 
-    // initS orqali keyin trigger
     function _tryAuto() {
       if (typeof window.initS === 'function' && !window._origInitS) {
         window._origInitS = window.initS;
         window.initS = function(...args) {
           const r = window._origInitS.apply(this, args);
           setTimeout(modernBootstrapAfterInit, 40);
-          // dpg (bosh sahifa) ni override qilib, v2 ni ko'rsatish
           return r;
         };
       } else if (curUser) { setTimeout(modernBootstrapAfterInit, 100); }
@@ -9769,7 +8722,6 @@ window.mTypingSubTab = mTypingSubTab;
     window.addEventListener('load', () => { _tryAuto(); setTimeout(()=>{ if(curUser) modernBootstrapAfterInit(); }, 400); });
     setTimeout(_tryAuto, 50);
 
-    // Eski showToast'ga murojaat bo'lsa, mToast'ni ham ishlatamiz
     if (typeof window.showToast === 'function' && !window._origShowToast) {
       window._origShowToast = window.showToast;
       window.showToast = function(...args) {
@@ -9778,20 +8730,15 @@ window.mTypingSubTab = mTypingSubTab;
       };
     }
 
-    // Tashqi click uchun notif panelni yopish
     document.addEventListener('click', (e) => {
       const panel = document.getElementById('notifPanel');
       if (panel && !e.target.closest('.notif-bell')) panel.classList.remove('show');
     });
 
-    // Click outside modal close already handled inline
-
-    // Screenshot'ni oldindan DB.seed qilish va data save triggeri orqali studentni boyitish
     const _origSaveData = window.saveData;
     if (typeof _origSaveData === 'function') {
       window.saveData = function(...args) {
         try {
-          // save'dan oldin butun student'larni boyitish
           (DB.students||[]).forEach(s => mEnsureRich(s));
         } catch(e){}
         return _origSaveData.apply(this, args);
@@ -9799,5 +8746,4 @@ window.mTypingSubTab = mTypingSubTab;
     }
   </script>
 </body>
-
 </html>

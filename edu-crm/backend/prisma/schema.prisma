@@ -59,14 +59,18 @@ model User {
   id          Int       @id @default(autoincrement())
   email       String    @unique
   password    String
+  name        String?
+  phone       String?   @unique(map: "User_phone_key")
   role        Role      @default(MANAGER)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  teacher     Teacher?  @relation(fields: [teacherId], references: [id])
-  teacherId   Int?      @unique
+  teacher     Teacher?
   createdById Int?
   createdBy   User?     @relation("CreatedUsers", fields: [createdById], references: [id])
   createdUsers User[]   @relation("CreatedUsers")
+
+  @@index([role])
+  @@index([email])
 }
 
 model Teacher {
@@ -113,6 +117,8 @@ model Group {
   status      GroupStatus      @default(ACTIVE)
   lessons     LessonSchedule[]
   students    Student[]
+  attendances Attendance[]
+  payments    Payment[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 }

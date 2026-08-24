@@ -24,10 +24,20 @@ router.post('/login', async (req, res) => {
   }
 
   const token = jwt.sign({ userId: user.id, role: user.role }, config.jwtSecret, {
-    expiresIn: config.jwtExpiresIn
+    expiresIn: config.jwtExpiresIn as any,
+    algorithm: 'HS256',
   });
 
-  return res.json({ token, user: { id: user.id, email: user.email, role: user.role } });
+  return res.json({
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name ?? null,
+      phone: user.phone ?? null,
+    }
+  });
 });
 
 export { router as authRouter };

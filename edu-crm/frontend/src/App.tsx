@@ -8,6 +8,7 @@ import { ClassroomsPage } from './pages/ClassroomsPage';
 import { PaymentsPage } from './pages/PaymentsPage';
 import { AttendancePage } from './pages/AttendancePage';
 import { SchedulePage } from './pages/SchedulePage';
+import { UsersPage } from './pages/UsersPage';
 import { LoginPage } from './pages/LoginPage';
 import { AuthProvider, useAuth, UserRole } from './stores/auth';
 import { Layout } from './components/Layout';
@@ -65,6 +66,7 @@ function App() {
           <Route path="students" element={<StudentsPage />} />
           <Route path="groups" element={<GroupsPage />} />
           <Route path="teachers" element={<TeachersPage />} />
+          <Route path="users" element={<UsersPage />} />
           <Route path="courses" element={<CoursesPage />} />
           <Route path="classrooms" element={<ClassroomsPage />} />
           <Route path="payments" element={<PaymentsPage />} />
