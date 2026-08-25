@@ -1,0 +1,9 @@
+{
+  "appId": "com.texnoo.app",
+  "appName": "Texnoo",
+  "webDir": "www",
+  "server": {
+    "url": "https://texnoo.com",
+    "cleartext": false
+  }
+}
