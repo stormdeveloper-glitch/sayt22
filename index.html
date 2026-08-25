@@ -3851,6 +3851,36 @@
     </div>
   </div>
 
+  <!-- DARS KUNLARI / JADVAL BELGILASH -->
+  <div class="modal-overlay" id="schedModal">
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-head">
+        <h3><i class="fas fa-calendar-alt" style="margin-right:7px;color:var(--cyan);"></i>DARS JADVALI — <span id="schedGrpName">—</span></h3>
+        <button class="modal-close" onclick="closeMod('schedModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="schedGroup" value="">
+        <div class="form-group">
+          <label>DARS KUNLARI TURI</label>
+          <select class="form-control" id="schedMode" onchange="onSchedModeChange()">
+            <option value="odd">Toq kunlar (Dushanba / Chorshanba / Juma)</option>
+            <option value="even">Juft kunlar (Seshanba / Payshanba / Shanba)</option>
+            <option value="custom">Aniq kunlarni tanlash</option>
+          </select>
+        </div>
+        <div class="form-group" id="schedCustomDaysWrap" style="display:none;">
+          <label>KUNLARNI TANLANG</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="schedCustomDays"></div>
+        </div>
+        <div class="form-group">
+          <label>DARS BOSHLANISH VAQTI</label>
+          <input type="time" class="form-control" id="schedTime" value="15:00">
+        </div>
+        <button class="btn btn-gold btn-block" onclick="saveGroupSchedule()"><i class="fas fa-save"></i> Saqlash</button>
+      </div>
+    </div>
+  </div>
+
   <!-- LOGIN -->
   <div id="loginScreen">
     <div class="lg-card">
@@ -5051,6 +5081,10 @@
           <div class="ph">
             <h2>DARS MAVZUSI</h2>
             <p>// Guruhingizning hozirgi va o'tgan mavzulari</p>
+          </div>
+          <div class="card" style="border-left:3px solid var(--cyan);">
+            <div class="ch"><h4>📅 DARS JADVALI</h4></div>
+            <div class="cb" id="slSchedule" style="color:var(--text3);font-size:13px;">// Ma'lumot yo'q</div>
           </div>
           <div class="card" style="border-left:3px solid var(--green);">
             <div class="ch"><h4>🟢 HOZIRGI MAVZU</h4></div>
@@ -6437,8 +6471,24 @@
     }
     function renderStudentLessonTopic() {
       const curEl = document.getElementById('slCur'), histEl = document.getElementById('slHist');
+      const schedEl = document.getElementById('slSchedule');
       if (!curEl) return;
       const myGroup = curUser.group;
+      if (schedEl) {
+        const groups = Array.isArray(DB.groups) ? DB.groups : [];
+        const g = groups.find(x => x.name === myGroup);
+        const days = scheduleDays(g?.schedule);
+        if (!days.length) {
+          schedEl.innerHTML = "// Dars jadvali hali belgilanmagan";
+        } else {
+          const daysTxt = days.slice().sort().map(d => WEEKDAY_NAMES[d]).join(', ');
+          const next = nextLessonFor(myGroup);
+          schedEl.innerHTML = `
+            <div style="font-weight:700;font-size:14px;">${daysTxt}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;">⏰ Soat ${g.schedule.time || '—'}</div>
+            ${next ? `<div style="font-size:11px;color:var(--cyan);margin-top:6px;font-family:'JetBrains Mono',monospace;">// Keyingi dars: ${next.toLocaleDateString('uz-UZ', { weekday: 'long', day: 'numeric', month: 'long' })}, soat ${g.schedule.time}</div>` : ''}`;
+        }
+      }
       const plans = (DB.lessonPlans || []).filter(p => p.group === myGroup).sort((a, b) => b.createdAt - a.createdAt);
       if (!plans.length) { curEl.innerHTML = "// Hozircha mavzu kiritilmagan"; histEl.innerHTML = "// Tarix bo'sh"; return; }
       const cur = plans[0];
@@ -6980,11 +7030,92 @@
       if (!g) { g = { id: Date.now(), name: groupName, status: 'active', teacherId }; DB.groups.push(g); }
       else if (!g.teacherId) { g.teacherId = teacherId; }
     }
+    // ── DARS KUNLARI / JADVAL ──
+    // Kun raqamlari: 1=Dushanba, 2=Seshanba, 3=Chorshanba, 4=Payshanba, 5=Juma, 6=Shanba, 0=Yakshanba
+    const WEEKDAY_NAMES = { 1: 'Dushanba', 2: 'Seshanba', 3: 'Chorshanba', 4: 'Payshanba', 5: 'Juma', 6: 'Shanba', 0: 'Yakshanba' };
+    const ODD_DAYS = [1, 3, 5];   // Dush/Chor/Juma
+    const EVEN_DAYS = [2, 4, 6];  // Sesh/Pay/Shan
+    function scheduleDays(schedule) {
+      if (!schedule) return [];
+      if (schedule.mode === 'odd') return ODD_DAYS;
+      if (schedule.mode === 'even') return EVEN_DAYS;
+      return Array.isArray(schedule.days) ? schedule.days : [];
+    }
+    function scheduleSummary(schedule) {
+      if (!schedule || !scheduleDays(schedule).length) return "📅 Jadval belgilanmagan";
+      const days = scheduleDays(schedule).slice().sort().map(d => WEEKDAY_NAMES[d].slice(0, 3)).join('/');
+      return `📅 ${days}${schedule.time ? ' · ' + schedule.time : ''}`;
+    }
+    function openScheduleModal(groupName) {
+      const groups = Array.isArray(DB.groups) ? DB.groups : [];
+      const g = groups.find(x => x.name === groupName);
+      document.getElementById('schedGroup').value = groupName;
+      document.getElementById('schedGrpName').textContent = groupName;
+      const sc = g?.schedule || { mode: 'odd', days: [], time: '15:00' };
+      document.getElementById('schedMode').value = sc.mode || 'odd';
+      document.getElementById('schedTime').value = sc.time || '15:00';
+      renderSchedCustomDays(sc.mode === 'custom' ? (sc.days || []) : []);
+      onSchedModeChange();
+      openMod('schedModal');
+    }
+    function renderSchedCustomDays(selected) {
+      const wrap = document.getElementById('schedCustomDays'); if (!wrap) return;
+      const order = [1, 2, 3, 4, 5, 6, 0];
+      wrap.innerHTML = order.map(d => `
+        <label style="display:flex;align-items:center;gap:5px;background:var(--card2);padding:6px 10px;border-radius:7px;border:1px solid var(--bor2);cursor:pointer;font-size:12px;">
+          <input type="checkbox" value="${d}" ${selected.includes(d) ? 'checked' : ''} style="accent-color:var(--cyan);"> ${WEEKDAY_NAMES[d]}
+        </label>`).join('');
+    }
+    function onSchedModeChange() {
+      const mode = document.getElementById('schedMode').value;
+      document.getElementById('schedCustomDaysWrap').style.display = mode === 'custom' ? 'block' : 'none';
+    }
+    function saveGroupSchedule() {
+      const groupName = document.getElementById('schedGroup').value;
+      const mode = document.getElementById('schedMode').value;
+      const time = document.getElementById('schedTime').value || '';
+      let days = [];
+      if (mode === 'odd') days = ODD_DAYS;
+      else if (mode === 'even') days = EVEN_DAYS;
+      else {
+        days = [...document.querySelectorAll('#schedCustomDays input[type=checkbox]:checked')].map(c => parseInt(c.value));
+        if (!days.length) { showToast('❗ Kamida 1 ta kun tanlang'); return; }
+      }
+      DB.groups = Array.isArray(DB.groups) ? DB.groups : [];
+      let g = DB.groups.find(x => x.name === groupName);
+      if (!g) { g = { id: Date.now(), name: groupName, status: 'active', teacherId: curUser?.role === 'teacher' ? curUser.id : null }; DB.groups.push(g); }
+      g.schedule = { mode, days, time };
+      saveData();
+      closeMod('schedModal');
+      renderGrpList();
+      showToast('✅ "' + groupName + '" guruhi uchun dars jadvali saqlandi');
+      // Guruhdagi o'quvchilarga bildirishnoma
+      try {
+        const targets = (DB.students || []).filter(s => (s.group || '') === groupName);
+        const daysTxt = days.slice().sort().map(d => WEEKDAY_NAMES[d]).join(', ');
+        targets.forEach(s => mPushNotif(s.id, 'announcement', `📅 Dars jadvali yangilandi: ${daysTxt}${time ? ' · soat ' + time : ''}`));
+      } catch (e) { console.warn('Jadval bildirishnomasi xato:', e); }
+    }
+    // Berilgan guruh uchun keyingi darsning sana/vaqtini hisoblaydi
+    function nextLessonFor(groupName) {
+      const groups = Array.isArray(DB.groups) ? DB.groups : [];
+      const g = groups.find(x => x.name === groupName);
+      const days = scheduleDays(g?.schedule);
+      if (!days.length) return null;
+      const time = g.schedule.time || '15:00';
+      const [hh, mm] = time.split(':').map(Number);
+      const now = new Date();
+      for (let i = 0; i < 8; i++) {
+        const d = new Date(now); d.setDate(now.getDate() + i); d.setHours(hh || 0, mm || 0, 0, 0);
+        if (days.includes(d.getDay()) && d.getTime() > now.getTime() - 60000) return d;
+      }
+      return null;
+    }
     function renderGrpList() {
       const gl = document.getElementById('grpList'); if (!gl) return;
       const groups = Array.isArray(DB.groups) ? DB.groups : [];
       if (!groups.length) { gl.innerHTML = "Guruhlar yo'q"; return; }
-      gl.innerHTML = groups.map(g => `<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cyan-dim);border:1px solid rgba(0,229,255,.2);border-radius:8px;margin-bottom:6px;font-size:13px;"><i class="fas fa-layer-group" style="color:var(--cyan);"></i> ${g.name} <span style="color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace;">${g.teacherId ? ('· ' + getTeacherNameById(g.teacherId)) : ''}</span><span class="badge gr" style="margin-left:auto;">FAOL</span><button class="btn btn-xs" onclick="editGroupName('${String(g.name).replace(/'/g, "\\'")}')"><i class="fas fa-edit"></i></button><button class="btn btn-xs btn-danger" onclick="deleteGroupTG('${String(g.name).replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button></div>`).join('');
+      gl.innerHTML = groups.map(g => `<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cyan-dim);border:1px solid rgba(0,229,255,.2);border-radius:8px;margin-bottom:6px;font-size:13px;flex-wrap:wrap;"><i class="fas fa-layer-group" style="color:var(--cyan);"></i> ${g.name} <span style="color:var(--text3);font-size:11px;font-family:'JetBrains Mono',monospace;">${g.teacherId ? ('· ' + getTeacherNameById(g.teacherId)) : ''}</span><span style="color:var(--cyan);font-size:11px;font-family:'JetBrains Mono',monospace;">${scheduleSummary(g.schedule)}</span><span class="badge gr" style="margin-left:auto;">FAOL</span><button class="btn btn-xs btn-cyan" onclick="openScheduleModal('${String(g.name).replace(/'/g, "\\'")}')"><i class="fas fa-calendar-alt"></i> Jadval</button><button class="btn btn-xs" onclick="editGroupName('${String(g.name).replace(/'/g, "\\'")}')"><i class="fas fa-edit"></i></button><button class="btn btn-xs btn-danger" onclick="deleteGroupTG('${String(g.name).replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button></div>`).join('');
     }
     function createTGrp() {
       const n = document.getElementById('newGrpName').value.trim();
