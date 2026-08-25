@@ -1195,19 +1195,68 @@
     }
 
     @media(max-width:700px) {
+      .chat-layout {
+        position: relative;
+      }
+
       .chat-sb {
         position: absolute;
         left: 0;
         top: 0;
+        width: 100%;
+        min-width: 100%;
         height: 100%;
         z-index: 10;
-        transform: translateX(-100%);
-        transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+        transform: translateX(0);
+        transition: transform .28s cubic-bezier(.4, 0, .2, 1);
       }
 
-      .chat-sb.cs-open {
+      .chat-main {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 11;
+        transform: translateX(100%);
+        transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+      }
+
+      #chatPage.mchat-open .chat-sb {
+        transform: translateX(-100%);
+      }
+
+      #chatPage.mchat-open .chat-main {
         transform: translateX(0);
       }
+
+      .ctb-back {
+        display: flex !important;
+      }
+
+      .ctb-actions .ctb-btn[title="Guruh yaratish"] {
+        display: none;
+      }
+    }
+
+    .ctb-back {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      color: var(--cyan);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .ctb-back:active {
+      background: var(--cyan-dim);
     }
 
     .csb-top {
@@ -3537,6 +3586,58 @@
     /* Typography polishing */
     .tx-wrap-head { font-family: 'Orbitron', monospace; letter-spacing: 1.5px; }
 
+    /* ═══════════════════════════════════════════════════
+       QO'SHIMCHA: TELEFON VA KOMPYUTERDA BIR XIL YAXSHI
+       KO'RINISH UCHUN UMUMIY RESPONSIVE TUZATISHLAR
+    ═══════════════════════════════════════════════════ */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    img, video, canvas, svg { max-width: 100%; height: auto; }
+
+    /* iOS'da input bosilganda avtomatik zoom bo'lmasligi uchun (min 16px) */
+    @media (max-width: 480px) {
+      .form-control, .ci-ta, input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Kichik telefonlar (< 400px) uchun login karta va umumiy paddinglar */
+    @media (max-width: 400px) {
+      .lg-card { padding: 18px 14px; width: 94%; }
+      .lg-title { font-size: 15px; }
+      .lg-av { width: 64px; height: 64px; }
+      .pg-wrap { padding: 10px; }
+      .ph-title, .pg-title { font-size: 16px !important; }
+      .tb-title { font-size: 11px; }
+      .top-badge { font-size: 10px; padding: 4px 7px; }
+      .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr !important; }
+      .srow { grid-template-columns: repeat(2, 1fr) !important; }
+      .g3 { grid-template-columns: repeat(2, minmax(100px,1fr)) !important; }
+      .modal-box { width: 95% !important; padding: 14px !important; }
+      .msg-wrap { max-width: 86% !important; }
+      .study-tabs { overflow-x: auto; flex-wrap: nowrap; }
+      .csb-tabs { flex-wrap: wrap; }
+    }
+
+    /* Barmoq bilan bosish uchun tugmalar juda kichik bo'lmasin */
+    @media (max-width: 700px) {
+      .btn, .ci-btn, .icon-btn, .ctb-btn, .mac-b, .mt-btn { min-height: 34px; }
+      .btn-xs { min-height: 26px; }
+      table { font-size: 11px; }
+      th, td { padding: 6px 8px; }
+    }
+
+    /* Katta ekran (desktop) uchun tarkib juda cho'zilib ketmasin */
+    @media (min-width: 1400px) {
+      .pg-wrap { max-width: 1500px; }
+      .pc { padding: 20px 28px; }
+    }
+
+    /* Gorizontal skroll paydo bo'lishining oldini olish */
+    .tw, .tx-scroll, .msg-area, .chat-list, .app-nav { -webkit-overflow-scrolling: touch; }
   </style>
 </head>
 
@@ -3650,7 +3751,10 @@
       </div>
       <div class="modal-body" style="max-height:60vh;overflow-y:auto;">
         <div class="form-group"><label>Test nomi</label><input class="form-control" id="tstTitle" placeholder="Masalan: HTML asoslari"></div>
-        <div class="form-group"><label>Har bir to'g'ri javob uchun tanga</label><input type="number" class="form-control" id="tstCoin" value="10" min="1"></div>
+        <div class="g2" style="margin-bottom:0;">
+          <div class="form-group"><label>Har bir to'g'ri javob uchun tanga</label><input type="number" class="form-control" id="tstCoin" value="10" min="1"></div>
+          <div class="form-group"><label>Vaqt chegarasi (daqiqa, 0 = cheklanmagan)</label><input type="number" class="form-control" id="tstTimeLimit" value="0" min="0"></div>
+        </div>
         <div class="card" style="margin:0 0 14px;border-left:3px solid var(--purple);">
           <div class="ch" style="padding:9px 12px;"><h4 style="font-size:11px;">📋 WORD/PDF'DAN NUSXALAB IMPORT QILISH</h4></div>
           <div class="cb" style="padding:10px 12px;">
@@ -3673,7 +3777,9 @@
   <div class="modal-overlay" id="takeTestModal">
     <div class="modal-box" style="max-width:520px;">
       <div class="modal-head">
-        <h3 id="ttTitle">TEST</h3><button class="modal-close" onclick="closeMod('takeTestModal')"><i class="fas fa-times"></i></button>
+        <h3 id="ttTitle">TEST</h3>
+        <div id="ttTimer" style="display:none;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--gold);background:var(--gold-dim);padding:4px 10px;border-radius:7px;border:1px solid rgba(255,204,0,.3);margin-left:8px;"><i class="fas fa-clock"></i> <span id="ttTimerVal">00:00</span></div>
+        <button class="modal-close" onclick="closeMod('takeTestModal')"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body" style="max-height:65vh;overflow-y:auto;" id="ttBody"></div>
       <div class="modal-foot">
@@ -3962,6 +4068,7 @@
         <!-- Chat main panel -->
         <div class="chat-main" id="chatMain">
           <div class="chat-topbar" id="chatTopbar">
+            <button class="ctb-back" onclick="mCloseMobileChat()" title="Orqaga"><i class="fas fa-arrow-left"></i></button>
             <div class="ctb-av" id="cTbAv" style="background:#00222e;color:var(--cyan);font-size:18px;">💬</div>
             <div class="ctb-info">
               <div class="ctb-name" id="cTbName">CHAT TANLANG</div>
@@ -4242,7 +4349,7 @@
                   </tr>
                 </table>
                 <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bor2);">
-                  <button class="btn btn-sm" onclick="showToast('⚙️ Parol o\'zgartirish tizimi')"><i
+                  <button class="btn btn-sm" onclick="openChangePasswordModal()"><i
                       class="fas fa-key"></i> Parolni o'zgartirish</button>
                 </div>
               </div>
@@ -4642,15 +4749,17 @@
             <div class="ch"><h4>YANGI DARS QO'SHISH</h4></div>
             <div class="cb">
               <div class="g2" style="margin-bottom:0;">
-                <div class="form-group"><label>GURUH</label><input class="form-control" id="lpGroup" placeholder="Masalan: D1"></div>
-                <div class="form-group"><label>FAN</label><input class="form-control" id="lpSubj" placeholder="Masalan: IT"></div>
+                <div class="form-group"><label>GURUH</label><select class="form-control" id="lpGroup" onchange="lpAutoFill()"></select></div>
+                <div class="form-group"><label>FAN</label><input class="form-control" id="lpSubj" placeholder="Masalan: IT" onchange="lpAutoFill()"></div>
                 <div class="form-group"><label>SANA</label><input type="date" class="form-control" id="lpDate"></div>
+                <div class="form-group"><label>DARS VAQTI</label><input type="time" class="form-control" id="lpTime"></div>
                 <div class="form-group"><label>DARS RAQAMI</label><input type="number" class="form-control" id="lpNo" min="1" value="1"></div>
               </div>
               <div class="form-group"><label>MAVZU</label><input class="form-control" id="lpTopic" placeholder="Masalan: HTML asoslari"></div>
               <div class="form-group"><label>DARS MAQSADI</label><input class="form-control" id="lpGoal" placeholder="Maqsad"></div>
               <div class="form-group"><label>UY VAZIFASI (izoh sifatida)</label><input class="form-control" id="lpHw" placeholder="Uy vazifasi"></div>
-              <button class="btn btn-gold" onclick="addLessonPlan()"><i class="fas fa-plus"></i> Qo'shish</button>
+              <button class="btn btn-gold" id="lpSaveBtn" onclick="addLessonPlan()"><i class="fas fa-plus"></i> Qo'shish</button>
+              <button class="btn btn-sm" id="lpCancelEditBtn" style="display:none;" onclick="lpCancelEdit()"><i class="fas fa-times"></i> Bekor qilish</button>
             </div>
           </div>
           <div class="card">
@@ -4766,7 +4875,7 @@
                   </tr>
                 </table>
                 <button class="btn btn-sm btn-gold" style="margin-top:10px;"
-                  onclick="showToast('⚙️ Parol o\'zgartirish')"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
+                  onclick="openChangePasswordModal()"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
               </div>
             </div>
             <div class="card">
@@ -5516,6 +5625,62 @@
       inp.type = sh ? 'text' : 'password';
       icon.classList.toggle('fa-eye', !sh); icon.classList.toggle('fa-eye-slash', sh);
     }
+    // ── O'z parolini o'zgartirish (talaba / o'qituvchi / admin) ──
+    function openChangePasswordModal() {
+      if (!curUser) { showToast('❗ Avval tizimga kiring'); return; }
+      const eyeStyle = 'position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text3);font-size:13px;';
+      openGlobalModal(`
+        <div class="modal-title"><i class="fas fa-key"></i> Parolni o'zgartirish</div>
+        <div class="form-group"><label>Joriy parol</label>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="cpOld" placeholder="Joriy parolingiz" autocomplete="off">
+            <i class="fas fa-eye" style="${eyeStyle}" onclick="tpwd('cpOld',this)"></i>
+          </div>
+        </div>
+        <div class="form-group"><label>Yangi parol</label>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="cpNew" placeholder="Kamida 4 ta belgi" autocomplete="off">
+            <i class="fas fa-eye" style="${eyeStyle}" onclick="tpwd('cpNew',this)"></i>
+          </div>
+        </div>
+        <div class="form-group"><label>Yangi parolni tasdiqlang</label>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="cpConfirm" placeholder="Yangi parolni qayta kiriting" autocomplete="off">
+            <i class="fas fa-eye" style="${eyeStyle}" onclick="tpwd('cpConfirm',this)"></i>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-cyan" style="flex:1;" onclick="submitPasswordChange()"><i class="fas fa-check"></i> Saqlash</button>
+        </div>`);
+      setTimeout(() => { const f = document.getElementById('cpOld'); if (f) f.focus(); }, 50);
+    }
+    window.openChangePasswordModal = openChangePasswordModal;
+
+    function submitPasswordChange() {
+      if (!curUser) return;
+      const oldEl = document.getElementById('cpOld'), newEl = document.getElementById('cpNew'), confEl = document.getElementById('cpConfirm');
+      if (!oldEl || !newEl || !confEl) return;
+      const oldP = oldEl.value.trim(), newP = newEl.value.trim(), confP = confEl.value.trim();
+      if (!oldP || !newP || !confP) { showToast("❗ Barcha maydonlarni to'ldiring"); return; }
+      let list;
+      if (curUser.role === 'student') list = DB.students;
+      else if (curUser.role === 'teacher') list = DB.teachers;
+      else if (curUser.role === 'admin') list = DB.admins;
+      else return;
+      const rec = (list || []).find(x => x.id === curUser.id);
+      if (!rec) { showToast('❌ Foydalanuvchi topilmadi'); return; }
+      if (String(rec.pass) !== oldP) { showToast("❌ Joriy parol noto'g'ri"); return; }
+      if (newP.length < 4) { showToast("❗ Yangi parol kamida 4 ta belgidan iborat bo'lsin"); return; }
+      if (newP !== confP) { showToast("❌ Yangi parollar bir-biriga mos emas"); return; }
+      if (newP === oldP) { showToast("❗ Yangi parol eskisidan farq qilishi kerak"); return; }
+      rec.pass = newP;
+      curUser.pass = newP;
+      saveData();
+      closeGlobalModal();
+      showToast('✅ Parol muvaffaqiyatli yangilandi');
+    }
+    window.submitPasswordChange = submitPasswordChange;
     function doLogin(role) {
       let user = null;
       if (role === 'student') {
@@ -5597,6 +5762,7 @@
       renderLbMini(); renderActList(); renderFullLb();
       renderStudentTests(); refreshDailyGameBtn(); renderMyAttendance(); refreshPracticeBtn();
       renderStudentHomeworks(); renderStudentLessonTopic(); renderMaterialsStudent();
+      if (typeof mCheckReminders === 'function') setTimeout(mCheckReminders, 500);
     }
     function renderMyAttendance() {
       const card = document.getElementById('myAttendanceCard'); if (!card) return;
@@ -5925,7 +6091,7 @@
       const pass = document.getElementById('edPass').value.trim();
       if (!name) { showToast('❗ Ism kiritilmagan'); return; }
       s.name = name; s.phone = phone || s.phone; s.group = group || s.group; s.pass = pass || s.pass;
-      saveData(); renderStTable(); fillCoinSelects(); if (typeof fillHwSelects === 'function') fillHwSelects();
+      saveData(); renderStTable(); fillCoinSelects(); if (typeof fillHwSelects === 'function') fillHwSelects(); if (typeof fillLpGroupSel === 'function') fillLpGroupSel();
       closeGlobalModal();
       showToast("✅ Talaba ma'lumotlari yangilandi");
     }
@@ -5941,7 +6107,7 @@
     }
     function confirmDeleteStud(id) {
       DB.students = DB.students.filter(x => x.id !== id);
-      saveData(); renderStTable(); fillCoinSelects(); if (typeof fillHwSelects === 'function') fillHwSelects(); fillLoginDropdowns();
+      saveData(); renderStTable(); fillCoinSelects(); if (typeof fillHwSelects === 'function') fillHwSelects(); if (typeof fillLpGroupSel === 'function') fillLpGroupSel(); fillLoginDropdowns();
       closeGlobalModal();
       showToast("🗑️ Talaba o'chirildi");
     }
@@ -5967,7 +6133,7 @@
       (DB.lessonPlans || []).forEach(p => { if (p.group === oldName) p.group = newName; });
       (DB.materials || []).forEach(m => { if (m.group === oldName) m.group = newName; });
       saveData(); renderGrpList(); renderStTable(); fillNewStudentGroup();
-      if (typeof fillHwSelects === 'function') fillHwSelects();
+      if (typeof fillHwSelects === 'function') fillHwSelects(); if (typeof fillLpGroupSel === 'function') fillLpGroupSel();
       if (typeof fillRpGroupSel === 'function') fillRpGroupSel();
       closeGlobalModal();
       showToast('✅ Guruh nomi yangilandi');
@@ -6015,21 +6181,97 @@
     // ══════════════════════════════════
     // ISH REJA (Dars mavzusi)
     // ══════════════════════════════════
+    // Guruh tanlovini to'ldirish (o'qituvchining o'z guruhlari)
+    function fillLpGroupSel() {
+      const sel = document.getElementById('lpGroup'); if (!sel) return;
+      let students = DB.students || [];
+      if (curUser?.role === 'teacher') students = students.filter(s => studentTeacherIds(s).includes(String(curUser.id)));
+      const groups = [...new Set(students.map(s => s.group || 'D1'))].sort();
+      const prevVal = sel.value;
+      sel.innerHTML = groups.length
+        ? groups.map(g => `<option value="${g}">${g}</option>`).join('')
+        : `<option value="">— Guruh yo'q —</option>`;
+      if (groups.includes(prevVal)) sel.value = prevVal;
+      lpAutoFill();
+    }
+    // SANA = bugun, VAQT = joriy vaqt (soat:daqiqa), FAN = o'qituvchining faniga bo'yicha default, DARS RAQAMI = shu guruh+fan bo'yicha keyingi raqam
+    function lpAutoFill() {
+      const dateEl = document.getElementById('lpDate');
+      if (dateEl && !dateEl.value) dateEl.value = new Date().toISOString().slice(0, 10);
+      const timeEl = document.getElementById('lpTime');
+      if (timeEl && !timeEl.value) timeEl.value = new Date().toTimeString().slice(0, 5);
+      const subjEl = document.getElementById('lpSubj');
+      if (subjEl && !subjEl.value.trim() && curUser?.subj) subjEl.value = curUser.subj;
+      lpAutoNo();
+    }
+    function lpAutoNo() {
+      const group = document.getElementById('lpGroup')?.value.trim();
+      const subj = document.getElementById('lpSubj')?.value.trim();
+      const noEl = document.getElementById('lpNo');
+      if (!noEl || !group || lpEditingId) return; // tahrirlashda raqam avtomatik o'zgarmasin
+      const mine = (DB.lessonPlans || []).filter(p => p.teacherId === curUser.id && p.group === group && (!subj || p.subj === subj));
+      const maxNo = mine.reduce((m, p) => Math.max(m, Number(p.no) || 0), 0);
+      noEl.value = maxNo + 1;
+    }
+    window.fillLpGroupSel = fillLpGroupSel; window.lpAutoFill = lpAutoFill; window.lpAutoNo = lpAutoNo;
+
+    let lpEditingId = null;
     function addLessonPlan() {
       const group = document.getElementById('lpGroup').value.trim();
       const subj = document.getElementById('lpSubj').value.trim();
       const date = document.getElementById('lpDate').value;
+      const time = document.getElementById('lpTime').value;
       const no = parseInt(document.getElementById('lpNo').value) || 1;
       const topic = document.getElementById('lpTopic').value.trim();
       const goal = document.getElementById('lpGoal').value.trim();
       const hw = document.getElementById('lpHw').value.trim();
       if (!group || !topic) { showToast('❗ Guruh va mavzuni kiriting'); return; }
       DB.lessonPlans = DB.lessonPlans || [];
-      DB.lessonPlans.push({ id: 'lp' + Date.now(), teacherId: curUser.id, group, subj: subj || '—', date: date || new Date().toISOString().slice(0, 10), no, topic, goal, hw, createdAt: Date.now() });
-      ['lpGroup', 'lpSubj', 'lpTopic', 'lpGoal', 'lpHw'].forEach(id => document.getElementById(id).value = '');
+      if (lpEditingId) {
+        const p = DB.lessonPlans.find(x => x.id === lpEditingId);
+        if (p) {
+          Object.assign(p, { group, subj: subj || '—', date: date || new Date().toISOString().slice(0, 10), time: time || '', no, topic, goal, hw });
+          showToast('✅ Dars rejasi yangilandi: ' + topic);
+        }
+        lpCancelEdit();
+      } else {
+        DB.lessonPlans.push({ id: 'lp' + Date.now(), teacherId: curUser.id, group, subj: subj || '—', date: date || new Date().toISOString().slice(0, 10), time: time || '', no, topic, goal, hw, createdAt: Date.now() });
+        ['lpTopic', 'lpGoal', 'lpHw'].forEach(id => document.getElementById(id).value = '');
+        lpAutoNo(); // keyingi darsni tez qo'shish uchun raqamni avtomatik oshiradi, GURUH/FAN/SANA/VAQT saqlanib qoladi
+        showToast('✅ Dars rejasi qo\'shildi: ' + topic);
+      }
       saveData(); renderLessonPlans();
-      showToast('✅ Dars rejasi qo\'shildi: ' + topic);
     }
+    function editLessonPlan(id) {
+      const p = (DB.lessonPlans || []).find(x => x.id === id); if (!p) return;
+      lpEditingId = id;
+      fillLpGroupSel();
+      document.getElementById('lpGroup').value = p.group;
+      document.getElementById('lpSubj').value = p.subj === '—' ? '' : p.subj;
+      document.getElementById('lpDate').value = p.date || '';
+      document.getElementById('lpTime').value = p.time || '';
+      document.getElementById('lpNo').value = p.no || 1;
+      document.getElementById('lpTopic').value = p.topic || '';
+      document.getElementById('lpGoal').value = p.goal || '';
+      document.getElementById('lpHw').value = p.hw || '';
+      document.getElementById('lpSaveBtn').innerHTML = '<i class="fas fa-save"></i> Saqlash';
+      document.getElementById('lpCancelEditBtn').style.display = '';
+      document.getElementById('lpg').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function lpCancelEdit() {
+      lpEditingId = null;
+      ['lpTopic', 'lpGoal', 'lpHw'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      document.getElementById('lpSaveBtn').innerHTML = '<i class="fas fa-plus"></i> Qo\'shish';
+      document.getElementById('lpCancelEditBtn').style.display = 'none';
+      lpAutoNo();
+    }
+    function deleteLessonPlan(id) {
+      DB.lessonPlans = (DB.lessonPlans || []).filter(x => x.id !== id);
+      saveData(); renderLessonPlans();
+      showToast("🗑️ Dars rejasi o'chirildi");
+    }
+    window.editLessonPlan = editLessonPlan; window.lpCancelEdit = lpCancelEdit; window.deleteLessonPlan = deleteLessonPlan;
+
     function renderLessonPlans() {
       const el = document.getElementById('lpList'); if (!el) return;
       const mine = (DB.lessonPlans || []).filter(p => p.teacherId === curUser.id).sort((a, b) => b.createdAt - a.createdAt);
@@ -6043,7 +6285,13 @@
               ${p.goal ? `<div style="font-size:11px;color:var(--text2);margin-top:3px;">🎯 ${p.goal}</div>` : ''}
               ${p.hw ? `<div style="font-size:11px;color:var(--text2);margin-top:2px;">📚 UY: ${p.hw}</div>` : ''}
             </div>
-            <span style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${p.date}</span>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <span style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${p.date}${p.time ? ' · ⏰ ' + p.time : ''}</span>
+              <div style="display:flex;gap:5px;">
+                <button class="btn btn-xs" onclick="editLessonPlan('${p.id}')"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-xs btn-danger" onclick="deleteLessonPlan('${p.id}')"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
           </div>
         </div>`).join('');
     }
@@ -6059,10 +6307,10 @@
         <div style="font-size:16px;font-weight:700;margin-top:6px;">${cur.topic}</div>
         ${cur.goal ? `<div style="font-size:12px;color:var(--text2);margin-top:8px;">🎯 Maqsad: ${cur.goal}</div>` : ''}
         ${cur.hw ? `<div style="font-size:12px;color:var(--gold);margin-top:5px;">📚 Uy vazifasi: ${cur.hw}</div>` : ''}
-        <div style="font-size:10px;color:var(--text3);margin-top:8px;font-family:'JetBrains Mono',monospace;">${cur.date}</div>`;
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;font-family:'JetBrains Mono',monospace;">${cur.date}${cur.time ? ' · ⏰ ' + cur.time : ''}</div>`;
       histEl.innerHTML = plans.slice(1).map(p => `
         <div style="padding:7px 0;border-bottom:1px solid var(--bor2);font-size:12px;">
-          <strong>${p.topic}</strong> <span style="color:var(--text3);font-size:10px;font-family:'JetBrains Mono',monospace;">— ${p.date}</span>
+          <strong>${p.topic}</strong> <span style="color:var(--text3);font-size:10px;font-family:'JetBrains Mono',monospace;">— ${p.date}${p.time ? ' ' + p.time : ''}</span>
         </div>`).join('') || "// Boshqa tarix yo'q";
     }
 
@@ -6706,7 +6954,7 @@
       if (id === 'stpg') { try { fillNewStudentGroup(); renderStTable(); } catch (e) { console.warn('STPG render:', e); } }
       if (id === 'hwmgrpg') { try { fillHwSelects(); renderHwTeacherList(); } catch (e) { console.warn('HWMGR render:', e); } }
       if (id === 'matmgrpg') { try { renderMaterialsTeacher(); } catch (e) { console.warn('MAT render:', e); } }
-      if (id === 'lpg') { try { renderLessonPlans(); } catch (e) { console.warn('LP render:', e); } }
+      if (id === 'lpg') { try { fillLpGroupSel(); renderLessonPlans(); } catch (e) { console.warn('LP render:', e); } }
       if (id === 'testmgrpg') { try { renderTeacherTests(); renderTestResults(); } catch (e) { console.warn('TESTMGR render:', e); } }
       if (id === 'hwspg') { try { renderStudentHomeworks(); } catch (e) { console.warn('HWS render:', e); } }
       if (id === 'slpg') { try { renderStudentLessonTopic(); } catch (e) { console.warn('SLPG render:', e); } }
@@ -6865,7 +7113,7 @@
       document.getElementById('cTbStatus').textContent = f.blocked ? '🚫 BLOKLANGAN' : f.online ? '● ONLINE' : '○ OFFLINE';
       document.getElementById('blockedBar').style.display = f.blocked ? 'flex' : 'none';
       document.getElementById('chatInpWrap').style.display = f.blocked ? 'none' : 'block';
-      renderMsgs(); renderCChats();
+      renderMsgs(); renderCChats(); mOpenMobileChat();
     }
     function openGrpChat(g) {
       curChat = { type: 'group', id: g.id }; cancelReply(); closeSearchInChat();
@@ -6877,8 +7125,19 @@
       document.getElementById('cTbStatus').textContent = g.members.length + " A'ZO";
       document.getElementById('blockedBar').style.display = 'none';
       document.getElementById('chatInpWrap').style.display = 'block';
-      renderMsgs(); renderCChats();
+      renderMsgs(); renderCChats(); mOpenMobileChat();
     }
+    // ── Mobil uchun: Telegram uslubida ro'yxat → suhbat o'tishi ──
+    function mOpenMobileChat() {
+      const pg = document.getElementById('chatPage');
+      if (pg && window.innerWidth <= 700) pg.classList.add('mchat-open');
+    }
+    function mCloseMobileChat() {
+      const pg = document.getElementById('chatPage');
+      if (pg) pg.classList.remove('mchat-open');
+    }
+    window.mOpenMobileChat = mOpenMobileChat;
+    window.mCloseMobileChat = mCloseMobileChat;
     function getChatData() {
       if (!curChat) return null;
       if (curChat.type === 'friend') return chatFriends.find(f => f.id === curChat.id);
@@ -7293,7 +7552,10 @@
       if (id === 'groupModal') renderGrpMemSel();
       document.getElementById(id).classList.add('open');
     }
-    function closeMod(id) { document.getElementById(id).classList.remove('open'); }
+    function closeMod(id) {
+      document.getElementById(id).classList.remove('open');
+      if (id === 'takeTestModal' && ttTimerInterval) { clearInterval(ttTimerInterval); ttTimerInterval = null; curTakingTest = null; curTakingAnswers = []; }
+    }
     function renderGrpMemSel() {
       selGrpMems = [];
       const el = document.getElementById('memSel'); el.innerHTML = '';
@@ -7388,6 +7650,7 @@
     function openTestBuilder() {
       document.getElementById('tstTitle').value = '';
       document.getElementById('tstCoin').value = 10;
+      document.getElementById('tstTimeLimit').value = 0;
       document.getElementById('tstQList').innerHTML = '';
       tstQCount = 0;
       addTstQ(); addTstQ();
@@ -7448,6 +7711,7 @@
     function saveTest() {
       const title = document.getElementById('tstTitle').value.trim();
       const coinPer = parseInt(document.getElementById('tstCoin').value) || 10;
+      const timeLimit = parseInt(document.getElementById('tstTimeLimit').value) || 0;
       if (!title) { showToast('❗ Test nomini kiriting'); return; }
       const qEls = document.querySelectorAll('#tstQList > div');
       const questions = [];
@@ -7461,7 +7725,7 @@
       if (!questions.length) { showToast('❗ Kamida 1 ta to\'liq savol kiriting'); return; }
       DB.tests = DB.tests || [];
       DB.tests.push({
-        id: 'test' + Date.now(), title, coinPer, questions,
+        id: 'test' + Date.now(), title, coinPer, timeLimit, questions,
         teacherId: curUser.id, teacherName: curUser.name, createdAt: Date.now(), active: true
       });
       closeMod('testModal'); saveData();
@@ -7475,7 +7739,7 @@
         <div class="req-card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
           <div>
             <div style="font-weight:700;font-size:13px;">${t.title}</div>
-            <div style="font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${t.questions.length} savol · ${t.coinPer}🪙/to'g'ri javob · ${t.active ? 'FAOL' : "O'CHIRILGAN"}</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${t.questions.length} savol · ${t.coinPer}🪙/to'g'ri javob${t.timeLimit ? ' · ⏱️ ' + t.timeLimit + ' daq' : ''} · ${t.active ? 'FAOL' : "O'CHIRILGAN"}</div>
           </div>
           <div style="display:flex;gap:6px;">
             <button class="btn btn-xs ${t.active ? 'btn-danger' : 'btn-success'}" onclick="toggleTest('${t.id}')">${t.active ? "To'xtatish" : 'Yoqish'}</button>
@@ -7524,7 +7788,7 @@
         return `<div class="card">
           <div class="ch"><h4>${t.title}</h4><span class="badge bg">${t.coinPer}🪙/savol</span></div>
           <div class="cb" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-            <div style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${t.questions.length} ta savol · ${t.teacherName}</div>
+            <div style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${t.questions.length} ta savol · ${t.teacherName}${t.timeLimit ? ' · ⏱️ ' + t.timeLimit + ' daqiqa' : ''}</div>
             ${done
             ? `<span class="badge gr">✅ ${done.correct}/${done.total} · +${done.coinsEarned}🪙</span>`
             : `<button class="btn btn-gold btn-sm" onclick="startTest('${t.id}')"><i class="fas fa-play"></i> Boshlash</button>`}
@@ -7532,6 +7796,14 @@
         </div>`;
       }).join('');
     }
+    let ttTimerInterval = null;
+    // Ilovadan chiqilsa (boshqa tabga o'tilsa, ilova fon rejimiga o'tsa yoki ekran o'chirilsa) faol testni avtomatik to'xtatadi — aldashning oldini olish uchun
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && curTakingTest) {
+        showToast('🚫 Ilovadan chiqildi — test avtomatik to\'xtatildi', 'error');
+        submitTest(true, true);
+      }
+    });
     function startTest(id) {
       const t = (DB.tests || []).find(x => x.id === id); if (!t) return;
       curTakingTest = t; curTakingAnswers = new Array(t.questions.length).fill(null);
@@ -7548,9 +7820,37 @@
           </div>
         </div>`).join('');
       openMod('takeTestModal');
+      // Vaqt chegarasi bo'lsa — sanoq boshlanadi va tugaganda test avtomatik yakunlanadi; 0/bo'sh bo'lsa vaqtsiz (cheklanmagan) test bo'ladi
+      const timerEl = document.getElementById('ttTimer');
+      const timerVal = document.getElementById('ttTimerVal');
+      if (ttTimerInterval) { clearInterval(ttTimerInterval); ttTimerInterval = null; }
+      if (t.timeLimit && t.timeLimit > 0) {
+        let secondsLeft = t.timeLimit * 60;
+        timerEl.style.display = 'flex'; timerEl.style.alignItems = 'center'; timerEl.style.gap = '5px';
+        const renderTime = () => {
+          const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+          const s = String(secondsLeft % 60).padStart(2, '0');
+          timerVal.textContent = `${m}:${s}`;
+          timerEl.style.color = secondsLeft <= 30 ? 'var(--red)' : 'var(--gold)';
+        };
+        renderTime();
+        ttTimerInterval = setInterval(() => {
+          secondsLeft--;
+          if (secondsLeft <= 0) {
+            clearInterval(ttTimerInterval); ttTimerInterval = null;
+            showToast('⏰ Vaqt tugadi! Test avtomatik yakunlandi');
+            submitTest(true);
+            return;
+          }
+          renderTime();
+        }, 1000);
+      } else {
+        timerEl.style.display = 'none';
+      }
     }
-    function submitTest() {
+    function submitTest(autoSubmitted, leftApp) {
       if (!curTakingTest) return;
+      if (ttTimerInterval) { clearInterval(ttTimerInterval); ttTimerInterval = null; }
       const t = curTakingTest;
       let correct = 0;
       t.questions.forEach((q, qi) => { if (curTakingAnswers[qi] === q.correct) correct++; });
@@ -7562,13 +7862,15 @@
         curUser.coins = s.coins;
       }
       DB.testResults = DB.testResults || [];
-      DB.testResults.push({ testId: t.id, studentId: curUser.id, correct, total: t.questions.length, coinsEarned, date: Date.now() });
+      DB.testResults.push({ testId: t.id, studentId: curUser.id, correct, total: t.questions.length, coinsEarned, date: Date.now(), stoppedByExit: !!leftApp });
       DB.transactions = DB.transactions || [];
       DB.transactions.push({ studentId: curUser.id, type: 'test', amount: coinsEarned, reason: 'Test: ' + t.title, date: Date.now() });
       closeMod('takeTestModal'); saveData();
       document.getElementById('tbCoins').textContent = '🪙 ' + (s ? s.coins : curUser.coins);
       initS();
-      showToast(`✅ Test tugadi! ${correct}/${t.questions.length} to'g'ri · +${coinsEarned}🪙`);
+      if (leftApp) showToast(`🚫 Test to'xtatildi (ilovadan chiqildi) — ${correct}/${t.questions.length} to'g'ri · +${coinsEarned}🪙`);
+      else if (!autoSubmitted) showToast(`✅ Test tugadi! ${correct}/${t.questions.length} to'g'ri · +${coinsEarned}🪙`);
+      else showToast(`⏰ Vaqt tugadi — ${correct}/${t.questions.length} to'g'ri · +${coinsEarned}🪙`);
       curTakingTest = null; curTakingAnswers = [];
     }
 
@@ -7897,10 +8199,99 @@
     function mPushNotif(studentId, type, message, extraData={}) {
       DB.notifications = DB.notifications || [];
       DB.nextNotificationId = DB.nextNotificationId || 1;
-      const I = { new_lesson:['📖','Yangi dars'], new_test:['📝','Yangi test'], new_message:['💬','Yangi xabar'], achievement:['🏆','Yangi yutuq'], rank_up:['⬆️','Reytingda o\'sish'], rank_down:['⬇️','Reytingda pasayish'], score_up:['📈','Ball oshdi'], vip_content:['👑','VIP kontent'], homework:['📋','Uyga vazifa'], teacher_comment:['✏️','O\'qituvchi izohi'], announcement:['📢','Muhim e\'lon'] };
-      const info = I[type] || ['🔔','Bildirishnoma'];
+      const I = { new_lesson:['\U0001F4D6','Yangi dars'], new_test:['\U0001F4DD','Yangi test'], new_message:['\U0001F4AC','Yangi xabar'], achievement:['\U0001F3C6','Yangi yutuq'], rank_up:['\u2B06\uFE0F','Reytingda o\'sish'], rank_down:['\u2B07\uFE0F','Reytingda pasayish'], score_up:['\U0001F4C8','Ball oshdi'], vip_content:['\U0001F451','VIP kontent'], homework:['\U0001F4CB','Uyga vazifa'], teacher_comment:['\u270F\uFE0F','O\'qituvchi izohi'], announcement:['\U0001F4E2','Muhim e\'lon'] };
+      const info = I[type] || ['\U0001F514','Bildirishnoma'];
       DB.notifications.push({ id: DB.nextNotificationId++, studentId: Number(studentId), type, icon: info[0], title: info[1], message, read:false, createdAt: Date.now(), data: extraData });
+      mFireDeviceNotif(Number(studentId), type, info[1], message);
     }
+    // \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Telefon (brauzer) bildirishnomasi \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    // Real qurilma/telefon bildirishnomasi \u2014 foydalanuvchi ruxsat bergan bo'lsa va shu tur yoqilgan bo'lsa yuboriladi.
+    const NOTIF_SETTING_KEY = { new_lesson:'newLesson', new_test:'newTest', new_message:'newMessage', achievement:'achievement', rank_up:'rankChange', rank_down:'rankChange', score_up:'scoreChange', vip_content:'vipContent', homework:'homework', teacher_comment:'teacherComment', announcement:'announcement' };
+    function mFireDeviceNotif(studentId, type, title, message) {
+      try {
+        if (typeof Notification === 'undefined') return;
+        if (Notification.permission !== 'granted') return;
+        if (!curUser || curUser.role !== 'student' || Number(curUser.id) !== Number(studentId)) return;
+        const s = mGetStudent(); if (s) mEnsureRich(s);
+        const key = NOTIF_SETTING_KEY[type];
+        if (key && s && s.notifSettings && s.notifSettings[key] === false) return;
+        const n = new Notification(title, { body: message, icon: 'https://cdn-icons-png.flaticon.com/512/3239/3239952.png', tag: 'techno-' + type + '-' + Date.now() });
+        n.onclick = () => { window.focus(); n.close(); };
+      } catch (e) { console.warn('Device notif error:', e); }
+    }
+    function mAskDeviceNotifPermission() {
+      if (typeof Notification === 'undefined') { showToast('\u2757 Bu qurilma/brauzer bildirishnomani qo\'llab-quvvatlamaydi'); return; }
+      if (Notification.permission === 'granted') { showToast('\u2705 Bildirishnomalar allaqachon yoqilgan'); renderNotifSettingsV2(); return; }
+      if (Notification.permission === 'denied') { showToast('\u2757 Bildirishnoma brauzer sozlamalarida bloklangan \u2014 qo\'lda yoqing'); return; }
+      Notification.requestPermission().then(perm => {
+        if (perm === 'granted') { showToast('\u2705 Telefon bildirishnomalari yoqildi!', 'success'); new Notification('Teacher_texno', { body: "Bildirishnomalar muvaffaqiyatli yoqildi \u2705" }); }
+        else showToast('\u2757 Ruxsat berilmadi');
+        renderNotifSettingsV2();
+      });
+    }
+    window.mAskDeviceNotifPermission = mAskDeviceNotifPermission;
+
+    // \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Dars / Vazifa muddat eslatmalari \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    function mReminderStorageKey() { return 'techno_reminded_' + (curUser ? curUser.id : 'anon'); }
+    function mGetRemindedSet() {
+      try { return new Set(JSON.parse(localStorage.getItem(mReminderStorageKey()) || '[]')); } catch (e) { return new Set(); }
+    }
+    function mSaveRemindedSet(set) {
+      try { localStorage.setItem(mReminderStorageKey(), JSON.stringify([...set])); } catch (e) {}
+    }
+    function mCheckReminders() {
+      if (!curUser || curUser.role !== 'student') return;
+      const s = mGetStudent(); if (!s) return;
+      mEnsureRich(s);
+      const reminded = mGetRemindedSet();
+      let changed = false;
+      const now = Date.now();
+      const ONE_DAY = 24 * 60 * 60 * 1000;
+
+      (DB.homeworks || []).forEach(hw => {
+        const forMe = (hw.targetType === 'group' && hw.targetGroup === s.group) || (hw.targetType === 'student' && Number(hw.studentId) === Number(s.id));
+        if (!forMe || !hw.due) return;
+        const dueTime = new Date(hw.due + 'T23:59:59').getTime();
+        const doneKey = 'hwdue_' + hw.id;
+        const isDone = (typeof hwSubmitted === 'function') && hwSubmitted(hw.id, s.id);
+        if (isDone || reminded.has(doneKey)) return;
+        if (dueTime - now <= ONE_DAY && dueTime - now > -ONE_DAY) {
+          mPushNotif(s.id, 'homework', `\u23F0 "${hw.title}" vazifasi muddati yaqinlashmoqda (${hw.due})`);
+          reminded.add(doneKey); changed = true;
+        }
+      });
+
+      (DB.lessonPlans || []).filter(p => p.group === s.group).forEach(p => {
+        // Yangi mavzu e'lon qilinganda bir marta xabar beriladi
+        const announceKey = 'lp_' + p.id;
+        if (!reminded.has(announceKey)) {
+          mPushNotif(s.id, 'new_lesson', `\U0001F4D6 Yangi dars mavzusi: ${p.subj} \u2014 ${p.topic} (Dars ${p.no})`);
+          reminded.add(announceKey); changed = true;
+        }
+        // Dars boshlanishidan oldin eslatma (agar vaqt belgilangan bo'lsa, boshlanishdan 30 daqiqa oldin, 1 marta)
+        if (p.time) {
+          const startKey = 'lpstart_' + p.id;
+          if (!reminded.has(startKey)) {
+            const startTime = new Date(`${p.date}T${p.time}:00`).getTime();
+            const msUntil = startTime - now;
+            const LESSON_REMIND_MS = 30 * 60 * 1000;
+            if (msUntil > 0 && msUntil <= LESSON_REMIND_MS) {
+              mPushNotif(s.id, 'new_lesson', `\u23F0 "${p.subj}" darsi ${p.time} da boshlanadi \u2014 ${p.topic}`);
+              reminded.add(startKey); changed = true;
+            } else if (msUntil <= 0 && msUntil > -10 * 60 * 1000) {
+              // Vaqt allaqachon o'tib ketgan bo'lsa (masalan ilova yopiq bo'lgan), yana bir marta darhol eslatadi
+              mPushNotif(s.id, 'new_lesson', `\u23F0 "${p.subj}" darsi boshlandi \u2014 ${p.topic}`);
+              reminded.add(startKey); changed = true;
+            }
+          }
+        }
+      });
+
+      if (changed) { mSaveRemindedSet(reminded); saveData(); renderNotifPanel(); }
+    }
+    window.mCheckReminders = mCheckReminders;
+    setInterval(mCheckReminders, 60 * 1000); // har 1 daqiqada tekshiradi — dars boshlanish vaqtiga aniqroq mos kelishi uchun
+    window.addEventListener('load', () => setTimeout(mCheckReminders, 3000));
 
     // ──────── Rankings ─────────
     function mGetRanked(mode='overall') {
@@ -8401,10 +8792,32 @@
         ['teacherComment',"O'qituvchi izohlari","O'qituvchi izoh yozganda"],
         ['announcement',"Muhim e'lonlar","Platforma e'lonlari"],
       ];
+      const permState = (typeof Notification !== 'undefined') ? Notification.permission : 'unsupported';
+      const permLabel = permState === 'granted' ? "✅ Yoqilgan" : permState === 'denied' ? "❌ Bloklangan" : permState === 'unsupported' ? "— Qo'llab-quvvatlanmaydi" : "Yoqilmagan";
       wrap.innerHTML = `
       <div class="pg-wrap">
-        <div class="pg-title"><i class="fas fa-bell-slash"></i> BILDIRISHNOMA SOZLAMALARI</div>
-        <div class="pg-sub">Qaysi turdagi bildirishnomalarni olishingizni tanlang</div>
+        <div class="pg-title"><i class="fas fa-bell-slash"></i> SOZLAMALAR</div>
+        <div class="pg-sub">Bildirishnoma va xavfsizlik sozlamalari</div>
+        <div class="scard mb-16" style="border-left:3px solid var(--cyan);">
+          <div class="srow" style="border:none;">
+            <div>
+              <div class="slbl"><i class="fas fa-key" style="color:var(--cyan);margin-right:5px;"></i> Parolni o'zgartirish</div>
+              <div class="slbl-sub">Hisobingiz xavfsizligi uchun parolingizni yangilang</div>
+            </div>
+            <button class="btn btn-cyan btn-sm" onclick="openChangePasswordModal()"><i class="fas fa-key"></i> O'zgartirish</button>
+          </div>
+        </div>
+        <div class="scard mb-16" style="border-left:3px solid var(--gold);">
+          <div class="srow" style="border:none;">
+            <div>
+              <div class="slbl"><i class="fas fa-mobile-alt" style="color:var(--gold);margin-right:5px;"></i> Telefon bildirishnomalari</div>
+              <div class="slbl-sub">Ilova ochiq bo'lganda dars/vazifa eslatmalari qurilmangizga chiqadi — holati: ${permLabel}</div>
+            </div>
+            ${permState === 'granted'
+              ? `<span class="badge gr">✅ Faol</span>`
+              : `<button class="btn btn-gold btn-sm" onclick="mAskDeviceNotifPermission()"><i class="fas fa-bell"></i> Yoqish</button>`}
+          </div>
+        </div>
         <div class="scard mb-16">
           ${items.map(([k,t,d]) => `<div class="srow">
             <div>
