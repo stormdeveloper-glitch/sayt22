@@ -1233,10 +1233,6 @@
       .ctb-back {
         display: flex !important;
       }
-
-      .ctb-actions .ctb-btn[title="Guruh yaratish"] {
-        display: none;
-      }
     }
 
     .ctb-back {
@@ -2642,6 +2638,47 @@
       .sidebar { width: 0 !important; min-width: 0 !important; border: 0 !important; padding: 0 !important; overflow: hidden; }
     }
 
+    /* === MOBIL TO'LIQ MENYU (kompyuterdagi yon menyuning oynasi) === */
+    .mms-sheet { position: fixed; inset: 0; z-index: 950; display: none; }
+    .mms-sheet.show { display: block; }
+    .mms-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); backdrop-filter: blur(2px); }
+    .mms-panel {
+      position: absolute; left: 0; right: 0; bottom: 0; max-height: 78vh;
+      background: var(--card); border-top: 1px solid var(--bor);
+      border-radius: 18px 18px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,.4);
+      display: flex; flex-direction: column; overflow: hidden;
+      animation: mmsUp .25s cubic-bezier(.4,0,.2,1);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    @keyframes mmsUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .mms-handle { width: 40px; height: 4px; border-radius: 3px; background: var(--bor2); margin: 10px auto 4px; flex-shrink: 0; }
+    .mms-title {
+      font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 800; color: var(--cyan);
+      letter-spacing: 1.5px; padding: 6px 18px 10px; flex-shrink: 0;
+    }
+    .mms-list { overflow-y: auto; padding: 4px 10px 14px; }
+    .mms-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 12px; border-radius: 10px; cursor: pointer;
+      color: var(--text2); font-size: 13.5px; font-weight: 600;
+      transition: background .15s;
+    }
+    .mms-item i { width: 20px; text-align: center; color: var(--cyan); font-size: 15px; }
+    .mms-item:active { background: var(--cyan-dim); }
+    .mms-item.mms-logout { color: var(--red); margin-top: 4px; border-top: 1px solid var(--bor2); padding-top: 14px; }
+    .mms-item.mms-logout i { color: var(--red); }
+    .mobile-menu-fab {
+      display: none; position: fixed; right: 16px; bottom: 16px; z-index: 890;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: #001018; border: none; font-size: 19px;
+      box-shadow: 0 6px 20px var(--cyan-glow);
+      align-items: center; justify-content: center;
+    }
+    @media (max-width: 900px) {
+      .mobile-menu-fab.show { display: flex; }
+    }
+
     /* === PAGE WRAPPER / LAYOUT === */
     .pg-wrap { padding: 16px; max-width: 1400px; margin: 0 auto; animation: pageIn var(--tr-slow); }
     @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -3538,6 +3575,18 @@
       content: '👑'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
       font-size: 22px; filter: drop-shadow(0 2px 6px var(--gold-glow2));
     }
+    .ph-av.mkt-framed {
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 22px var(--gold-glow), 0 0 30px var(--cyan-glow);
+    }
+    .ph-owned-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; position: relative; z-index: 2; }
+    .ph-owned-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,204,0,.25);
+      font-size: 11px; font-weight: 700; color: var(--gold);
+    }
     .ph-name { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 800; letter-spacing: .4px; }
     .ph-uname { color: var(--text3); font-size: 12.5px; margin: 2px 0 8px; }
     .ph-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -3940,8 +3989,16 @@
       <div class="bn-item" id="bn-profile" onclick="bnNav('ppg','PROFILIM',this)">
         <i class="fas fa-user-circle"></i><span>Profile</span>
       </div>
+      <div class="bn-item" id="bn-more" onclick="openMobileMoreMenu()">
+        <i class="fas fa-bars"></i><span>Menyu</span>
+      </div>
     </div>
   </nav>
+
+  <!-- Mobil to'liq menyu (kompyuterdagi yon menyu bilan bir xil) -->
+  <div class="mms-sheet" id="mobileMoreSheet"></div>
+  <!-- O'qituvchi/admin uchun mobil menyu tugmasi (ularda pastki menyu yo'q) -->
+  <button class="mobile-menu-fab" id="mobileMenuFab" onclick="openMobileMoreMenu()" style="display:none;" title="Menyu"><i class="fas fa-bars"></i></button>
 
   <!-- APP SHELL -->
   <div id="appShell">
@@ -4075,14 +4132,35 @@
               <div class="ctb-status" id="cTbStatus">—</div>
             </div>
             <div class="ctb-actions">
+              <button class="ctb-btn" id="grpMembersBtn" onclick="openGroupMembersModal()" title="Guruh a'zolari" style="display:none;"><i
+                  class="fas fa-user-friends"></i></button>
               <button class="ctb-btn" onclick="openMod('groupModal')" title="Guruh yaratish"><i
                   class="fas fa-users"></i></button>
               <button class="ctb-btn" onclick="searchInChat()" title="Qidirish"><i class="fas fa-search"></i></button>
               <button class="ctb-btn" onclick="toggleOnline()" id="onlineBtn" title="Online"><i
                   class="fas fa-wifi"></i></button>
-              <button class="ctb-btn red" onclick="blockCurChat()" title="Bloklash"><i class="fas fa-ban"></i></button>
-              <button class="ctb-btn red" onclick="removeFriend()" title="O'chirish"><i
+              <button class="ctb-btn red" onclick="blockCurChat()" title="Bloklash" id="blockChatBtn"><i class="fas fa-ban"></i></button>
+              <button class="ctb-btn red" onclick="removeFriend()" title="O'chirish" id="removeFriendBtn"><i
                   class="fas fa-user-times"></i></button>
+            </div>
+          </div>
+
+          <!-- Guruh a'zolarini boshqarish moduli -->
+          <div class="modal-overlay" id="grpMembersModal">
+            <div class="modal-box">
+              <div class="modal-head">
+                <h3><i class="fas fa-user-friends" style="margin-right:7px;color:var(--purple);"></i>GURUH A'ZOLARI</h3>
+                <button class="modal-close" onclick="closeMod('grpMembersModal')"><i class="fas fa-times"></i></button>
+              </div>
+              <div class="modal-body">
+                <div id="grpMembersList" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;"></div>
+                <div class="form-group" style="margin-top:12px;"><label>Yangi a'zo qo'shish</label>
+                  <div id="grpAddMemberList" style="display:flex;flex-direction:column;gap:3px;max-height:150px;overflow-y:auto;"></div>
+                </div>
+              </div>
+              <div class="modal-foot">
+                <button class="btn btn-sm" onclick="closeMod('grpMembersModal')">Yopish</button>
+              </div>
             </div>
           </div>
 
@@ -6909,21 +6987,37 @@
       el.innerHTML = html;
     }
     function renderMktPage() {
+      const s = curUser?.role === 'student' ? DB.students.find(x => x.id === curUser.id) : null;
+      if (s) mEnsureRich(s);
+      const owned = new Set(s?.mktOwned || []);
       document.getElementById('mktGrid').innerHTML = mktItems.map((item, i) => `
-    <div class="mkt-card" onclick="buyItem(${i})">
+    <div class="mkt-card ${owned.has(item.name) ? 'owned' : ''}" onclick="buyItem(${i})" style="${owned.has(item.name) ? 'opacity:.7;' : ''}">
       <div class="mkt-icon">${item.icon}</div>
       <div class="mkt-name">${item.name}</div>
-      <div class="mkt-price">💎 ${item.price}</div>
+      <div class="mkt-price">${owned.has(item.name) ? '✅ Olingan' : '💎 ' + item.price}</div>
     </div>`).join('');
     }
     function buyItem(i) {
       const item = mktItems[i];
+      if (curUser?.role === 'student') {
+        const s = DB.students.find(x => x.id === curUser.id);
+        if (s) {
+          mEnsureRich(s);
+          if (s.mktOwned.includes(item.name)) { showToast('✅ Bu buyum allaqachon sizda bor'); return; }
+          if (diamonds < item.price) { showToast('❌ Olmos yetarli emas!'); return; }
+          diamonds -= item.price;
+          s.olmos = diamonds;
+          s.mktOwned.push(item.name);
+          saveData();
+          updateDia(); renderMktPage(); renderCMarket();
+          const ppgEl = document.getElementById('ppg');
+          if (ppgEl && ppgEl.classList.contains('active')) renderProfileV2();
+          showToast('✅ ' + item.name + ' sotib olindi va profilingizga qo\'shildi!');
+          return;
+        }
+      }
       if (diamonds >= item.price) {
         diamonds -= item.price;
-        if (curUser?.role === 'student') {
-          const s = DB.students.find(x => x.id === curUser.id);
-          if (s) s.olmos = diamonds;
-        }
         saveData();
         updateDia(); renderMktPage(); renderCMarket(); showToast('✅ ' + item.name + ' sotib olindi!');
       }
@@ -7084,6 +7178,9 @@
 
     function renderCMarket() {
       const el = document.getElementById('cts-market');
+      const s = curUser?.role === 'student' ? DB.students.find(x => x.id === curUser.id) : null;
+      if (s) mEnsureRich(s);
+      const owned = new Set(s?.mktOwned || []);
       el.innerHTML = `
     <div class="coin-banner">
       <div style="font-size:10px;opacity:.7;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">MENING OLMOSLARIM</div>
@@ -7091,12 +7188,12 @@
       <div class="coin-rate">// 1 tanga = 20 olmos</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;">
-      ${mktItems.map((item, i) => `
-        <div onclick="buyItem(${i})" style="background:var(--card2);border:1px solid var(--bor2);border-radius:9px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(0,229,255,.3)';this.style.boxShadow='0 0 12px var(--cyan-glow)'" onmouseout="this.style.borderColor='var(--bor2)';this.style.boxShadow='none'">
+      ${mktItems.map((item, i) => { const isOwned = owned.has(item.name); return `
+        <div onclick="buyItem(${i})" style="background:var(--card2);border:1px solid ${isOwned ? 'rgba(0,255,136,.35)' : 'var(--bor2)'};border-radius:9px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;${isOwned ? 'opacity:.75;' : ''}" onmouseover="this.style.borderColor='rgba(0,229,255,.3)';this.style.boxShadow='0 0 12px var(--cyan-glow)'" onmouseout="this.style.borderColor='${isOwned ? 'rgba(0,255,136,.35)' : 'var(--bor2)'}';this.style.boxShadow='none'">
           <div style="font-size:22px;">${item.icon}</div>
           <div style="font-size:10px;font-weight:700;margin:3px 0;font-family:'Orbitron',monospace;color:var(--text);">${item.name}</div>
-          <div style="font-size:11px;color:var(--cyan);font-family:'JetBrains Mono',monospace;">💎 ${item.price}</div>
-        </div>`).join('')}
+          <div style="font-size:11px;color:${isOwned ? 'var(--green)' : 'var(--cyan)'};font-family:'JetBrains Mono',monospace;">${isOwned ? '✅ Olingan' : '💎 ' + item.price}</div>
+        </div>`;}).join('')}
     </div>`;
     }
 
@@ -7113,6 +7210,9 @@
       document.getElementById('cTbStatus').textContent = f.blocked ? '🚫 BLOKLANGAN' : f.online ? '● ONLINE' : '○ OFFLINE';
       document.getElementById('blockedBar').style.display = f.blocked ? 'flex' : 'none';
       document.getElementById('chatInpWrap').style.display = f.blocked ? 'none' : 'block';
+      const gmb = document.getElementById('grpMembersBtn'); if (gmb) gmb.style.display = 'none';
+      const bb = document.getElementById('blockChatBtn'); if (bb) bb.style.display = '';
+      const rb = document.getElementById('removeFriendBtn'); if (rb) rb.style.display = '';
       renderMsgs(); renderCChats(); mOpenMobileChat();
     }
     function openGrpChat(g) {
@@ -7125,8 +7225,76 @@
       document.getElementById('cTbStatus').textContent = g.members.length + " A'ZO";
       document.getElementById('blockedBar').style.display = 'none';
       document.getElementById('chatInpWrap').style.display = 'block';
+      const gmb = document.getElementById('grpMembersBtn'); if (gmb) gmb.style.display = '';
+      const bb = document.getElementById('blockChatBtn'); if (bb) bb.style.display = 'none';
+      const rb = document.getElementById('removeFriendBtn'); if (rb) rb.style.display = 'none';
       renderMsgs(); renderCChats(); mOpenMobileChat();
     }
+    // ── Guruh a'zolarini boshqarish (qo'shish / chiqarish / boshqa guruhga o'tkazish) ──
+    function openGroupMembersModal() {
+      if (!curChat || curChat.type !== 'group') return;
+      const g = chatGroups.find(x => x.id === curChat.id); if (!g) return;
+      renderGrpMembersModal(g);
+      document.getElementById('grpMembersModal').classList.add('open');
+    }
+    function renderGrpMembersModal(g) {
+      const otherGroups = chatGroups.filter(x => x.id !== g.id);
+      const listEl = document.getElementById('grpMembersList');
+      listEl.innerHTML = g.members.map(m => `
+        <div class="cl-item" style="cursor:default;">
+          <div class="cl-av" style="${getAvatarStyle(m.c)}width:30px;height:30px;min-width:30px;font-size:11px;">${m.ini || (m.name||'?').charAt(0).toUpperCase()}</div>
+          <span style="font-size:12px;flex:1;">${escHtml(m.name||'')}</span>
+          ${otherGroups.length ? `<select class="form-control" style="width:auto;padding:3px 6px;font-size:10px;" onchange="if(this.value){mMoveGroupMember('${g.id}','${m.id}',this.value);}this.value='';">
+            <option value="">O'tkazish →</option>
+            ${otherGroups.map(og => `<option value="${og.id}">${escHtml(og.name)}</option>`).join('')}
+          </select>` : ''}
+          <button class="btn btn-xs btn-danger" title="Guruhdan chiqarish" onclick="mRemoveGroupMember('${g.id}','${m.id}')"><i class="fas fa-times"></i></button>
+        </div>`).join('') || `<div style="text-align:center;padding:14px;color:var(--text3);font-size:11px;">// A'zo yo'q</div>`;
+
+      const addable = chatFriends.filter(f => !g.members.some(m => m.id === f.id));
+      const addEl = document.getElementById('grpAddMemberList');
+      addEl.innerHTML = addable.length ? addable.map(f => `
+        <div class="cl-item" style="cursor:pointer;" onclick="mAddGroupMember('${g.id}','${f.id}')">
+          <div class="cl-av" style="${getAvatarStyle(f.c)}width:26px;height:26px;min-width:26px;font-size:10px;">${f.ini}</div>
+          <span style="font-size:12px;flex:1;">${escHtml(f.name)}</span>
+          <i class="fas fa-plus-circle" style="color:var(--cyan);"></i>
+        </div>`).join('') : `<div style="text-align:center;padding:10px;color:var(--text3);font-size:11px;">// Qo'shiladigan do'st yo'q</div>`;
+    }
+    function mAddGroupMember(gid, fid) {
+      const g = chatGroups.find(x => x.id === gid); if (!g) return;
+      const f = chatFriends.find(x => x.id === fid); if (!f) return;
+      if (g.members.some(m => m.id === fid)) return;
+      g.members.push(f);
+      g.msgs.push({ id: gId(), text: (f.name || 'Yangi a\'zo') + " guruhga qo'shildi", sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'text', reactions: {} });
+      saveData(); renderGrpMembersModal(g); renderCChats();
+      if (curChat?.id === gid) { document.getElementById('cTbStatus').textContent = g.members.length + " A'ZO"; renderMsgs(); }
+      showToast('✅ ' + (f.name||'A\'zo') + " guruhga qo'shildi");
+    }
+    function mRemoveGroupMember(gid, mid) {
+      const g = chatGroups.find(x => x.id === gid); if (!g) return;
+      const idx = g.members.findIndex(m => m.id === mid); if (idx < 0) return;
+      const removed = g.members.splice(idx, 1)[0];
+      g.msgs.push({ id: gId(), text: (removed?.name || 'A\'zo') + ' guruhdan chiqarildi', sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'text', reactions: {} });
+      saveData(); renderGrpMembersModal(g); renderCChats();
+      if (curChat?.id === gid) { document.getElementById('cTbStatus').textContent = g.members.length + " A'ZO"; renderMsgs(); }
+      showToast("✅ A'zo guruhdan chiqarildi");
+    }
+    function mMoveGroupMember(fromId, mid, toId) {
+      const fromG = chatGroups.find(x => x.id === fromId); const toG = chatGroups.find(x => x.id === toId);
+      if (!fromG || !toG) return;
+      const idx = fromG.members.findIndex(m => m.id === mid); if (idx < 0) return;
+      const moved = fromG.members.splice(idx, 1)[0];
+      if (!toG.members.some(m => m.id === mid)) toG.members.push(moved);
+      fromG.msgs.push({ id: gId(), text: (moved?.name||'A\'zo') + ' "' + toG.name + '" guruhiga o\'tkazildi', sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'text', reactions: {} });
+      toG.msgs.push({ id: gId(), text: (moved?.name||'A\'zo') + ' "' + fromG.name + '" guruhidan o\'tkazib qo\'shildi', sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), type: 'text', reactions: {} });
+      saveData(); renderGrpMembersModal(fromG); renderCChats();
+      if (curChat?.id === fromId) { document.getElementById('cTbStatus').textContent = fromG.members.length + " A'ZO"; renderMsgs(); }
+      showToast('✅ ' + (moved?.name||'A\'zo') + ' "' + toG.name + '" guruhiga o\'tkazildi');
+    }
+    window.openGroupMembersModal = openGroupMembersModal;
+    window.mAddGroupMember = mAddGroupMember;
+    window.mRemoveGroupMember = mRemoveGroupMember;
+    window.mMoveGroupMember = mMoveGroupMember;
     // ── Mobil uchun: Telegram uslubida ro'yxat → suhbat o'tishi ──
     function mOpenMobileChat() {
       const pg = document.getElementById('chatPage');
@@ -8074,6 +8242,7 @@
       if (!s || typeof s !== 'object') return s;
       if (!Array.isArray(s.achievements)) s.achievements = [];
       if (!s.purchasedProducts || !Array.isArray(s.purchasedProducts)) s.purchasedProducts = [];
+      if (!Array.isArray(s.mktOwned)) s.mktOwned = [];
       if (!s.subjectScores || typeof s.subjectScores !== 'object') {
         s.subjectScores = {}; MODERN_SUBJECTS.forEach(sub => s.subjectScores[sub.id] = { score: 0, prevScore: 0, lessonsAttended: 0, tasksCompleted: 0, testsTaken: 0, avgTestScore: 0, teacherGrade: 0, trend: 'stable', reason: '' });
       } else MODERN_SUBJECTS.forEach(sub => { if (!s.subjectScores[sub.id]) s.subjectScores[sub.id] = { score: 0, prevScore: 0, lessonsAttended: 0, tasksCompleted: 0, testsTaken: 0, avgTestScore: 0, teacherGrade: 0, trend: 'stable', reason: '' }; });
@@ -8155,6 +8324,37 @@
       document.querySelectorAll('.bn-item').forEach(b => b.classList.toggle('active', b.id === targetId));
     }
     window.bnNav = bnNav;
+
+    // ──────── Mobil to'liq menyu (kompyuterdagi yon menyu bilan bir xil ro'yxat) ────────
+    function openMobileMoreMenu() {
+      const sheet = document.getElementById('mobileMoreSheet'); if (!sheet) return;
+      const navId = curUser?.role === 'teacher' ? 'tNav' : curUser?.role === 'admin' ? 'aNav' : 'sNav';
+      const skipPages = ['dpg', 'chatpg', 'marketpg', 'ppg', 'adpg'];
+      const srcItems = [...document.querySelectorAll(`#${navId} .nav-item`)];
+      const items = srcItems.filter(el => {
+        const oc = el.getAttribute('onclick') || '';
+        if (oc.includes('doLogout')) return false;
+        const m = oc.match(/showPage\('([a-zA-Z0-9_]+)'/);
+        if (m && skipPages.includes(m[1])) return false;
+        return true;
+      });
+      sheet.innerHTML = `
+        <div class="mms-backdrop" onclick="closeMobileMoreMenu()"></div>
+        <div class="mms-panel">
+          <div class="mms-handle"></div>
+          <div class="mms-title"><i class="fas fa-bars"></i> TO'LIQ MENYU</div>
+          <div class="mms-list">
+            ${items.map(el => `<div class="mms-item" onclick="closeMobileMoreMenu();${(el.getAttribute('onclick')||'').replace(/"/g,'&quot;')}">${el.innerHTML}</div>`).join('')}
+            <div class="mms-item mms-logout" onclick="closeMobileMoreMenu();doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+          </div>
+        </div>`;
+      sheet.classList.add('show');
+    }
+    function closeMobileMoreMenu() {
+      const sheet = document.getElementById('mobileMoreSheet'); if (sheet) sheet.classList.remove('show');
+    }
+    window.openMobileMoreMenu = openMobileMoreMenu;
+    window.closeMobileMoreMenu = closeMobileMoreMenu;
 
     // ──────── Notification Panel ─────────
     function toggleNotifPanel() {
@@ -8915,9 +9115,9 @@
       <div class="pg-wrap">
         <div class="profile-hero">
           <div class="ph-wrap">
-            <div class="ph-av ${s.vip?.status?'vip-ph':''}">${(s.firstName||s.name||'U').charAt(0).toUpperCase()}</div>
+            <div class="ph-av ${s.vip?.status?'vip-ph':''} ${s.mktOwned?.includes('Avatar ramka')?'mkt-framed':''}">${(s.firstName||s.name||'U').charAt(0).toUpperCase()}</div>
             <div style="flex:1;min-width:0;">
-              <div class="ph-name">${escHtml(s.firstName+' '+(s.lastName||''))} ${s.vip?.status?'<span class="vip-badge" style="margin-left:6px;">👑 VIP</span>':''}</div>
+              <div class="ph-name">${escHtml(s.firstName+' '+(s.lastName||''))} ${s.vip?.status?'<span class="vip-badge" style="margin-left:6px;">👑 VIP</span>':''}${s.mktOwned?.includes('VIP nishon')?' <span class="vip-badge" style="margin-left:6px;background:var(--gold-dim);color:var(--gold);">⭐ Nishon</span>':''}</div>
               <div class="ph-uname">${escHtml(s.username||'')} · ID: ${s.id}</div>
               <div class="ph-meta">
                 <span class="ph-chip"><i class="fas fa-graduation-cap"></i> ${escHtml(s.grade||'—')}</span>
@@ -8926,6 +9126,7 @@
                 <span class="ph-chip" style="background:var(--gold-dim);color:var(--gold);border-color:rgba(255,204,0,.2);"><i class="fas fa-layer-group"></i> ${s.badge||'Starter'}</span>
                 <span class="ph-chip" style="background:var(--cyan-dim);color:var(--cyan);border-color:rgba(0,229,255,.2);">⚡ Daraja ${lvl}</span>
               </div>
+              ${(s.mktOwned && s.mktOwned.length) ? `<div class="ph-owned-row">${s.mktOwned.map(nm => { const it = mktItems.find(x=>x.name===nm); return `<span class="ph-owned-chip">${it?it.icon:'🎁'} ${escHtml(nm)}</span>`; }).join('')}</div>` : ''}
             </div>
           </div>
           <div style="position:relative;z-index:2;margin-top:18px;">
@@ -9115,9 +9316,11 @@
           const dpg = document.getElementById('dpg');
           if (dpg && dpg.classList.contains('active')) renderDashboardV2();
           const bn = document.getElementById('bottomNav'); if (bn) bn.style.display='';
+          const fab = document.getElementById('mobileMenuFab'); if (fab) fab.classList.remove('show');
           renderNotifPanel();
         } else {
           const bn = document.getElementById('bottomNav'); if (bn) bn.style.display='none';
+          const fab = document.getElementById('mobileMenuFab'); if (fab) fab.classList.add('show');
         }
       } catch(e) { console.warn('modernBootstrapAfterInit:', e); }
     }
