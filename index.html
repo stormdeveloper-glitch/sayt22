@@ -2632,10 +2632,14 @@
       background: var(--red); box-shadow: 0 0 8px var(--red);
     }
     @media (max-width: 900px) {
-      .bottom-nav { display: block; }
-      body { padding-bottom: 68px; }
-      .app-nav { display: none !important; }
-      .sidebar { width: 0 !important; min-width: 0 !important; border: 0 !important; padding: 0 !important; overflow: hidden; }
+      /* Talaba/o'qituvchi/admin menyusi endi pastki panelda emas — chap
+         yuqori burchakdagi ☰ hamburger tugmasi orqali chap tomondan
+         silliq animatsiya bilan chiqadigan yon panel (drawer) ochiladi.
+         #sidebar uchun kerakli fixed/translateX qoidalari yuqorida
+         (max-width:899px) allaqachon belgilangan — shu yerda faqat
+         pastki navigatsiyani o'chiramiz va .app-nav ko'rinishini saqlab
+         qolamiz (drawer ochilganda menyu elementlari ko'rinishi kerak). */
+      .bottom-nav { display: none !important; }
     }
 
     /* === MOBIL TO'LIQ MENYU (kompyuterdagi yon menyuning oynasi) === */
@@ -3949,6 +3953,7 @@
     <div class="tb-title" id="tbTitle">BOSH SAHIFA</div>
     <div class="tb-right">
       <div class="top-badge" id="tbCoins">🪙 0</div>
+      <button class="icon-btn" id="tbSwapBtn" title="Valyuta almashish" onclick="openCurrencyExchangeModal()" style="display:none;"><i class="fas fa-right-left"></i></button>
       <div class="top-badge tb-cyan" id="tbDiamonds">💎 0</div>
       <div class="icon-btn notif-bell" title="Bildirishnomalar" id="notifBellBtn" onclick="toggleNotifPanel()">
         <i class="fas fa-bell"></i>
@@ -4052,24 +4057,25 @@
       <!-- TALABA NAV -->
       <nav class="app-nav" id="sNav" style="display:none;">
         <div class="nav-sec">Mening sahifam</div>
+        <div class="nav-item" onclick="showPage('ppg',this,'PROFILIM')"><i class="fas fa-user-circle"></i> Profil
+        </div>
         <div class="nav-item active" onclick="showPage('dpg',this,'BOSH SAHIFA')"><i class="fas fa-th-large"></i> Bosh
           sahifa</div>
         <div class="nav-item" onclick="showPage('rpg',this,'REYTING')"><i class="fas fa-trophy"></i> Reyting</div>
-        <div class="nav-item" onclick="showPage('hpg',this,'FAOLLIK TARIXI')"><i class="fas fa-history"></i> Faollik
-          tarixi</div>
         <div class="nav-item" onclick="showPage('marketpg',this,'MARKET')"><i class="fas fa-shopping-cart"></i> Market
         </div>
+        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
+            class="badge-notif" id="sChatBadge" style="display:none;">0</span></div>
+        <div class="nav-item" onclick="showPage('matpg',this,'DARSLIK VA KITOBLAR')"><i class="fas fa-book"></i> Darsliklar</div>
+        <div class="nav-item" onclick="showPage('notifpg',this,'SOZLAMALAR')"><i class="fas fa-bell"></i> Sozlamalar</div>
+        <div class="nav-sec">Qo'shimcha</div>
+        <div class="nav-item" onclick="showPage('hpg',this,'FAOLLIK TARIXI')"><i class="fas fa-history"></i> Faollik
+          tarixi</div>
         <div class="nav-item" onclick="showPage('testspg',this,'TESTLAR')"><i class="fas fa-file-alt"></i> Testlar</div>
         <div class="nav-item" onclick="showPage('slpg',this,'DARS MAVZUSI')"><i class="fas fa-book-open"></i> Dars mavzusi</div>
         <div class="nav-item" onclick="showPage('hwspg',this,'VAZIFALARIM')"><i class="fas fa-tasks"></i> Vazifalarim <span class="badge-notif" id="hwPendingBadge" style="display:none;">0</span></div>
-        <div class="nav-item" onclick="showPage('matpg',this,'DARSLIK VA KITOBLAR')"><i class="fas fa-book"></i> Darslik/Kitob</div>
         <div class="nav-item" onclick="showPage('battlepg',this,'BILIM BELLASHUVI')"><i class="fas fa-bolt"></i> Bilim bellashuvi</div>
-        <div class="nav-sec">Ijtimoiy</div>
-        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
-            class="badge-notif" id="sChatBadge" style="display:none;">0</span></div>
-        <div class="nav-sec">Profil</div>
-        <div class="nav-item" onclick="showPage('ppg',this,'PROFILIM')"><i class="fas fa-user-circle"></i> Profilim
-        </div>
+        <div class="nav-sec">Hisob</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
       </nav>
 
@@ -5282,6 +5288,8 @@
                     class="fas fa-chalkboard-teacher"></i> O'qituvchilar</button>
                 <button class="btn" onclick="showPage('paypg',null,'TO\'LOVLAR')"><i class="fas fa-money-bill-wave"></i>
                   To'lovlar hisoboti</button>
+                <button class="btn" onclick="openExchangeRateSettingsModal()"><i class="fas fa-right-left"></i>
+                  Valyuta kursi sozlamasi</button>
               </div>
             </div>
           </div>
@@ -5375,7 +5383,8 @@
     const DB = {
       students: [],
       teachers: [],
-      admins: []
+      admins: [],
+      settings: { exchangeRate: 5 } // 1 Olmos (💎) = 5 Tanga (🪙), admin tomonidan sozlanadi
     };
 
     let saveTimer = null;
@@ -5474,7 +5483,8 @@
         materials: DB.materials || [],
         homeworks: DB.homeworks || [],
         homeworkSubmissions: DB.homeworkSubmissions || [],
-        lessonPlans: DB.lessonPlans || []
+        lessonPlans: DB.lessonPlans || [],
+        settings: DB.settings || { exchangeRate: 5 }
       };
     }
     const LOCAL_KEY = 'teacherTexnoData';
@@ -5495,7 +5505,8 @@
         ],
         transactions: [], adminRequests: [], messages: [], groups: [],
         chatFriends: [], chatGroups: [], pendingReqs: [],
-        pendingTelegramLinks: [], telegramProfiles: {}, tests: [], testResults: [], gamePlays: {}, practicePlays: {}, battleLog: [], attendanceLog: [], pairHistory: []
+        pendingTelegramLinks: [], telegramProfiles: {}, tests: [], testResults: [], gamePlays: {}, practicePlays: {}, battleLog: [], attendanceLog: [], pairHistory: [],
+        settings: { exchangeRate: 5 }
       };
     }
 
@@ -5531,6 +5542,7 @@
       DB.homeworks = Array.isArray(data.homeworks) ? data.homeworks : [];
       DB.homeworkSubmissions = Array.isArray(data.homeworkSubmissions) ? data.homeworkSubmissions : [];
       DB.lessonPlans = Array.isArray(data.lessonPlans) ? data.lessonPlans : [];
+      DB.settings = (data.settings && typeof data.settings === 'object') ? { exchangeRate: 5, ...data.settings } : { exchangeRate: 5 };
     }
 
     async function loadData() {
@@ -5617,14 +5629,14 @@
     let allChatGroups = [];
     let allPendingReqs = [];
     const mktItems = [
-      { icon: "🖼️", name: "Avatar ramka", price: 50 },
-      { icon: "⭐", name: "VIP nishon", price: 100 },
-      { icon: "🎵", name: "Musiqa mavzu", price: 80 },
-      { icon: "🌈", name: "Rang mavzu", price: 60 },
-      { icon: "🏆", name: "Champion", price: 150 },
-      { icon: "💫", name: "Animatsiya", price: 90 },
-      { icon: "🎭", name: "Maxsus ramka", price: 70 },
-      { icon: "🔥", name: "Fire effekt", price: 120 },
+      { icon: "🖼️", name: "Avatar ramka", price: 50, slot: "avatar" },
+      { icon: "⭐", name: "VIP nishon", price: 100, slot: "badge" },
+      { icon: "🎵", name: "Musiqa mavzu", price: 80, slot: null },
+      { icon: "🌈", name: "Rang mavzu", price: 60, slot: null },
+      { icon: "🏆", name: "Champion", price: 150, slot: "badge" },
+      { icon: "💫", name: "Animatsiya", price: 90, slot: null },
+      { icon: "🎭", name: "Maxsus ramka", price: 70, slot: "avatar" },
+      { icon: "🔥", name: "Fire effekt", price: 120, slot: null },
     ];
     const EMOJIS = ['😀', '😂', '🥰', '😍', '🤔', '😎', '😢', '😡', '👍', '👎', '❤️', '🔥', '✨', '🎉', '🙏', '💯', '😮', '🤣', '😭', '😊', '🥳', '😴', '🤗', '😏', '👋', '💪', '🤝', '✌️', '🫶', '💝', '🌟', '⚡', '🎯', '🚀', '💎', '🌊', '🎮', '🧠', '💻', '🖥️'];
     const STICKERS = ['🐱', '🐶', '🦊', '🐼', '🐨', '🦁', '🐸', '🦋', '🌸', '🌟', '🍕', '🍦', '🎮', '🎸', '🚀', '🌈', '💎', '🏆', '🎁', '🎪', '🤖', '👾', '🎯', '💡', '⚡', '🌙', '☀️', '🎵', '🎨', '🏅'];
@@ -5733,7 +5745,8 @@
         setTimeout(() => { ol.style.display = 'none'; }, 400);
       }
       const ls = document.getElementById('loginScreen');
-      if (ls) {
+      // Agar sessiya tiklanib, foydalanuvchi allaqachon tizimga kirgan bo'lsa — login ekranini ko'rsatmaymiz
+      if (ls && !curUser) {
         ls.style.display = 'flex';
         ls.style.opacity = '0';
         requestAnimationFrame(() => {
@@ -5760,6 +5773,7 @@
       } catch (e) {
         console.warn('loadData xatosi:', e);
       } finally {
+        try { restoreSession(); } catch (e) { console.warn('Sessiya tiklashda xatolik', e); }
         finishLoading();
       }
     })();
@@ -5882,15 +5896,51 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('topbar').style.display = 'flex';
       document.getElementById('appShell').style.display = 'flex';
+      saveSession();
       initApp();
     }
     function doLogout() {
       curUser = null; curChat = null;
+      clearSession();
       document.getElementById('topbar').style.display = 'none';
       document.getElementById('appShell').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
       ['lgSPwd', 'lgTPwd', 'lgAPwd'].forEach(id => document.getElementById(id).value = '');
       showToast('👋 Xayr!');
+    }
+
+    // ── Sessiya: sahifa yangilanganda foydalanuvchi qayta-qayta login qilmasin ──
+    const SESSION_KEY = 'teacherTexnoSession';
+    function saveSession() {
+      if (!curUser) return;
+      try {
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify({ role: curUser.role, id: curUser.id }));
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ role: curUser.role, id: curUser.id }));
+      } catch (e) { console.warn('Sessiya saqlashda xatolik', e); }
+    }
+    function clearSession() {
+      try { sessionStorage.removeItem(SESSION_KEY); localStorage.removeItem(SESSION_KEY); } catch (e) {}
+    }
+    function readSession() {
+      try {
+        const raw = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) { return null; }
+    }
+    // Avvalgi sessiyani DB yuklangandan so'ng tiklashga urinamiz (loadData() dan keyin chaqiriladi)
+    function restoreSession() {
+      const sess = readSession();
+      if (!sess || !sess.role || sess.id === undefined || sess.id === null) return false;
+      let list = sess.role === 'student' ? DB.students : sess.role === 'teacher' ? DB.teachers : sess.role === 'admin' ? DB.admins : null;
+      if (!list) return false;
+      const user = list.find(x => String(x.id) === String(sess.id));
+      if (!user) { clearSession(); return false; }
+      curUser = { ...user, role: sess.role };
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('topbar').style.display = 'flex';
+      document.getElementById('appShell').style.display = 'flex';
+      initApp();
+      return true;
     }
 
     // ── INIT
@@ -5905,6 +5955,7 @@
       document.getElementById('sbRl').textContent = r === 'student' ? "// Talaba" : r === 'teacher' ? "// O'qituvchi" : "// Admin";
       document.getElementById('tbCoins').textContent = '🪙 ' + (curUser.coins || 0);
       document.getElementById('tbDiamonds').textContent = '💎 ' + diamonds;
+      const swapBtn = document.getElementById('tbSwapBtn'); if (swapBtn) swapBtn.style.display = (r === 'student') ? 'flex' : 'none';
       document.getElementById('csMyAv').textContent = ini;
       document.getElementById('csMyName').textContent = curUser.name;
       document.getElementById('csCoins').textContent = diamonds;
@@ -6032,8 +6083,12 @@
         document.getElementById('actList').innerHTML = '<div style="color:var(--text3);font-size:12px;font-family:\'JetBrains Mono\',monospace;padding:10px 0;">// Hozircha faollik yo\'q</div>';
       }
     }
+    function teacherScopedStudents() {
+      if (curUser?.role !== 'teacher') return DB.students;
+      return DB.students.filter(s => studentTeacherIds(s).includes(String(curUser.id)));
+    }
     function renderTopStudents() {
-      const top = [...DB.students].sort((a, b) => b.coins - a.coins).slice(0, 3);
+      const top = [...teacherScopedStudents()].sort((a, b) => b.coins - a.coins).slice(0, 3);
       document.getElementById('atop').innerHTML = top.map((s, i) => `
     <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bor2);">
       <span style="font-size:20px;">${['🥇', '🥈', '🥉'][i]}</span>
@@ -6042,7 +6097,7 @@
     </div>`).join('');
     }
     function renderRankList() {
-      const sorted = [...DB.students].sort((a, b) => b.coins - a.coins);
+      const sorted = [...teacherScopedStudents()].sort((a, b) => b.coins - a.coins);
       document.getElementById('adRankList').innerHTML = sorted.map((s, i) => `
     <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bor2);font-size:12px;">
       <span style="color:var(--text3);width:20px;font-family:'JetBrains Mono',monospace;">${i + 1}</span>
@@ -6075,6 +6130,7 @@
       <td><code style="background:var(--card2);padding:2px 6px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);">${s.pass}</code></td>
       <td><span class="badge ${s.streak > 0 ? 'gr' : 'br'}">${s.streak > 0 ? 'FAOL' : 'NOFAOL'}</span></td>
       <td><button class="btn btn-xs" onclick="editStud(${s.id})"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-xs" title="Guruhni o'zgartirish" onclick="openChangeGroupModal(${s.id})"><i class="fas fa-people-arrows"></i></button>
       <button class="btn btn-xs btn-danger" onclick="deleteStud(${s.id})"><i class="fas fa-trash"></i></button></td>
     </tr>`;
       }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:16px;font-family:'JetBrains Mono',monospace;">// Talaba yo'q</td></tr>`;
@@ -6174,6 +6230,7 @@
       const amt = Number(amount) || 0;
       s.coins = (s.coins || 0) + amt;
       if (s.coins < 0) s.coins = 0;
+      s.totalCoins = s.coins; // reytingda darhol to'g'ri ko'rinishi uchun sinxronlab qo'yamiz
       s.coinMap = { ...coinMapOf(s), [primaryTeacherIdOf(s)]: s.coins };
       DB.transactions = DB.transactions || [];
       DB.transactions.push({ studentId: s.id, type, amount: amt, reason: reasonLabel, date: Date.now() });
@@ -6264,11 +6321,105 @@
       const group = document.getElementById('edGrp').value.trim();
       const pass = document.getElementById('edPass').value.trim();
       if (!name) { showToast('❗ Ism kiritilmagan'); return; }
-      s.name = name; s.phone = phone || s.phone; s.group = group || s.group; s.pass = pass || s.pass;
+      const groupChanged = group && group !== s.group;
+      s.name = name; s.phone = phone || s.phone; s.pass = pass || s.pass;
+      if (groupChanged) { applyGroupTransfer(s, group); }
       saveData(); renderStTable(); fillCoinSelects(); if (typeof fillHwSelects === 'function') fillHwSelects(); if (typeof fillLpGroupSel === 'function') fillLpGroupSel();
       closeGlobalModal();
       showToast("✅ Talaba ma'lumotlari yangilandi");
     }
+
+    // ══════════════════════════════════
+    // GURUH O'ZGARTIRISH (talabani boshqa guruhga o'tkazish)
+    // Guruh o'zgarganda talabaning guruhi, o'qituvchisi (agar guruh boshqa
+    // o'qituvchiga tegishli bo'lsa), dars/reyting bilan bog'liq ko'rinishlar
+    // ham to'g'ri yangilanadi.
+    // ══════════════════════════════════
+    function allKnownGroupNames() {
+      const fromGroups = (Array.isArray(DB.groups) ? DB.groups : []).map(g => g.name);
+      const fromStudents = (DB.students || []).map(s => s.group).filter(Boolean);
+      return [...new Set([...fromGroups, ...fromStudents])].sort();
+    }
+    function openChangeGroupModal(id) {
+      const s = DB.students.find(x => x.id === id); if (!s) return;
+      const groups = allKnownGroupNames();
+      openGlobalModal(`
+        <div class="modal-title"><i class="fas fa-people-arrows"></i> Guruhni o'zgartirish</div>
+        <p style="color:var(--text3);font-size:12.5px;margin-bottom:10px;">${escHtml(s.name)} — hozirgi guruh: <b style="color:var(--cyan);">${escHtml(s.group||'—')}</b></p>
+        <div class="form-group"><label>Yangi guruh</label>
+          <select class="form-control" id="chgGrpSel">
+            ${groups.map(g => `<option value="${escHtml(g)}" ${g===s.group?'selected':''}>${escHtml(g)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label>Yoki yangi guruh nomi kiriting</label>
+          <input class="form-control" id="chgGrpNew" placeholder="Masalan: D3">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-cyan" style="flex:1;" onclick="submitChangeGroup(${id})"><i class="fas fa-check"></i> O'tkazish</button>
+        </div>`);
+    }
+    window.openChangeGroupModal = openChangeGroupModal;
+    function submitChangeGroup(id) {
+      const s = DB.students.find(x => x.id === id); if (!s) return;
+      const newTyped = (document.getElementById('chgGrpNew')?.value || '').trim();
+      const newSel = (document.getElementById('chgGrpSel')?.value || '').trim();
+      const newGroup = newTyped || newSel;
+      if (!newGroup) { showToast('❗ Guruhni tanlang yoki nomini kiriting'); return; }
+      if (newGroup === s.group) { showToast('❗ Talaba allaqachon shu guruhda'); closeGlobalModal(); return; }
+      const oldGroup = s.group;
+      applyGroupTransfer(s, newGroup);
+      saveData();
+      closeGlobalModal();
+      showToast(`✅ ${s.name}: "${oldGroup||'—'}" → "${newGroup}" guruhiga o'tkazildi`);
+    }
+    window.submitChangeGroup = submitChangeGroup;
+    // Talabaning guruh, o'qituvchi va bog'liq ko'rinishlarini yangilaydi.
+    // saveData() chaqiruvchi tomonidan amalga oshiriladi.
+    function applyGroupTransfer(s, newGroup) {
+      const oldGroup = s.group;
+      s.group = newGroup;
+      // Yangi guruhga biriktirilgan o'qituvchini aniqlaymiz. Agar guruh hali
+      // hech kimga tegishli bo'lmasa — talabaning joriy o'qituvchisida qoldiramiz
+      // (agar teacher o'zi o'tkazayotgan bo'lsa, o'zini biriktiradi).
+      let newTeacherId = getGroupTeacherId(newGroup);
+      if (!newTeacherId && curUser?.role === 'teacher') newTeacherId = curUser.id;
+      if (newTeacherId) {
+        newTeacherId = Number(newTeacherId) || newTeacherId;
+        s.teacherId = newTeacherId;
+        s.teacherIds = [newTeacherId];
+        setGroupTeacher(newGroup, newTeacherId);
+      }
+      // Guruh coins-map/tanga balansi teacherId asosida saqlanadi — eski
+      // o'qituvchidagi tangalarini yo'qotmasin deb umumiy hisobni saqlab qolamiz.
+      if (newTeacherId) {
+        const total = typeof s.coins === 'number' ? s.coins : coinTotalOf(s);
+        s.coinMap = { ...coinMapOf(s), [newTeacherId]: total };
+      }
+      DB.transactions = DB.transactions || [];
+      DB.transactions.push({ studentId: s.id, type: 'group_change', reason: `Guruh o'zgartirildi: ${oldGroup||'—'} → ${newGroup}`, time: Date.now(), id: (DB.transactions.at(-1)?.id||0)+1 });
+      mPushNotif(s.id, 'announcement', `📚 Sizning guruhingiz o'zgardi: ${oldGroup||'—'} → ${newGroup}`);
+      // Bog'liq barcha ko'rinishlarni darhol yangilaymiz — qo'lda refresh shart emas.
+      try {
+        renderStTable(); fillCoinSelects();
+        if (curUser?.role === 'teacher' || curUser?.role === 'admin') {
+          if (typeof renderTopStudents === 'function') renderTopStudents();
+          if (typeof renderRankList === 'function') renderRankList();
+          if (typeof renderTBody === 'function') renderTBody();
+          if (typeof renderPayReport === 'function') renderPayReport();
+          if (typeof renderAttendanceStats === 'function') renderAttendanceStats();
+          if (typeof renderGrpList === 'function') renderGrpList();
+          if (typeof fillNewStudentGroup === 'function') fillNewStudentGroup();
+          if (typeof fillHwSelects === 'function') fillHwSelects();
+          if (typeof fillLpGroupSel === 'function') fillLpGroupSel();
+        }
+        if (curUser?.role === 'student' && curUser.id === s.id) {
+          curUser.group = newGroup; curUser.teacherId = s.teacherId; curUser.teacherIds = s.teacherIds;
+        }
+        rtRefreshRatingViews();
+      } catch (e) { console.warn('applyGroupTransfer render xatolik:', e); }
+    }
+    window.applyGroupTransfer = applyGroupTransfer;
     function deleteStud(id) {
       const s = DB.students.find(x => x.id === id); if (!s) return;
       openGlobalModal(`
@@ -7269,6 +7420,9 @@
           diamonds -= item.price;
           s.olmos = diamonds;
           s.mktOwned.push(item.name);
+          // Sotib olingan buyum shu turkumdagi birinchi buyum bo'lsa, avtomatik jihozlanadi (equip)
+          if (item.slot === 'avatar' && !s.equippedAvatar) s.equippedAvatar = item.name;
+          if (item.slot === 'badge' && !s.equippedBadge) s.equippedBadge = item.name;
           saveData();
           updateDia(); renderMktPage(); renderCMarket();
           const ppgEl = document.getElementById('ppg');
@@ -7284,12 +7438,133 @@
       }
       else showToast('❌ Olmos yetarli emas!');
     }
+    // Sotib olingan avatar ramka / nishonni jihozlash (equip) yoki yechish (unequip).
+    // Har bir turkumda (avatar/badge) bir vaqtda faqat bitta buyum faol bo'lishi mumkin.
+    function equipMktItem(name) {
+      const s = mGetStudent(); if (!s) { showToast('❗ Avval tizimga kiring'); return; }
+      mEnsureRich(s);
+      if (!s.mktOwned?.includes(name)) { showToast('❗ Avval sotib oling'); return; }
+      const item = mktItems.find(x => x.name === name);
+      if (!item || !item.slot) { showToast('✅ Bu buyum sotib olinganda avtomatik faol bo\'ladi'); return; }
+      if (item.slot === 'avatar') {
+        s.equippedAvatar = (s.equippedAvatar === name) ? null : name;
+        showToast(s.equippedAvatar === name ? '✅ ' + name + ' jihozlandi' : '➖ ' + name + ' yechildi');
+      } else if (item.slot === 'badge') {
+        s.equippedBadge = (s.equippedBadge === name) ? null : name;
+        showToast(s.equippedBadge === name ? '✅ ' + name + ' jihozlandi' : '➖ ' + name + ' yechildi');
+      }
+      saveData();
+      renderMktPage();
+      const ppgEl = document.getElementById('ppg');
+      if (ppgEl && ppgEl.classList.contains('active') && typeof renderProfileV2 === 'function') renderProfileV2();
+    }
+    window.equipMktItem = equipMktItem;
     function updateDia() {
       document.getElementById('csCoins').textContent = diamonds;
       document.getElementById('tbDiamonds').textContent = '💎 ' + diamonds;
       if (document.getElementById('mk_diamonds')) document.getElementById('mk_diamonds').textContent = diamonds + ' 💎';
       const sm = document.getElementById('smCoins'); if (sm) sm.textContent = diamonds;
     }
+
+    // ══════════════════════════════════
+    // VALYUTA TIZIMI: Tanga (🪙) ↔ Olmos (💎)
+    // Kurs sozlamalardan (DB.settings.exchangeRate) boshqariladi:
+    // 1 Olmos = exchangeRate Tanga (so'm → dollar kabi konvertatsiya tizimi).
+    // ══════════════════════════════════
+    function getExchangeRate() { return Math.max(1, apiNum(DB.settings?.exchangeRate, 5)); }
+    function openCurrencyExchangeModal() {
+      const s = mGetStudent();
+      if (!s) { showToast('❗ Avval tizimga kiring'); return; }
+      const rate = getExchangeRate();
+      const coins = Number(s.coins) || 0;
+      openGlobalModal(`
+        <div class="modal-title"><i class="fas fa-right-left"></i> Valyuta almashish</div>
+        <p style="color:var(--text3);font-size:12.5px;margin-bottom:12px;">Joriy kurs: <b style="color:var(--gold);">1 💎 = ${rate} 🪙</b></p>
+        <div style="display:flex;gap:10px;margin-bottom:14px;">
+          <div class="scard" style="flex:1;text-align:center;padding:10px;">
+            <div class="fs11 txt3">Tanga</div>
+            <div class="fs16 fw7" style="color:var(--gold);">🪙 ${coins}</div>
+          </div>
+          <div class="scard" style="flex:1;text-align:center;padding:10px;">
+            <div class="fs11 txt3">Olmos</div>
+            <div class="fs16 fw7" style="color:var(--cyan);">💎 ${diamonds}</div>
+          </div>
+        </div>
+        <div class="form-group"><label>Yo'nalish</label>
+          <select class="form-control" id="exDir">
+            <option value="d2c">💎 Olmosni Tangaga almashtirish</option>
+            <option value="c2d">🪙 Tangani Olmosga almashtirish</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Miqdor</label>
+          <input class="form-control" id="exAmt" type="number" min="1" step="1" placeholder="Masalan: 10">
+        </div>
+        <div class="fs12 txt3" id="exPreview" style="margin-bottom:10px;">—</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-cyan" style="flex:1;" onclick="submitCurrencyExchange()"><i class="fas fa-check"></i> Almashtirish</button>
+        </div>`);
+      const dirEl = document.getElementById('exDir'), amtEl = document.getElementById('exAmt');
+      const updatePreview = () => {
+        const dir = dirEl.value; const amt = Math.max(0, parseInt(amtEl.value) || 0);
+        const prev = document.getElementById('exPreview');
+        if (!prev) return;
+        if (dir === 'd2c') prev.textContent = amt ? `${amt} 💎 → ${amt * rate} 🪙` : '—';
+        else prev.textContent = amt ? `${amt} 🪙 → ${(amt / rate).toFixed(2)} 💎` : '—';
+      };
+      dirEl.addEventListener('change', updatePreview); amtEl.addEventListener('input', updatePreview);
+      setTimeout(() => amtEl.focus(), 50);
+    }
+    window.openCurrencyExchangeModal = openCurrencyExchangeModal;
+    function submitCurrencyExchange() {
+      const s = mGetStudent(); if (!s) return;
+      const rate = getExchangeRate();
+      const dir = document.getElementById('exDir')?.value;
+      const amt = Math.max(0, parseFloat(document.getElementById('exAmt')?.value) || 0);
+      if (!amt || amt <= 0) { showToast('❗ Miqdorni to\'g\'ri kiriting'); return; }
+      if (dir === 'd2c') {
+        if (diamonds < amt) { showToast('❌ Olmos yetarli emas!'); return; }
+        const gained = Math.floor(amt * rate);
+        diamonds -= amt; s.olmos = diamonds;
+        applyCoinChange(s, gained, `Valyuta almashinuvi: ${amt}💎 → ${gained}🪙`, 'exchange');
+        showToast(`✅ ${amt} 💎 → ${gained} 🪙 ga almashtirildi`);
+      } else {
+        const coins = Number(s.coins) || 0;
+        if (coins < amt) { showToast('❌ Tanga yetarli emas!'); return; }
+        const gained = amt / rate;
+        applyCoinChange(s, -amt, `Valyuta almashinuvi: ${amt}🪙 → ${gained.toFixed(2)}💎`, 'exchange');
+        diamonds += gained; s.olmos = diamonds;
+        showToast(`✅ ${amt} 🪙 → ${gained.toFixed(2)} 💎 ga almashtirildi`);
+      }
+      // Balans o'zgarishi darhol saqlanadi va interfeysda ko'rinadi
+      saveData(); updateDia(); closeGlobalModal();
+      const ppgEl = document.getElementById('ppg'); if (ppgEl && ppgEl.classList.contains('active') && typeof renderProfileV2 === 'function') renderProfileV2();
+    }
+    window.submitCurrencyExchange = submitCurrencyExchange;
+
+    // ── Admin: ayirboshlash kursini sozlash ──
+    function openExchangeRateSettingsModal() {
+      if (curUser?.role !== 'admin') { showToast('❗ Faqat admin uchun'); return; }
+      const rate = getExchangeRate();
+      openGlobalModal(`
+        <div class="modal-title"><i class="fas fa-sliders-h"></i> Valyuta kursi sozlamasi</div>
+        <p style="color:var(--text3);font-size:12.5px;margin-bottom:12px;">Hozirgi kurs: 1 💎 (Olmos) = ${rate} 🪙 (Tanga)</p>
+        <div class="form-group"><label>Yangi kurs (1 Olmos = ? Tanga)</label>
+          <input class="form-control" id="exRateInput" type="number" min="1" step="1" value="${rate}">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-cyan" style="flex:1;" onclick="saveExchangeRate()"><i class="fas fa-check"></i> Saqlash</button>
+        </div>`);
+    }
+    window.openExchangeRateSettingsModal = openExchangeRateSettingsModal;
+    function saveExchangeRate() {
+      const val = Math.max(1, parseInt(document.getElementById('exRateInput')?.value) || 1);
+      DB.settings = DB.settings || {}; DB.settings.exchangeRate = val;
+      saveData(); closeGlobalModal();
+      showToast(`✅ Yangi kurs saqlandi: 1 💎 = ${val} 🪙`);
+    }
+    window.saveExchangeRate = saveExchangeRate;
 
     // ── PAGE NAV
     function showPage(id, navEl, title) {
@@ -7321,6 +7596,9 @@
       closeSB();
     }
     function toggleSB() {
+      // Chap tomondagi yon panel (drawer) — mobil va desktopda bir xil:
+      // ☰ tugma bosilganda #sidebar.open klassi silliq animatsiya bilan
+      // chap tomondan chiqadi (CSS transition: transform .3s).
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sbBg').style.display = document.getElementById('sidebar').classList.contains('open') ? 'block' : 'none';
     }
@@ -8889,7 +9167,14 @@
       const dpg = document.getElementById('dpg'); if (!dpg) return;
       const s = mGetStudent();
       dpg.classList.add('active');
-      if (!s) { dpg.innerHTML = `<div class="pg-wrap"><div class="pg-title"><i class="fas fa-home"></i> BOSH SAHIFA</div><div class="pg-sub">Iltimos, tizimga kiring</div></div>`; return; }
+      if (!s) {
+        // Bu sahifa faqat talaba uchun. Agar o'qituvchi/admin yoki umuman
+        // tizimga kirilmagan bo'lsa, noto'g'ri "tizimga kiring" xabarini
+        // chiqarish o'rniga vaziyatga mos xabar beramiz.
+        const msg = curUser ? "Bu sahifa faqat talabalar uchun mavjud" : "Iltimos, tizimga kiring";
+        dpg.innerHTML = `<div class="pg-wrap"><div class="pg-title"><i class="fas fa-home"></i> BOSH SAHIFA</div><div class="pg-sub">${msg}</div></div>`;
+        return;
+      }
       mEnsureRich(s); mSeedStudentDemo(s);
       mGetRanked('overall');
       const coins = Number(s.totalCoins)||0; const lvl = s.level||1; const badge = s.badge||'Starter'; const streak = s.activity?.streak||0;
@@ -9595,6 +9880,10 @@
       <div style="margin-top:16px;">
         <div class="pg-title" style="font-size:16px;"><i class="fas fa-store" style="color:var(--gold);"></i> TA'LIM MAHSULOTLARI DO'KONI</div>
         <div class="pg-sub">Sotib oling, ko'proq bilim oling!</div>
+        <div class="scard mb-16" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div class="fs12 txt3"><i class="fas fa-wallet"></i> Balansingiz: <b style="color:var(--gold);">🪙 ${myCoins}</b> · <b style="color:var(--cyan);">💎 ${diamonds}</b></div>
+          <button class="btn btn-cyan btn-sm" onclick="openCurrencyExchangeModal()"><i class="fas fa-right-left"></i> Valyuta almashish</button>
+        </div>
         <div class="study-tabs mb-16">
           <button class="st-tab active"><i class="fas fa-border-all"></i> Barchasi</button>
           <button class="st-tab"><i class="fas fa-layer-group"></i> Kurslar</button>
@@ -9634,19 +9923,14 @@
     function buyProduct(pid, coins) {
       const s = mGetStudent(); if (!s) { showToast('Avval tizimga kiring','error'); return; }
       mEnsureRich(s);
-      const curCoins = Number(s.totalCoins)||0;
+      const curCoins = Number(s.coins)||0;
       if (curCoins < coins) { mToast(`Tanga yetarli emas!`,'error','❌ Xatolik'); return; }
-      s.totalCoins = curCoins - coins;
-      const teacherId = s.teacherId || 1;
-      if (typeof s.coins !== 'object' || !s.coins) s.coins = {};
-      const sub = Number(s.coins[teacherId]||0) - coins;
-      s.coins[teacherId] = Math.max(0, sub);
       s.purchasedProducts = s.purchasedProducts||[];
       if (!s.purchasedProducts.includes(pid)) s.purchasedProducts.push(pid);
-      DB.transactions = DB.transactions || [];
-      DB.transactions.push({ studentId: s.id, type: 'purchase', coins: -coins, reason: 'Market: '+MODERN_PRODUCTS.find(x=>x.id===pid)?.name, time: Date.now(), id: (DB.transactions.at(-1)?.id||0)+1 });
+      applyCoinChange(s, -coins, 'Market: '+MODERN_PRODUCTS.find(x=>x.id===pid)?.name, 'purchase', false);
       mPushNotif(s.id,'announcement','Sotib olish muvaffaqiyatli: '+MODERN_PRODUCTS.find(x=>x.id===pid)?.name);
       saveData(); mToast('Muvaffaqiyatli sotib olindi!','success','🎉 Tabrik'); renderMarketV2();
+      const ppgEl = document.getElementById('ppg'); if (ppgEl && ppgEl.classList.contains('active') && typeof renderProfileV2 === 'function') renderProfileV2();
     }
     window.buyProduct = buyProduct;
 
@@ -9680,7 +9964,6 @@
           if (sNav && !sNav.dataset.v2Added) {
             sNav.dataset.v2Added = '1';
             const extraItems = [
-              { onclick:"showPage('studypg',this,'O\\'QISH')", icon:'fas fa-book-open', label:"O'qish" },
               { onclick:"showPage('scorespg',this,'NATIJALAR')", icon:'fas fa-chart-bar', label:'Natijalar' },
               { onclick:"showPage('progresspg',this,'RIVOJLANISH')", icon:'fas fa-chart-line', label:'Rivojlanish' },
               { onclick:"showPage('achpg',this,'YUTUQLAR')", icon:'fas fa-medal', label:'Yutuqlar' },
@@ -9720,6 +10003,65 @@
     }
     window.addEventListener('load', () => { _tryAuto(); setTimeout(()=>{ if(curUser) modernBootstrapAfterInit(); }, 400); });
     setTimeout(_tryAuto, 50);
+
+    // ══════════════════════════════════
+    // REYTING — REAL VAQTDA YANGILANISH
+    // Bir nechta oyna/qurilmada bir vaqtda ishlaganda ham (localStorage
+    // orqali) reyting va statistika qo'lda refresh qilmasdan yangilanadi.
+    // ══════════════════════════════════
+    function rtRefreshRatingViews() {
+      if (!curUser) return;
+      try {
+        if (curUser.role === 'student') {
+          const dpg = document.getElementById('dpg');
+          if (dpg && dpg.classList.contains('active')) renderDashboardV2();
+          const rpg = document.getElementById('rpg');
+          if (rpg && rpg.classList.contains('active') && typeof renderRankingV2 === 'function') renderRankingV2();
+          const ppg = document.getElementById('ppg');
+          if (ppg && ppg.classList.contains('active') && typeof renderProfileV2 === 'function') renderProfileV2();
+        } else if (curUser.role === 'teacher' || curUser.role === 'admin') {
+          const adpg = document.getElementById('adpg');
+          if (adpg && adpg.classList.contains('active')) {
+            if (typeof renderTopStudents === 'function') renderTopStudents();
+            if (typeof renderRankList === 'function') renderRankList();
+          }
+          const stpg = document.getElementById('stpg');
+          if (stpg && stpg.classList.contains('active') && typeof renderStTable === 'function') renderStTable();
+        }
+      } catch (e) { console.warn('rtRefreshRatingViews xatolik:', e); }
+    }
+    window.rtRefreshRatingViews = rtRefreshRatingViews;
+
+    // Bitta oynada ball qo'shilganda/kamayganda darhol ko'rinishi uchun —
+    // saveData() har chaqirilganda reytingni qayta hisoblab, ko'rinishni yangilaymiz.
+    const _origSaveDataRt = saveData;
+    saveData = function(...args) {
+      const r = _origSaveDataRt.apply(this, args);
+      setTimeout(rtRefreshRatingViews, 200);
+      return r;
+    };
+    window.saveData = saveData;
+
+    // Boshqa oyna/tabda ma'lumot o'zgarganda (localStorage 'storage' hodisasi
+    // orqali) joriy oynadagi DB'ni ham yangilab, reytingni qayta chizamiz.
+    window.addEventListener('storage', (e) => {
+      if (e.key !== LOCAL_KEY || !e.newValue) return;
+      try {
+        const data = JSON.parse(e.newValue);
+        if (hasRealData(data)) {
+          applyLoadedData(data);
+          rtRefreshRatingViews();
+          if (curUser?.role === 'teacher' || curUser?.role === 'admin') {
+            if (typeof renderTBody === 'function') renderTBody();
+            if (typeof renderPayReport === 'function') renderPayReport();
+          }
+        }
+      } catch (err) { console.warn('Cross-tab sync xatolik:', err); }
+    });
+
+    // Bir xil oyna ichida ham (masalan interval asosidagi jarayonlar) reyting
+    // doim yangi bo'lishi uchun har 5 soniyada faol ko'rinishni yangilaymiz.
+    setInterval(rtRefreshRatingViews, 5000);
 
     if (typeof window.showToast === 'function' && !window._origShowToast) {
       window._origShowToast = window.showToast;
