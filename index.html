@@ -2108,6 +2108,12 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, .4), 0 0 15px var(--cyan-glow);
     }
 
+    .mkt-disabled {
+      pointer-events: none;
+      opacity: .55 !important;
+      filter: grayscale(.3);
+    }
+
     .mkt-icon {
       font-size: 28px;
       margin-bottom: 6px;
@@ -5900,6 +5906,7 @@
       initApp();
     }
     function doLogout() {
+      stopMarketSync();
       curUser = null; curChat = null;
       clearSession();
       document.getElementById('topbar').style.display = 'none';
@@ -5966,6 +5973,9 @@
       else { initA(); showPage('admpg', null, 'ADMIN DASHBOARD'); }
       renderCChats(); renderCFriends(); renderCReqs(); renderCMarket();
       initEP(); initSP(); initReactPick(); renderMktPage(); fillCoinSelects();
+      // Talaba bo'lsa — coin/olmos/inventar/equip holatini serverdan tortib,
+      // sinxronlab turamiz (login, refresh, boshqa qurilma — hammasida bir xil bo'lishi uchun)
+      if (r === 'student') startMarketSync(); else stopMarketSync();
     }
 
     function initS() {
@@ -7403,61 +7413,187 @@
       if (s) mEnsureRich(s);
       const owned = new Set(s?.mktOwned || []);
       document.getElementById('mktGrid').innerHTML = mktItems.map((item, i) => `
-    <div class="mkt-card ${owned.has(item.name) ? 'owned' : ''}" onclick="buyItem(${i})" style="${owned.has(item.name) ? 'opacity:.7;' : ''}">
+    <div class="mkt-card ${owned.has(item.name) ? 'owned' : ''} ${mktBusy ? 'mkt-disabled' : ''}" onclick="${mktBusy ? '' : `buyItem(${i})`}" style="${owned.has(item.name) ? 'opacity:.7;' : ''}">
       <div class="mkt-icon">${item.icon}</div>
       <div class="mkt-name">${item.name}</div>
       <div class="mkt-price">${owned.has(item.name) ? '✅ Olingan' : '💎 ' + item.price}</div>
     </div>`).join('');
     }
-    function buyItem(i) {
-      const item = mktItems[i];
-      if (curUser?.role === 'student') {
-        const s = DB.students.find(x => x.id === curUser.id);
-        if (s) {
-          mEnsureRich(s);
-          if (s.mktOwned.includes(item.name)) { showToast('✅ Bu buyum allaqachon sizda bor'); return; }
-          if (diamonds < item.price) { showToast('❌ Olmos yetarli emas!'); return; }
-          diamonds -= item.price;
-          s.olmos = diamonds;
-          s.mktOwned.push(item.name);
-          // Sotib olingan buyum shu turkumdagi birinchi buyum bo'lsa, avtomatik jihozlanadi (equip)
-          if (item.slot === 'avatar' && !s.equippedAvatar) s.equippedAvatar = item.name;
-          if (item.slot === 'badge' && !s.equippedBadge) s.equippedBadge = item.name;
-          saveData();
-          updateDia(); renderMktPage(); renderCMarket();
-          const ppgEl = document.getElementById('ppg');
-          if (ppgEl && ppgEl.classList.contains('active')) renderProfileV2();
-          showToast('✅ ' + item.name + ' sotib olindi va profilingizga qo\'shildi!');
-          return;
-        }
+
+    // ══════════════════════════════════════════════════
+    // MARKET / TANGA / OLMOS — SERVER BILAN ISHLASH QATLAMI
+    // ══════════════════════════════════════════════════
+    // Bu bo'lim endi balansni O'ZI HISOBLAMAYDI. Har bir xarid, jihozlash va
+    // valyuta almashinuvi so'rovi backendga yuboriladi; ekranda faqat serverdan
+    // qaytgan (tasdiqlangan) natija ko'rsatiladi. Agar server javob bermasa yoki
+    // xatolik qaytarsa, balans/inventar HECH QACHON frontendda o'zgartirilmaydi —
+    // bu firibgarlikning oldini oladi (masalan, tarmoqni o'chirib balansni
+    // "hiyla bilan" ko'paytirish imkonsiz bo'ladi).
+    //
+    // KUTILAYOTGAN BACKEND SHARTNOMASI (API CONTRACT):
+    // Har bir so'rov 'credentials: same-origin' bilan yuboriladi (agar backend
+    // sessiya cookie ishlatsa — avtomatik boradi). Baribir studentId ham
+    // yuboriladi, LEKIN backend hech qachon shunga ishonmasligi kerak: u
+    // studentId ni albatta joriy sessiyaga tegishli ekanini serverda o'zi
+    // tekshirishi, va barcha balans/inventar amallarini faqat shu tekshiruvdan
+    // keyin bajarishi shart. Frontend faqat so'rov yuboradi va javobni
+    // ko'rsatadi — hisob-kitobni hech qachon o'zi qilmaydi.
+    //
+    //  GET  /api/market/state?studentId=ID
+    //       -> 200 { ok:true, state:{ coins, diamonds, mktOwned:[names],
+    //                purchasedProducts:[ids], equippedAvatar, equippedBadge,
+    //                exchangeRate } }
+    //
+    //  POST /api/market/buy-item        body:{ studentId, itemIndex }
+    //  POST /api/market/buy-product     body:{ studentId, productId }
+    //  POST /api/market/equip           body:{ studentId, name }
+    //  POST /api/currency/exchange      body:{ studentId, direction:'d2c'|'c2d', amount }
+    //  POST /api/admin/exchange-rate    body:{ rate }              (faqat admin)
+    //
+    //       Muvaffaqiyatli javob doim: { ok:true, state:{...yuqoridagidek...} }
+    //       Xatolik javobi doim:      { ok:false, error:'CODE' }  (pastdagi
+    //       MARKET_ERR_MSG jadvaliga qarang — shu kodlar frontendda tarjima
+    //       qilinadi, shuning uchun backend aynan shu kodlardan foydalansa
+    //       kifoya, matnni frontend o'zi ko'rsatadi).
+    //
+    //  Backend albatta bajarishi shart bo'lgan tekshiruvlar:
+    //   - Xarid narxi joriy balansdan katta bo'lsa -> {error:'insufficient_balance'}
+    //     va HECH NARSA yechilmasin/yozilmasin.
+    //   - Bir martalik buyum allaqachon sotib olingan bo'lsa -> {error:'already_owned'}
+    //   - Balansdan yechish faqat xarid MUVAFFAQIYATLI yozilgandan keyin (bitta
+    //     atomik tranzaksiya/DB transaction ichida) amalga oshsin.
+    //   - Almashinuv kursi (exchangeRate) faqat serverdagi settings jadvalidan
+    //     olinsin, frontend yubormaydi va yuborsa ham e'tiborga olinmasin.
+    let mktBusy = false; // bitta so'rov tugamasdan ikkinchisi yuborilishining oldini oladi
+    let mktSyncTimer = null;
+
+    const MARKET_ERR_MSG = {
+      insufficient_balance: '❌ Mablag\' yetarli emas!',
+      already_owned: '✅ Bu buyum allaqachon sizda bor',
+      not_owned: '❗ Avval sotib oling',
+      invalid_amount: '❗ Miqdorni to\'g\'ri kiriting',
+      invalid_item: '❌ Noto\'g\'ri mahsulot',
+      unauthorized: '❗ Avval tizimga kiring',
+      network_error: '❌ Serverga ulanib bo\'lmadi. Internetni tekshiring va qayta urinib ko\'ring.',
+      server_error: '❌ Serverda xatolik yuz berdi. Birozdan so\'ng qayta urinib ko\'ring.'
+    };
+    function mktErrMsg(err) { return MARKET_ERR_MSG[err] || MARKET_ERR_MSG.server_error; }
+
+    // Serverdan qaytgan tasdiqlangan holatni joriy foydalanuvchining local
+    // ko'rinishiga qo'llaydi (faqat KO'RSATISH uchun; hisob-kitob emas).
+    function applyMarketState(state) {
+      if (!state) return;
+      const s = mGetStudent();
+      if (s) {
+        mEnsureRich(s);
+        if (state.coins !== undefined) { s.coins = state.coins; s.totalCoins = state.coins; }
+        if (state.diamonds !== undefined) s.olmos = state.diamonds;
+        if (Array.isArray(state.mktOwned)) s.mktOwned = state.mktOwned;
+        if (Array.isArray(state.purchasedProducts)) s.purchasedProducts = state.purchasedProducts;
+        if ('equippedAvatar' in state) s.equippedAvatar = state.equippedAvatar;
+        if ('equippedBadge' in state) s.equippedBadge = state.equippedBadge;
       }
-      if (diamonds >= item.price) {
-        diamonds -= item.price;
-        saveData();
-        updateDia(); renderMktPage(); renderCMarket(); showToast('✅ ' + item.name + ' sotib olindi!');
-      }
-      else showToast('❌ Olmos yetarli emas!');
-    }
-    // Sotib olingan avatar ramka / nishonni jihozlash (equip) yoki yechish (unequip).
-    // Har bir turkumda (avatar/badge) bir vaqtda faqat bitta buyum faol bo'lishi mumkin.
-    function equipMktItem(name) {
-      const s = mGetStudent(); if (!s) { showToast('❗ Avval tizimga kiring'); return; }
-      mEnsureRich(s);
-      if (!s.mktOwned?.includes(name)) { showToast('❗ Avval sotib oling'); return; }
-      const item = mktItems.find(x => x.name === name);
-      if (!item || !item.slot) { showToast('✅ Bu buyum sotib olinganda avtomatik faol bo\'ladi'); return; }
-      if (item.slot === 'avatar') {
-        s.equippedAvatar = (s.equippedAvatar === name) ? null : name;
-        showToast(s.equippedAvatar === name ? '✅ ' + name + ' jihozlandi' : '➖ ' + name + ' yechildi');
-      } else if (item.slot === 'badge') {
-        s.equippedBadge = (s.equippedBadge === name) ? null : name;
-        showToast(s.equippedBadge === name ? '✅ ' + name + ' jihozlandi' : '➖ ' + name + ' yechildi');
-      }
-      saveData();
-      renderMktPage();
+      if (state.diamonds !== undefined) diamonds = state.diamonds;
+      if (state.exchangeRate !== undefined) { DB.settings = DB.settings || {}; DB.settings.exchangeRate = state.exchangeRate; }
+      // Faqat vaqtinchalik keshni yangilaymiz (asosiy va ishonchli manba — server/database)
+      try { localStorage.setItem(LOCAL_KEY, JSON.stringify(toApiData())); } catch (e) {}
+      updateDia(); renderMktPage(); renderCMarket();
       const ppgEl = document.getElementById('ppg');
       if (ppgEl && ppgEl.classList.contains('active') && typeof renderProfileV2 === 'function') renderProfileV2();
+      const mvEl = document.getElementById('marketV2Wrap');
+      if (mvEl && mvEl.innerHTML && typeof renderMarketV2 === 'function') renderMarketV2();
     }
+
+    // Umumiy yordamchi: market/valyuta bilan bog'liq har qanday POST so'rovni
+    // backendga yuboradi va natijani standart ko'rinishda qaytaradi.
+    async function mktRequest(url, body) {
+      let res;
+      try {
+        res = await fetch(url, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      } catch (e) {
+        return { ok: false, error: 'network_error' };
+      }
+      let data = null;
+      try { data = await res.json(); } catch (e) { /* bo'sh yoki noto'g'ri javob */ }
+      if (!res.ok || !data || data.ok !== true) {
+        return { ok: false, error: (data && data.error) || 'server_error' };
+      }
+      return data;
+    }
+
+    // Sahifa ochilganda / login qilinganda / boshqa qurilmadan kirilganda —
+    // haqiqiy balans va inventarni serverdan olib, ko'rsatilayotganini
+    // sinxronlab qo'yamiz (frontend hech qachon o'zi to'qib chiqarmaydi).
+    async function fetchMarketState(silent) {
+      if (!curUser || curUser.role !== 'student') return;
+      try {
+        const res = await fetch('/api/market/state?studentId=' + encodeURIComponent(curUser.id), { credentials: 'same-origin', cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (data && data.ok && data.state) applyMarketState(data.state);
+      } catch (e) {
+        if (!silent) showToast(mktErrMsg('network_error'));
+        console.warn('Market holatini serverdan olishda xatolik', e);
+      }
+    }
+    // Talaba tizimga kirgan davomida balansning barcha qurilmalarda "deyarli
+    // real vaqt"da sinxron ko'rinishi uchun davriy so'rov (backend keyinchalik
+    // websocket/SSE qo'shsa, bu polling shunga almashtirilishi mumkin).
+    function startMarketSync() {
+      stopMarketSync();
+      fetchMarketState(true);
+      mktSyncTimer = setInterval(() => fetchMarketState(true), 15000);
+      window.addEventListener('focus', mktSyncOnFocus);
+      document.addEventListener('visibilitychange', mktSyncOnFocus);
+    }
+    function stopMarketSync() {
+      if (mktSyncTimer) clearInterval(mktSyncTimer);
+      mktSyncTimer = null;
+      window.removeEventListener('focus', mktSyncOnFocus);
+      document.removeEventListener('visibilitychange', mktSyncOnFocus);
+    }
+    function mktSyncOnFocus() { if (document.visibilityState !== 'hidden') fetchMarketState(true); }
+
+    async function buyItem(i) {
+      if (mktBusy) return;
+      const item = mktItems[i];
+      if (!item) { showToast(mktErrMsg('invalid_item')); return; }
+      if (curUser?.role !== 'student') { showToast(mktErrMsg('unauthorized')); return; }
+      const s = mGetStudent(); if (!s) { showToast(mktErrMsg('unauthorized')); return; }
+      mEnsureRich(s);
+      if (s.mktOwned.includes(item.name)) { showToast(mktErrMsg('already_owned')); return; }
+      mktBusy = true; renderMktPage();
+      const result = await mktRequest('/api/market/buy-item', { studentId: curUser.id, itemIndex: i });
+      mktBusy = false;
+      if (!result.ok) { showToast(mktErrMsg(result.error)); renderMktPage(); return; }
+      applyMarketState(result.state);
+      showToast('✅ ' + item.name + ' sotib olindi va profilingizga qo\'shildi!');
+    }
+    window.buyItem = buyItem;
+    // Sotib olingan avatar ramka / nishonni jihozlash (equip) yoki yechish (unequip).
+    // Har bir turkumda (avatar/badge) bir vaqtda faqat bitta buyum faol bo'lishi mumkin.
+    // Bu holat ham serverda saqlanadi, shuning uchun barcha qurilmalarda bir xil ko'rinadi.
+    async function equipMktItem(name) {
+      if (mktBusy) return;
+      const s = mGetStudent(); if (!s) { showToast(mktErrMsg('unauthorized')); return; }
+      mEnsureRich(s);
+      if (!s.mktOwned?.includes(name)) { showToast(mktErrMsg('not_owned')); return; }
+      const item = mktItems.find(x => x.name === name);
+      if (!item || !item.slot) { showToast('✅ Bu buyum sotib olinganda avtomatik faol bo\'ladi'); return; }
+      mktBusy = true;
+      const result = await mktRequest('/api/market/equip', { studentId: curUser.id, name });
+      mktBusy = false;
+      if (!result.ok) { showToast(mktErrMsg(result.error)); return; }
+      applyMarketState(result.state);
+      const nowEquipped = item.slot === 'avatar' ? (result.state.equippedAvatar === name) : (result.state.equippedBadge === name);
+      showToast(nowEquipped ? '✅ ' + name + ' jihozlandi' : '➖ ' + name + ' yechildi');
+    }
+    window.equipMktItem = equipMktItem;
     window.equipMktItem = equipMktItem;
     function updateDia() {
       document.getElementById('csCoins').textContent = diamonds;
@@ -7516,33 +7652,31 @@
       setTimeout(() => amtEl.focus(), 50);
     }
     window.openCurrencyExchangeModal = openCurrencyExchangeModal;
-    function submitCurrencyExchange() {
+    // Tanga <-> Olmos almashinuvi endi TO'LIQ backend orqali amalga oshadi.
+    // Kurs ham, hisoblash ham, balansdan yechish/qo'shish ham — bari serverda.
+    // Frontend faqat so'rov yuboradi va serverdan qaytgan tasdiqlangan
+    // balansni ko'rsatadi (POST /api/currency/exchange — yuqoridagi shartnomaga q.).
+    async function submitCurrencyExchange() {
+      if (mktBusy) return;
       const s = mGetStudent(); if (!s) return;
-      const rate = getExchangeRate();
       const dir = document.getElementById('exDir')?.value;
       const amt = Math.max(0, parseFloat(document.getElementById('exAmt')?.value) || 0);
-      if (!amt || amt <= 0) { showToast('❗ Miqdorni to\'g\'ri kiriting'); return; }
-      if (dir === 'd2c') {
-        if (diamonds < amt) { showToast('❌ Olmos yetarli emas!'); return; }
-        const gained = Math.floor(amt * rate);
-        diamonds -= amt; s.olmos = diamonds;
-        applyCoinChange(s, gained, `Valyuta almashinuvi: ${amt}💎 → ${gained}🪙`, 'exchange');
-        showToast(`✅ ${amt} 💎 → ${gained} 🪙 ga almashtirildi`);
-      } else {
-        const coins = Number(s.coins) || 0;
-        if (coins < amt) { showToast('❌ Tanga yetarli emas!'); return; }
-        const gained = amt / rate;
-        applyCoinChange(s, -amt, `Valyuta almashinuvi: ${amt}🪙 → ${gained.toFixed(2)}💎`, 'exchange');
-        diamonds += gained; s.olmos = diamonds;
-        showToast(`✅ ${amt} 🪙 → ${gained.toFixed(2)} 💎 ga almashtirildi`);
-      }
-      // Balans o'zgarishi darhol saqlanadi va interfeysda ko'rinadi
-      saveData(); updateDia(); closeGlobalModal();
-      const ppgEl = document.getElementById('ppg'); if (ppgEl && ppgEl.classList.contains('active') && typeof renderProfileV2 === 'function') renderProfileV2();
+      if (!amt || amt <= 0) { showToast(mktErrMsg('invalid_amount')); return; }
+      const btn = document.querySelector('#globalModal .btn-cyan');
+      if (btn) { btn.disabled = true; btn.style.opacity = '.6'; }
+      mktBusy = true;
+      const result = await mktRequest('/api/currency/exchange', { studentId: curUser.id, direction: dir, amount: amt });
+      mktBusy = false;
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+      if (!result.ok) { showToast(mktErrMsg(result.error)); return; }
+      applyMarketState(result.state);
+      closeGlobalModal();
+      if (dir === 'd2c') showToast(`✅ ${amt} 💎 → 🪙 ga almashtirildi`);
+      else showToast(`✅ ${amt} 🪙 → 💎 ga almashtirildi`);
     }
     window.submitCurrencyExchange = submitCurrencyExchange;
 
-    // ── Admin: ayirboshlash kursini sozlash ──
+    // ── Admin: ayirboshlash kursini sozlash (bu ham serverdagi settings'ga yoziladi) ──
     function openExchangeRateSettingsModal() {
       if (curUser?.role !== 'admin') { showToast('❗ Faqat admin uchun'); return; }
       const rate = getExchangeRate();
@@ -7558,11 +7692,17 @@
         </div>`);
     }
     window.openExchangeRateSettingsModal = openExchangeRateSettingsModal;
-    function saveExchangeRate() {
+    async function saveExchangeRate() {
+      if (mktBusy) return;
       const val = Math.max(1, parseInt(document.getElementById('exRateInput')?.value) || 1);
-      DB.settings = DB.settings || {}; DB.settings.exchangeRate = val;
-      saveData(); closeGlobalModal();
-      showToast(`✅ Yangi kurs saqlandi: 1 💎 = ${val} 🪙`);
+      mktBusy = true;
+      const result = await mktRequest('/api/admin/exchange-rate', { rate: val });
+      mktBusy = false;
+      if (!result.ok) { showToast(mktErrMsg(result.error)); return; }
+      DB.settings = DB.settings || {};
+      DB.settings.exchangeRate = (result.state && result.state.exchangeRate) || val;
+      closeGlobalModal();
+      showToast(`✅ Yangi kurs saqlandi: 1 💎 = ${DB.settings.exchangeRate} 🪙`);
     }
     window.saveExchangeRate = saveExchangeRate;
 
@@ -9920,17 +10060,21 @@
         </div>
       </div>`;
     }
-    function buyProduct(pid, coins) {
-      const s = mGetStudent(); if (!s) { showToast('Avval tizimga kiring','error'); return; }
+    // Ta'lim mahsulotlarini (kurs/test/kitob/video/premium) sotib olish ham
+    // endi to'liq backend orqali: narx, egalik va balans server tomonida
+    // tekshiriladi va yoziladi (POST /api/market/buy-product).
+    async function buyProduct(pid, coins) {
+      if (mktBusy) return;
+      const s = mGetStudent(); if (!s) { mToast('Avval tizimga kiring','error'); return; }
       mEnsureRich(s);
-      const curCoins = Number(s.coins)||0;
-      if (curCoins < coins) { mToast(`Tanga yetarli emas!`,'error','❌ Xatolik'); return; }
-      s.purchasedProducts = s.purchasedProducts||[];
-      if (!s.purchasedProducts.includes(pid)) s.purchasedProducts.push(pid);
-      applyCoinChange(s, -coins, 'Market: '+MODERN_PRODUCTS.find(x=>x.id===pid)?.name, 'purchase', false);
-      mPushNotif(s.id,'announcement','Sotib olish muvaffaqiyatli: '+MODERN_PRODUCTS.find(x=>x.id===pid)?.name);
-      saveData(); mToast('Muvaffaqiyatli sotib olindi!','success','🎉 Tabrik'); renderMarketV2();
-      const ppgEl = document.getElementById('ppg'); if (ppgEl && ppgEl.classList.contains('active') && typeof renderProfileV2 === 'function') renderProfileV2();
+      if (s.purchasedProducts?.includes(pid)) { mToast(mktErrMsg('already_owned'),'error'); return; }
+      mktBusy = true; renderMarketV2();
+      const result = await mktRequest('/api/market/buy-product', { studentId: curUser.id, productId: pid });
+      mktBusy = false;
+      if (!result.ok) { mToast(mktErrMsg(result.error), 'error', '❌ Xatolik'); renderMarketV2(); return; }
+      applyMarketState(result.state);
+      mPushNotif(s.id, 'announcement', 'Sotib olish muvaffaqiyatli: ' + (MODERN_PRODUCTS.find(x => x.id === pid)?.name || ''));
+      mToast('Muvaffaqiyatli sotib olindi!', 'success', '🎉 Tabrik');
     }
     window.buyProduct = buyProduct;
 
