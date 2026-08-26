@@ -4080,7 +4080,7 @@
         <div class="nav-item" onclick="showPage('testspg',this,'TESTLAR')"><i class="fas fa-file-alt"></i> Testlar</div>
         <div class="nav-item" onclick="showPage('slpg',this,'DARS MAVZUSI')"><i class="fas fa-book-open"></i> Dars mavzusi</div>
         <div class="nav-item" onclick="showPage('hwspg',this,'VAZIFALARIM')"><i class="fas fa-tasks"></i> Vazifalarim <span class="badge-notif" id="hwPendingBadge" style="display:none;">0</span></div>
-        <div class="nav-item" onclick="showPage('battlepg',this,'BILIM BELLASHUVI')"><i class="fas fa-bolt"></i> Bilim bellashuvi</div>
+        <!-- <div class="nav-item" onclick="showPage('battlepg',this,'BILIM BELLASHUVI')"><i class="fas fa-bolt"></i> Bilim bellashuvi</div> -->
         <div class="nav-sec">Hisob</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
       </nav>
@@ -4562,6 +4562,15 @@
               <div class="cb" style="padding:10px;">
                 <div id="adRankList"></div>
               </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px;">
+            <div class="ch" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <h4><i class="fas fa-layer-group"></i> GURUH REYTINGI</h4>
+              <select id="tGroupRankSel" class="form-control" style="max-width:220px;" onchange="renderTeacherGroupRank()"></select>
+            </div>
+            <div class="cb" style="padding:10px;">
+              <div id="tGroupRankList"></div>
             </div>
           </div>
         </div>
@@ -5299,6 +5308,15 @@
               </div>
             </div>
           </div>
+          <div class="card" style="margin-top:16px;">
+            <div class="ch" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <h4><i class="fas fa-layer-group"></i> GURUH REYTINGI (BARCHA GURUHLAR)</h4>
+              <select id="admGroupRankSel" class="form-control" style="max-width:220px;" onchange="renderAdminGroupRank()"></select>
+            </div>
+            <div class="cb" style="padding:10px;">
+              <div id="admGroupRankList"></div>
+            </div>
+          </div>
         </div>
 
         <div class="page" id="tpg">
@@ -6034,7 +6052,7 @@
       document.getElementById('tp_name').textContent = curUser.name;
       document.getElementById('tp_code').textContent = curUser.code || 'TCH-???';
       refreshTelegramLinkUI();
-      renderTopStudents(); renderRankList(); renderStTable(); renderTBody(); renderPayReport();
+      renderTopStudents(); renderRankList(); renderStTable(); renderTBody(); renderPayReport(); renderTeacherGroupRank();
       renderTeacherTests(); renderTestResults(); fillRpGroupSel(); renderAttendanceStats();
       fillNewStudentGroup(); renderGrpList();
       fillHwSelects(); renderHwTeacherList(); renderMaterialsTeacher(); renderLessonPlans();
@@ -6049,7 +6067,7 @@
       document.getElementById('tp_code').textContent = curUser.code || 'ADM-???';
       refreshTelegramLinkUI();
       renderStTable(); renderTBody(); renderPayReport();
-      fillNewStudentGroup(); renderGrpList();
+      fillNewStudentGroup(); renderGrpList(); renderAdminGroupRank();
     }
     function getLevelName(l) { return ["Starter", "Beginner", "Advanced", "Pro", "Expert", "Master"][l - 1] || "Legend"; }
     function getColor(idx) { return COLORS[idx % COLORS.length]; }
@@ -6422,6 +6440,8 @@
           if (typeof fillNewStudentGroup === 'function') fillNewStudentGroup();
           if (typeof fillHwSelects === 'function') fillHwSelects();
           if (typeof fillLpGroupSel === 'function') fillLpGroupSel();
+          if (typeof renderTeacherGroupRank === 'function') renderTeacherGroupRank();
+          if (typeof renderAdminGroupRank === 'function') renderAdminGroupRank();
         }
         if (curUser?.role === 'student' && curUser.id === s.id) {
           curUser.group = newGroup; curUser.teacherId = s.teacherId; curUser.teacherIds = s.teacherIds;
@@ -8651,17 +8671,24 @@
         el.innerHTML = `<div class="card"><div class="cb" style="color:var(--text3);font-size:13px;text-align:center;padding:30px;font-family:'JetBrains Mono',monospace;">// Test mavjud emas</div></div>`;
         return;
       }
-      const myResults = (DB.testResults || []).filter(r => r.studentId === curUser.id);
+      const myResults = (DB.testResults || []).filter(r => r.studentId === curUser.id && r.testId != null);
       el.innerHTML = tests.map(t => {
-        const done = myResults.find(r => r.testId === t.id);
+        // Bir kunda faqat 1 marta: shu test bo'yicha BUGUNGI urinish bo'lsa — qulflanadi,
+        // ertaga (kun almashganda) avtomatik qayta ochiladi. Oldingi kunlardagi natijalar tarixda saqlanadi.
+        const myAttempts = myResults.filter(r => r.testId === t.id).sort((a, b) => (b.date || 0) - (a.date || 0));
+        const last = myAttempts[0];
+        const doneToday = last && isToday(last.date);
+        const commentHtml = last && last.teacherComment
+          ? `<div style="font-size:11px;color:var(--gold);margin-top:6px;"><i class="fas fa-comment-dots"></i> O'qituvchi izohi: ${escHtml(last.teacherComment)}</div>` : '';
         return `<div class="card">
           <div class="ch"><h4>${t.title}</h4><span class="badge bg">${t.coinPer}🪙/savol</span></div>
           <div class="cb" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
             <div style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${t.questions.length} ta savol · ${t.teacherName}${t.timeLimit ? ' · ⏱️ ' + t.timeLimit + ' daqiqa' : ''}</div>
-            ${done
-            ? `<span class="badge gr">✅ ${done.correct}/${done.total} · +${done.coinsEarned}🪙</span>`
-            : `<button class="btn btn-gold btn-sm" onclick="startTest('${t.id}')"><i class="fas fa-play"></i> Boshlash</button>`}
+            ${doneToday
+            ? `<span class="badge gr">✅ ${last.correct}/${last.total} · +${last.coinsEarned}🪙 · ertaga qayta topshirasiz</span>`
+            : `<button class="btn btn-gold btn-sm" onclick="startTest('${t.id}')"><i class="fas fa-play"></i> ${last ? 'Qayta topshirish' : 'Boshlash'}</button>${last ? `<span class="badge gr" style="margin-left:6px;">Oxirgi: ${last.correct}/${last.total}</span>` : ''}`}
           </div>
+          ${commentHtml}
         </div>`;
       }).join('');
     }
@@ -8675,6 +8702,8 @@
     });
     function startTest(id) {
       const t = (DB.tests || []).find(x => x.id === id); if (!t) return;
+      const already = (DB.testResults || []).some(r => r.testId === id && r.studentId === curUser.id && isToday(r.date));
+      if (already) { showToast('⏳ Siz bu testni bugun allaqachon topshirdingiz. Ertaga qayta urinib ko\'ring!'); renderStudentTests(); return; }
       curTakingTest = t; curTakingAnswers = new Array(t.questions.length).fill(null);
       document.getElementById('ttTitle').textContent = t.title;
       document.getElementById('ttBody').innerHTML = t.questions.map((q, qi) => `
@@ -8755,6 +8784,8 @@
       { q: "API nimani anglatadi?", opts: ["Application Programming Interface", "Auto Program Install", "App Process Index", "Active Page Info"], correct: 0 },
     ];
     function todayKey() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+    function dayKeyOf(ts) { const d = new Date(Number(ts) || 0); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+    function isToday(ts) { return dayKeyOf(ts) === todayKey(); }
     function hasPlayedToday() {
       if (!curUser) return true;
       const key = accountKey(curUser.role, curUser.id);
@@ -9023,39 +9054,40 @@
     // ══  ZAMONAVIY UI / MODERN SYSTEM   ═════════════════════
     // ════════════════════════════════════════════════════════
 
-    const MODERN_SUBJECTS = [
-      { id: 'math', name: 'Matematika', icon: '📐', color: '#00e5ff' },
-      { id: 'english', name: 'Ingliz tili', icon: '🇬🇧', color: '#ffcc00' },
-      { id: 'physics', name: 'Fizika', icon: '⚛️', color: '#00ff88' },
-      { id: 'chemistry', name: 'Kimyo', icon: '🧪', color: '#bf5fff' },
-      { id: 'biology', name: 'Biologiya', icon: '🌱', color: '#ff8a65' },
-      { id: 'history', name: 'Tarix', icon: '📜', color: '#4fc3f7' },
-      { id: 'literature', name: 'Adabiyot', icon: '📚', color: '#f06292' },
-      { id: 'programming', name: 'Dasturlash', icon: '💻', color: '#7c4dff' },
-    ];
+    // ──────────────────────────────────────────────────────────────
+    // FANLAR: "Bosh fan" (hamma uchun umumiy, hardcoded 8 ta fan)
+    // tizimi butunlay OLIB TASHLANDI. Endi har bir o'quvchi FAQAT
+    // o'zi haqiqatda qo'shilgan (biriktirilgan o'qituvchisi bor)
+    // fanlarni ko'radi. Har bir o'qituvchi (t.subj) — bitta fanga mos.
+    // ──────────────────────────────────────────────────────────────
+    const SUBJECT_ICONS = ['📐', '🇬🇧', '⚛️', '🧪', '🌱', '📜', '📚', '💻', '🎨', '🎵', '⚽', '🧮', '🌍', '🔬', '📊', '🖥️'];
+    const SUBJECT_COLORS = ['#00e5ff', '#ffcc00', '#00ff88', '#bf5fff', '#ff8a65', '#4fc3f7', '#f06292', '#7c4dff'];
+    function hashStr(str) { let h = 0; str = String(str || ''); for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; } return h; }
+    // O'quvchining haqiqiy fanlari: uning biriktirilgan har bir o'qituvchisi = 1 ta fan (t.subj).
+    // Talaba biror o'qituvchiga/guruhga biriktirilmagan bo'lsa — bo'sh ro'yxat qaytadi (hech qanday "bosh fan" ko'rsatilmaydi).
+    function getStudentSubjects(s) {
+      if (!s) return [];
+      const ids = studentTeacherIds(s);
+      const seen = new Set(); const list = [];
+      ids.forEach(tid => {
+        if (seen.has(tid)) return; seen.add(tid);
+        const t = (DB.teachers || []).find(x => String(x.id) === String(tid));
+        const name = (t && (t.subj || t.subject)) || "Fan";
+        const h = hashStr(tid + '_' + name);
+        list.push({ id: tid, teacherId: Number(tid) || tid, name, icon: SUBJECT_ICONS[h % SUBJECT_ICONS.length], color: SUBJECT_COLORS[h % SUBJECT_COLORS.length] });
+      });
+      return list;
+    }
+    window.getStudentSubjects = getStudentSubjects;
 
-    const MODERN_ACHV_DEFS = [
-      { id: 'first_test', name: 'Birinchi test', desc: '1 ta testni yakunlang', icon: '🎯', xp: 50 },
-      { id: 'tests_10', name: 'Test ustozi', desc: '10 ta testni muvaffaqiyatli tugating', icon: '🏆', xp: 200 },
-      { id: 'tests_50', name: 'Test mutaxassisi', desc: '50 ta testni bajaring', icon: '🎖️', xp: 500 },
-      { id: 'streak_7', name: '7 kunlik streak', desc: '7 kun ketma-ket dars qiling', icon: '🔥', xp: 150 },
-      { id: 'streak_30', name: 'Oylik streak', desc: '30 kun ketma-ket o\'qish', icon: '⚡', xp: 1000 },
-      { id: 'xp_1000', name: '1000 ball', desc: 'Jami 1000 ball to\'plang', icon: '⭐', xp: 100 },
-      { id: 'xp_5000', name: '5000 ball', desc: 'Jami 5000 ball to\'plang', icon: '💎', xp: 500 },
-      { id: 'tasks_50', name: 'Topshiriq ustozi', desc: '50 ta topshiriqni bajaring', icon: '📚', xp: 300 },
-      { id: 'rank_1', name: '1-o\'rin', desc: 'Reytingda 1-o\'ringa chiqing', icon: '🥇', xp: 1000 },
-      { id: 'rank_3', name: 'Top-3', desc: 'Reytingda 3-o\'ringa kirinq', icon: '🥉', xp: 500 },
-      { id: 'vip', name: 'VIP foydalanuvchi', desc: 'VIP obunani faollashtiring', icon: '👑', xp: 200 },
-      { id: 'videos_10', name: 'Video sevuvchi', desc: '10 ta video darsni ko\'ring', icon: '🎬', xp: 150 },
-    ];
-
+    // Do'kon mahsulotlari — VIP/Premium tizimi olib tashlanganligi sababli barcha
+    // mahsulotlar oddiy tanga (🪙) evaziga hammaga baravar ochiq.
     const MODERN_PRODUCTS = [
-      { id: 'course_math_basic', name: 'Matematika asoslari', type: 'course', typeName: 'KURS', price: 200, coinsPrice: 500, rating: 4.8, purchased: 124, premium: false, vip: false, image: '📐', desc: 'Matematika fanining to\'liq asoslari kursi. 30 ta dars, 100+ masala.', teacher: 'Aliyev A.', lessons: 30 },
-      { id: 'vip_english', name: 'VIP Ingliz tili', type: 'vip_course', typeName: 'VIP KURS', price: 500, coinsPrice: 1500, rating: 4.9, purchased: 89, premium: true, vip: true, image: '🇬🇧', desc: 'Premium Ingliz tili kursi. 50 ta dars + shaxsiy o\'qituvchi bilan mashg\'ulotlar.', teacher: 'Valiyeva M.', lessons: 50 },
-      { id: 'tests_pack_math', name: 'Matematika test to\'plami', type: 'test', typeName: 'TEST', price: 50, coinsPrice: 150, rating: 4.7, purchased: 356, premium: false, vip: false, image: '📝', desc: '200 ta savoldan iborat to\'liq test to\'plami. Tushuntirish bilan birga.', teacher: 'O\'tkirbek O.', lessons: 0 },
-      { id: 'book_physics', name: 'Fizika bo\'yicha premium kitob', type: 'book', typeName: 'KITOB', price: 80, coinsPrice: 250, rating: 4.6, purchased: 210, premium: false, vip: false, image: '📘', desc: 'Fizika bo\'yicha 300 sahifalik elektr kitob. Rasm va diagrammalar bilan.', teacher: '', lessons: 0 },
-      { id: 'video_pack_chem', name: 'Kimyo video darslar to\'plami', type: 'video', typeName: 'VIDEO', price: 120, coinsPrice: 350, rating: 4.8, purchased: 178, premium: true, vip: false, image: '🎬', desc: '4K formatda 25 ta video dars. Har biriga test va topshiriqlar.', teacher: 'Zokirov B.', lessons: 25 },
-      { id: 'premium_all', name: 'PREMIUM paket (Barchasi)', type: 'premium', typeName: '👑 PREMIUM', price: 1200, coinsPrice: 3500, rating: 5.0, purchased: 45, premium: true, vip: true, image: '👑', desc: 'Barcha kurslar, VIP videolar, premium testlar, shaxsiy maslahat. 1 yillik ulash.', teacher: 'Barcha o\'qituvchilar', lessons: 500 },
+      { id: 'course_math_basic', name: 'Matematika asoslari', type: 'course', typeName: 'KURS', coinsPrice: 500, rating: 4.8, purchased: 124, image: '📐', desc: 'Matematika fanining to\'liq asoslari kursi. 30 ta dars, 100+ masala.', teacher: 'Aliyev A.', lessons: 30 },
+      { id: 'course_english', name: 'Ingliz tili kursi', type: 'course', typeName: 'KURS', coinsPrice: 700, rating: 4.9, purchased: 89, image: '🇬🇧', desc: 'Ingliz tili kursi. 50 ta dars.', teacher: 'Valiyeva M.', lessons: 50 },
+      { id: 'tests_pack_math', name: 'Matematika test to\'plami', type: 'test', typeName: 'TEST', coinsPrice: 150, rating: 4.7, purchased: 356, image: '📝', desc: '200 ta savoldan iborat to\'liq test to\'plami. Tushuntirish bilan birga.', teacher: 'O\'tkirbek O.', lessons: 0 },
+      { id: 'book_physics', name: 'Fizika bo\'yicha kitob', type: 'book', typeName: 'KITOB', coinsPrice: 250, rating: 4.6, purchased: 210, image: '📘', desc: 'Fizika bo\'yicha 300 sahifalik elektron kitob. Rasm va diagrammalar bilan.', teacher: '', lessons: 0 },
+      { id: 'video_pack_chem', name: 'Kimyo video darslar to\'plami', type: 'video', typeName: 'VIDEO', coinsPrice: 350, rating: 4.8, purchased: 178, image: '🎬', desc: '4K formatda 25 ta video dars. Har biriga test va topshiriqlar.', teacher: 'Zokirov B.', lessons: 25 },
     ];
 
     // ──────── Helpers ─────────
@@ -9065,46 +9097,161 @@
       if (!Array.isArray(s.achievements)) s.achievements = [];
       if (!s.purchasedProducts || !Array.isArray(s.purchasedProducts)) s.purchasedProducts = [];
       if (!Array.isArray(s.mktOwned)) s.mktOwned = [];
-      if (!s.subjectScores || typeof s.subjectScores !== 'object') {
-        s.subjectScores = {}; MODERN_SUBJECTS.forEach(sub => s.subjectScores[sub.id] = { score: 0, prevScore: 0, lessonsAttended: 0, tasksCompleted: 0, testsTaken: 0, avgTestScore: 0, teacherGrade: 0, trend: 'stable', reason: '' });
-      } else MODERN_SUBJECTS.forEach(sub => { if (!s.subjectScores[sub.id]) s.subjectScores[sub.id] = { score: 0, prevScore: 0, lessonsAttended: 0, tasksCompleted: 0, testsTaken: 0, avgTestScore: 0, teacherGrade: 0, trend: 'stable', reason: '' }; });
-      if (!s.activity || typeof s.activity !== 'object') s.activity = { today:{lessons:0,videos:0,tests:0,tasks:0,minutes:0,xp:0}, week:{lessons:0,videos:0,tests:0,tasks:0,minutes:0,xp:0}, total:{lessons:0,videos:0,tests:0,tasks:0,minutes:0,xp:0}, streak:0, lastActive:0, dailyGoal:{target:100,current:0} };
-      if (!s.vip || typeof s.vip !== 'object') s.vip = { status:false, expiresAt:0, plan:'none' };
+      if (!s.subjectScores || typeof s.subjectScores !== 'object') s.subjectScores = {};
+      // Faqat haqiqatda qo'shilgan fanlar uchun subjectScores yozuvi yaratiladi ("bosh fan" yo'q).
+      getStudentSubjects(s).forEach(sub => { if (!s.subjectScores[sub.id]) s.subjectScores[sub.id] = { score: 0, prevScore: 0, lessonsAttended: 0, tasksCompleted: 0, testsTaken: 0, avgTestScore: 0, trend: 'stable', reason: '' }; });
+      if (!s.activity || typeof s.activity !== 'object') s.activity = { today:{lessons:0,videos:0,tests:0,tasks:0,minutes:0,xp:0}, week:{lessons:0,videos:0,tests:0,tasks:0,minutes:0,xp:0}, total:{lessons:0,videos:0,tests:0,tasks:0,minutes:0,xp:0}, lastActive:0, dailyGoal:{target:100,current:0} };
       if (!s.rank || typeof s.rank !== 'object') s.rank = { daily:0, weekly:0, monthly:0, overall:0, prevOverall:0 };
-      if (!s.notifSettings || typeof s.notifSettings !== 'object') s.notifSettings = { newLesson:true, newTest:true, newMessage:true, achievement:true, rankChange:true, scoreChange:true, vipContent:true, homework:true, teacherComment:true, announcement:true };
+      if (!s.notifSettings || typeof s.notifSettings !== 'object') s.notifSettings = { newLesson:true, newTest:true, newMessage:true, rankChange:true, scoreChange:true, homework:true, teacherComment:true, announcement:true };
       if (!s.firstName) { const nm = String(s.name||'').split(' '); s.firstName = nm[0]||''; s.lastName = nm[1]||''; }
       if (!s.username) s.username = '@' + String(s.name||'user').toLowerCase().replace(/ /g,'_').slice(0,20);
       if (!s.grade) s.grade = '10-sinf';
       if (!s.school) s.school = 'Maktab #' + (s.id||1);
       if (!s.progress || typeof s.progress !== 'object') s.progress = { weekly:[], monthly:[], overall:0, perSubject:{}, strongSubjects:[], weakSubjects:[], nextGoal:500 };
+      if (!s.dailyTasksLog || typeof s.dailyTasksLog !== 'object') s.dailyTasksLog = {};
+      // Doimiy streak maydonini activity.streak bilan sinxronlaymiz (ikkita alohida streak sanog'i bo'lmasin).
+      s.activity.streak = Number(s.streak) || 0;
       return s;
     }
-    function mSeedStudentDemo(s) {
+    // Talabaning bir fandagi (bitta o'qituvchi = bitta fan) HAQIQIY natijasini
+    // mavjud test/vazifa/davomat ma'lumotlaridan hisoblaydi. Hech qanday
+    // tasodifiy/demo raqam ishlatilmaydi.
+    function computeSubjectScores(s) {
       if (!s) return s;
-      const sid = Number(s.id)||1;
-      MODERN_SUBJECTS.forEach((sub, i) => {
-        const sc = Math.round(50 + (((sid*7)+(i*13)) % 48));
-        const prev = Math.max(0, sc + (((i+sid*3) % 15) - 7));
-        const sObj = s.subjectScores[sub.id];
-        if (!sObj.score) {
-          sObj.score = sc; sObj.prevScore = prev;
-          sObj.lessonsAttended = 5 + ((sid+i*3) % 25);
-          sObj.tasksCompleted = 10 + ((sid*2+i) % 40);
-          sObj.testsTaken = 2 + ((sid+i) % 12);
-          sObj.avgTestScore = Math.round(55 + ((sid*5+i) % 40));
-          sObj.teacherGrade = Math.round(3 + ((sid+i) % 3));
-          const diff = sc - prev;
-          sObj.trend = diff > 4 ? 'up' : diff < -4 ? 'down' : 'stable';
-          if (sObj.trend === 'up') sObj.reason = `Oxirgi ${3 + (i%3)} ta topshiriqning ${2 + (i%2)} tasi to'g'ri bajarildi.`;
-          else if (sObj.trend === 'down') sObj.reason = `Oxirgi ${2 + (i%2)} ta testdagi natija past bo'ldi.`;
-          else sObj.reason = 'Natijalar barqaror.';
+      mEnsureRich(s);
+      const subjects = getStudentSubjects(s);
+      const prevScores = {}; Object.keys(s.subjectScores || {}).forEach(k => prevScores[k] = s.subjectScores[k]?.score || 0);
+      const newScores = {};
+      subjects.forEach(sub => {
+        const tid = String(sub.teacherId);
+        // Testlar: shu o'qituvchi yaratgan testlar bo'yicha natijalar
+        const myTestIds = new Set((DB.tests || []).filter(t => String(t.teacherId) === tid).map(t => t.id));
+        const testResults = (DB.testResults || []).filter(r => r.studentId === s.id && myTestIds.has(r.testId));
+        const testsTaken = testResults.length;
+        const avgTestScore = testsTaken ? Math.round(testResults.reduce((a, r) => a + (r.total ? (r.correct / r.total) * 100 : 0), 0) / testsTaken) : 0;
+        // Vazifalar: shu o'qituvchi bergan uy vazifalari bo'yicha bajarilganlik
+        const myHw = (DB.homeworks || []).filter(h => String(h.teacherId) === tid && (
+          (h.targetType === 'group' && h.targetGroup === s.group) || (h.targetType === 'student' && Number(h.targetStudentId) === Number(s.id))
+        ));
+        const doneHwIds = new Set((DB.homeworkSubmissions || []).filter(su => su.studentId === s.id).map(su => su.homeworkId));
+        const tasksCompleted = myHw.filter(h => doneHwIds.has(h.id)).length;
+        const taskRate = myHw.length ? tasksCompleted / myHw.length : (tasksCompleted > 0 ? 1 : 0);
+        // Davomat: shu o'qituvchi belgilagan davomat yozuvlari
+        const myAttendance = (DB.attendanceLog || []).filter(a => a.studentId === s.id && String(a.teacherId) === tid);
+        const lessonsAttended = myAttendance.filter(a => a.status === 'present').length;
+        const attendanceRate = myAttendance.length ? lessonsAttended / myAttendance.length : 0;
+        const score = Math.round(avgTestScore * 0.5 + attendanceRate * 100 * 0.3 + taskRate * 100 * 0.2);
+        const prev = prevScores[sub.id] || 0;
+        const diff = score - prev;
+        const trend = diff > 4 ? 'up' : diff < -4 ? 'down' : 'stable';
+        let reason = 'Hali yetarlicha ma\'lumot yo\'q.';
+        if (testsTaken || myAttendance.length || myHw.length) {
+          if (trend === 'up') reason = `Test o'rtachasi ${avgTestScore}, davomat ${Math.round(attendanceRate*100)}% — yaxshi natija!`;
+          else if (trend === 'down') reason = `Test o'rtachasi ${avgTestScore}, davomat ${Math.round(attendanceRate*100)}% — ko'proq mashq qiling.`;
+          else reason = `Test o'rtachasi ${avgTestScore}, davomat ${Math.round(attendanceRate*100)}%, ${tasksCompleted}/${myHw.length||0} vazifa bajarilgan.`;
+        }
+        newScores[sub.id] = { score, prevScore: prev, lessonsAttended, tasksCompleted, testsTaken, avgTestScore, trend, reason };
+      });
+      s.subjectScores = newScores;
+      return s;
+    }
+    // Eski nom bilan chaqirilgan joylar buzilmasligi uchun — endi FAQAT haqiqiy ma'lumotdan hisoblaydi (demo/tasodifiy son yo'q).
+    function mSeedStudentDemo(s) { return computeSubjectScores(s); }
+
+    // ──────────────────────────────────────────────────────────────
+    // STREAK: ketma-ket faol kunlar. Yagona hisoblagich — s.streak.
+    // (Ilgari s.streak va s.activity.streak ikkita alohida, mos kelmaydigan
+    // qiymat sifatida yurgan edi — endi bittasi asosiy hisoblanadi.)
+    // ──────────────────────────────────────────────────────────────
+    function dayKeyToDate(key) { if (!key) return null; const p = String(key).split('-').map(Number); if (p.length !== 3) return null; return new Date(p[0], p[1] - 1, p[2]); }
+    function daysBetweenKeys(a, b) { const da = dayKeyToDate(a), db = dayKeyToDate(b); if (!da || !db) return null; return Math.round((db - da) / 86400000); }
+    function updateStudentStreak(s) {
+      if (!s) return;
+      const today = todayKey();
+      if (s.lastActiveDay === today) return; // bugun uchun allaqachon hisoblangan
+      const diff = s.lastActiveDay ? daysBetweenKeys(s.lastActiveDay, today) : null;
+      s.streak = (diff === 1) ? ((Number(s.streak) || 0) + 1) : 1; // ketma-ket kun bo'lmasa — qaytadan 1 dan boshlanadi
+      s.lastActiveDay = today;
+      if (s.activity) s.activity.streak = s.streak;
+    }
+    window.updateStudentStreak = updateStudentStreak;
+
+    // ──────────────────────────────────────────────────────────────
+    // KUNLIK TOPSHIRIQLAR: haqiqiy harakatlar (test, o'yin, vazifa, davomat)
+    // asosida avtomatik aniqlanadi va bajarilganda mavjud ball tizimiga
+    // mos ball (🪙) beriladi. Holati (bajarilgan/bajarilmagan) sana bo'yicha saqlanadi.
+    // ──────────────────────────────────────────────────────────────
+    const DAILY_TASK_DEFS = [
+      { id: 'test', icon: '📝', title: 'Kunlik testni yeching', desc: 'Istalgan 1 ta faol testni bugun topshiring', reward: 15,
+        isDone: (s) => (DB.testResults || []).some(r => r.studentId === s.id && isToday(r.date)) },
+      { id: 'game', icon: '🎮', title: "Kunlik o'yinni o'ynang", desc: "Bugungi kunlik o'yinni yakunlang", reward: 10,
+        isDone: (s) => (DB.gamePlays || {})[accountKey('student', s.id)] === todayKey() },
+      { id: 'homework', icon: '📚', title: 'Vazifani topshiring', desc: 'Bugun kamida 1 ta uy vazifasini topshiring', reward: 10,
+        isDone: (s) => (DB.homeworkSubmissions || []).some(su => su.studentId === s.id && isToday(su.submittedAt)) },
+      { id: 'attendance', icon: '✅', title: 'Darsga faol qatnashing', desc: "Bugungi davomatingiz belgilansin", reward: 5,
+        isDone: (s) => (DB.attendanceLog || []).some(a => a.studentId === s.id && a.status === 'present' && isToday(a.date)) },
+    ];
+    function refreshDailyTasksForStudent(s) {
+      if (!s) return {};
+      mEnsureRich(s);
+      const today = todayKey();
+      if (!s.dailyTasksLog[today]) s.dailyTasksLog[today] = {};
+      const log = s.dailyTasksLog[today];
+      let changed = false;
+      DAILY_TASK_DEFS.forEach(def => {
+        const done = !!def.isDone(s);
+        if (done && !log[def.id]) {
+          log[def.id] = true;
+          s.coins = (Number(s.coins) || 0) + def.reward;
+          s.totalCoins = s.coins;
+          s.coinMap = { ...coinMapOf(s), [primaryTeacherIdOf(s)]: s.coins };
+          DB.transactions = DB.transactions || [];
+          DB.transactions.push({ studentId: s.id, type: 'daily_task', amount: def.reward, reason: `Kunlik topshiriq: ${def.title}`, date: Date.now() });
+          changed = true;
         }
       });
-      const tot = s.totalCoins || s.coins || 0;
-      const a = s.activity;
-      if (!a.total.tests && tot > 0) { a.total.tests = Math.min(20, Math.round(tot/20)); a.total.tasks = Math.round(tot/8); a.total.lessons = Math.round(tot/15); a.total.videos = Math.round(tot/25); a.total.minutes = tot*3; a.today = { lessons:1+(sid%3), videos:sid%2, tests: sid%3, tasks: 2+(sid%4), minutes: 20+(sid%60), xp: tot%100 }; a.week = { lessons:5+(sid%8), videos: 2+(sid%5), tests: 3+(sid%6), tasks: 10+(sid%10), minutes: 200+(sid%300), xp: tot%400 }; a.streak = 1 + (sid % 14); a.dailyGoal.current = Math.min(100, a.today.xp || 0); }
-      return s;
+      if (changed) {
+        saveData();
+        if (curUser && curUser.role === 'student' && Number(curUser.id) === Number(s.id)) {
+          curUser.coins = s.coins;
+          const cEl = document.getElementById('tbCoins'); if (cEl) cEl.textContent = '🪙 ' + s.coins;
+        }
+      }
+      return log;
     }
+    function renderDailyTasksCard(s) {
+      if (!s) return '';
+      const log = refreshDailyTasksForStudent(s);
+      const doneCount = DAILY_TASK_DEFS.filter(d => log[d.id]).length;
+      return `<div class="scard mb-16">
+        <div class="sc-head mb-8"><div class="sc-title"><i class="fas fa-list-check" style="color:var(--green);margin-right:6px;"></i> Kunlik topshiriqlar</div><span class="fs12 orb txt2 fw7">${doneCount}/${DAILY_TASK_DEFS.length}</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${DAILY_TASK_DEFS.map(def => { const done = !!log[def.id]; return `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--card2);border-radius:10px;${done ? 'opacity:.65;' : ''}">
+            <div style="font-size:20px;">${done ? '✅' : def.icon}</div>
+            <div style="flex:1;min-width:0;"><div class="fw7 fs13" style="${done ? 'text-decoration:line-through;' : ''}">${def.title}</div><div class="fs11 txt3">${def.desc}</div></div>
+            <div class="fs12 fw8" style="color:${done ? 'var(--green)' : 'var(--gold)'};">${done ? 'Bajarildi' : '+' + def.reward + '🪙'}</div>
+          </div>`; }).join('')}
+        </div>
+      </div>`;
+    }
+    window.renderDailyTasksCard = renderDailyTasksCard;
+    window.refreshDailyTasksForStudent = refreshDailyTasksForStudent;
+
+    // ──────────────────────────────────────────────────────────────
+    // FAN BO'YICHA REYTING: talaba faqat o'zi qo'shilgan fan(lar) bo'yicha
+    // reytingda qatnashadi. Har bir fan uchun ball — o'sha o'qituvchidan
+    // (fandan) to'plangan tanga (coinMap[teacherId]).
+    // ──────────────────────────────────────────────────────────────
+    function getSubjectRanked(teacherId) {
+      const tid = String(teacherId);
+      const list = (DB.students || []).filter(s => studentTeacherIds(s).includes(tid))
+        .map(s => ({ ...s, _subjCoins: Number(coinMapOf(s)[tid]) || 0 }));
+      list.sort((a, b) => b._subjCoins - a._subjCoins);
+      list.forEach((s, i) => { s._rank = i + 1; });
+      return list;
+    }
+    window.getSubjectRanked = getSubjectRanked;
+
 
     function mFormatTime(ts) { try { const d = new Date(Number(ts)||0); const n = Date.now(); const diff = (n - d.getTime())/1000; if (diff < 60) return 'Hozir'; if (diff < 3600) return Math.round(diff/60)+' daqiqa avval'; if (diff < 86400) return Math.round(diff/3600)+' soat avval'; if (diff < 604800) return Math.round(diff/86400)+' kun avval'; return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear(); } catch(e){return '';} }
     function mPct(v,mx){ return Math.max(0, Math.min(100, Math.round((Number(v)||0)/(Number(mx)||1)*100))); }
@@ -9323,6 +9470,127 @@
       return list;
     }
 
+    // ══════════════════════════════════
+    // GURUH REYTINGI
+    // Umumiy reytingdan tashqari, har bir guruhning o'z reytingi.
+    // Talaba boshqa guruhga o'tkazilganda alohida "a'zolik ro'yxati"
+    // saqlanmaydi — reyting har doim DB.students[].group maydonidan LIVE
+    // hisoblanadi, shuning uchun guruh almashtirilishi bilanoq eski
+    // guruh reytingidan avtomatik chiqib, yangisiga qo'shiladi.
+    // ══════════════════════════════════
+    function mGetGroupRanked(groupName) {
+      const list = (DB.students || [])
+        .filter(s => String(s.group || '') === String(groupName || '') && groupName)
+        .map(s => ({ ...s, _coins: Number(s.totalCoins) || (typeof s.coins === 'number' ? s.coins : 0) }));
+      list.sort((a, b) => b._coins - a._coins);
+      list.forEach((s, i) => { s._rank = i + 1; });
+      return list;
+    }
+    window.mGetGroupRanked = mGetGroupRanked;
+
+    // Joriy foydalanuvchi ko'rishga haqli bo'lgan guruh nomlari:
+    //  - admin: barcha guruhlar
+    //  - teacher: faqat o'ziga tegishli (DB.groups.teacherId yoki o'z talabalari orqali bog'liq) guruhlar
+    //  - student: faqat o'z guruhi
+    function getVisibleGroupNames() {
+      const allGroupNames = (Array.isArray(DB.groups) ? DB.groups : []).map(g => g.name).filter(Boolean);
+      if (curUser?.role === 'admin') {
+        const fromStudents = (DB.students || []).map(s => s.group).filter(Boolean);
+        return [...new Set([...allGroupNames, ...fromStudents])].sort();
+      }
+      if (curUser?.role === 'teacher') {
+        const owned = (Array.isArray(DB.groups) ? DB.groups : [])
+          .filter(g => String(g.teacherId) === String(curUser.id))
+          .map(g => g.name).filter(Boolean);
+        // Eski ma'lumotlarda DB.groups'ga yozilmagan, lekin talaba orqali
+        // shu o'qituvchiga bog'liq guruhlarni ham ko'rsatamiz.
+        const viaStudents = (DB.students || [])
+          .filter(s => studentTeacherIds(s).includes(String(curUser.id)))
+          .map(s => s.group).filter(Boolean);
+        return [...new Set([...owned, ...viaStudents])].sort();
+      }
+      if (curUser?.role === 'student') {
+        const s = mGetStudent();
+        return s?.group ? [s.group] : [];
+      }
+      return [];
+    }
+    window.getVisibleGroupNames = getVisibleGroupNames;
+
+    // Guruh reytingidagi bitta qatorni (o'rin, avatar, ism, ball, daraja) chizadi.
+    function renderGroupRankRow(s, i, meId) {
+      const me = meId != null && Number(s.id) === Number(meId);
+      return `<div class="lb-card ${me ? 'me' : ''}" style="${i ? 'margin-top:6px;' : ''}">
+        <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i<3?(medals[i]||'🥇'):(i+1)}</div>
+        <div class="lb-av">${(s.name||'?').charAt(0).toUpperCase()}</div>
+        <div class="lb-info">
+          <div class="lb-name">${escHtml(s.name||'')}${me?' <span style="color:var(--cyan);">(siz)</span>':''}</div>
+          <div class="lb-meta"><span>Daraja ${s.level||1}</span></div>
+        </div>
+        <div class="lb-score">
+          <div class="lb-val">${s._coins} 🪙</div>
+          <div class="lb-lvl">${s.badge||'Starter'}</div>
+        </div>
+      </div>`;
+    }
+    window.renderGroupRankRow = renderGroupRankRow;
+
+    // <select> ichiga guruh nomlarini to'ldiradi; iloji bo'lsa avvalgi tanlovni saqlab qoladi.
+    function fillGroupRankSelect(selId, groupNames) {
+      const sel = document.getElementById(selId);
+      if (!sel) return '';
+      const prev = sel.value;
+      sel.innerHTML = groupNames.length
+        ? groupNames.map(g => `<option value="${escHtml(g)}">${escHtml(g)}</option>`).join('')
+        : `<option value="">— Guruh yo'q —</option>`;
+      if (prev && groupNames.includes(prev)) sel.value = prev;
+      return sel.value;
+    }
+
+    // Talaba uchun: o'z guruhidagi boshqa o'quvchilar bilan taqqoslash bloki.
+    // renderRankingV2() ichidan chaqiriladi (#rpg sahifasi, "Umumiy reyting"dan pastda).
+    function renderMyGroupRankBlock() {
+      const s = mGetStudent();
+      if (!s || !s.group) return '';
+      const ranked = mGetGroupRanked(s.group);
+      if (!ranked.length) return '';
+      return `<div class="scard" style="margin-top:16px;">
+        <div class="sc-head mb-8"><div class="sc-title"><i class="fas fa-layer-group" style="color:var(--cyan);margin-right:6px;"></i> Guruh reytingi (${escHtml(s.group)})</div></div>
+        ${ranked.map((u,i)=>renderGroupRankRow(u,i,s.id)).join('')}
+      </div>`;
+    }
+    window.renderMyGroupRankBlock = renderMyGroupRankBlock;
+
+    // O'qituvchi paneli (adpg): faqat o'ziga tegishli guruhlar orasidan tanlab ko'rsatadi.
+    function renderTeacherGroupRank() {
+      if (curUser?.role !== 'teacher') return;
+      const groups = getVisibleGroupNames();
+      const selected = fillGroupRankSelect('tGroupRankSel', groups);
+      const el = document.getElementById('tGroupRankList');
+      if (!el) return;
+      if (!selected) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;font-family:\'JetBrains Mono\',monospace;">// Sizga biriktirilgan guruh topilmadi</div>'; return; }
+      const ranked = mGetGroupRanked(selected);
+      el.innerHTML = ranked.length
+        ? ranked.map((u,i)=>renderGroupRankRow(u,i,null)).join('')
+        : '<div style="color:var(--text3);font-size:12px;font-family:\'JetBrains Mono\',monospace;">// Bu guruhda talaba yo\'q</div>';
+    }
+    window.renderTeacherGroupRank = renderTeacherGroupRank;
+
+    // Admin paneli (admpg): barcha guruhlar orasidan tanlab ko'rsatadi.
+    function renderAdminGroupRank() {
+      if (curUser?.role !== 'admin') return;
+      const groups = getVisibleGroupNames();
+      const selected = fillGroupRankSelect('admGroupRankSel', groups);
+      const el = document.getElementById('admGroupRankList');
+      if (!el) return;
+      if (!selected) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;font-family:\'JetBrains Mono\',monospace;">// Guruh topilmadi</div>'; return; }
+      const ranked = mGetGroupRanked(selected);
+      el.innerHTML = ranked.length
+        ? ranked.map((u,i)=>renderGroupRankRow(u,i,null)).join('')
+        : '<div style="color:var(--text3);font-size:12px;font-family:\'JetBrains Mono\',monospace;">// Bu guruhda talaba yo\'q</div>';
+    }
+    window.renderAdminGroupRank = renderAdminGroupRank;
+
     // ──────── Dashboard ─────────
     function renderDashboardV2() {
       const dpg = document.getElementById('dpg'); if (!dpg) return;
@@ -9336,28 +9604,21 @@
         dpg.innerHTML = `<div class="pg-wrap"><div class="pg-title"><i class="fas fa-home"></i> BOSH SAHIFA</div><div class="pg-sub">${msg}</div></div>`;
         return;
       }
-      mEnsureRich(s); mSeedStudentDemo(s);
+      mEnsureRich(s); updateStudentStreak(s); computeSubjectScores(s);
       mGetRanked('overall');
       const coins = Number(s.totalCoins)||0; const lvl = s.level||1; const badge = s.badge||'Starter'; const streak = s.activity?.streak||0;
       const myRank = s.rank?.overall || 0; const prevRank = s.rank?.prevOverall || 0;
       const rankDelta = prevRank ? (prevRank - myRank) : 0;
       const todayXP = s.activity?.today?.xp || 0; const goal = s.activity?.dailyGoal?.target || 100;
       const week = s.activity?.week || {}; const weekXP = week.xp || 0;
-      // First achievements 4
-      const ach = s.achievements || []; const achDefs = MODERN_ACHV_DEFS;
-      const earnedIds = new Set(ach.map(a => a.id));
+      const MODERN_SUBJECTS = getStudentSubjects(s);
       const subjectArr = MODERN_SUBJECTS.slice(0,4).map(sub => { const d = s.subjectScores[sub.id]||{}; return { ...sub, d }; });
       dpg.innerHTML = `
       <div class="pg-wrap">
         <div class="pg-title hide-mob"><i class="fas fa-home"></i> BOSH SAHIFA</div>
         <div class="pg-sub hide-mob">${s.firstName||s.name} 👋, bugun nima o'rganasiz?</div>
 
-        ${!s.vip?.status ? `
-        <div class="vip-card mb-16">
-          <div class="vip-title">👑 VIP obuna - 50% chegirma</div>
-          <div class="vip-sub">Barcha premium kurslar, cheksiz testlar, shaxsiy o'qituvchi bilan ishlash imkoniyati!</div>
-          <button class="vip-btn" onclick="showPage('vippg',null,'VIP OBUNA')"><i class="fas fa-crown"></i> VIP ga o'tish</button>
-        </div>` : ''}
+        ${renderDailyTasksCard(s)}
 
         <div class="grid-4 mb-16">
           <div class="stat-card cyan">
@@ -9444,10 +9705,12 @@
 
         <div class="grid-2 mb-16">
           <div class="scard">
-            <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-medal" style="color:var(--purple);margin-right:6px;"></i> Yutuqlar</div><button class="btn btn-sm" style="padding:4px 10px;font-size:11px;" onclick="showPage('achpg',null,'YUTUQLAR')">Barchasi →</button></div>
-            <div class="ach-grid">
-              ${achDefs.slice(0,8).map(a => { const isEarned = earnedIds.has(a.id); const isRare = (a.xp||0)>=500; return `<div class="ach-badge ${isEarned?'':'locked'} ${isRare&&isEarned?'rare':''}"><div class="ach-ico">${a.icon}</div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div>${isEarned?`<div class="ach-xp">+${a.xp} XP</div>`:`<div class="ach-xp" style="background:rgba(138,156,197,.1);color:var(--text3);">🔒 ${a.xp} XP</div>`}</div>`; }).join('')}
-            </div>
+            <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-medal" style="color:var(--purple);margin-right:6px;"></i> Fanlar bo'yicha reyting</div><button class="btn btn-sm" style="padding:4px 10px;font-size:11px;" onclick="showPage('scorespg',null,'NATIJALAR')">Barchasi →</button></div>
+            ${subjectArr.length ? subjectArr.map(sub => { const ranked = getSubjectRanked(sub.teacherId); const myPos = ranked.findIndex(u=>Number(u.id)===Number(s.id)); return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bor2);">
+              <div style="font-size:18px;">${sub.icon}</div>
+              <div style="flex:1;min-width:0;"><div class="fw7 fs13">${sub.name}</div><div class="fs11 txt3">${myPos>=0?('#'+(myPos+1)+' / '+ranked.length):'Reytingda yo\'q'}</div></div>
+              <div class="orb fw8" style="color:${sub.color};">${myPos>=0?ranked[myPos]._subjCoins:0}🪙</div>
+            </div>`; }).join('') : `<div class="fs12 txt3" style="padding:10px 0;">Hali fanga biriktirilmagansiz</div>`}
           </div>
           <div class="scard">
             <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-bolt" style="color:var(--cyan);margin-right:6px;"></i> Tezkor harakatlar</div></div>
@@ -9456,15 +9719,6 @@
               <button class="btn btn-gold btn-sm" style="justify-content:center;height:60px;flex-direction:column;gap:4px;" onclick="showPage('studypg',null,'O\'QISH')"><i class="fas fa-book-open" style="font-size:18px;"></i><span>Darslar</span></button>
               <button class="btn btn-sm" style="justify-content:center;height:60px;flex-direction:column;gap:4px;border-color:rgba(191,95,255,.3);color:var(--purple);background:rgba(191,95,255,.06);" onclick="showPage('chatpg',null,'CHAT')"><i class="fas fa-comments" style="font-size:18px;"></i><span>O'qituvchi bilan chat</span></button>
               <button class="btn btn-sm" style="justify-content:center;height:60px;flex-direction:column;gap:4px;border-color:rgba(255,204,0,.3);color:var(--gold);background:rgba(255,204,0,.06);" onclick="showPage('marketpg',null,'MARKET')"><i class="fas fa-shopping-bag" style="font-size:18px;"></i><span>Market</span></button>
-            </div>
-            <div class="mt-16">
-              <div class="insight-box" style="padding:10px 14px;">
-                <div class="insight-ico" style="font-size:20px;">📚</div>
-                <div>
-                  <div class="insight-ttl" style="font-size:12.5px;">Davom etayotgan dars</div>
-                  <div class="insight-txt" style="font-size:11.5px;">${MODERN_SUBJECTS[((s.id||1)-1)%8].icon} ${MODERN_SUBJECTS[((s.id||1)-1)%8].name} · ${4+((s.id||1)%6)}-dars · 65% yakunlandi</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -9486,16 +9740,12 @@
     function renderStudyV2() {
       const wrap = document.getElementById('studyWrap'); if (!wrap) return;
       const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('O\'QISH'); return; }
-      mEnsureRich(s);
+      mEnsureRich(s); computeSubjectScores(s);
+      const MODERN_SUBJECTS = getStudentSubjects(s);
       wrap.innerHTML = `
       <div class="pg-wrap">
         <div class="pg-title"><i class="fas fa-book-open"></i> O'QISH</div>
         <div class="pg-sub">Fanlar bo'yicha darslar, testlar va materiallar</div>
-        ${!s.vip?.status ? `<div class="vip-card mb-16">
-          <div class="vip-title">👑 VIP KONTENT</div>
-          <div class="vip-sub">Premium video darslar, maxsus testlar va shaxsiy tavsiyalardan foydalaning!</div>
-          <button class="vip-btn" onclick="showPage('vippg',null,'VIP')"><i class="fas fa-crown"></i> VIP ni faollashtirish</button>
-        </div>`:''}
         <div class="study-head mb-16">
           <div class="flex-center gap-10" style="flex:1;">
             <div class="cir-wrap" style="width:80px;height:80px;">
@@ -9523,22 +9773,21 @@
           <button class="st-tab" onclick="mStudyTab('materials',this)"><i class="fas fa-book"></i> Materiallar</button>
         </div>
         <div id="studyTabContent" class="mkt-grid">
-          ${MODERN_SUBJECTS.map((sub,i) => { const d = s.subjectScores[sub.id]||{}; const lessons = d.lessonsAttended||0; const vipOnly = i%5===4; return `<div class="mkt-card ${vipOnly&&!s.vip?.status ? 'premium-overlay vip-card-st' : ''}">
+          ${MODERN_SUBJECTS.length ? MODERN_SUBJECTS.map((sub,i) => { const d = s.subjectScores[sub.id]||{}; const lessons = d.lessonsAttended||0; return `<div class="mkt-card">
             <div class="mkt-cover" style="background:linear-gradient(135deg, ${sub.color}18, ${sub.color}08);">
               <div style="font-size:52px;">${sub.icon}</div>
-              ${vipOnly?'<div class="premium-ribbon">VIP</div>':''}
             </div>
             <div class="mkt-body">
               <span class="mkt-type" style="color:${sub.color};background:${sub.color}15;">DARS</span>
-              <div class="mkt-name">${sub.name} - to'liq kurs</div>
-              <div class="mkt-desc">${30+i*5} ta dars · ${100+i*10} ta masala · Videolar bilan</div>
-              <div class="mkt-meta"><div class="mkt-rating">⭐ ${(4.2+i*0.08).toFixed(1)}</div><div>${lessons} marta qatnashilgan</div></div>
+              <div class="mkt-name">${sub.name}</div>
+              <div class="mkt-desc">${lessons} ta darsga qatnashgansiz · ${d.testsTaken||0} ta test</div>
+              <div class="mkt-meta"><div class="mkt-rating">📊 Natija: ${d.score||0}/100</div><div>${d.tasksCompleted||0} topshiriq</div></div>
             </div>
             <div class="mkt-foot">
-              <div class="mkt-price"><div class="mkt-cash">${30+i*10} dars</div><div class="mkt-coins">${d.testsTaken||0} ta test · ${d.tasksCompleted||0} topshiriq</div></div>
-              ${vipOnly&&!s.vip?.status ? `<div class="premium-lock"><i class="fas fa-lock"></i> VIP talab qilinadi</div>` : `<button class="buy-btn" onclick="showPage('scorespg',null,'${sub.name}')"><i class="fas fa-play"></i> O'qish</button>`}
+              <div class="mkt-price"><div class="mkt-cash">${getTeacherNameById(sub.teacherId)||''}</div><div class="mkt-coins">${d.testsTaken||0} ta test · ${d.tasksCompleted||0} topshiriq</div></div>
+              <button class="buy-btn" onclick="showPage('scorespg',null,'${escHtml(sub.name)}')"><i class="fas fa-play"></i> O'qish</button>
             </div>
-          </div>`;}).join('')}
+          </div>`;}).join('') : `<div class="fs13 txt3" style="padding:20px;">Sizga hali fan/o'qituvchi biriktirilmagan.</div>`}
         </div>
       </div>`;
     }
@@ -9550,10 +9799,34 @@
     function emptyPg(title) { return `<div class="pg-wrap"><div class="pg-title"><i class="fas fa-info-circle"></i> ${title}</div><div class="pg-sub">Tizimga kiring va talaba hisobidan foydalaning</div></div>`; }
 
     // ──────── Scores (Natijalar) ─────────
+    function weeklyPointsSeries(studentId, weeks) {
+      const now = Date.now();
+      const buckets = new Array(weeks).fill(0);
+      (DB.transactions || []).filter(t => t.studentId === studentId).forEach(t => {
+        const weekIdx = Math.floor((now - (t.date || 0)) / (7 * 86400000));
+        const idx = weeks - 1 - weekIdx;
+        if (idx >= 0 && idx < weeks) buckets[idx] += Number(t.amount) || 0;
+      });
+      return buckets;
+    }
+    function dailyPointsSeries(studentId, days) {
+      const now = Date.now();
+      const buckets = new Array(days).fill(0);
+      (DB.transactions || []).filter(t => t.studentId === studentId).forEach(t => {
+        const dayIdx = Math.floor((now - (t.date || 0)) / 86400000);
+        const idx = days - 1 - dayIdx;
+        if (idx >= 0 && idx < days) buckets[idx] += Number(t.amount) || 0;
+      });
+      return buckets;
+    }
     function renderScoresV2() {
       const wrap = document.getElementById('scoresWrap'); if (!wrap) return;
       const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('NATIJALAR'); return; }
-      mEnsureRich(s); mSeedStudentDemo(s);
+      mEnsureRich(s); computeSubjectScores(s);
+      const MODERN_SUBJECTS = getStudentSubjects(s);
+      const avgScore = MODERN_SUBJECTS.length ? Math.round(MODERN_SUBJECTS.reduce((a,sub)=>a+Number(s.subjectScores[sub.id]?.score||0),0)/MODERN_SUBJECTS.length) : 0;
+      const weekBars = weeklyPointsSeries(s.id, 8);
+      const maxWeek = Math.max(1, ...weekBars);
       wrap.innerHTML = `
       <div class="pg-wrap">
         <div class="pg-title"><i class="fas fa-chart-pie"></i> FANLAR BO'YICHA NATIJALAR</div>
@@ -9563,25 +9836,22 @@
           <div class="stat-card cyan">
             <div class="stat-ico"><i class="fas fa-graduation-cap"></i></div>
             <div class="stat-label">O'rtacha ball</div>
-            <div class="stat-val">${Math.round(MODERN_SUBJECTS.reduce((a,sub)=>a+Number(s.subjectScores[sub.id]?.score||0),0)/MODERN_SUBJECTS.length)}</div>
-            <div class="stat-chg up"><i class="fas fa-arrow-up"></i> +3% oyga</div>
+            <div class="stat-val">${avgScore}</div>
           </div>
           <div class="stat-card green">
             <div class="stat-ico"><i class="fas fa-check-double"></i></div>
             <div class="stat-label">Topshiriqlar</div>
             <div class="stat-val">${MODERN_SUBJECTS.reduce((a,sub)=>a+Number(s.subjectScores[sub.id]?.tasksCompleted||0),0)}</div>
-            <div class="stat-chg up"><i class="fas fa-plus"></i> ${10+s.id%5} ta yangi</div>
           </div>
           <div class="stat-card gold">
             <div class="stat-ico"><i class="fas fa-pen-nib"></i></div>
             <div class="stat-label">Testlar</div>
             <div class="stat-val">${MODERN_SUBJECTS.reduce((a,sub)=>a+Number(s.subjectScores[sub.id]?.testsTaken||0),0)}</div>
-            <div class="stat-chg up"><i class="fas fa-plus"></i> ${3+s.id%3} ta yangi</div>
           </div>
         </div>
 
         <div class="grid-2 mb-16">
-          ${MODERN_SUBJECTS.map(sub => { const d = s.subjectScores[sub.id]||{}; const diff = (d.score||0)-(d.prevScore||0); return `<div class="subj-card">
+          ${MODERN_SUBJECTS.length ? MODERN_SUBJECTS.map(sub => { const d = s.subjectScores[sub.id]||{}; const diff = (d.score||0)-(d.prevScore||0); const ranked = getSubjectRanked(sub.teacherId); const myPos = ranked.findIndex(u=>Number(u.id)===Number(s.id)); return `<div class="subj-card">
             <div class="subj-head">
               <div class="subj-ico" style="background:${sub.color}18;color:${sub.color};">${sub.icon}</div>
               <div style="flex:1;"><div class="subj-name">${sub.name}</div><div class="subj-avg">O'rtacha test: ${d.avgTestScore||0} · Dars: ${d.lessonsAttended||0} ta</div></div>
@@ -9595,19 +9865,19 @@
               <div><div class="fw8 txt2">${d.tasksCompleted||0}</div>Topshiriq</div>
               <div><div class="fw8 txt2">${d.testsTaken||0}</div>Test</div>
               <div><div class="fw8 txt2">${d.lessonsAttended||0}</div>Dars</div>
-              <div><div class="fw8 txt2">${d.teacherGrade? d.teacherGrade+'/5':'—'}</div>O'qituvchi</div>
+              <div><div class="fw8 txt2">${myPos>=0?('#'+(myPos+1)):'—'}</div>Fan reytingi</div>
             </div>
             ${d.reason ? `<div class="insight-box ${d.trend==='up'?'success':d.trend==='down'?'warning':''} mt-16" style="padding:8px 12px;">
               <div class="insight-ico" style="font-size:16px;">${d.trend==='up'?'📈':d.trend==='down'?'📉':'ℹ️'}</div>
               <div><div class="insight-ttl" style="font-size:11.5px;">Sabab:</div><div class="insight-txt" style="font-size:11px;">${d.reason}</div></div>
             </div>`:''}
-          </div>`; }).join('')}
+          </div>`; }).join('') : `<div class="fs13 txt3">Sizga hali fan/o'qituvchi biriktirilmagan.</div>`}
         </div>
 
         <div class="scard mb-16">
-          <div class="sc-head mb-16"><div class="sc-title"><i class="fas fa-chart-column" style="color:var(--cyan);"></i> Umumiy o'sish (oxirgi 8 hafta)</div></div>
+          <div class="sc-head mb-16"><div class="sc-title"><i class="fas fa-chart-column" style="color:var(--cyan);"></i> Umumiy o'sish (oxirgi 8 hafta, ball)</div></div>
           <div class="bar-chart">
-            ${['1-hafta','2','3','4','5','6','7','8'].map((d,i)=>{const v = 40 + ((s.id*5+i*9)%55); return `<div class="bar-col"><div class="bar" data-val="${v}" style="height:${v}%;"></div><div class="bar-lbl">${d}</div></div>`;}).join('')}
+            ${weekBars.map((v,i)=>{const pct = Math.round((v/maxWeek)*100); return `<div class="bar-col"><div class="bar" data-val="${v}" style="height:${Math.max(3,pct)}%;"></div><div class="bar-lbl">${i+1}-h</div></div>`;}).join('')}
           </div>
         </div>
       </div>`;
@@ -9925,6 +10195,7 @@
             </div>
           </div>`;}).join('')}
         </div>
+        ${renderMyGroupRankBlock()}
       </div>`;
     }
     function mRankTab(mode, el) { document.querySelectorAll('.study-tabs .st-tab').forEach(x=>x.classList.remove('active')); if (el) el.classList.add('active'); mToast(mode+' reytingi yuklandi','','✅'); }
@@ -10114,6 +10385,8 @@
         else if (pageId === 'vippg') renderVIPV2();
         else if (pageId === 'notifpg') renderNotifSettingsV2();
         else if (pageId === 'rpg') renderRankingV2();
+        else if (pageId === 'adpg') { if (typeof renderTeacherGroupRank === 'function') renderTeacherGroupRank(); }
+        else if (pageId === 'admpg') { if (typeof renderAdminGroupRank === 'function') renderAdminGroupRank(); }
         else if (pageId === 'ppg') renderProfileV2();
         else if (pageId === 'marketpg') setTimeout(renderMarketV2, 30);
         if (curUser?.role === 'student') renderNotifPanel();
@@ -10189,7 +10462,10 @@
           if (adpg && adpg.classList.contains('active')) {
             if (typeof renderTopStudents === 'function') renderTopStudents();
             if (typeof renderRankList === 'function') renderRankList();
+            if (typeof renderTeacherGroupRank === 'function') renderTeacherGroupRank();
           }
+          const admpg = document.getElementById('admpg');
+          if (admpg && admpg.classList.contains('active') && typeof renderAdminGroupRank === 'function') renderAdminGroupRank();
           const stpg = document.getElementById('stpg');
           if (stpg && stpg.classList.contains('active') && typeof renderStTable === 'function') renderStTable();
         }
