@@ -157,6 +157,8 @@ def normalize_data(data: Any) -> tuple[dict, bool]:
         "pendingReqs": [], "pendingTelegramLinks": [],
         "tests": [], "plans": [], "submissions": [],
         "telegramProfiles": {},
+        "settings": {},
+        "currencyExchanges": [], "nextExchangeId": 1,
         # New student fields defaults
         "studentDefaults": {
             "firstName": "",
@@ -221,6 +223,10 @@ def normalize_data(data: Any) -> tuple[dict, bool]:
             student["coins"] = {str(teacher_id): current_total}
             changed = True
 
+        if not isinstance(student.get("olmos"), int):
+            student["olmos"] = n_int(student.get("olmos"))
+            changed = True
+
         coins = n_int(student.get("totalCoins"))
         student["level"] = max(1, int(coins / 100) + 1)
         if coins < 100:
@@ -257,6 +263,46 @@ def find_account(data: dict, role: str, account_id: int) -> Optional[dict]:
         return None
     aid = n_int(account_id)
     return next((item for item in data.get(collection, []) if n_int(item.get("id")) == aid), None)
+
+
+# --------------------------------------------------------------------------
+# Tanga <-> Olmos valyuta almashinuvi
+#
+# Kurslar ATAYLAB bir-biriga teskari EMAS (spred bilan):
+#   Tanga -> Olmos: 1 Tanga = COIN_TO_DIAMOND_RATE (standart 10) Olmos
+#   Olmos -> Tanga: DIAMOND_TO_COIN_RATE (standart 15) Olmos = 1 Tanga
+# Bu ikkala qiymat admin panelidan sozlanishi mumkin, lekin standart holatda
+# talabnomadagi 10 / 15 qiymatlari ishlatiladi.
+# --------------------------------------------------------------------------
+DEFAULT_COIN_TO_DIAMOND_RATE = 10
+DEFAULT_DIAMOND_TO_COIN_RATE = 15
+
+
+def get_exchange_rates(data: dict) -> tuple[int, int]:
+    """Joriy Tanga->Olmos va Olmos->Tanga kurslarini qaytaradi (har doim >=1)."""
+    settings = data.get("settings")
+    if not isinstance(settings, dict):
+        settings = {}
+    c2d = n_int(settings.get("coinToDiamondRate"), DEFAULT_COIN_TO_DIAMOND_RATE) or DEFAULT_COIN_TO_DIAMOND_RATE
+    d2c = n_int(settings.get("diamondToCoinRate"), DEFAULT_DIAMOND_TO_COIN_RATE) or DEFAULT_DIAMOND_TO_COIN_RATE
+    return max(1, c2d), max(1, d2c)
+
+
+def student_wallet_state(student: dict, data: dict) -> dict:
+    """Talabaning market/valyuta uchun ochiq holatini (state) shakllantiradi."""
+    c2d, d2c = get_exchange_rates(data)
+    return {
+        "coins": n_int(student.get("totalCoins")),
+        "diamonds": n_int(student.get("olmos")),
+        "mktOwned": student.get("mktOwned") if isinstance(student.get("mktOwned"), list) else [],
+        "purchasedProducts": student.get("purchasedProducts") if isinstance(student.get("purchasedProducts"), list) else [],
+        "equippedAvatar": student.get("equippedAvatar"),
+        "equippedBadge": student.get("equippedBadge"),
+        "coinToDiamondRate": c2d,
+        "diamondToCoinRate": d2c,
+        # Eskilik bilan moslik uchun (frontendning eski kodi shu maydonni o'qishi mumkin)
+        "exchangeRate": d2c,
+    }
 
 
 def send_bot_message(chat_id: Any, text: str, reply_markup: Optional[dict] = None) -> tuple[bool, str]:
@@ -349,6 +395,151 @@ def save_data():
     req_data, _ = normalize_data(req_data)
     write_data(req_data)
     return jsonify({"status": "success", "message": "Ma'lumot saqlandi"})
+
+
+@app.route("/api/market/state", methods=["GET"])
+def market_state():
+    """Talabaning joriy tanga/olmos balansi va inventarini serverdan qaytaradi.
+
+    Frontend hech qachon bu qiymatlarni o'zi hisoblamaydi — faqat shu yerdan
+    kelgan (tasdiqlangan) holatni ko'rsatadi.
+    """
+    student_id = n_int(request.args.get("studentId"))
+    if not student_id:
+        return jsonify({"ok": False, "error": "unauthorized"}), 400
+
+    with _data_lock:
+        data = read_data()
+        data, changed = normalize_data(data)
+        student = find_account(data, "student", student_id)
+        if not student:
+            if changed:
+                write_data(data)
+            return jsonify({"ok": False, "error": "unauthorized"}), 404
+        if changed:
+            write_data(data)
+        state = student_wallet_state(student, data)
+
+    return jsonify({"ok": True, "state": state})
+
+
+@app.route("/api/currency/exchange", methods=["POST"])
+def currency_exchange():
+    """Tanga <-> Olmos almashinuvini serverda, atomik tarzda amalga oshiradi.
+
+    Kurslar ATAYLAB teng emas:
+      c2d (Tanga -> Olmos): 1 Tanga = coinToDiamondRate (standart 10) Olmos
+      d2c (Olmos -> Tanga): diamondToCoinRate (standart 15) Olmos = 1 Tanga
+        (miqdor diamondToCoinRate'ga karrali bo'lishi shart, aks holda rad etiladi)
+
+    Har bir muvaffaqiyatli almashinuv data["currencyExchanges"] ro'yxatiga
+    yoziladi (kim, qachon, qaysi yo'nalishda, qancha miqdorda).
+    """
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"ok": False, "error": "invalid_amount"}), 400
+
+    student_id = n_int(body.get("studentId"))
+    direction = str(body.get("direction", "")).strip()
+    amount = n_int(body.get("amount"))
+
+    if not student_id or direction not in ("c2d", "d2c"):
+        return jsonify({"ok": False, "error": "invalid_amount"}), 400
+    if amount <= 0:
+        return jsonify({"ok": False, "error": "invalid_amount"}), 400
+
+    with _data_lock:
+        data = read_data()
+        data, _ = normalize_data(data)
+        student = find_account(data, "student", student_id)
+        if not student:
+            return jsonify({"ok": False, "error": "unauthorized"}), 404
+
+        c2d_rate, d2c_rate = get_exchange_rates(data)
+        cur_coins = n_int(student.get("totalCoins"))
+        cur_diamonds = n_int(student.get("olmos"))
+
+        if direction == "c2d":
+            # Tanga sarflab, Olmos olish: 1 Tanga = c2d_rate Olmos
+            if amount > cur_coins:
+                return jsonify({"ok": False, "error": "insufficient_balance"}), 400
+            coins_delta = -amount
+            diamonds_delta = amount * c2d_rate
+        else:
+            # Olmos sarflab, Tanga olish: d2c_rate Olmos = 1 Tanga
+            # Miqdor kursga karrali bo'lishi shart — aks holda Olmos "yo'qolib" ketmasligi uchun rad etamiz.
+            if amount % d2c_rate != 0:
+                return jsonify({"ok": False, "error": "invalid_multiple"}), 400
+            if amount > cur_diamonds:
+                return jsonify({"ok": False, "error": "insufficient_balance"}), 400
+            diamonds_delta = -amount
+            coins_delta = amount // d2c_rate
+
+        student["totalCoins"] = cur_coins + coins_delta
+        student["olmos"] = cur_diamonds + diamonds_delta
+
+        exchange_id = n_int(data.get("nextExchangeId"), 1)
+        data["nextExchangeId"] = exchange_id + 1
+        data.setdefault("currencyExchanges", []).append({
+            "id": exchange_id,
+            "studentId": student_id,
+            "direction": direction,
+            "amount": amount,
+            "coinsDelta": coins_delta,
+            "diamondsDelta": diamonds_delta,
+            "coinsBalanceAfter": student["totalCoins"],
+            "diamondsBalanceAfter": student["olmos"],
+            "rateUsed": c2d_rate if direction == "c2d" else d2c_rate,
+            "at": int(time.time() * 1000),
+        })
+
+        write_data(data)
+        state = student_wallet_state(student, data)
+
+    return jsonify({"ok": True, "state": state})
+
+
+@app.route("/api/admin/exchange-rate", methods=["POST"])
+def admin_exchange_rate():
+    """Admin uchun: Tanga<->Olmos kurslarini o'zgartirish (standart: 10 / 15).
+
+    Talab: `role` va `adminId` yuborilishi va haqiqatan admin bo'lishi kerak.
+    """
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"ok": False, "error": "invalid_amount"}), 400
+
+    admin_id = n_int(body.get("adminId"))
+
+    with _data_lock:
+        data = read_data()
+        data, _ = normalize_data(data)
+        admin = find_account(data, "admin", admin_id) if admin_id else None
+        if not admin:
+            return jsonify({"ok": False, "error": "unauthorized"}), 403
+
+        settings = data.get("settings")
+        if not isinstance(settings, dict):
+            settings = {}
+            data["settings"] = settings
+
+        if "coinToDiamondRate" in body:
+            settings["coinToDiamondRate"] = max(1, n_int(body.get("coinToDiamondRate"), DEFAULT_COIN_TO_DIAMOND_RATE))
+        if "diamondToCoinRate" in body:
+            settings["diamondToCoinRate"] = max(1, n_int(body.get("diamondToCoinRate"), DEFAULT_DIAMOND_TO_COIN_RATE))
+        # Eski frontend/klient faqat "rate" yuborishi mumkin — buni Olmos->Tanga
+        # kursi sifatida talqin qilamiz (eski xatti-harakatga eng yaqini).
+        elif "rate" in body:
+            settings["diamondToCoinRate"] = max(1, n_int(body.get("rate"), DEFAULT_DIAMOND_TO_COIN_RATE))
+
+        write_data(data)
+        c2d_rate, d2c_rate = get_exchange_rates(data)
+
+    return jsonify({"ok": True, "state": {
+        "coinToDiamondRate": c2d_rate,
+        "diamondToCoinRate": d2c_rate,
+        "exchangeRate": d2c_rate,
+    }})
 
 
 @app.route("/api/ai/chat", methods=["POST"])

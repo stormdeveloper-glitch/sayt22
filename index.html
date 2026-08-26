@@ -7472,6 +7472,7 @@
       already_owned: '✅ Bu buyum allaqachon sizda bor',
       not_owned: '❗ Avval sotib oling',
       invalid_amount: '❗ Miqdorni to\'g\'ri kiriting',
+      invalid_multiple: '❗ Miqdor talab qilingan songa karrali bo\'lishi kerak',
       invalid_item: '❌ Noto\'g\'ri mahsulot',
       unauthorized: '❗ Avval tizimga kiring',
       network_error: '❌ Serverga ulanib bo\'lmadi. Internetni tekshiring va qayta urinib ko\'ring.',
@@ -7494,7 +7495,9 @@
         if ('equippedBadge' in state) s.equippedBadge = state.equippedBadge;
       }
       if (state.diamonds !== undefined) diamonds = state.diamonds;
-      if (state.exchangeRate !== undefined) { DB.settings = DB.settings || {}; DB.settings.exchangeRate = state.exchangeRate; }
+      DB.settings = DB.settings || {};
+      if (state.coinToDiamondRate !== undefined) DB.settings.coinToDiamondRate = state.coinToDiamondRate;
+      if (state.diamondToCoinRate !== undefined) DB.settings.diamondToCoinRate = state.diamondToCoinRate;
       // Faqat vaqtinchalik keshni yangilaymiz (asosiy va ishonchli manba — server/database)
       try { localStorage.setItem(LOCAL_KEY, JSON.stringify(toApiData())); } catch (e) {}
       updateDia(); renderMktPage(); renderCMarket();
@@ -7607,15 +7610,21 @@
     // Kurs sozlamalardan (DB.settings.exchangeRate) boshqariladi:
     // 1 Olmos = exchangeRate Tanga (so'm → dollar kabi konvertatsiya tizimi).
     // ══════════════════════════════════
-    function getExchangeRate() { return Math.max(1, apiNum(DB.settings?.exchangeRate, 5)); }
+    // Kurslar ATAYLAB bir-biriga teskari EMAS (server bilan bir xil standart qiymatlar):
+    //   Tanga -> Olmos: 1 🪙 = coinToDiamondRate (standart 10) 💎
+    //   Olmos -> Tanga: diamondToCoinRate (standart 15) 💎 = 1 🪙
+    // Haqiqiy qiymatlar har doim serverdan (DB.settings) olinadi — bu yerdagilar
+    // faqat server bilan hali sinxronlanmagan holat uchun boshlang'ich ko'rsatkich.
+    function getCoinToDiamondRate() { return Math.max(1, apiNum(DB.settings?.coinToDiamondRate, 10)); }
+    function getDiamondToCoinRate() { return Math.max(1, apiNum(DB.settings?.diamondToCoinRate, 15)); }
     function openCurrencyExchangeModal() {
       const s = mGetStudent();
       if (!s) { showToast('❗ Avval tizimga kiring'); return; }
-      const rate = getExchangeRate();
+      const c2d = getCoinToDiamondRate(), d2c = getDiamondToCoinRate();
       const coins = Number(s.coins) || 0;
       openGlobalModal(`
         <div class="modal-title"><i class="fas fa-right-left"></i> Valyuta almashish</div>
-        <p style="color:var(--text3);font-size:12.5px;margin-bottom:12px;">Joriy kurs: <b style="color:var(--gold);">1 💎 = ${rate} 🪙</b></p>
+        <p style="color:var(--text3);font-size:12.5px;margin-bottom:12px;">Kurs: <b style="color:var(--gold);">1 🪙 = ${c2d} 💎</b> &nbsp;·&nbsp; <b style="color:var(--cyan);">${d2c} 💎 = 1 🪙</b></p>
         <div style="display:flex;gap:10px;margin-bottom:14px;">
           <div class="scard" style="flex:1;text-align:center;padding:10px;">
             <div class="fs11 txt3">Tanga</div>
@@ -7628,8 +7637,8 @@
         </div>
         <div class="form-group"><label>Yo'nalish</label>
           <select class="form-control" id="exDir">
-            <option value="d2c">💎 Olmosni Tangaga almashtirish</option>
-            <option value="c2d">🪙 Tangani Olmosga almashtirish</option>
+            <option value="d2c">💎 Olmosni Tangaga almashtirish (${d2c} 💎 = 1 🪙)</option>
+            <option value="c2d">🪙 Tangani Olmosga almashtirish (1 🪙 = ${c2d} 💎)</option>
           </select>
         </div>
         <div class="form-group"><label>Miqdor</label>
@@ -7645,8 +7654,13 @@
         const dir = dirEl.value; const amt = Math.max(0, parseInt(amtEl.value) || 0);
         const prev = document.getElementById('exPreview');
         if (!prev) return;
-        if (dir === 'd2c') prev.textContent = amt ? `${amt} 💎 → ${amt * rate} 🪙` : '—';
-        else prev.textContent = amt ? `${amt} 🪙 → ${(amt / rate).toFixed(2)} 💎` : '—';
+        if (!amt) { prev.textContent = '—'; return; }
+        if (dir === 'd2c') {
+          if (amt % d2c !== 0) { prev.textContent = `❗ Miqdor ${d2c} ga karrali bo'lishi kerak (masalan: ${d2c}, ${d2c * 2}, ${d2c * 10})`; return; }
+          prev.textContent = `${amt} 💎 → ${amt / d2c} 🪙`;
+        } else {
+          prev.textContent = `${amt} 🪙 → ${amt * c2d} 💎`;
+        }
       };
       dirEl.addEventListener('change', updatePreview); amtEl.addEventListener('input', updatePreview);
       setTimeout(() => amtEl.focus(), 50);
@@ -7679,12 +7693,15 @@
     // ── Admin: ayirboshlash kursini sozlash (bu ham serverdagi settings'ga yoziladi) ──
     function openExchangeRateSettingsModal() {
       if (curUser?.role !== 'admin') { showToast('❗ Faqat admin uchun'); return; }
-      const rate = getExchangeRate();
+      const c2d = getCoinToDiamondRate(), d2c = getDiamondToCoinRate();
       openGlobalModal(`
-        <div class="modal-title"><i class="fas fa-sliders-h"></i> Valyuta kursi sozlamasi</div>
-        <p style="color:var(--text3);font-size:12.5px;margin-bottom:12px;">Hozirgi kurs: 1 💎 (Olmos) = ${rate} 🪙 (Tanga)</p>
-        <div class="form-group"><label>Yangi kurs (1 Olmos = ? Tanga)</label>
-          <input class="form-control" id="exRateInput" type="number" min="1" step="1" value="${rate}">
+        <div class="modal-title"><i class="fas fa-sliders-h"></i> Valyuta kurslari sozlamasi</div>
+        <p style="color:var(--text3);font-size:12.5px;margin-bottom:12px;">Kurslar ataylab bir xil emas (spred). Standart: 1 🪙 = 10 💎, 15 💎 = 1 🪙.</p>
+        <div class="form-group"><label>Tanga → Olmos (1 Tanga = ? Olmos)</label>
+          <input class="form-control" id="exRateC2D" type="number" min="1" step="1" value="${c2d}">
+        </div>
+        <div class="form-group"><label>Olmos → Tanga (? Olmos = 1 Tanga)</label>
+          <input class="form-control" id="exRateD2C" type="number" min="1" step="1" value="${d2c}">
         </div>
         <div style="display:flex;gap:8px;margin-top:14px;">
           <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
@@ -7694,15 +7711,19 @@
     window.openExchangeRateSettingsModal = openExchangeRateSettingsModal;
     async function saveExchangeRate() {
       if (mktBusy) return;
-      const val = Math.max(1, parseInt(document.getElementById('exRateInput')?.value) || 1);
+      const c2dVal = Math.max(1, parseInt(document.getElementById('exRateC2D')?.value) || 10);
+      const d2cVal = Math.max(1, parseInt(document.getElementById('exRateD2C')?.value) || 15);
       mktBusy = true;
-      const result = await mktRequest('/api/admin/exchange-rate', { rate: val });
+      const result = await mktRequest('/api/admin/exchange-rate', {
+        adminId: curUser?.id, coinToDiamondRate: c2dVal, diamondToCoinRate: d2cVal
+      });
       mktBusy = false;
       if (!result.ok) { showToast(mktErrMsg(result.error)); return; }
       DB.settings = DB.settings || {};
-      DB.settings.exchangeRate = (result.state && result.state.exchangeRate) || val;
+      DB.settings.coinToDiamondRate = (result.state && result.state.coinToDiamondRate) || c2dVal;
+      DB.settings.diamondToCoinRate = (result.state && result.state.diamondToCoinRate) || d2cVal;
       closeGlobalModal();
-      showToast(`✅ Yangi kurs saqlandi: 1 💎 = ${DB.settings.exchangeRate} 🪙`);
+      showToast(`✅ Yangi kurslar saqlandi: 1 🪙 = ${DB.settings.coinToDiamondRate} 💎 · ${DB.settings.diamondToCoinRate} 💎 = 1 🪙`);
     }
     window.saveExchangeRate = saveExchangeRate;
 
