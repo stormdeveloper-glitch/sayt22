@@ -3801,6 +3801,17 @@
     </div>
   </div>
 
+  <!-- NEGA U SHU O'RINDA? — real statistikaga asoslangan raqobat tushuntirishi -->
+  <div class="modal-overlay" id="whyRankModal">
+    <div class="modal-box" style="max-width:380px;">
+      <div class="modal-head">
+        <h3><i class="fas fa-magnifying-glass-chart" style="margin-right:7px;color:var(--cyan);"></i>NEGA SHU O'RINDA?</h3>
+        <button class="modal-close" onclick="closeMod('whyRankModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" id="whyRankBody" style="max-height:60vh;overflow-y:auto;"></div>
+    </div>
+  </div>
+
   <!-- TEST BUILDER MODAL (teacher) -->
   <div class="modal-overlay" id="testModal">
     <div class="modal-box" style="max-width:560px;">
@@ -4068,12 +4079,13 @@
         <div class="nav-item active" onclick="showPage('dpg',this,'BOSH SAHIFA')"><i class="fas fa-th-large"></i> Bosh
           sahifa</div>
         <div class="nav-item" onclick="showPage('rpg',this,'REYTING')"><i class="fas fa-trophy"></i> Reyting</div>
+        <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar <span class="badge-notif" id="sNewsBadge" style="display:none;">0</span></div>
         <div class="nav-item" onclick="showPage('marketpg',this,'MARKET')"><i class="fas fa-shopping-cart"></i> Market
         </div>
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
             class="badge-notif" id="sChatBadge" style="display:none;">0</span></div>
         <div class="nav-item" onclick="showPage('matpg',this,'DARSLIK VA KITOBLAR')"><i class="fas fa-book"></i> Darsliklar</div>
-        <div class="nav-item" onclick="showPage('notifpg',this,'SOZLAMALAR')"><i class="fas fa-bell"></i> Sozlamalar</div>
+        <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
         <div class="nav-sec">Qo'shimcha</div>
         <div class="nav-item" onclick="showPage('hpg',this,'FAOLLIK TARIXI')"><i class="fas fa-history"></i> Faollik
           tarixi</div>
@@ -4091,6 +4103,7 @@
         <div class="nav-item active" onclick="showPage('adpg',this,'STATISTIKA')"><i class="fas fa-chart-bar"></i>
           Statistika</div>
         <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> Talabalar</div>
+        <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar</div>
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
             class="badge-notif" id="tChatBadge" style="display:none;">0</span></div>
         <div class="nav-item" onclick="showPage('cpg',this,'TANGA BERISH')"><i class="fas fa-coins"></i> Tanga berish
@@ -4116,6 +4129,7 @@
             class="fas fa-tachometer-alt"></i> Dashboard</div>
         <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> Barcha talabalar
         </div>
+        <div class="nav-item" onclick="showPage('newsmgrpg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar</div>
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat</div>
         <div class="nav-item" onclick="showPage('tpg',this,'O\'QITUVCHILAR')"><i class="fas fa-chalkboard-teacher"></i>
           O'qituvchilar</div>
@@ -4124,6 +4138,7 @@
         <div class="nav-item" onclick="showPage('monpg',this,'MONITORING')"><i class="fas fa-eye"></i> Monitoring</div>
         <div class="nav-sec">Profil</div>
         <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-user-shield"></i> Profil</div>
+        <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
       </nav>
       <div class="sb-footer">TEACHER_TEXNO v3.1 · 2025</div>
@@ -5148,6 +5163,51 @@
           </div>
         </div>
 
+        <!-- YANGI: YANGILIKLAR (NEWS) — barcha rollar uchun umumiy lenta -->
+        <div class="page" id="newspg">
+          <div id="newsWrap"></div>
+        </div>
+
+        <!-- ADMIN: YANGILIKLARNI BOSHQARISH -->
+        <div class="page" id="newsmgrpg">
+          <div class="ph">
+            <h2>YANGILIKLAR BOSHQARUVI</h2>
+            <p>// Platformadagi barcha foydalanuvchilarga ko'rinadigan e'lonlarni yarating va boshqaring</p>
+          </div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch"><h4 id="newsFormTitle">YANGI E'LON QO'SHISH</h4></div>
+            <div class="cb">
+              <div class="g2" style="margin-bottom:0;">
+                <div class="form-group"><label>KATEGORIYA</label>
+                  <select class="form-control" id="newsCategory">
+                    <option value="ai">🤖 AI</option>
+                    <option value="dasturlash">💻 Dasturlash</option>
+                    <option value="texnologiya">⚙️ Texnologiya</option>
+                    <option value="darslik">📚 Darslik</option>
+                    <option value="platforma">🏫 Platforma</option>
+                    <option value="boshqa">📌 Boshqa</option>
+                  </select>
+                </div>
+                <div class="form-group"><label><input type="checkbox" id="newsPinned" style="width:auto;margin-right:6px;">Muhim (yuqorida qadalgan)</label></div>
+              </div>
+              <div class="form-group"><label>SARLAVHA</label><input class="form-control" id="newsTitle" placeholder="Masalan: Platformaga yangi AI Assistant qo'shildi"></div>
+              <div class="form-group"><label>MATN</label><textarea class="form-control" id="newsContent" rows="4" placeholder="E'lon matnini shu yerga yozing..."></textarea></div>
+              <div class="form-group"><label>RASM HAVOLASI (ixtiyoriy)</label><input class="form-control" id="newsImage" placeholder="https://..."></div>
+              <input type="hidden" id="newsEditId" value="">
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-gold" id="newsSubmitBtn" onclick="saveNewsPost()"><i class="fas fa-plus"></i> Joylash</button>
+                <button class="btn btn-sm" id="newsCancelBtn" style="display:none;" onclick="cancelEditNews()"><i class="fas fa-times"></i> Bekor qilish</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><h4>E'LONLAR RO'YXATI</h4></div>
+            <div class="cb" id="newsAdminList" style="padding:10px;">
+              <div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;">// E'lon yo'q</div>
+            </div>
+          </div>
+        </div>
+
         <!-- YANGI: BILIM BELLASHUVI (Savol-javob raqobat bo'limi) -->
         <div class="page" id="battlepg">
           <div class="ph">
@@ -5241,6 +5301,16 @@
           <div id="notifWrap"></div>
         </div>
 
+        <!-- YANGI: TO'LIQ SOZLAMALAR MARKAZI -->
+        <div class="page" id="settpg">
+          <div id="settWrap"></div>
+        </div>
+
+        <!-- YANGI: TO'LIQ SOZLAMALAR MARKAZI -->
+        <div class="page" id="settpg">
+          <div id="settWrap"></div>
+        </div>
+
         <!-- ADMIN PAGES -->
         <div class="page" id="admpg">
           <div class="ph">
@@ -5305,6 +5375,8 @@
                   To'lovlar hisoboti</button>
                 <button class="btn" onclick="openExchangeRateSettingsModal()"><i class="fas fa-right-left"></i>
                   Valyuta kursi sozlamasi</button>
+                <button class="btn btn-cyan" onclick="showPage('newsmgrpg',null,'YANGILIKLAR')"><i class="fas fa-newspaper"></i>
+                  Yangiliklar boshqaruvi</button>
               </div>
             </div>
           </div>
@@ -5505,6 +5577,7 @@
         attendanceLog: DB.attendanceLog || [],
         pairHistory: DB.pairHistory || [],
         materials: DB.materials || [],
+        news: DB.news || [],
         homeworks: DB.homeworks || [],
         homeworkSubmissions: DB.homeworkSubmissions || [],
         lessonPlans: DB.lessonPlans || [],
@@ -5563,6 +5636,7 @@
       DB.attendanceLog = Array.isArray(data.attendanceLog) ? data.attendanceLog : [];
       DB.pairHistory = Array.isArray(data.pairHistory) ? data.pairHistory : [];
       DB.materials = Array.isArray(data.materials) ? data.materials : [];
+      DB.news = Array.isArray(data.news) ? data.news : [];
       DB.homeworks = Array.isArray(data.homeworks) ? data.homeworks : [];
       DB.homeworkSubmissions = Array.isArray(data.homeworkSubmissions) ? data.homeworkSubmissions : [];
       DB.lessonPlans = Array.isArray(data.lessonPlans) ? data.lessonPlans : [];
@@ -5986,6 +6060,7 @@
       document.getElementById('csCoins').textContent = diamonds;
       prepareChatsForCurrentUser();
       saveData();
+      applyThemeFromPrefs();
       if (r === 'student') { initS(); showPage('dpg', null, 'BOSH SAHIFA'); }
       else if (r === 'teacher') { initT(); showPage('adpg', null, 'STATISTIKA'); }
       else { initA(); showPage('admpg', null, 'ADMIN DASHBOARD'); }
@@ -6015,6 +6090,7 @@
       renderLbMini(); renderActList(); renderFullLb();
       renderStudentTests(); refreshDailyGameBtn(); renderMyAttendance(); refreshPracticeBtn();
       renderStudentHomeworks(); renderStudentLessonTopic(); renderMaterialsStudent();
+      if (typeof updateNewsBadge === 'function') updateNewsBadge();
       if (typeof mCheckReminders === 'function') setTimeout(mCheckReminders, 500);
     }
     function renderMyAttendance() {
@@ -7001,6 +7077,181 @@
         el.innerHTML += `<div style="margin:14px 0 8px;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;">// ${String(k).replace(/</g, '&lt;')}</div><div class="g2">${grid}</div>`;
       });
     }
+
+    // ══════════════════════════════════
+    // YANGILIKLAR (NEWS)
+    // Barcha rollar (admin/o'qituvchi/talaba) uchun umumiy e'lonlar lentasi.
+    // Admin qo'shadi/tahrirlaydi/o'chiradi, hamma o'qiydi. Har bir foydalanuvchi
+    // (roli+id bo'yicha) alohida "o'qilgan" belgisi saqlanadi — shu orqali 🆕 Yangi
+    // nishoni va navdagi son-badge to'g'ri ishlaydi.
+    // ══════════════════════════════════
+    const NEWS_CATS = {
+      ai: { label: 'AI', icon: '🤖' },
+      dasturlash: { label: 'Dasturlash', icon: '💻' },
+      texnologiya: { label: 'Texnologiya', icon: '⚙️' },
+      darslik: { label: 'Darslik', icon: '📚' },
+      platforma: { label: 'Platforma', icon: '🏫' },
+      boshqa: { label: 'Boshqa', icon: '📌' }
+    };
+    // Joriy foydalanuvchini rol+id bo'yicha bitta kalitga aylantiradi (turli rollardagi id'lar
+    // to'qnashmasligi uchun) — "o'qilgan"/"ko'rilgan" ro'yxatlarida shu kalit ishlatiladi.
+    function newsUserKey() { return curUser ? (curUser.role + '_' + curUser.id) : null; }
+
+    function saveNewsPost() {
+      if (!curUser || curUser.role !== 'admin') { showToast('❗ Faqat admin e\'lon joylashi mumkin'); return; }
+      const title = document.getElementById('newsTitle').value.trim();
+      const content = document.getElementById('newsContent').value.trim();
+      const category = document.getElementById('newsCategory').value || 'boshqa';
+      const image = document.getElementById('newsImage').value.trim();
+      const pinned = document.getElementById('newsPinned').checked;
+      const editId = document.getElementById('newsEditId').value;
+      if (!title || !content) { showToast('❗ Sarlavha va matnni kiriting'); return; }
+      DB.news = DB.news || [];
+      if (editId) {
+        const n = DB.news.find(x => x.id === editId);
+        if (n) { n.title = title; n.content = content; n.category = category; n.image = image; n.pinned = pinned; }
+        showToast('✅ E\'lon yangilandi');
+      } else {
+        const post = { id: 'news' + Date.now(), title, content, category, image, pinned, authorId: curUser.id, authorName: curUser.name, authorRole: curUser.role, createdAt: Date.now(), views: 0, viewedBy: [] };
+        DB.news.unshift(post);
+        showToast('✅ Yangilik joylandi');
+        // Barcha talabalarga bildirishnoma yuboriladi
+        (DB.students || []).forEach(s => mPushNotif(s.id, 'announcement', `📰 Yangi e'lon: ${title}`));
+      }
+      cancelEditNews();
+      saveData();
+      renderNewsAdminList();
+      if (typeof updateNewsBadge === 'function') updateNewsBadge();
+    }
+    window.saveNewsPost = saveNewsPost;
+
+    function editNewsPost(id) {
+      const n = (DB.news || []).find(x => x.id === id); if (!n) return;
+      document.getElementById('newsTitle').value = n.title;
+      document.getElementById('newsContent').value = n.content;
+      document.getElementById('newsCategory').value = n.category;
+      document.getElementById('newsImage').value = n.image || '';
+      document.getElementById('newsPinned').checked = !!n.pinned;
+      document.getElementById('newsEditId').value = n.id;
+      document.getElementById('newsFormTitle').textContent = "E'LONNI TAHRIRLASH";
+      document.getElementById('newsSubmitBtn').innerHTML = '<i class="fas fa-check"></i> Saqlash';
+      document.getElementById('newsCancelBtn').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.editNewsPost = editNewsPost;
+
+    function cancelEditNews() {
+      ['newsTitle', 'newsContent', 'newsImage'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      document.getElementById('newsCategory').value = 'ai';
+      document.getElementById('newsPinned').checked = false;
+      document.getElementById('newsEditId').value = '';
+      document.getElementById('newsFormTitle').textContent = "YANGI E'LON QO'SHISH";
+      document.getElementById('newsSubmitBtn').innerHTML = '<i class="fas fa-plus"></i> Joylash';
+      document.getElementById('newsCancelBtn').style.display = 'none';
+    }
+    window.cancelEditNews = cancelEditNews;
+
+    function deleteNewsPost(id) {
+      if (!confirm("E'lonni o'chirishni tasdiqlaysizmi?")) return;
+      DB.news = (DB.news || []).filter(n => n.id !== id);
+      saveData(); renderNewsAdminList();
+      showToast("🗑️ E'lon o'chirildi");
+    }
+    window.deleteNewsPost = deleteNewsPost;
+
+    function renderNewsAdminList() {
+      const el = document.getElementById('newsAdminList'); if (!el) return;
+      const list = (DB.news || []).slice().sort((a, b) => (b.pinned - a.pinned) || (b.createdAt - a.createdAt));
+      if (!list.length) { el.innerHTML = `<div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;">// E'lon yo'q</div>`; return; }
+      el.innerHTML = list.map(n => `
+        <div class="card" style="margin-bottom:10px;">
+          <div class="cb" style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:24px;">${NEWS_CATS[n.category]?.icon || '📌'}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:13px;">${n.pinned ? '📌 ' : ''}${escHtml(n.title)}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px;">${NEWS_CATS[n.category]?.label || 'Boshqa'} · ${new Date(n.createdAt).toLocaleDateString('uz-UZ')} · 👁 ${n.views || 0} ko'rildi</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-xs" onclick="editNewsPost('${n.id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-xs btn-danger" onclick="deleteNewsPost('${n.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+    window.renderNewsAdminList = renderNewsAdminList;
+
+    // Joriy foydalanuvchi uchun o'qilmagan (yangi) e'lonlar sonini nav-badge'ga chiqaradi.
+    function updateNewsBadge() {
+      const badge = document.getElementById('sNewsBadge'); if (!badge) return;
+      const key = newsUserKey(); if (!key) { badge.style.display = 'none'; return; }
+      const unread = (DB.news || []).filter(n => !(Array.isArray(n.viewedBy) && n.viewedBy.includes(key))).length;
+      badge.style.display = unread ? 'block' : 'none';
+      badge.textContent = unread;
+    }
+    window.updateNewsBadge = updateNewsBadge;
+
+    let newsCurCat = 'all';
+    function newsSetCat(cat, el) {
+      newsCurCat = cat;
+      document.querySelectorAll('#newsCatTabs .st-tab').forEach(x => x.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderNewsFeed();
+    }
+    window.newsSetCat = newsSetCat;
+
+    function openNewsDetail(id) {
+      const n = (DB.news || []).find(x => x.id === id); if (!n) return;
+      const key = newsUserKey();
+      n.viewedBy = n.viewedBy || [];
+      if (key && !n.viewedBy.includes(key)) { n.viewedBy.push(key); n.views = (n.views || 0) + 1; saveData(); }
+      const body = document.getElementById('whyRankBody');
+      if (body) {
+        body.innerHTML = `
+          ${n.image ? `<img src="${n.image}" style="width:100%;border-radius:10px;margin-bottom:10px;" onerror="this.style.display='none';">` : ''}
+          <div class="fs11 txt3">${NEWS_CATS[n.category]?.icon || '📌'} ${NEWS_CATS[n.category]?.label || 'Boshqa'} · ${new Date(n.createdAt).toLocaleDateString('uz-UZ')}</div>
+          <div class="fs16 fw8 mt-4 mb-8">${escHtml(n.title)}</div>
+          <div class="fs13" style="white-space:pre-wrap;line-height:1.6;">${escHtml(n.content)}</div>
+          <div class="fs11 txt3 mt-16">✍️ ${escHtml(n.authorName || '')} · 👁 ${n.views || 0} marta ko'rildi</div>
+        `;
+        document.querySelector('#whyRankModal h3').innerHTML = `<i class="fas fa-newspaper" style="margin-right:7px;color:var(--cyan);"></i>YANGILIK`;
+        openMod('whyRankModal');
+      }
+      renderNewsFeed(); updateNewsBadge();
+    }
+    window.openNewsDetail = openNewsDetail;
+
+    function renderNewsFeed() {
+      const wrap = document.getElementById('newsWrap'); if (!wrap) return;
+      const key = newsUserKey();
+      let list = (DB.news || []).slice();
+      if (newsCurCat !== 'all') list = list.filter(n => n.category === newsCurCat);
+      list.sort((a, b) => (b.pinned - a.pinned) || (b.createdAt - a.createdAt));
+      const catTabs = `<div class="study-tabs mb-16" id="newsCatTabs" style="flex-wrap:wrap;">
+        <button class="st-tab ${newsCurCat === 'all' ? 'active' : ''}" onclick="newsSetCat('all',this)">Barchasi</button>
+        ${Object.entries(NEWS_CATS).map(([k, v]) => `<button class="st-tab ${newsCurCat === k ? 'active' : ''}" onclick="newsSetCat('${k}',this)">${v.icon} ${v.label}</button>`).join('')}
+      </div>`;
+      const cardsHtml = !list.length
+        ? `<div class="card"><div class="cb" style="color:var(--text3);font-size:13px;text-align:center;padding:30px;font-family:'JetBrains Mono',monospace;">// Hozircha yangilik yo'q</div></div>`
+        : `<div class="g2">${list.map(n => {
+            const isNew = !(Array.isArray(n.viewedBy) && key && n.viewedBy.includes(key));
+            return `<div class="card" style="cursor:pointer;" onclick="openNewsDetail('${n.id}')">
+              ${n.image ? `<img src="${n.image}" style="width:100%;height:130px;object-fit:cover;border-radius:10px 10px 0 0;" onerror="this.style.display='none';">` : ''}
+              <div class="cb">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                  <span class="badge bg" style="font-size:9px;">${NEWS_CATS[n.category]?.icon || '📌'} ${NEWS_CATS[n.category]?.label || 'Boshqa'}</span>
+                  ${isNew ? `<span class="badge gr" style="font-size:9px;">🆕 Yangi</span>` : ''}
+                  ${n.pinned ? `<span class="badge bb" style="font-size:9px;">📌 Muhim</span>` : ''}
+                </div>
+                <div style="font-weight:700;font-size:14px;margin-top:6px;">${escHtml(n.title)}</div>
+                <div style="font-size:12px;color:var(--text2);margin-top:4px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(n.content)}</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:8px;">${new Date(n.createdAt).toLocaleDateString('uz-UZ')} · 👁 ${n.views || 0}</div>
+              </div>
+            </div>`;
+          }).join('')}</div>`;
+      wrap.innerHTML = `<div class="ph"><h2>YANGILIKLAR</h2><p>// AI, dasturlash, texnologiya, darslik va platformadagi so'nggi e'lonlar</p></div>${catTabs}${cardsHtml}`;
+      updateNewsBadge();
+    }
+    window.renderNewsFeed = renderNewsFeed;
 
     function fillRpGroupSel() {
       const sel = document.getElementById('rpGroupSel'); if (!sel) return;
@@ -8252,6 +8503,12 @@
       _queueMsgTask(fn);
     }
     async function askTexnoAI(prompt, data) {
+      const __rec = getCurrentAccountRecord(); ensureAccountPrefs(__rec);
+      if (__rec && __rec.prefs && __rec.prefs.aiEnabled === false) {
+        data.msgs.push({ id: gId(), text: "🚫 AI yordamchisi sozlamalarda o'chirilgan. Sozlamalar → AI bo'limidan yoqishingiz mumkin.", sent: false, senderKey: 'texno-ai', senderName: 'Texno AI', time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' });
+        renderMsgs(); renderCChats(); saveData();
+        return;
+      }
       if (!prompt) {
         data.msgs.push({ id: gId(), text: "Texno AI uchun savol yozing: /texno sayt uchun reja tuz", sent: false, senderKey: 'texno-ai', senderName: 'Texno AI', time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' });
         renderMsgs(); renderCChats(); saveData();
@@ -8259,6 +8516,15 @@
       }
       const aiMsg = { id: gId(), text: 'Texno AI yozmoqda...', sent: false, senderKey: 'texno-ai', senderName: 'Texno AI', time: nTime(), type: 'text', reactions: {}, read: false, senderId: 'texno-ai' };
       data.msgs.push(aiMsg); renderMsgs(); renderCChats();
+      // Reyting haqidagi savollarga — hech qachon o'ylab topilmagan javob emas, faqat
+      // REAL statistikaga asoslangan javob berish uchun — backendga chiqmasdan, mavjud
+      // ma'lumotlardan lokal javob qidiramiz.
+      const localAns = (typeof mTryLocalRankingAnswer === 'function') ? mTryLocalRankingAnswer(prompt) : null;
+      if (localAns) {
+        aiMsg.text = localAns; aiMsg.time = nTime();
+        renderMsgs(); renderCChats(); saveData();
+        return;
+      }
       try {
         const history = data.msgs
           .filter(m => m.text && !m.deleted)
@@ -9462,13 +9728,328 @@
     setInterval(mCheckReminders, 60 * 1000); // har 1 daqiqada tekshiradi — dars boshlanish vaqtiga aniqroq mos kelishi uchun
     window.addEventListener('load', () => setTimeout(mCheckReminders, 3000));
 
-    // ──────── Rankings ─────────
-    function mGetRanked(mode='overall') {
-      const list = (DB.students||[]).map(s => ({ ...s, _coins: Number(s.totalCoins) || (typeof s.coins === 'number'?s.coins:0) }));
-      list.sort((a,b) => b._coins - a._coins);
-      list.forEach((s,i)=>{ s._rank = i+1; if (typeof s.rank === 'object' && s.rank) { if (mode==='overall') { s.rank.prevOverall = s.rank.overall||0; s.rank.overall = i+1; } } });
+    // ══════════════════════════════════
+    // AQLLI REYTING TIZIMI
+    // Oddiy "kim ko'p tanga to'plagan" jadvali emas — har bir o'quvchining
+    // HAQIQIY natijalari (test o'rtachasi, davomat, vazifa bajarilishi —
+    // computeSubjectScores orqali), barqarorligi (streak) va so'nggi
+    // tendensiyasi (fanlar bo'yicha o'sish/pasayish) birlashtirilib,
+    // "aqlli ball" (_smart) hisoblanadi. Shu orqali reyting o'quvchilar
+    // o'rtasidagi REAL raqobatni aks ettiradi, faqat tanga miqdorini emas.
+    // Og'irliklar: Tanga 40% + O'zlashtirish 35% + Barqarorlik(streak) 15% + Tendensiya 10%
+    // ══════════════════════════════════
+    function mComputeSmartScore(s) {
+      computeSubjectScores(s); // fanlar bo'yicha haqiqiy ballarni (test/davomat/vazifa asosida) yangilaydi
+      const subjVals = Object.values(s.subjectScores || {});
+      const academicAvg = subjVals.length ? Math.round(subjVals.reduce((a, d) => a + (d.score || 0), 0) / subjVals.length) : 0;
+      const upCnt = subjVals.filter(d => d.trend === 'up').length;
+      const downCnt = subjVals.filter(d => d.trend === 'down').length;
+      const momentum = subjVals.length ? Math.round(((upCnt - downCnt) / subjVals.length) * 100) : 0; // -100..100
+      const streak = Number(s.activity?.streak ?? s.streak) || 0;
+      const consistency = Math.min(100, streak * 8);
+      return { academicAvg, momentum, streak, consistency };
+    }
+    window.mComputeSmartScore = mComputeSmartScore;
+
+    function mGetSmartRanked(mode = 'overall') {
+      const raw = DB.students || [];
+      const withSmart = raw.map(s => {
+        const coins = Number(s.totalCoins) || (typeof s.coins === 'number' ? s.coins : 0);
+        const { academicAvg, momentum, streak, consistency } = mComputeSmartScore(s);
+        return { ref: s, coins, academicAvg, momentum, streak, consistency };
+      });
+      const maxCoins = Math.max(1, ...withSmart.map(x => x.coins));
+      withSmart.forEach(x => { x.coinsNorm = Math.round((x.coins / maxCoins) * 100); });
+      withSmart.forEach(x => {
+        x.smart = Math.round(x.coinsNorm * 0.4 + x.academicAvg * 0.35 + x.consistency * 0.15 + Math.max(0, x.momentum) * 0.10);
+      });
+      withSmart.sort((a, b) => b.smart - a.smart || b.coins - a.coins);
+      const list = withSmart.map((x, i) => {
+        const merged = { ...x.ref, _coins: x.coins, _smart: x.smart, _academic: x.academicAvg, _momentum: x.momentum, _streak: x.streak, _consistency: x.consistency, _rank: i + 1 };
+        if (typeof merged.rank === 'object' && merged.rank && mode === 'overall') { merged.rank.prevOverall = merged.rank.overall || 0; merged.rank.overall = i + 1; }
+        return merged;
+      });
+      // Raqobat tahlili: har bir o'quvchi uchun eng yaqin raqibni (aqlli ball farqi eng kichik) aniqlaydi.
+      list.forEach((u, i) => {
+        const above = list[i - 1] || null;
+        const below = list[i + 1] || null;
+        let rival = null;
+        if (above && below) rival = ((u._smart||0) - (below._smart||0)) <= ((above._smart||0) - (u._smart||0)) ? below : above;
+        else rival = above || below;
+        u._rival = rival ? { id: rival.id, name: rival.name, gap: Math.abs((u._smart || 0) - (rival._smart || 0)) } : null;
+        u._gapAbove = above ? Math.max(0, (above._smart || 0) - (u._smart || 0)) : 0;
+      });
       return list;
     }
+    window.mGetSmartRanked = mGetSmartRanked;
+
+    // Ikki o'quvchi orasidagi farqni HAQIQIY statistika asosida tushuntiradi (taxminiy gap yo'q).
+    function mExplainRankDiff(a, b) {
+      const parts = [];
+      const coinDiff = (a._coins || 0) - (b._coins || 0);
+      if (Math.abs(coinDiff) >= 5) parts.push(`${coinDiff > 0 ? escHtml(a.name) : escHtml(b.name)} ${Math.abs(coinDiff)} 🪙 ko'proq to'plagan`);
+      const acaDiff = (a._academic || 0) - (b._academic || 0);
+      if (Math.abs(acaDiff) >= 4) parts.push(`${acaDiff > 0 ? escHtml(a.name) : escHtml(b.name)}ning o'zlashtirishi (test+davomat+vazifa) ${Math.abs(acaDiff)} punkt yuqori`);
+      const streakDiff = (a._streak || 0) - (b._streak || 0);
+      if (Math.abs(streakDiff) >= 2) parts.push(`${streakDiff > 0 ? escHtml(a.name) : escHtml(b.name)} ${Math.abs(streakDiff)} kun ko'proq ketma-ket faol (streak)`);
+      const momDiff = (a._momentum || 0) - (b._momentum || 0);
+      if (Math.abs(momDiff) >= 15) parts.push(`${momDiff > 0 ? escHtml(a.name) : escHtml(b.name)} so'nggi kunlarda ko'proq fanlarda o'sish tendensiyasida`);
+      if (!parts.length) parts.push("Ikkalasi deyarli teng natijaga ega — farq juda kichik, biroz harakat bilan o'rin almashishi mumkin.");
+      return parts;
+    }
+    window.mExplainRankDiff = mExplainRankDiff;
+
+    // "Nega u shu o'rinda?" — bosilgan o'quvchini joriy foydalanuvchi bilan real ko'rsatkichlar asosida solishtiradi.
+    function showWhyRank(targetId) {
+      const body = document.getElementById('whyRankBody');
+      if (!body) return;
+      const list = mGetSmartRanked();
+      const target = list.find(u => Number(u.id) === Number(targetId));
+      if (!target) return;
+      const s = mGetStudent();
+      const me = s ? list.find(u => Number(u.id) === Number(s.id)) : null;
+      if (!me) {
+        body.innerHTML = `<div class="fs13 txt3">O'zingiz bilan solishtirish uchun talaba sifatida tizimga kiring.</div>`;
+        openMod('whyRankModal'); return;
+      }
+      if (Number(me.id) === Number(target.id)) {
+        body.innerHTML = `<div class="fs13 txt3">Bu — sizning natijangiz. Reytingdagi boshqa o'quvchi ustidagi <b>"Nega bunday?"</b> tugmasini bosib solishtiring.</div>`;
+        openMod('whyRankModal'); return;
+      }
+      const ahead = target._rank < me._rank;
+      const reasons = mExplainRankDiff(ahead ? target : me, ahead ? me : target);
+      body.innerHTML = `
+        <div class="fs14 fw8 mb-4">${escHtml(target.name)} — #${target._rank} <span class="fs12 txt3 fw6">(aqlli ball: ${target._smart})</span></div>
+        <div class="fs12 txt3 mb-16">Siz — #${me._rank} <span class="fs11">(aqlli ball: ${me._smart})</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${reasons.map(r => `<div class="insight-box" style="padding:8px 12px;"><div class="insight-ico">📊</div><div class="insight-txt">${r}</div></div>`).join('')}
+        </div>
+        <div class="fs11 txt3 mt-16">Aqlli ball = 🪙Tanga (40%) + O'zlashtirish: test/davomat/vazifa (35%) + Barqarorlik-streak (15%) + So'nggi tendensiya (10%)</div>
+      `;
+      openMod('whyRankModal');
+    }
+    window.showWhyRank = showWhyRank;
+
+    // ══════════════════════════════════
+    // REYTING TARIXI VA "O'ZIB KETISH" (OVERTAKE) HODISALARI
+    // Har safar reyting qayta hisoblanganda oldingi holat (DB.rankSnapshot) bilan
+    // solishtiriladi. Agar ikki o'quvchining nisbiy tartibi o'zgargan bo'lsa (biri
+    // ikkinchisini o'zib ketgan bo'lsa), bu HAQIQIY sabab (ball/o'zlashtirish/streak
+    // farqi) bilan birga DB.rankHistory'ga yoziladi va ikkala tomonga ham bildirishnoma
+    // yuboriladi. Hech qanday taxminiy/soxta sabab ishlatilmaydi — faqat real farq.
+    // ══════════════════════════════════
+
+    // Talabaning oxirgi 7 kunda (real tranzaksiyalar asosida) yig'gan ball miqdori.
+    function mWeeklyCoinGain(studentId) {
+      const since = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      return (DB.transactions || []).filter(t => Number(t.studentId) === Number(studentId) && t.date >= since).reduce((a, t) => a + (Number(t.amount) || 0), 0);
+    }
+    window.mWeeklyCoinGain = mWeeklyCoinGain;
+
+    // g'olib (winner) raqibini (loser) nima sababli o'zib ketganini, ikkalasining
+    // OLDINGI snapshotiga nisbatan REAL o'zgarishlar asosida tushuntiradi.
+    function mBuildOvertakeReasons(winner, prevSnap) {
+      const pw = prevSnap[winner.id] || {};
+      const bits = [];
+      const coinGain = (winner._coins || 0) - (pw.coins || 0);
+      if (coinGain > 0) bits.push(`+${coinGain} 🪙 yig'di`);
+      const acaGain = (winner._academic || 0) - (pw.academic || 0);
+      if (acaGain >= 3) bits.push(`o'zlashtirishi +${acaGain} punkt oshdi (test/davomat/vazifa)`);
+      const streakGain = (winner._streak || 0) - (pw.streak || 0);
+      if (streakGain > 0) bits.push(`streak +${streakGain} kun`);
+      if (!bits.length) bits.push('umumiy faolligi oshdi');
+      return bits;
+    }
+
+    // Reytingni qayta hisoblaydi va oldingi snapshotga nisbatan "o'zib ketish"
+    // hodisalarini aniqlab, tarixga yozadi + bildirishnoma yuboradi.
+    function mRefreshRankingAndDetectChanges() {
+      if (!Array.isArray(DB.students) || !DB.students.length) return mGetSmartRanked();
+      const newList = mGetSmartRanked();
+      const prevSnap = (DB.rankSnapshot && DB.rankSnapshot.entries) || {};
+      const hasPrev = Object.keys(prevSnap).length > 0;
+      let changed = false;
+      DB.rankHistory = DB.rankHistory || [];
+      if (hasPrev) {
+        const withPrev = newList.filter(u => prevSnap[u.id]);
+        for (let i = 0; i < withPrev.length; i++) {
+          for (let j = i + 1; j < withPrev.length; j++) {
+            const a = withPrev[i], b = withPrev[j]; // hozirgi tartibda: a, b'dan oldinda
+            const pa = prevSnap[a.id], pb = prevSnap[b.id];
+            if (pa.rank > pb.rank) { // ilgari b, a'dan oldinda edi — demak a o'zib ketdi
+              const ballDelta = Math.round(((a._smart || 0) - (pa.smart || 0)) - ((b._smart || 0) - (pb.smart || 0)));
+              if (ballDelta <= 0) continue;
+              const evt = {
+                id: 'rh_' + Date.now() + '_' + a.id + '_' + b.id,
+                winnerId: a.id, winnerName: a.name, loserId: b.id, loserName: b.name,
+                fromRank: pa.rank, toRank: a._rank, ballDelta,
+                reasonBits: mBuildOvertakeReasons(a, prevSnap),
+                timestamp: Date.now()
+              };
+              DB.rankHistory.unshift(evt);
+              changed = true;
+              mPushNotif(a.id, 'rank_up', `🎉 Siz ${b.name}dan oldinga o'tdingiz! (+${ballDelta} ball farq bilan)`);
+              mPushNotif(b.id, 'rank_down', `⚡ ${a.name} sizdan oldinga o'tdi. Sabab: ${mBuildOvertakeReasons(a, prevSnap).join(', ')}.`);
+            }
+          }
+        }
+        if (DB.rankHistory.length > 200) DB.rankHistory.length = 200;
+      }
+      const entries = {};
+      newList.forEach(u => { entries[u.id] = { rank: u._rank, smart: u._smart, coins: u._coins, academic: u._academic, streak: u._streak }; });
+      DB.rankSnapshot = { timestamp: Date.now(), entries };
+      if (changed || !hasPrev) saveData();
+      return newList;
+    }
+    window.mRefreshRankingAndDetectChanges = mRefreshRankingAndDetectChanges;
+    // Sahifa ochilganda darhol va keyin har 3 daqiqada faoliyatga qarab reytingni tekshirib turadi
+    // (bu — mCheckReminders bilan bir xil "davriy tekshiruv" andozasi, alohida server kerak emas).
+    window.addEventListener('load', () => setTimeout(mRefreshRankingAndDetectChanges, 4000));
+    setInterval(mRefreshRankingAndDetectChanges, 3 * 60 * 1000);
+
+    // "🏆 Nima sababli 1-o'rinda?" — 1-o'rindagi o'quvchining haqiqiy ustunliklarini ko'rsatadi.
+    function showTop1Reason() {
+      const body = document.getElementById('whyRankBody');
+      if (!body) return;
+      const list = mGetSmartRanked();
+      const top = list[0]; if (!top) return;
+      const second = list[1] || null;
+      mEnsureRich(top); computeSubjectScores(top);
+      const subjVals = Object.values(top.subjectScores || {});
+      const totalLessons = subjVals.reduce((a, d) => a + (d.lessonsAttended || 0), 0);
+      const totalTests = subjVals.reduce((a, d) => a + (d.testsTaken || 0), 0);
+      const avgTest = subjVals.length ? Math.round(subjVals.reduce((a, d) => a + (d.avgTestScore || 0), 0) / subjVals.length) : 0;
+      const weekGain = mWeeklyCoinGain(top.id);
+      body.innerHTML = `
+        <div class="fs14 fw8 mb-4">🏆 ${escHtml(top.name)} hozir 1-o'rinda</div>
+        <div class="fs12 txt3 mb-16">Aqlli ball: ${top._smart}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="insight-box" style="padding:8px 12px;"><div class="insight-ico">📚</div><div class="insight-txt">${totalLessons} ta darsda qatnashgan</div></div>
+          <div class="insight-box" style="padding:8px 12px;"><div class="insight-ico">📝</div><div class="insight-txt">${totalTests} ta test topshirgan, o'rtacha natija ${avgTest}%</div></div>
+          <div class="insight-box" style="padding:8px 12px;"><div class="insight-ico">🔥</div><div class="insight-txt">${top._streak} kunlik streak (ketma-ket faollik)</div></div>
+          <div class="insight-box" style="padding:8px 12px;"><div class="insight-ico">📈</div><div class="insight-txt">Oxirgi 7 kunda ${weekGain} 🪙 yig'gan</div></div>
+        </div>
+        ${second ? `<div class="fs12 txt3 mt-16">🥈 2-o'rindagi ${escHtml(second.name)}dan ${Math.max(0, top._smart - second._smart)} aqlli ball oldinda.</div>` : ''}
+      `;
+      openMod('whyRankModal');
+    }
+    window.showTop1Reason = showTop1Reason;
+
+    // "Keyingi o'ringa chiqish uchun nima qilish kerak?" — real gap va tavsiya.
+    function showNextRankPlan() {
+      const body = document.getElementById('whyRankBody');
+      const s = mGetStudent();
+      if (!body || !s) return;
+      const list = mGetSmartRanked();
+      const meIdx = list.findIndex(u => Number(u.id) === Number(s.id));
+      if (meIdx < 0) return;
+      const me = list[meIdx];
+      if (meIdx === 0) {
+        body.innerHTML = `<div class="fs13 txt3">Siz allaqachon 1-o'rindasiz 🏆 O'z darajangizni saqlab qoling!</div>`;
+        openMod('whyRankModal'); return;
+      }
+      const above = list[meIdx - 1];
+      const gap = Math.max(1, above._smart - me._smart);
+      // Taxminiy tavsiya: mavjud kunlik topshiriq mukofotlariga tayanib (test +15, vazifa +10, davomat +5) necha marta kerakligini hisoblaymiz.
+      const testsNeeded = Math.max(1, Math.ceil(gap / 15));
+      body.innerHTML = `
+        <div class="fs14 fw8 mb-4">Siz — #${me._rank} <span class="fs12 txt3 fw6">(aqlli ball: ${me._smart})</span></div>
+        <div class="fs12 txt3 mb-16">Keyingi o'rin — ${escHtml(above.name)}, #${above._rank} <span class="fs11">(aqlli ball: ${above._smart})</span></div>
+        <div class="insight-box success" style="padding:8px 12px;"><div class="insight-ico">🎯</div><div class="insight-txt">Farq: <b>${gap} ball</b>. Taxminan ${testsNeeded} ta testda yaxshi natija olish yoki muntazam dars/vazifa bajarish orqali bu farqni yopishingiz mumkin.</div></div>
+        <div class="fs11 txt3 mt-16">Hisob-kitob mavjud kunlik topshiriq mukofotlariga (test +15🪙, vazifa +10🪙, davomat +5🪙) asoslangan taxminiy tavsiya.</div>
+      `;
+      openMod('whyRankModal');
+    }
+    window.showNextRankPlan = showNextRankPlan;
+
+    // Reyting tarixi feed'ini chizadi (oxirgi N ta "o'zib ketish" hodisasi).
+    function renderRankHistoryFeed(limit = 8) {
+      const events = (DB.rankHistory || []).slice(0, limit);
+      if (!events.length) return `<div class="fs12 txt3" style="padding:8px 0;">Hali reyting o'zgarishlari qayd etilmagan.</div>`;
+      return events.map(e => {
+        const d = new Date(e.timestamp);
+        const dateStr = d.toLocaleDateString('uz-UZ') + ' ' + d.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+        return `<div style="padding:9px 0;border-bottom:1px solid var(--bor2);">
+          <div class="fs11 txt3 orb">${dateStr}</div>
+          <div class="fs13 fw7 mt-4">${escHtml(e.winnerName)} → ${e.fromRank}-o'rindan ${e.toRank}-o'ringa ko'tarildi</div>
+          <div class="fs12 txt3">Sabab: +${e.ballDelta} ball (${e.reasonBits.join(', ')}) — ${escHtml(e.loserName)}dan oldinga o'tdi</div>
+        </div>`;
+      }).join('');
+    }
+    window.renderRankHistoryFeed = renderRankHistoryFeed;
+
+    // Joriy o'quvchini oxirgi marta kim ortda qoldirgani / u oxirgi marta kimni o'zib o'tgani.
+    function mGetMyLatestOvertakeEvents(studentId) {
+      const asLoser = (DB.rankHistory || []).find(e => Number(e.loserId) === Number(studentId));
+      const asWinner = (DB.rankHistory || []).find(e => Number(e.winnerId) === Number(studentId));
+      return { asLoser, asWinner };
+    }
+    window.mGetMyLatestOvertakeEvents = mGetMyLatestOvertakeEvents;
+
+    // ══════════════════════════════════
+    // Klient-tomon "Reyting API"si — bu loyiha yagona HTML fayl + localStorage/
+    // umumiy /api/data sinxronizatsiyasi asosida ishlaydi (alohida /api/ranking/*
+    // server marshrutlari mavjud emas). Shu sabab quyidagi funksiyalar xuddi shu
+    // nomlar bilan LOKAL "API" sifatida taqdim etiladi — real backend qo'shilsa,
+    // xuddi shu funksiyalarni tegishli marshrutlarga ulash mumkin.
+    // ══════════════════════════════════
+    const RankingAPI = {
+      get: () => mGetSmartRanked(),
+      getUser: (userId) => mGetSmartRanked().find(u => Number(u.id) === Number(userId)) || null,
+      nearby: (userId) => { const list = mGetSmartRanked(); const i = list.findIndex(u => Number(u.id) === Number(userId)); if (i < 0) return null; return { me: list[i], above: list[i - 1] || null, below: list[i + 1] || null, rival: list[i]._rival }; },
+      history: (userId) => (DB.rankHistory || []).filter(e => Number(e.winnerId) === Number(userId) || Number(e.loserId) === Number(userId)),
+      analysis: (userId) => { const u = RankingAPI.getUser(userId); if (!u) return null; return { rank: u._rank, smart: u._smart, coins: u._coins, academic: u._academic, streak: u._streak, momentum: u._momentum, weeklyGain: mWeeklyCoinGain(userId) }; },
+      compare: (userId, targetId) => { const list = mGetSmartRanked(); const a = list.find(u => Number(u.id) === Number(userId)); const b = list.find(u => Number(u.id) === Number(targetId)); if (!a || !b) return null; const ahead = a._rank < b._rank; return { reasons: mExplainRankDiff(ahead ? a : b, ahead ? b : a), a, b }; }
+    };
+    window.RankingAPI = RankingAPI;
+
+    // "/texno" AI chatiga yozilgan reyting haqidagi savollarni LOKAL, real ma'lumotlar
+    // asosida javoblaydi (masalan: "Nega Sherzod meni oldinga o'tib ketdi?"). AI hech
+    // qachon sababni o'ylab topmaydi — faqat real statistikaga tayanadi yoki null qaytaradi
+    // (shunda savol backendga o'tadi).
+    function mTryLocalRankingAnswer(prompt) {
+      const p = String(prompt || '').toLowerCase();
+      const rankKeywords = ["reyting", "o'rin", "orin", "oldinga o't", "ortda qol", "raqib", "1-o'rin", "birinchi o'rin"];
+      if (!rankKeywords.some(k => p.includes(k))) return null;
+      const s = mGetStudent(); if (!s) return null;
+      mEnsureRich(s);
+      const list = mGetSmartRanked();
+      const me = list.find(u => Number(u.id) === Number(s.id));
+      if (!me) return null;
+      // Ismi tilga olingan boshqa o'quvchi bilan solishtirish so'ralganmi?
+      const named = (DB.students || []).find(st => Number(st.id) !== Number(s.id) && String(st.name || '').trim() && p.includes(String(st.name).toLowerCase().split(' ')[0]));
+      if (named && (p.includes('oldinga') || p.includes('nega') || p.includes('sabab'))) {
+        const cmp = RankingAPI.compare(s.id, named.id);
+        if (cmp) return cmp.reasons.join('. ') + '.';
+      }
+      if (p.includes("1-o'rin") || p.includes('1-orin') || p.includes("birinchi o'rin")) {
+        const top = list[0]; if (!top) return null;
+        computeSubjectScores(top);
+        const subjVals = Object.values(top.subjectScores || {});
+        const totalLessons = subjVals.reduce((a, d) => a + (d.lessonsAttended || 0), 0);
+        const avgTest = subjVals.length ? Math.round(subjVals.reduce((a, d) => a + (d.avgTestScore || 0), 0) / subjVals.length) : 0;
+        return `🏆 ${top.name} hozir 1-o'rinda: ${totalLessons} ta darsda qatnashgan, test o'rtachasi ${avgTest}%, ${top._streak} kunlik streak, aqlli ball — ${top._smart}.`;
+      }
+      if (p.includes('kim meni') || p.includes('meni kim') || p.includes('ortda qol')) {
+        const ev = mGetMyLatestOvertakeEvents(s.id).asLoser;
+        return ev ? `${ev.winnerName} sizdan oldinga o'tdi. Sabab: ${ev.reasonBits.join(', ')} (farq: ${ev.ballDelta} ball).` : 'Hozircha sizni hech kim ortda qoldirmagan.';
+      }
+      if (p.includes('kimni oldinga') || p.includes('men kimni')) {
+        const ev = mGetMyLatestOvertakeEvents(s.id).asWinner;
+        return ev ? `Siz ${ev.loserName}dan oldinga o'tdingiz! Sabab: ${ev.reasonBits.join(', ')} (farq: ${ev.ballDelta} ball).` : "Hozircha siz hech kimni o'zib o'tmagansiz.";
+      }
+      if (p.includes('raqib')) {
+        return me._rival ? `Eng yaqin raqibingiz — ${me._rival.name}, orangizdagi farq ${me._rival.gap} ball.` : 'Hozircha aniq raqibingiz aniqlanmadi.';
+      }
+      return `Siz hozir #${me._rank} o'rindasiz (aqlli ball: ${me._smart}).`;
+    }
+    window.mTryLocalRankingAnswer = mTryLocalRankingAnswer;
+
+    // ──────── Rankings ─────────
+    // Eski nom bilan chaqirilgan barcha joylar (dashboard, profil, reyting sahifasi) endi
+    // AVTOMATIK RAVISHDA aqlli (real raqobatga asoslangan) reytingdan foydalanadi — chaqiruv
+    // signaturasi o'zgarmagani uchun mavjud kod strukturasi buzilmaydi.
+    function mGetRanked(mode='overall') { return mGetSmartRanked(mode); }
 
     // ══════════════════════════════════
     // GURUH REYTINGI
@@ -9605,7 +10186,8 @@
         return;
       }
       mEnsureRich(s); updateStudentStreak(s); computeSubjectScores(s);
-      mGetRanked('overall');
+      const smartList = mRefreshRankingAndDetectChanges();
+      const meSmart = smartList.find(u => Number(u.id) === Number(s.id));
       const coins = Number(s.totalCoins)||0; const lvl = s.level||1; const badge = s.badge||'Starter'; const streak = s.activity?.streak||0;
       const myRank = s.rank?.overall || 0; const prevRank = s.rank?.prevOverall || 0;
       const rankDelta = prevRank ? (prevRank - myRank) : 0;
@@ -9652,7 +10234,9 @@
           <div class="insight-ico">💡</div>
           <div>
             <div class="insight-ttl">Bugun ${myRank}-o'rindasiz</div>
-            <div class="insight-txt">${myRank > 1 ? `1-o'ringa chiqish uchun yana ${Math.max(5, 35 - (coins%35))} ball kerak. Bugun ${Math.min(3, 1 + (myRank%3))} ta test yeching va oldinga o'ting!` : `Tabriklaymiz! Siz reytingda PERVENSTVO egasiz! O'z darajangizni saqlab qoling!`}</div>
+            <div class="insight-txt">${myRank > 1
+              ? `${meSmart?._rival ? `Eng yaqin raqibingiz — <b>${escHtml(meSmart._rival.name)}</b>, farq ${meSmart._rival.gap} ball.` : ''} ${meSmart?._gapAbove ? `Oldingi o'ringa chiqish uchun yana ${meSmart._gapAbove} aqlli ball kerak.` : ''}`
+              : `Tabriklaymiz! Siz reytingda PERVENSTVO egasiz! O'z darajangizni saqlab qoling!`}</div>
           </div>
         </div>`:''}
 
@@ -10139,7 +10723,7 @@
     // ──────── Leaderboard v2 ─────────
     function renderRankingV2() {
       const pg = document.getElementById('rpg'); if (!pg) return;
-      const ranked = mGetRanked();
+      const ranked = mRefreshRankingAndDetectChanges();
       const s = mGetStudent();
       const myPos = s ? ranked.findIndex(r => Number(r.id)===Number(s.id)) : -1;
       pg.classList.add('active');
@@ -10170,13 +10754,26 @@
             <div class="pod-plat"><div class="pod-name">${escHtml(String(ranked[2].name||'').split(' ')[0]||'')}</div><div class="pod-pts">${ranked[2]._coins} 🪙</div><div class="pod-rn orb fw8">3</div></div>
           </div>`:''}
         </div>
+        ${ranked[0] ? `<div style="text-align:center;margin:-6px 0 16px;">
+          <button class="btn btn-gold btn-sm" onclick="showTop1Reason()"><i class="fas fa-trophy"></i> Nima sababli 1-o'rinda?</button>
+        </div>` : ''}
         ${s && myPos>=0 ? `<div class="insight-box success mb-16">
           <div class="insight-ico">🎯</div>
           <div>
-            <div class="insight-ttl">Siz ${myPos+1}-o'rinchi ekansiz!</div>
-            <div class="insight-txt">${myPos>0 ? `${myPos}-o'ringa chiqish uchun yana ${Math.max(10, (ranked[myPos-1]?ranked[myPos-1]._coins:0) - s.totalCoins + 1)} ball kerak.` : 'Siz BIRINCHI o\'rin ekansiz 🏆'}</div>
+            <div class="insight-ttl">Siz ${myPos+1}-o'rinchi ekansiz! <span class="fs11 txt3 fw6">(aqlli ball: ${ranked[myPos]._smart})</span></div>
+            <div class="insight-txt">${myPos>0
+              ? `${ranked[myPos]._rival ? `Eng yaqin raqibingiz — <b>${escHtml(ranked[myPos]._rival.name)}</b>, orangizdagi farq atigi ${ranked[myPos]._rival.gap} ball.` : ''} ${ranked[myPos]._gapAbove ? `Oldingi o'ringa chiqish uchun yana ${ranked[myPos]._gapAbove} aqlli ball kerak.` : ''}`
+              : 'Siz BIRINCHI o\'rin ekansiz 🏆 Aqlli ball: tanga + o\'zlashtirish + barqarorlik yig\'indisi bo\'yicha!'}</div>
+            ${myPos>0 ? `<button class="btn btn-sm" style="margin-top:8px;padding:5px 10px;font-size:11px;" onclick="showNextRankPlan()"><i class="fas fa-stairs"></i> Keyingi o'ringa qanday chiqaman?</button>` : ''}
           </div>
         </div>`:''}
+        ${(() => { if (!s) return ''; const { asLoser, asWinner } = mGetMyLatestOvertakeEvents(s.id);
+          if (!asLoser && !asWinner) return '';
+          return `<div class="grid-2 mb-16">
+            ${asLoser ? `<div class="insight-box warning" style="padding:10px 12px;"><div class="insight-ico">⚠️</div><div><div class="insight-ttl" style="font-size:12px;">${escHtml(asLoser.winnerName)} sizdan oldinga o'tdi</div><div class="insight-txt" style="font-size:11px;">Sabab: ${asLoser.reasonBits.join(', ')} (+${asLoser.ballDelta} ball)</div></div></div>` : ''}
+            ${asWinner ? `<div class="insight-box success" style="padding:10px 12px;"><div class="insight-ico">🎉</div><div><div class="insight-ttl" style="font-size:12px;">Siz ${escHtml(asWinner.loserName)}dan oldinga o'tdingiz</div><div class="insight-txt" style="font-size:11px;">Sabab: ${asWinner.reasonBits.join(', ')} (+${asWinner.ballDelta} ball)</div></div></div>` : ''}
+          </div>`;
+        })()}
         <div class="scard">
           ${ranked.map((u,i) => { const me = s && Number(u.id)===Number(s.id); return `<div class="lb-card ${me?'me':''}" style="${i?'margin-top:6px;':''}">
             <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i<3?medals[i]||'🥇':(i+1)}</div>
@@ -10184,7 +10781,7 @@
             <div class="lb-info">
               <div class="lb-name">${escHtml(u.name||'')}${me?' <span style="color:var(--cyan);">(siz)</span>':''}</div>
               <div class="lb-meta">
-                <span>Daraja ${u.level||1}</span>
+                <span>Aqlli ball ${u._smart}</span>
                 ${u.group?`<span>· ${escHtml(u.group)}</span>`:''}
                 <span>· ${u.activity?.streak?('🔥'+u.activity.streak+' kun'):'⚪'}</span>
               </div>
@@ -10193,7 +10790,12 @@
               <div class="lb-val">${u._coins} 🪙</div>
               <div class="lb-lvl">${u.badge||'Starter'}</div>
             </div>
+            ${!me ? `<button class="btn btn-sm" style="padding:4px 8px;font-size:10px;margin-left:6px;white-space:nowrap;" onclick="showWhyRank(${Number(u.id)})"><i class="fas fa-circle-question"></i> Nega bunday?</button>` : ''}
           </div>`;}).join('')}
+        </div>
+        <div class="scard mt-16">
+          <div class="sc-head mb-8"><div class="sc-title"><i class="fas fa-clock-rotate-left" style="color:var(--purple);margin-right:6px;"></i> Reyting tarixi</div></div>
+          ${renderRankHistoryFeed(8)}
         </div>
         ${renderMyGroupRankBlock()}
       </div>`;
@@ -10371,6 +10973,196 @@
     window.buyProduct = buyProduct;
 
     // ──────── Nav Hooks + Init ─────────
+        // ══════════════════════════════════
+    // SOZLAMALAR MARKAZI (talaba/o'qituvchi/admin uchun umumiy)
+    // ══════════════════════════════════
+    const LANG_LABELS = { uz: "O'zbekcha", ru: 'Русский', en: 'English' };
+    function ensureAccountPrefs(rec) {
+      if (!rec || typeof rec !== 'object') return rec;
+      if (!rec.prefs || typeof rec.prefs !== 'object') rec.prefs = {};
+      const p = rec.prefs;
+      if (!p.theme) p.theme = 'dark';
+      if (!p.lang) p.lang = 'uz';
+      if (p.aiEnabled === undefined) p.aiEnabled = true;
+      if (!p.notif || typeof p.notif !== 'object') p.notif = { newMessage: true, newLesson: true, newTest: true, announcement: true, homework: true, rankChange: true };
+      if (!p.privacy || typeof p.privacy !== 'object') p.privacy = { showOnline: true, allowFriendRequests: true, showInLeaderboard: true };
+      return rec;
+    }
+    function applyThemeFromPrefs() {
+      const rec = getCurrentAccountRecord(); ensureAccountPrefs(rec);
+      const theme = rec?.prefs?.theme || 'dark';
+      document.body.classList.toggle('theme-light', theme === 'light');
+      const icon = document.getElementById('themeToggle');
+      if (icon) icon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    function toggleTheme() {
+      const rec = getCurrentAccountRecord(); if (!rec) return;
+      ensureAccountPrefs(rec);
+      rec.prefs.theme = rec.prefs.theme === 'light' ? 'dark' : 'light';
+      if (curUser) curUser.prefs = rec.prefs;
+      saveData(); applyThemeFromPrefs();
+      showToast(rec.prefs.theme === 'light' ? "☀️ Yorug' mavzu yoqildi" : "🌙 Qorong'u mavzu yoqildi");
+    }
+    window.toggleTheme = toggleTheme;
+    function mSetLanguage(lang) {
+      const rec = getCurrentAccountRecord(); if (!rec) return;
+      ensureAccountPrefs(rec);
+      rec.prefs.lang = lang;
+      if (curUser) curUser.prefs = rec.prefs;
+      document.documentElement.lang = lang;
+      saveData();
+      showToast('✅ ' + LANG_LABELS[lang] + ' tanlandi');
+      renderSettingsHubV2();
+    }
+    window.mSetLanguage = mSetLanguage;
+    function mToggleAI(el) {
+      const rec = getCurrentAccountRecord(); if (!rec) return;
+      ensureAccountPrefs(rec);
+      rec.prefs.aiEnabled = !rec.prefs.aiEnabled;
+      if (curUser) curUser.prefs = rec.prefs;
+      if (el) el.classList.toggle('on', rec.prefs.aiEnabled);
+      saveData();
+      showToast(rec.prefs.aiEnabled ? '🤖 Texno AI yoqildi' : "🚫 Texno AI o'chirildi");
+    }
+    window.mToggleAI = mToggleAI;
+    function mToggleGenericPref(group, key, el) {
+      const rec = getCurrentAccountRecord(); if (!rec) return;
+      ensureAccountPrefs(rec);
+      rec.prefs[group][key] = !rec.prefs[group][key];
+      if (curUser) curUser.prefs = rec.prefs;
+      if (el) el.classList.toggle('on', !!rec.prefs[group][key]);
+      saveData();
+    }
+    window.mToggleGenericPref = mToggleGenericPref;
+
+    function settSetTab(tab, el) {
+      document.querySelectorAll('#settTabs .st-tab').forEach(x => x.classList.remove('active'));
+      if (el) el.classList.add('active');
+      const cont = document.getElementById('settTabContent'); if (cont) cont.innerHTML = settRenderTab(tab);
+    }
+    window.settSetTab = settSetTab;
+
+    function settRenderTab(tab) {
+      const rec = getCurrentAccountRecord(); ensureAccountPrefs(rec);
+      const p = rec?.prefs || {};
+      if (tab === 'profile') {
+        const isStudent = curUser?.role === 'student';
+        return `<div class="scard">
+          <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-id-badge" style="color:var(--cyan);margin-right:6px;"></i> Profil ma'lumotlari</div></div>
+          <div class="form-group"><label>Ism familiya</label><input class="form-control" id="settName" value="${escHtml(rec?.name || '')}"></div>
+          ${isStudent ? `<div class="form-group"><label>Telefon</label><input class="form-control" id="settPhone" value="${escHtml(rec?.phone || '')}"></div>
+          <div class="form-group"><label>Guruh</label><input class="form-control" value="${escHtml(rec?.group || '—')}" disabled></div>` : ''}
+          ${curUser?.role === 'teacher' ? `<div class="form-group"><label>Fan</label><input class="form-control" id="settSubj" value="${escHtml(rec?.subj || '')}"></div>` : ''}
+          <button class="btn btn-cyan" onclick="settSaveProfile()"><i class="fas fa-save"></i> Saqlash</button>
+        </div>`;
+      }
+      if (tab === 'language') {
+        return `<div class="scard">
+          <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-language" style="color:var(--gold);margin-right:6px;"></i> Interfeys tili</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${Object.entries(LANG_LABELS).map(([code, label]) => `<div class="srow" style="cursor:pointer;" onclick="mSetLanguage('${code}')">
+              <div class="slbl">${label}</div>
+              ${p.lang === code ? '<span class="badge gr">✅ Faol</span>' : '<span class="badge bb">Tanlash</span>'}
+            </div>`).join('')}
+          </div>
+          <div class="fs11 txt3 mt-16">// To'liq tarjima keyingi versiyalarda kengaytiriladi</div>
+        </div>`;
+      }
+      if (tab === 'appearance') {
+        return `<div class="scard">
+          <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-palette" style="color:var(--purple);margin-right:6px;"></i> Ko'rinish</div></div>
+          <div class="srow">
+            <div><div class="slbl">Qorong'u / Yorug' mavzu</div><div class="slbl-sub">Ilova ko'rinishini almashtiring</div></div>
+            <button class="btn btn-sm" onclick="toggleTheme()"><i class="fas ${p.theme === 'light' ? 'fa-sun' : 'fa-moon'}"></i> ${p.theme === 'light' ? "Yorug'" : "Qorong'u"}</button>
+          </div>
+        </div>`;
+      }
+      if (tab === 'notif') {
+        const items = [['newMessage', 'Chat xabarlari'], ['newLesson', 'Yangi darslar'], ['newTest', 'Yangi testlar'], ['homework', 'Uyga vazifa'], ['rankChange', "Reyting o'zgarishi"], ['announcement', "Muhim e'lonlar"]];
+        const permState = (typeof Notification !== 'undefined') ? Notification.permission : 'unsupported';
+        return `<div class="scard">
+          <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-bell" style="color:var(--cyan);margin-right:6px;"></i> Bildirishnomalar</div></div>
+          <div class="srow"><div><div class="slbl">Telefon bildirishnomalari</div><div class="slbl-sub">Holati: ${permState === 'granted' ? '✅ Yoqilgan' : permState === 'denied' ? '❌ Bloklangan' : 'Yoqilmagan'}</div></div>
+            ${permState === 'granted' ? '<span class="badge gr">Faol</span>' : `<button class="btn btn-gold btn-sm" onclick="mAskDeviceNotifPermission()"><i class="fas fa-bell"></i> Yoqish</button>`}</div>
+          ${items.map(([k, t]) => `<div class="srow"><div class="slbl">${t}</div><div class="switch ${p.notif?.[k] ? 'on' : ''}" onclick="mToggleGenericPref('notif','${k}',this)"></div></div>`).join('')}
+        </div>`;
+      }
+      if (tab === 'ai') {
+        return `<div class="scard">
+          <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-robot" style="color:var(--green);margin-right:6px;"></i> AI sozlamalari</div></div>
+          <div class="srow"><div><div class="slbl">Texno AI yordamchisi</div><div class="slbl-sub">Chatda /texno buyrug'i orqali AI javob berishi</div></div>
+            <div class="switch ${p.aiEnabled ? 'on' : ''}" onclick="mToggleAI(this)"></div></div>
+          <div class="fs11 txt3 mt-16">// AI o'chirilsa, /texno buyrug'i chatda javob bermaydi</div>
+        </div>`;
+      }
+      if (tab === 'password') {
+        return `<div class="scard">
+          <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-key" style="color:var(--gold);margin-right:6px;"></i> Parolni o'zgartirish</div></div>
+          <p class="fs12 txt3 mb-16">Hisobingiz xavfsizligi uchun vaqti-vaqti bilan parolingizni yangilab turing.</p>
+          <button class="btn btn-gold" onclick="openChangePasswordModal()"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
+        </div>`;
+      }
+      if (tab === 'privacy') {
+        return `<div class="scard">
+          <div class="sc-head mb-12"><div class="sc-title"><i class="fas fa-user-shield" style="color:var(--purple);margin-right:6px;"></i> Maxfiylik</div></div>
+          <div class="srow"><div><div class="slbl">Online holatni ko'rsatish</div><div class="slbl-sub">Boshqalar sizning online ekaningizni ko'radi</div></div>
+            <div class="switch ${p.privacy?.showOnline ? 'on' : ''}" onclick="mToggleGenericPref('privacy','showOnline',this)"></div></div>
+          <div class="srow"><div><div class="slbl">Do'stlik so'rovlarini qabul qilish</div><div class="slbl-sub">Boshqalar sizni do'st sifatida qo'sha oladi</div></div>
+            <div class="switch ${p.privacy?.allowFriendRequests ? 'on' : ''}" onclick="mToggleGenericPref('privacy','allowFriendRequests',this)"></div></div>
+          <div class="srow"><div><div class="slbl">Reytingda ko'rinish</div><div class="slbl-sub">Umumiy reyting jadvalida ismingiz chiqadi</div></div>
+            <div class="switch ${p.privacy?.showInLeaderboard ? 'on' : ''}" onclick="mToggleGenericPref('privacy','showInLeaderboard',this)"></div></div>
+        </div>`;
+      }
+      if (tab === 'logout') {
+        return `<div class="scard" style="text-align:center;padding:30px 16px;">
+          <i class="fas fa-sign-out-alt" style="font-size:36px;color:var(--red);opacity:.8;"></i>
+          <div class="fw8 fs15 mt-16">Akkauntdan chiqmoqchimisiz?</div>
+          <div class="fs12 txt3 mt-8 mb-16">Qayta kirish uchun login va parolingiz kerak bo'ladi.</div>
+          <button class="btn btn-danger" style="min-width:160px;justify-content:center;" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</button>
+        </div>`;
+      }
+      return '';
+    }
+    function settSaveProfile() {
+      const rec = getCurrentAccountRecord(); if (!rec) return;
+      const nameEl = document.getElementById('settName');
+      const phoneEl = document.getElementById('settPhone');
+      const subjEl = document.getElementById('settSubj');
+      if (nameEl && nameEl.value.trim()) rec.name = nameEl.value.trim();
+      if (phoneEl) rec.phone = phoneEl.value.trim();
+      if (subjEl) rec.subj = subjEl.value.trim();
+      if (curUser) { curUser.name = rec.name; if (phoneEl) curUser.phone = rec.phone; if (subjEl) curUser.subj = rec.subj; }
+      saveData();
+      try { document.getElementById('sbNm').textContent = rec.name; } catch (e) { }
+      showToast('✅ Profil yangilandi');
+      if (typeof renderStTable === 'function') renderStTable();
+      if (typeof renderTBody === 'function') renderTBody();
+    }
+    window.settSaveProfile = settSaveProfile;
+
+    function renderSettingsHubV2() {
+      const wrap = document.getElementById('settWrap'); if (!wrap) return;
+      const tabs = [
+        ['profile', 'fa-id-badge', 'Profil'],
+        ['language', 'fa-language', 'Til'],
+        ['appearance', 'fa-palette', "Ko'rinish"],
+        ['notif', 'fa-bell', 'Bildirishnoma'],
+        ['ai', 'fa-robot', 'AI'],
+        ['password', 'fa-key', 'Parol'],
+        ['privacy', 'fa-user-shield', 'Maxfiylik'],
+        ['logout', 'fa-sign-out-alt', 'Chiqish'],
+      ];
+      wrap.innerHTML = `
+        <div class="pg-wrap">
+          <div class="pg-title"><i class="fas fa-gear"></i> SOZLAMALAR</div>
+          <div class="pg-sub">Profil, til, ko'rinish, bildirishnoma va xavfsizlik sozlamalari</div>
+          <div class="study-tabs mb-16" id="settTabs" style="flex-wrap:wrap;">
+            ${tabs.map(([id, icon, label], i) => `<button class="st-tab ${i === 0 ? 'active' : ''}" onclick="settSetTab('${id}',this)"><i class="fas ${icon}"></i> ${label}</button>`).join('')}
+          </div>
+          <div id="settTabContent">${settRenderTab('profile')}</div>
+        </div>`;
+    }
+    window.renderSettingsHubV2 = renderSettingsHubV2;
     const _origShowPage = window.showPage;
     window.showPage = function(id, navEl, title) {
       const result = typeof _origShowPage === 'function' ? _origShowPage.apply(this, arguments) : undefined;
@@ -10384,6 +11176,7 @@
         else if (pageId === 'achpg') renderAchievementsV2();
         else if (pageId === 'vippg') renderVIPV2();
         else if (pageId === 'notifpg') renderNotifSettingsV2();
+        else if (pageId === 'settpg') renderSettingsHubV2();
         else if (pageId === 'rpg') renderRankingV2();
         else if (pageId === 'adpg') { if (typeof renderTeacherGroupRank === 'function') renderTeacherGroupRank(); }
         else if (pageId === 'admpg') { if (typeof renderAdminGroupRank === 'function') renderAdminGroupRank(); }
