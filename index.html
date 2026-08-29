@@ -3788,6 +3788,29 @@
     </div>
   </div>
 
+  <!-- BROADCAST MODAL: bitta xabarni bir nechta shaxsga alohida-alohida (guruh yaratmasdan) yuborish -->
+  <div class="modal-overlay" id="broadcastModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-paper-plane" style="margin-right:7px;color:var(--gold);"></i>OMMAVIY XABAR</h3>
+        <button class="modal-close" onclick="closeMod('broadcastModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Qabul qiluvchilarni tanlang</label>
+          <div id="bcMemSel" style="display:flex;flex-direction:column;gap:3px;max-height:150px;overflow-y:auto;"></div>
+        </div>
+        <div id="bcSelMemWrap" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;"></div>
+        <div class="form-group" style="margin-top:10px;"><label>Xabar matni</label>
+          <textarea class="form-control" id="bcTextIn" rows="3" placeholder="Xabar matnini shu yerga yozing..."></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-sm" onclick="closeMod('broadcastModal')">Bekor</button>
+        <button class="btn btn-cyan btn-sm" onclick="sendBroadcast()"><i class="fas fa-paper-plane"></i> Yuborish</button>
+      </div>
+    </div>
+  </div>
+
   <!-- REACTION MODAL -->
   <div class="modal-overlay" id="reactModal">
     <div class="modal-box" style="max-width:280px;">
@@ -4080,6 +4103,7 @@
           sahifa</div>
         <div class="nav-item" onclick="showPage('rpg',this,'REYTING')"><i class="fas fa-trophy"></i> Reyting</div>
         <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar <span class="badge-notif" id="sNewsBadge" style="display:none;">0</span></div>
+        <div class="nav-item" onclick="showPage('ytpg',this,'YOUTUBE KANAL')"><i class="fab fa-youtube"></i> YouTube</div>
         <div class="nav-item" onclick="showPage('marketpg',this,'MARKET')"><i class="fas fa-shopping-cart"></i> Market
         </div>
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
@@ -4104,6 +4128,7 @@
           Statistika</div>
         <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> Talabalar</div>
         <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar</div>
+        <div class="nav-item" onclick="showPage('ytpg',this,'YOUTUBE KANAL')"><i class="fab fa-youtube"></i> YouTube</div>
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
             class="badge-notif" id="tChatBadge" style="display:none;">0</span></div>
         <div class="nav-item" onclick="showPage('cpg',this,'TANGA BERISH')"><i class="fas fa-coins"></i> Tanga berish
@@ -4130,6 +4155,7 @@
         <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> Barcha talabalar
         </div>
         <div class="nav-item" onclick="showPage('newsmgrpg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar</div>
+        <div class="nav-item" onclick="showPage('ytpg',this,'YOUTUBE KANAL')"><i class="fab fa-youtube"></i> YouTube</div>
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat</div>
         <div class="nav-item" onclick="showPage('tpg',this,'O\'QITUVCHILAR')"><i class="fas fa-chalkboard-teacher"></i>
           O'qituvchilar</div>
@@ -4194,6 +4220,8 @@
                   class="fas fa-user-friends"></i></button>
               <button class="ctb-btn" onclick="openMod('groupModal')" title="Guruh yaratish"><i
                   class="fas fa-users"></i></button>
+              <button class="ctb-btn" onclick="openMod('broadcastModal')" title="Ommaviy xabar (bir nechta odamga)"><i
+                  class="fas fa-paper-plane"></i></button>
               <button class="ctb-btn" onclick="searchInChat()" title="Qidirish"><i class="fas fa-search"></i></button>
               <button class="ctb-btn" onclick="toggleOnline()" id="onlineBtn" title="Online"><i
                   class="fas fa-wifi"></i></button>
@@ -5206,6 +5234,11 @@
               <div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;">// E'lon yo'q</div>
             </div>
           </div>
+        </div>
+
+        <!-- YANGI: YOUTUBE KANAL -->
+        <div class="page" id="ytpg">
+          <div id="ytWrap"></div>
         </div>
 
         <!-- YANGI: BILIM BELLASHUVI (Savol-javob raqobat bo'limi) -->
@@ -7253,6 +7286,61 @@
     }
     window.renderNewsFeed = renderNewsFeed;
 
+    // ══════════════════════════════════
+    // YOUTUBE KANAL BO'LIMI
+    // ══════════════════════════════════
+    function ytUploadsPlaylist(channelId) {
+      // YouTube "yuklangan videolar" playlist ID'si odatda kanal ID'sida UC -> UU almashtirilib olinadi
+      if (!channelId) return '';
+      channelId = channelId.trim();
+      return channelId.startsWith('UC') ? 'UU' + channelId.slice(2) : channelId;
+    }
+    function saveYtSettings() {
+      const idEl = document.getElementById('ytChannelIdInput');
+      const urlEl = document.getElementById('ytChannelUrlInput');
+      if (!idEl || !urlEl) return;
+      DB.settings = DB.settings || {};
+      DB.settings.ytChannelId = idEl.value.trim();
+      DB.settings.ytChannelUrl = urlEl.value.trim();
+      saveData();
+      showToast('✅ YouTube kanal sozlamalari saqlandi');
+      renderYoutubePage();
+    }
+    window.saveYtSettings = saveYtSettings;
+    function renderYoutubePage() {
+      const wrap = document.getElementById('ytWrap'); if (!wrap) return;
+      const s = DB.settings || {};
+      const chId = s.ytChannelId || '';
+      const chUrl = s.ytChannelUrl || (chId ? `https://www.youtube.com/channel/${chId}` : '');
+      const isAdmin = curUser?.role === 'admin';
+      const adminForm = isAdmin ? `
+        <div class="card" style="margin-bottom:14px;">
+          <div class="ch"><h4>KANAL SOZLAMALARI</h4></div>
+          <div class="cb">
+            <div class="form-group"><label>KANAL ID (masalan: UCxxxxxxxxxxxxxxxxxxxxxx)</label>
+              <input class="form-control" id="ytChannelIdInput" value="${escHtml(chId)}" placeholder="UCxxxxxxxxxxxxxxxxxxxxxx"></div>
+            <div class="form-group"><label>KANAL HAVOLASI (ixtiyoriy, "Obuna bo'lish" tugmasi uchun)</label>
+              <input class="form-control" id="ytChannelUrlInput" value="${escHtml(chUrl)}" placeholder="https://www.youtube.com/@kanal"></div>
+            <button class="btn btn-gold" onclick="saveYtSettings()"><i class="fas fa-check"></i> Saqlash</button>
+          </div>
+        </div>` : '';
+      const playlist = ytUploadsPlaylist(chId);
+      const body = !chId
+        ? `<div class="card"><div class="cb" style="color:var(--text3);font-size:13px;text-align:center;padding:30px;font-family:'JetBrains Mono',monospace;">// Hozircha YouTube kanal ulanmagan</div></div>`
+        : `<div class="card">
+            <div class="ch"><h4><i class="fab fa-youtube" style="color:#ff0000;"></i> KANAL VIDEOLARI</h4>
+              ${chUrl ? `<a class="btn btn-sm btn-cyan" href="${chUrl}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Kanalga o'tish</a>` : ''}
+            </div>
+            <div class="cb" style="padding:0;">
+              <div style="position:relative;width:100%;padding-top:56.25%;">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=${playlist}" title="YouTube kanal" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:0 0 10px 10px;"></iframe>
+              </div>
+            </div>
+          </div>`;
+      wrap.innerHTML = `<div class="ph"><h2>YOUTUBE KANAL</h2><p>// Platformaning rasmiy YouTube kanalidagi darslar va videolar</p></div>${adminForm}${body}`;
+    }
+    window.renderYoutubePage = renderYoutubePage;
+
     function fillRpGroupSel() {
       const sel = document.getElementById('rpGroupSel'); if (!sel) return;
       const cur = sel.value;
@@ -8022,6 +8110,9 @@
       if (id === 'slpg') { try { renderStudentLessonTopic(); } catch (e) { console.warn('SLPG render:', e); } }
       if (id === 'matpg') { try { renderMaterialsStudent(); } catch (e) { console.warn('MATPG render:', e); } }
       if (id === 'battlepg') { try { refreshDailyGameBtn(); refreshPracticeBtn(); renderBattleBoard('daily'); } catch (e) { console.warn('BATTLEPG render:', e); } }
+      if (id === 'newspg') { try { renderNewsFeed(); } catch (e) { console.warn('NEWSPG render:', e); } }
+      if (id === 'newsmgrpg') { try { renderNewsAdminList(); } catch (e) { console.warn('NEWSMGR render:', e); } }
+      if (id === 'ytpg') { try { renderYoutubePage(); } catch (e) { console.warn('YTPG render:', e); } }
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
       if (title) document.getElementById('tbTitle').textContent = title;
@@ -8705,6 +8796,7 @@
     // Group
     function openMod(id) {
       if (id === 'groupModal') renderGrpMemSel();
+      if (id === 'broadcastModal') renderBcMemSel();
       document.getElementById(id).classList.add('open');
     }
     function closeMod(id) {
@@ -8745,6 +8837,55 @@
       document.getElementById('grpNameIn').value = '';
       renderCChats(); openGrpChat(g); saveData(); showToast('✅ "' + name + '" guruhi yaratildi!');
     }
+
+    // ── OMMAVIY XABAR (BROADCAST): bitta xabarni tanlangan bir nechta shaxsga
+    // alohida-alohida shaxsiy chatga (guruh yaratmasdan) yuboradi.
+    let selBcMems = [];
+    function renderBcMemSel() {
+      selBcMems = [];
+      const el = document.getElementById('bcMemSel'); el.innerHTML = '';
+      chatFriends.forEach(f => {
+        const d = document.createElement('div'); d.className = 'cl-item'; d.style.cursor = 'pointer';
+        d.onclick = () => togBcMem(f, d);
+        d.innerHTML = `
+      <div class="cl-av" style="${getAvatarStyle(f.c)}width:30px;height:30px;min-width:30px;font-size:11px;">${f.ini}</div>
+      <span style="font-size:12px;flex:1;">${f.name}</span>
+      <i id="bc-${f.id}" class="fas fa-circle" style="color:var(--text3);font-size:12px;"></i>`;
+        el.appendChild(d);
+      });
+      document.getElementById('bcSelMemWrap').innerHTML = '';
+      const t = document.getElementById('bcTextIn'); if (t) t.value = '';
+    }
+    function togBcMem(f, el) {
+      const idx = selBcMems.findIndex(x => x.id === f.id);
+      const ic = document.getElementById('bc-' + f.id);
+      if (idx >= 0) { selBcMems.splice(idx, 1); el.style.background = ''; ic.className = 'fas fa-circle'; ic.style.color = 'var(--text3)'; }
+      else { selBcMems.push(f); el.style.background = 'var(--cyan-dim)'; ic.className = 'fas fa-check-circle'; ic.style.color = 'var(--cyan)'; }
+      document.getElementById('bcSelMemWrap').innerHTML = selBcMems.map(m => `<span style="background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,229,255,.25);border-radius:16px;padding:2px 8px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;">${m.name.split(' ')[0]}</span>`).join('');
+    }
+    function sendBroadcast() {
+      const text = (document.getElementById('bcTextIn')?.value || '').trim();
+      if (!text) { showToast('❗ Xabar matnini kiriting'); return; }
+      if (selBcMems.length < 2) { showToast("❗ Kamida 2 ta qabul qiluvchi tanlang"); return; }
+      let sentCount = 0;
+      selBcMems.forEach(sel => {
+        const data = chatFriends.find(f => f.id === sel.id);
+        if (!data) return;
+        data.msgs = data.msgs || [];
+        data.msgs.push({
+          id: gId(), text, sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '',
+          time: nTime(), type: 'text', reactions: {}, read: true
+        });
+        sentCount++;
+      });
+      closeMod('broadcastModal');
+      renderCChats();
+      if (curChat) renderMsgs(true);
+      saveData();
+      showToast(`✅ Xabar ${sentCount} kishiga yuborildi`);
+    }
+    window.sendBroadcast = sendBroadcast;
+    window.togBcMem = togBcMem;
 
     // Search
     function searchC(q) {
