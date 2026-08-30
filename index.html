@@ -346,6 +346,43 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
+    /* ── ILOVANI YUKLAB OLISH (APK) ── */
+    .apk-dl-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 255, 136, .3);
+      background: linear-gradient(90deg, rgba(0, 255, 136, .1), rgba(0, 229, 255, .06));
+      color: var(--green);
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: .3px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .apk-dl-btn:hover {
+      background: linear-gradient(90deg, rgba(0, 255, 136, .18), rgba(0, 229, 255, .1));
+      box-shadow: 0 0 18px rgba(0, 255, 136, .18);
+      transform: translateY(-1px);
+    }
+
+    .apk-dl-btn i.fa-android { font-size: 15px; }
+
+    .apk-dl-note {
+      text-align: center;
+      font-size: 9.5px;
+      color: var(--text3);
+      margin-top: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: .5px;
+    }
+
     .tab-row {
       display: flex;
       gap: 4px;
@@ -3697,6 +3734,148 @@
 
     /* Gorizontal skroll paydo bo'lishining oldini olish */
     .tw, .tx-scroll, .msg-area, .chat-list, .app-nav { -webkit-overflow-scrolling: touch; }
+
+    /* ══════════════════════════════════════════════════
+       KOD YOZISH (VS Code uslubidagi IDE)
+       ══════════════════════════════════════════════════ */
+    #codepg.page.active {
+      display: flex;
+      flex-direction: column;
+      margin: -14px;
+      padding: 0;
+      height: calc(100vh - var(--hh));
+    }
+    @media (min-width:1400px) { #codepg.page.active { margin: -20px -28px; } }
+
+    .ide-wrap { display:flex; flex-direction:column; height:100%; min-height:0; background:#0a0f1c; }
+    .ide-wrap.ide-fullscreen { position:fixed; inset:0; z-index:900; height:100dvh; }
+
+    .ide-top {
+      flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:8px;
+      padding:8px 12px; background:linear-gradient(180deg,#0d1628,#0a1224);
+      border-bottom:1px solid var(--bor); flex-wrap:wrap;
+    }
+    .ide-top-l, .ide-top-r { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .ide-top select#ideProjectSel {
+      background:var(--card2); color:var(--text); border:1px solid var(--bor2); border-radius:7px;
+      padding:7px 9px; font-size:12px; font-family:'JetBrains Mono',monospace; max-width:160px;
+    }
+    .ide-icon-btn {
+      width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+      border-radius:7px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05);
+      color:var(--text2); cursor:pointer; font-size:12px; transition:all .15s; flex-shrink:0;
+    }
+    .ide-icon-btn:hover { background:var(--cyan-dim); color:var(--cyan); border-color:rgba(0,229,255,.3); }
+    .ide-icon-btn.danger:hover { background:var(--red-dim); color:var(--red); border-color:rgba(255,56,96,.3); }
+
+    .ide-body { flex:1; min-height:0; display:flex; overflow:hidden; }
+    .ide-editor-pane { flex:1 1 55%; min-width:0; display:flex; flex-direction:column; border-right:1px solid var(--bor); }
+    .ide-filetabs { flex-shrink:0; display:flex; gap:2px; background:#080e1a; padding:6px 6px 0; overflow-x:auto; }
+    .ide-ftab {
+      padding:7px 14px; font-size:11.5px; font-family:'JetBrains Mono',monospace; color:var(--text3);
+      background:transparent; border:none; border-radius:7px 7px 0 0; cursor:pointer; white-space:nowrap;
+      display:flex; align-items:center; gap:6px; transition:all .15s;
+    }
+    .ide-ftab i { font-size:11px; }
+    .ide-ftab.active { color:var(--cyan); background:#0a0f1c; box-shadow:inset 0 -2px 0 var(--cyan); }
+    .ide-ftab:hover:not(.active) { color:var(--text); background:rgba(255,255,255,.03); }
+
+    .ide-editors { flex:1; min-height:0; position:relative; background:#0a0f1c; }
+    .ide-cm-host { position:absolute; inset:0; display:none; }
+    .ide-cm-host.active { display:block; }
+    .ide-cm-host .CodeMirror { height:100%; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.55; }
+
+    .ide-divider { width:5px; flex-shrink:0; cursor:col-resize; background:transparent; position:relative; }
+    .ide-divider::after {
+      content:''; position:absolute; left:2px; top:0; bottom:0; width:1px; background:var(--bor2);
+    }
+    .ide-divider:hover::after, .ide-divider.dragging::after { background:var(--cyan); width:2px; box-shadow:0 0 8px var(--cyan-glow); }
+
+    .ide-preview-pane { flex:1 1 45%; min-width:0; display:flex; flex-direction:column; background:#080e1a; }
+    .ide-preview-head {
+      flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+      padding:7px 12px; font-size:10.5px; letter-spacing:1px; color:var(--text3);
+      font-family:'JetBrains Mono',monospace; border-bottom:1px solid var(--bor2);
+    }
+    .ide-preview-head span i { color:var(--green); margin-right:5px; }
+    .ide-auto { display:flex; align-items:center; gap:5px; cursor:pointer; font-size:10.5px; color:var(--text3); }
+    .ide-auto input { accent-color:var(--cyan); cursor:pointer; }
+    .ide-iframe { flex:1; min-height:0; width:100%; border:none; background:#fff; }
+    .ide-console {
+      flex-shrink:0; max-height:34%; min-height:26px; overflow-y:auto; background:#05080f;
+      border-top:1px solid var(--bor2); padding:8px 12px; font-family:'JetBrains Mono',monospace;
+      font-size:11.5px; color:var(--text2); white-space:pre-wrap; word-break:break-word;
+    }
+    .ide-console .ic-err { color:var(--red); }
+    .ide-console .ic-log { color:var(--text); }
+    .ide-console .ic-info { color:var(--text3); }
+    .ide-console .ic-warn { color:var(--gold); }
+
+    .ide-mobile-switch { display:none; flex-shrink:0; }
+
+    /* ── MOBIL: kod va natija almashinadigan tab ko'rinishi ── */
+    @media (max-width: 900px) {
+      .ide-body { position:relative; }
+      .ide-editor-pane, .ide-preview-pane { position:absolute; inset:0; border-right:none; }
+      .ide-editor-pane { display:none; }
+      .ide-editor-pane.ide-mob-active { display:flex; }
+      .ide-preview-pane { display:none; }
+      .ide-preview-pane.ide-mob-active { display:flex; }
+      .ide-divider { display:none; }
+      .ide-mobile-switch {
+        display:flex; flex-shrink:0; border-top:1px solid var(--bor);
+        background:#0a1224; padding:6px; gap:6px;
+      }
+      .ide-mobile-switch button {
+        flex:1; padding:9px; border-radius:8px; border:1px solid var(--bor2); background:rgba(255,255,255,.03);
+        color:var(--text3); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center;
+        justify-content:center; gap:6px;
+      }
+      .ide-mobile-switch button.active { background:var(--cyan-dim); color:var(--cyan); border-color:rgba(0,229,255,.3); }
+      .ide-top select#ideProjectSel { max-width:110px; }
+    }
+
+    /* CodeMirror — sayt mavzusiga moslashtirilgan qorong'u tema */
+    .CodeMirror {
+      background:#0a0f1c !important; color:#e2eaff !important; border:none !important;
+    }
+    .CodeMirror-gutters { background:#080d18 !important; border-right:1px solid var(--bor2) !important; }
+    .CodeMirror-linenumber { color:#3c4a68 !important; }
+    .CodeMirror-cursor { border-left:2px solid var(--cyan) !important; }
+    .CodeMirror-activeline-background { background:rgba(0,229,255,.05) !important; }
+    .CodeMirror-selected { background:rgba(0,229,255,.15) !important; }
+    .CodeMirror-matchingbracket { color:var(--gold) !important; font-weight:700; text-decoration:none !important; }
+    .cm-s-default .cm-keyword { color:#ff6ac1 !important; }
+    .cm-s-default .cm-atom { color:#bf5fff !important; }
+    .cm-s-default .cm-number { color:#ffcc00 !important; }
+    .cm-s-default .cm-def { color:#00e5ff !important; }
+    .cm-s-default .cm-variable { color:#e2eaff !important; }
+    .cm-s-default .cm-variable-2 { color:#8ad8ff !important; }
+    .cm-s-default .cm-property { color:#8ad8ff !important; }
+    .cm-s-default .cm-string { color:#00ff88 !important; }
+    .cm-s-default .cm-string-2 { color:#00ff88 !important; }
+    .cm-s-default .cm-comment { color:#4a5878 !important; font-style:italic; }
+    .cm-s-default .cm-tag { color:#ff6ac1 !important; }
+    .cm-s-default .cm-attribute { color:#ffcc00 !important; }
+    .cm-s-default .cm-meta { color:#8a9cc5 !important; }
+    .cm-s-default .cm-builtin { color:#00e5ff !important; }
+    .cm-s-default .cm-operator { color:#e2eaff !important; }
+    .CodeMirror-hints { background:var(--card) !important; border:1px solid var(--bor) !important; color:var(--text) !important; font-family:'JetBrains Mono',monospace; box-shadow:0 8px 30px rgba(0,0,0,.5); }
+    .CodeMirror-hint { color:var(--text2) !important; }
+    li.CodeMirror-hint-active { background:var(--cyan) !important; color:#000 !important; }
+    .CodeMirror-foldgutter { color:#3c4a68; }
+    .CodeMirror-foldmarker { color:var(--gold); }
+
+    /* Loyiha yaratish modalidagi til kartalari */
+    .ide-type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
+    .ide-type-card {
+      display:flex; flex-direction:column; align-items:center; gap:5px; padding:12px 6px;
+      border-radius:9px; border:1px solid var(--bor2); background:rgba(255,255,255,.03); cursor:pointer;
+      font-size:11px; color:var(--text2); transition:all .15s; text-align:center;
+    }
+    .ide-type-card i { font-size:17px; color:var(--text3); }
+    .ide-type-card.active { border-color:var(--cyan); background:var(--cyan-dim); color:var(--cyan); }
+    .ide-type-card.active i { color:var(--cyan); }
   </style>
 </head>
 
@@ -3784,6 +3963,26 @@
       <div class="modal-foot">
         <button class="btn btn-sm" onclick="closeMod('groupModal')">Bekor</button>
         <button class="btn btn-cyan btn-sm" onclick="createGroup()"><i class="fas fa-plus"></i> Yaratish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KOD YOZISH: YANGI LOYIHA MODALI -->
+  <div class="modal-overlay" id="ideNewModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-laptop-code" style="margin-right:7px;color:var(--cyan);"></i>YANGI LOYIHA</h3>
+        <button class="modal-close" onclick="closeMod('ideNewModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Loyiha nomi</label><input class="form-control" id="ideNewNameIn" placeholder="Masalan: Mening saytim"></div>
+        <div class="form-group"><label>Turi</label>
+          <div class="ide-type-grid" id="ideTypeGrid"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-sm" onclick="closeMod('ideNewModal')">Bekor</button>
+        <button class="btn btn-cyan btn-sm" onclick="ideCreateProject()"><i class="fas fa-plus"></i> Yaratish</button>
       </div>
     </div>
   </div>
@@ -3961,6 +4160,11 @@
         <button class="btn btn-gold btn-block" onclick="doLogin('admin')"><i class="fas fa-user-shield"></i>
           KIRISH</button>
       </div>
+
+      <a class="apk-dl-btn" href="Texnoo.apk" download="Texnoo.apk" onclick="showToast('⬇️ Ilova yuklanmoqda...')">
+        <i class="fab fa-android"></i> ILOVANI YUKLAB OLISH (APK)
+      </a>
+      <div class="apk-dl-note">// Android uchun · v1.0 · 4.1 MB</div>
     </div>
   </div>
 
@@ -4090,6 +4294,7 @@
         <div class="nav-item" onclick="showPage('hpg',this,'FAOLLIK TARIXI')"><i class="fas fa-history"></i> Faollik
           tarixi</div>
         <div class="nav-item" onclick="showPage('testspg',this,'TESTLAR')"><i class="fas fa-file-alt"></i> Testlar</div>
+        <div class="nav-item" onclick="showPage('codepg',this,'KOD YOZISH')"><i class="fas fa-laptop-code"></i> Kod yozish</div>
         <div class="nav-item" onclick="showPage('slpg',this,'DARS MAVZUSI')"><i class="fas fa-book-open"></i> Dars mavzusi</div>
         <div class="nav-item" onclick="showPage('hwspg',this,'VAZIFALARIM')"><i class="fas fa-tasks"></i> Vazifalarim <span class="badge-notif" id="hwPendingBadge" style="display:none;">0</span></div>
         <!-- <div class="nav-item" onclick="showPage('battlepg',this,'BILIM BELLASHUVI')"><i class="fas fa-bolt"></i> Bilim bellashuvi</div> -->
@@ -5159,6 +5364,49 @@
           <div id="matStudentList" class="g2">
             <div class="card">
               <div class="cb" style="color:var(--text3);font-size:13px;text-align:center;padding:30px;font-family:'JetBrains Mono',monospace;">// Material yo'q</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KOD YOZISH — VS Code uslubidagi IDE -->
+        <div class="page" id="codepg">
+          <div class="ide-wrap" id="ideWrap">
+            <div class="ide-top">
+              <div class="ide-top-l">
+                <select id="ideProjectSel" onchange="ideSwitchProject(this.value)"></select>
+                <button class="ide-icon-btn" onclick="ideNewProject()" title="Yangi loyiha"><i class="fas fa-plus"></i></button>
+                <button class="ide-icon-btn" onclick="ideRenameProject()" title="Nomini o'zgartirish"><i class="fas fa-i-cursor"></i></button>
+                <button class="ide-icon-btn danger" onclick="ideDeleteProject()" title="Loyihani o'chirish"><i class="fas fa-trash"></i></button>
+              </div>
+              <div class="ide-top-r">
+                <button class="btn btn-sm" onclick="ideSaveProject()" title="Saqlash"><i class="fas fa-save"></i> <span class="hide-mob">Saqlash</span></button>
+                <button class="btn btn-cyan btn-sm" onclick="ideRunCode()" title="Ishga tushirish"><i class="fas fa-play"></i> <span class="hide-mob">Run</span></button>
+                <button class="ide-icon-btn" onclick="ideToggleFullscreen()" title="Kengaytirish" id="ideFsBtn"><i class="fas fa-expand"></i></button>
+              </div>
+            </div>
+            <div class="ide-body" id="ideBody">
+              <div class="ide-editor-pane ide-mob-active" id="ideEditorPane">
+                <div class="ide-filetabs" id="ideFileTabs"></div>
+                <div class="ide-editors" id="ideEditors">
+                  <div class="ide-cm-host active" id="cmHostHtml"></div>
+                  <div class="ide-cm-host" id="cmHostCss"></div>
+                  <div class="ide-cm-host" id="cmHostJs"></div>
+                  <div class="ide-cm-host" id="cmHostSingle"></div>
+                </div>
+              </div>
+              <div class="ide-divider" id="ideDivider"></div>
+              <div class="ide-preview-pane" id="idePreviewPane">
+                <div class="ide-preview-head">
+                  <span><i class="fas fa-circle"></i>NATIJA</span>
+                  <label class="ide-auto"><input type="checkbox" id="ideAutoRun" checked onchange="ideOnAutoToggle()"> Avto-ishga tushirish</label>
+                </div>
+                <iframe id="idePreviewFrame" class="ide-iframe" sandbox="allow-scripts allow-modals allow-forms allow-popups"></iframe>
+                <div class="ide-console" id="ideConsole">// Konsol chiqishi shu yerda ko'rinadi</div>
+              </div>
+            </div>
+            <div class="ide-mobile-switch" id="ideMobileSwitch">
+              <button class="active" onclick="ideMobileView('code')" id="ideMbCode"><i class="fas fa-code"></i> Kod</button>
+              <button onclick="ideMobileView('result')" id="ideMbResult"><i class="fas fa-play"></i> Natija</button>
             </div>
           </div>
         </div>
@@ -8022,6 +8270,7 @@
       if (id === 'slpg') { try { renderStudentLessonTopic(); } catch (e) { console.warn('SLPG render:', e); } }
       if (id === 'matpg') { try { renderMaterialsStudent(); } catch (e) { console.warn('MATPG render:', e); } }
       if (id === 'battlepg') { try { refreshDailyGameBtn(); refreshPracticeBtn(); renderBattleBoard('daily'); } catch (e) { console.warn('BATTLEPG render:', e); } }
+      if (id === 'codepg') { try { ideOnPageShow(); } catch (e) { console.warn('CODEPG render:', e); } }
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
       if (title) document.getElementById('tbTitle').textContent = title;
@@ -11318,6 +11567,445 @@
         } catch(e){}
         return _origSaveData.apply(this, args);
       };
+    }
+  </script>
+
+  <!-- ══════════════════════════════════════════════════
+       KOD YOZISH (IDE) — CodeMirror kutubxonasi
+       ══════════════════════════════════════════════════ -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/css-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/xml-fold.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/comment-fold.min.js"></script>
+
+  <script>
+    // ══════════════════════════════════════════════════
+    // KOD YOZISH (IDE) — loyihalar, muharrirlar, ijro
+    // ══════════════════════════════════════════════════
+    const IDE_STORE_KEY = 'tt_code_projects_v1';
+    const IDE_TYPES = {
+      web:   { label: 'Web (HTML/CSS/JS)', icon: 'fa-globe' },
+      python:{ label: 'Python', icon: 'fa-brands fa-python' },
+      java:  { label: 'Java', icon: 'fa-brands fa-java' },
+      cpp:   { label: 'C++', icon: 'fa-file-code' },
+      c:     { label: 'C', icon: 'fa-file-code' },
+      php:   { label: 'PHP', icon: 'fa-brands fa-php' }
+    };
+    const IDE_TEMPLATES = {
+      web: {
+        html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mening loyiham</title>
+</head>
+<body>
+  <h1>Salom, Dunyo!</h1>
+  <p>HTML, CSS va JavaScript yordamida shu yerda loyiha yarating.</p>
+  <button id="btn">Bosing</button>
+</body>
+</html>`,
+        css: `body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #0d1628;
+  color: #e2eaff;
+  text-align: center;
+  padding: 50px 20px;
+}
+
+h1 { color: #00e5ff; }
+
+button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #00e5ff;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+}`,
+        js: `console.log('Loyiha ishga tushdi!');
+
+document.getElementById('btn').addEventListener('click', () => {
+  alert('Siz tugmani bosdingiz!');
+});`
+      },
+      python: `# Python kodingizni shu yerga yozing
+name = "Dunyo"
+print(f"Salom, {name}!")
+
+for i in range(1, 6):
+    print(i, "x", i, "=", i * i)`,
+      java: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Salom, Dunyo!");
+    }
+}`,
+      cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Salom, Dunyo!" << endl;
+    return 0;
+}`,
+      c: `#include <stdio.h>
+
+int main() {
+    printf("Salom, Dunyo!\\n");
+    return 0;
+}`,
+      php: `<?php
+echo "Salom, Dunyo!";
+?>`
+    };
+
+    let ideProjects = [];
+    let ideCurId = null;
+    let ideNewSelectedType = 'web';
+    let ideActiveFileTab = 'html';
+    let ideMobView = 'code';
+    let ideCM = { html: null, css: null, js: null, single: null };
+    let ideLibsReady = false;
+    let ideAutoTimer = null;
+    let idePyodide = null;
+    let idePyodideLoading = null;
+    let ideDragging = false;
+
+    function ideLoad() {
+      try {
+        const raw = localStorage.getItem(IDE_STORE_KEY);
+        ideProjects = raw ? JSON.parse(raw) : [];
+      } catch (e) { ideProjects = []; }
+      if (!ideProjects.length) {
+        ideProjects.push(ideMakeProject('Mening birinchi loyiham', 'web'));
+      }
+      if (!ideCurId || !ideProjects.find(p => p.id === ideCurId)) ideCurId = ideProjects[0].id;
+    }
+    function ideStore() {
+      try { localStorage.setItem(IDE_STORE_KEY, JSON.stringify(ideProjects)); } catch (e) { console.warn('IDE saqlashda xatolik', e); }
+    }
+    function ideMakeProject(name, type) {
+      const tpl = IDE_TEMPLATES[type];
+      const proj = { id: 'p' + Date.now() + Math.floor(Math.random() * 999), name: name || 'Yangi loyiha', type, updatedAt: Date.now() };
+      if (type === 'web') { proj.html = tpl.html; proj.css = tpl.css; proj.js = tpl.js; }
+      else proj.code = tpl;
+      return proj;
+    }
+    function ideCurProject() { return ideProjects.find(p => p.id === ideCurId); }
+
+    function ideOnPageShow() {
+      ideLoad();
+      ideRenderProjectSelect();
+      ideEnsureLibs().then(() => {
+        ideEnsureEditors();
+        ideApplyProjectToEditors();
+        ideRenderFileTabs();
+        ideMobileView('code');
+        setTimeout(ideRefreshEditors, 60);
+        if (document.getElementById('ideAutoRun').checked) ideRunCode();
+      });
+      ideSetupViewportGuard();
+      ideSetupDivider();
+    }
+
+    // ── Kutubxonalarni yuklash (bir marta) ──
+    function ideEnsureLibs() {
+      if (ideLibsReady && window.CodeMirror) return Promise.resolve();
+      return new Promise(resolve => {
+        let tries = 0;
+        const check = () => {
+          tries++;
+          if (window.CodeMirror) { ideLibsReady = true; resolve(); }
+          else if (tries < 100) setTimeout(check, 50);
+          else resolve();
+        };
+        check();
+      });
+    }
+
+    // ── CodeMirror instansiyalarini yaratish ──
+    function ideEnsureEditors() {
+      if (!window.CodeMirror) return;
+      const commonOpts = {
+        lineNumbers: true, theme: 'default', autoCloseBrackets: true, matchBrackets: true,
+        styleActiveLine: true, indentUnit: 2, tabSize: 2, foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        extraKeys: { 'Ctrl-Space': 'autocomplete', "'<'": ideHintOnTag, "'/'": ideHintOnSlash, 'Ctrl-S': () => { ideSaveProject(); return false; } }
+      };
+      if (!ideCM.html) {
+        ideCM.html = CodeMirror(document.getElementById('cmHostHtml'), { ...commonOpts, mode: 'htmlmixed', autoCloseTags: true, value: '' });
+        ideCM.css = CodeMirror(document.getElementById('cmHostCss'), { ...commonOpts, mode: 'css', value: '' });
+        ideCM.js = CodeMirror(document.getElementById('cmHostJs'), { ...commonOpts, mode: 'javascript', value: '' });
+        ideCM.single = CodeMirror(document.getElementById('cmHostSingle'), { ...commonOpts, mode: 'python', value: '' });
+        [ideCM.html, ideCM.css, ideCM.js, ideCM.single].forEach(cm => {
+          cm.on('inputRead', (inst, change) => {
+            if (change.text[0] && /[\w.#-]/.test(change.text[0])) {
+              try { inst.showHint({ completeSingle: false }); } catch (e) {}
+            }
+          });
+          cm.on('change', () => ideOnEditorChange());
+        });
+      }
+    }
+    function ideHintOnTag(cm) { cm.replaceSelection('<'); try { cm.showHint({ completeSingle: false }); } catch (e) {} }
+    function ideHintOnSlash(cm) { cm.replaceSelection('/'); }
+    function ideRefreshEditors() { Object.values(ideCM).forEach(cm => cm && cm.refresh()); }
+
+    function ideModeForType(type) {
+      return { python: 'python', java: 'text/x-java', cpp: 'text/x-c++src', c: 'text/x-csrc', php: 'application/x-httpd-php' }[type] || 'text/plain';
+    }
+
+    function ideApplyProjectToEditors() {
+      const p = ideCurProject(); if (!p || !ideCM.html) return;
+      if (p.type === 'web') {
+        ideCM.html.setValue(p.html || ''); ideCM.css.setValue(p.css || ''); ideCM.js.setValue(p.js || '');
+      } else {
+        ideCM.single.setOption('mode', ideModeForType(p.type));
+        ideCM.single.setValue(p.code || '');
+      }
+      document.getElementById('ideProjectSel').value = p.id;
+    }
+
+    function ideRenderFileTabs() {
+      const p = ideCurProject(); if (!p) return;
+      const tabsEl = document.getElementById('ideFileTabs');
+      if (p.type === 'web') {
+        tabsEl.innerHTML = `
+          <button class="ide-ftab ${ideActiveFileTab === 'html' ? 'active' : ''}" onclick="ideSwitchFileTab('html')"><i class="fas fa-code"></i>index.html</button>
+          <button class="ide-ftab ${ideActiveFileTab === 'css' ? 'active' : ''}" onclick="ideSwitchFileTab('css')"><i class="fab fa-css3-alt"></i>style.css</button>
+          <button class="ide-ftab ${ideActiveFileTab === 'js' ? 'active' : ''}" onclick="ideSwitchFileTab('js')"><i class="fab fa-js"></i>script.js</button>`;
+        ideSwitchFileTab(['html', 'css', 'js'].includes(ideActiveFileTab) ? ideActiveFileTab : 'html');
+      } else {
+        const ext = { python: 'main.py', java: 'Main.java', cpp: 'main.cpp', c: 'main.c', php: 'index.php' }[p.type] || 'kod';
+        tabsEl.innerHTML = `<button class="ide-ftab active"><i class="fas fa-file-code"></i>${ext}</button>`;
+        document.querySelectorAll('.ide-cm-host').forEach(h => h.classList.remove('active'));
+        document.getElementById('cmHostSingle').classList.add('active');
+        setTimeout(() => ideCM.single && ideCM.single.refresh(), 30);
+      }
+    }
+    function ideSwitchFileTab(tab) {
+      ideActiveFileTab = tab;
+      document.querySelectorAll('#ideFileTabs .ide-ftab').forEach((b, i) => b.classList.toggle('active', ['html', 'css', 'js'][i] === tab));
+      document.querySelectorAll('.ide-cm-host').forEach(h => h.classList.remove('active'));
+      document.getElementById('cmHost' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+      setTimeout(() => ideCM[tab] && ideCM[tab].refresh(), 30);
+    }
+
+    function ideRenderProjectSelect() {
+      const sel = document.getElementById('ideProjectSel'); if (!sel) return;
+      sel.innerHTML = ideProjects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      sel.value = ideCurId;
+    }
+    function ideSwitchProject(id) {
+      ideSaveProject(true);
+      ideCurId = id; ideActiveFileTab = 'html';
+      ideApplyProjectToEditors(); ideRenderFileTabs();
+      setTimeout(ideRefreshEditors, 40);
+      if (document.getElementById('ideAutoRun').checked) ideRunCode();
+    }
+
+    // ── Yangi loyiha ──
+    function ideNewProject() {
+      document.getElementById('ideNewNameIn').value = '';
+      ideNewSelectedType = 'web';
+      const grid = document.getElementById('ideTypeGrid');
+      grid.innerHTML = Object.entries(IDE_TYPES).map(([k, v]) =>
+        `<div class="ide-type-card ${k === 'web' ? 'active' : ''}" data-t="${k}" onclick="ideSelType('${k}')"><i class="fas ${v.icon}"></i>${v.label}</div>`
+      ).join('');
+      openMod('ideNewModal');
+    }
+    function ideSelType(t) {
+      ideNewSelectedType = t;
+      document.querySelectorAll('#ideTypeGrid .ide-type-card').forEach(c => c.classList.toggle('active', c.dataset.t === t));
+    }
+    function ideCreateProject() {
+      const name = document.getElementById('ideNewNameIn').value.trim() || 'Yangi loyiha';
+      const proj = ideMakeProject(name, ideNewSelectedType);
+      ideProjects.unshift(proj); ideCurId = proj.id; ideStore();
+      ideRenderProjectSelect(); ideActiveFileTab = 'html';
+      ideApplyProjectToEditors(); ideRenderFileTabs();
+      setTimeout(ideRefreshEditors, 40);
+      closeMod('ideNewModal'); showToast('✅ Loyiha yaratildi');
+      if (document.getElementById('ideAutoRun').checked) ideRunCode();
+    }
+    function ideRenameProject() {
+      const p = ideCurProject(); if (!p) return;
+      const nm = prompt("Loyiha nomini kiriting:", p.name);
+      if (nm && nm.trim()) { p.name = nm.trim(); ideStore(); ideRenderProjectSelect(); showToast('✏️ Nomi o\'zgartirildi'); }
+    }
+    function ideDeleteProject() {
+      if (ideProjects.length <= 1) { showToast('⚠️ Kamida bitta loyiha bo\'lishi kerak'); return; }
+      const p = ideCurProject(); if (!p) return;
+      if (!confirm(`"${p.name}" loyihasini o'chirmoqchimisiz?`)) return;
+      ideProjects = ideProjects.filter(x => x.id !== p.id);
+      ideCurId = ideProjects[0].id; ideStore();
+      ideRenderProjectSelect(); ideApplyProjectToEditors(); ideRenderFileTabs();
+      setTimeout(ideRefreshEditors, 40); showToast('🗑️ Loyiha o\'chirildi');
+    }
+    function ideSaveProject(silent) {
+      const p = ideCurProject(); if (!p || !ideCM.html) return;
+      if (p.type === 'web') { p.html = ideCM.html.getValue(); p.css = ideCM.css.getValue(); p.js = ideCM.js.getValue(); }
+      else { p.code = ideCM.single.getValue(); }
+      p.updatedAt = Date.now(); ideStore();
+      if (!silent) showToast('💾 Saqlandi');
+    }
+
+    // ── Avtomatik ishga tushirish ──
+    function ideOnEditorChange() {
+      if (!document.getElementById('ideAutoRun')?.checked) return;
+      clearTimeout(ideAutoTimer);
+      ideAutoTimer = setTimeout(() => ideRunCode(), 700);
+    }
+    function ideOnAutoToggle() { if (document.getElementById('ideAutoRun').checked) ideRunCode(); }
+
+    // ── Ishga tushirish ──
+    function ideRunCode() {
+      const p = ideCurProject(); if (!p) return;
+      ideSaveProject(true);
+      if (p.type === 'web') { ideRunWeb(p); ideMobileView('result'); }
+      else if (p.type === 'python') { ideRunPython(p.code); ideMobileView('result'); }
+      else { ideConsoleClear(); ideConsoleWrite(`ℹ️ "${IDE_TYPES[p.type].label}" tili uchun brauzerda to'g'ridan-to'g'ri ijro hozircha qo'llab-quvvatlanmaydi.\nKodingiz muharrirda saqlanadi va tahrirlanadi. To'liq natijani ko'rish uchun Web (HTML/CSS/JS) yoki Python loyihasidan foydalaning.`, 'info'); document.getElementById('idePreviewFrame').srcdoc = ''; ideMobileView('result'); }
+    }
+    function ideRunWeb(p) {
+      ideConsoleClear();
+      const consoleBridge = `
+        <script>
+          (function(){
+            const send = (type, args) => { try { parent.postMessage({ __ideConsole: true, type, msg: args.map(a => { try { return typeof a === 'object' ? JSON.stringify(a) : String(a); } catch(e){ return String(a); } }).join(' ') }, '*'); } catch(e){} };
+            ['log','warn','error','info'].forEach(m => { const orig = console[m]; console[m] = function(...a){ send(m, a); orig.apply(console, a); }; });
+            window.addEventListener('error', e => send('error', [e.message + ' (line ' + e.lineno + ')']));
+          })();
+        <\/script>`;
+      const doc = `<!DOCTYPE html><html><head><meta charset="UTF-8">${consoleBridge}<style>${p.css || ''}</style></head><body>${p.html || ''}<script>${p.js || ''}<\/script></body></html>`;
+      document.getElementById('idePreviewFrame').srcdoc = doc;
+    }
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.__ideConsole) ideConsoleWrite(e.data.msg, e.data.type);
+    });
+
+    function ideConsoleClear() { document.getElementById('ideConsole').innerHTML = ''; }
+    function ideConsoleWrite(msg, type) {
+      const el = document.getElementById('ideConsole');
+      const row = document.createElement('div');
+      row.className = 'ic-' + (type || 'log');
+      row.textContent = (type === 'error' ? '✗ ' : type === 'warn' ? '⚠ ' : '') + msg;
+      el.appendChild(row); el.scrollTop = el.scrollHeight;
+    }
+
+    // ── Python (Pyodide, kerak bo'lganda yuklanadi) ──
+    function ideLoadPyodide() {
+      if (idePyodide) return Promise.resolve(idePyodide);
+      if (idePyodideLoading) return idePyodideLoading;
+      idePyodideLoading = new Promise((resolve, reject) => {
+        ideConsoleWrite('⏳ Python muhiti yuklanmoqda (birinchi marta biroz vaqt olishi mumkin)...', 'info');
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
+        s.onload = async () => {
+          try { idePyodide = await loadPyodide(); resolve(idePyodide); }
+          catch (e) { reject(e); }
+        };
+        s.onerror = () => reject(new Error('Pyodide yuklanmadi. Internet aloqasini tekshiring.'));
+        document.head.appendChild(s);
+      });
+      return idePyodideLoading;
+    }
+    async function ideRunPython(code) {
+      ideConsoleClear();
+      try {
+        const pyodide = await ideLoadPyodide();
+        pyodide.setStdout({ batched: (s) => ideConsoleWrite(s, 'log') });
+        pyodide.setStderr({ batched: (s) => ideConsoleWrite(s, 'err') });
+        ideConsoleClear();
+        await pyodide.runPythonAsync(code || '');
+      } catch (e) {
+        ideConsoleWrite(String(e && e.message ? e.message : e), 'err');
+      }
+    }
+
+    // ── Mobil: Kod / Natija almashtirish ──
+    function ideMobileView(v) {
+      ideMobView = v;
+      document.getElementById('ideEditorPane').classList.toggle('ide-mob-active', v === 'code');
+      document.getElementById('idePreviewPane').classList.toggle('ide-mob-active', v === 'result');
+      document.getElementById('ideMbCode').classList.toggle('active', v === 'code');
+      document.getElementById('ideMbResult').classList.toggle('active', v === 'result');
+      if (v === 'code') setTimeout(ideRefreshEditors, 30);
+    }
+
+    // ── To'liq ekran ──
+    function ideToggleFullscreen() {
+      const wrap = document.getElementById('ideWrap');
+      wrap.classList.toggle('ide-fullscreen');
+      const icon = document.querySelector('#ideFsBtn i');
+      icon.className = wrap.classList.contains('ide-fullscreen') ? 'fas fa-compress' : 'fas fa-expand';
+      setTimeout(ideRefreshEditors, 100);
+    }
+
+    // ── Desktop: panellarni sudrab o'lchamini o'zgartirish ──
+    function ideSetupDivider() {
+      const div = document.getElementById('ideDivider');
+      if (!div || div.dataset.bound) return;
+      div.dataset.bound = '1';
+      const body = document.getElementById('ideBody');
+      const editorPane = document.getElementById('ideEditorPane');
+      div.addEventListener('mousedown', (e) => {
+        e.preventDefault(); ideDragging = true; div.classList.add('dragging');
+        document.body.style.userSelect = 'none';
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (!ideDragging) return;
+        const rect = body.getBoundingClientRect();
+        let pct = ((e.clientX - rect.left) / rect.width) * 100;
+        pct = Math.min(80, Math.max(20, pct));
+        editorPane.style.flex = `1 1 ${pct}%`;
+      });
+      window.addEventListener('mouseup', () => {
+        if (!ideDragging) return;
+        ideDragging = false; div.classList.remove('dragging');
+        document.body.style.userSelect = ''; ideRefreshEditors();
+      });
+    }
+
+    // ── Mobil klaviatura ochilganda IDE ekrandan chiqib ketmasligi uchun ──
+    function ideSetupViewportGuard() {
+      if (window.__ideVVBound || !window.visualViewport) return;
+      window.__ideVVBound = true;
+      const wrap = () => document.getElementById('ideWrap');
+      const apply = () => {
+        const w = wrap(); if (!w || !document.getElementById('codepg').classList.contains('active')) return;
+        const vv = window.visualViewport;
+        if (window.innerWidth <= 900) {
+          w.style.height = vv.height + 'px';
+        } else {
+          w.style.height = '';
+        }
+        setTimeout(ideRefreshEditors, 30);
+      };
+      window.visualViewport.addEventListener('resize', apply);
+      window.visualViewport.addEventListener('scroll', apply);
     }
   </script>
 </body>
