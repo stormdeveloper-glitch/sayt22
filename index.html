@@ -6966,6 +6966,45 @@
     // ISH REJA SHABLONLARI — tayyor kurs dasturlari asosida ommaviy import
     // (Yangi kurs ish rejasi kelsa, shu tuzilishda LESSON_PLAN_TEMPLATES ga yangi kalit qo'shiladi)
     // ══════════════════════════════════
+    const LESSON_PLAN_TEMPLATE_SAVODXON_LESSONS = [
+{no:1,topic:'Kirish. Kompyuter va uning qismlari bilan tanishuv',goal:'Monitor, tizim bloki, klaviatura, sichqoncha vazifalarini bilish',hw:'Amaliyot: kompyuter qismlarini ko\'rsatib berish, nomlarini yozib olish'},
+{no:2,topic:'Kompyuterni yoqish/o\'chirish. Klaviatura va sichqoncha bilan ishlash',goal:'Tizimga kirish, sichqoncha va klaviaturadan foydalanish ko\'nikmasi',hw:'Amaliyot: click, double-click, drag-and-drop mashqlari'},
+{no:3,topic:'Windows ish stoli, oynalar bilan ishlash, dasturlarni ishga tushirish',goal:'Ish stoli, Start menyu, oynalarni boshqarish (yopish/kichraytirish)',hw:'Amaliyot: 3 ta dasturni ochib, oynalar orasida almashish'},
+{no:4,topic:'Fayl va papkalar bilan ishlash',goal:'Papka/fayl yaratish, nomlash, ko\'chirish, o\'chirish, qidirish',hw:'Amaliyot: shaxsiy papka tuzilmasi yaratish (Hujjatlar, Rasmlar, Loyihalar)'},
+{no:5,topic:'Klaviaturada matn terish mashqi (10 barmoq usuli)',goal:'Klaviatura tartibini bilish, tez va xatosiz teri',hw:'O\'yin: tezkor matn terish musobaqasi (Blokknotda)'},
+{no:6,topic:'Internet nima? Brauzer bilan ishlash',goal:'Brauzer interfeysi, sahifalarni ochish, yorliqlar (tab)larni boshqarish',hw:'Amaliyot: 5 ta turli veb-saytga kirib, yorliqlarda ochish'},
+{no:7,topic:'Qidiruv tizimlaridan samarali foydalanish (Google)',goal:'Kalit so\'z tanlash, natijalarni filtrlash, rasm/video qidirish',hw:'Amaliyot: berilgan 5 ta savolga qidiruv orqali javob topish'},
+{no:8,topic:'Elektron pochta (Gmail) yaratish va undan foydalanish',goal:'Pochta akkaunt ochish, xat yozish, fayl biriktirish',hw:'Amaliyot: guruhdoshiga fayl biriktirilgan xat yuborish'},
+{no:9,topic:'Internetda xavfsizlik va shaxsiy ma\'lumotlarni himoya qilish',goal:'Kuchli parol, firibgarlikni tanish, shaxsiy ma\'lumotni oshkor qilmaslik',hw:'Amaliyot: xavfsiz parol yaratish qoidalari + firibgar xat namunasini tahlil qilish'},
+{no:10,topic:'Ma\'lumot madaniyati: ishonchli manba va soxta xabarlarni farqlash',goal:'Manbani tekshirish, faktlarni solishtirish ko\'nikmasi',hw:'Amaliyot: 3 ta xabarni tahlil qilib, ishonchli/soxta ekanini aniqlash'},
+{no:11,topic:'Bulutli xotira (Google Drive), fayl almashish, onlayn hujjatlar',goal:'Faylni bulutga yuklash, ulashish havolasi yaratish',hw:'Amaliyot: papkani Google Drive\'ga yuklab, guruhdoshi bilan ulashish'},
+{no:12,topic:'1-OY YAKUNI: Takrorlash + o\'yin darsi + nazorat ishi',goal:'1-oy mavzularini mustahkamlash va bilimni baholash',hw:'O\'yin: "Kompyuter bilimdoni" viktorinasi + yozma test (15 savol)'},
+{no:13,topic:'MS Word bilan tanishuv: interfeys, hujjat yaratish',goal:'Word oynasi tuzilishi, yangi hujjat ochish va saqlash',hw:'Amaliyot: yangi hujjat yaratib, o\'zi haqida qisqa matn yozish'},
+{no:14,topic:'Matnni formatlash: shrift, o\'lcham, rang, abzats',goal:'Matn formatlash vositalaridan foydalanish',hw:'Amaliyot: berilgan matnni namunaga mos formatlash'},
+{no:15,topic:'Ro\'yxatlar va jadvallar bilan ishlash',goal:'Nomerlangan/belgili ro\'yxat, jadval yaratish va tahrirlash',hw:'Amaliyot: haftalik dars jadvalini Word jadvali sifatida tuzish'},
+{no:16,topic:'Rasm, WordArt va sarlavhalar qo\'shish',goal:'Hujjatga vizual elementlar qo\'shish, sahifani bezash',hw:'Amaliyot: rasm va sarlavha bilan e\'lon (afisha) tayyorlash'},
+{no:17,topic:'Sahifa sozlamalari, hujjatni saqlash va chop etish',goal:'Sahifa o\'lchami, chegaralar, PDF formatga saqlash',hw:'Amaliyot: hujjatni PDF ko\'rinishida saqlash'},
+{no:18,topic:'AMALIY LOYIHA: Rezyume (CV) va ariza yaratish',goal:'Real hayotda kerak bo\'ladigan hujjat tayyorlash ko\'nikmasi',hw:'O\'yin: tezkor formatlash musobaqasi + o\'z CV faylini yaratish'},
+{no:19,topic:'MS Excel bilan tanishuv: katakcha, qator, ustun',goal:'Excel interfeysi, ma\'lumot kiritish, katakchalarni belgilash',hw:'Amaliyot: oddiy jadval (ism, yosh, shahar) kiritish'},
+{no:20,topic:'Asosiy formulalar: SUM, AVERAGE, MAX, MIN',goal:'Oddiy hisob-kitob formulalaridan foydalanish',hw:'Amaliyot: sinf o\'quvchilari baholarini hisoblash jadvali'},
+{no:21,topic:'Jadvallarni formatlash, saralash va filtrlash',goal:'Ma\'lumotni tartiblash va kerakli qismini ajratib olish',hw:'Amaliyot: mahsulotlar ro\'yxatini narx bo\'yicha saralash'},
+{no:22,topic:'Diagramma (grafik) yaratish',goal:'Ma\'lumotlarni vizual tarzda taqdim etish',hw:'Amaliyot: oylik xarajatlar bo\'yicha doiraviy diagramma yaratish'},
+{no:23,topic:'AMALIY LOYIHA: Oilaviy byudjet jadvali tuzish',goal:'Formula, formatlash va diagrammani birgalikda qo\'llash',hw:'Amaliyot: daromad-xarajat jadvali + diagramma bilan to\'liq fayl tayyorlash'},
+{no:24,topic:'2-OY YAKUNI: Takrorlash + o\'yin darsi + nazorat ishi',goal:'Word va Excel bo\'yicha bilimni mustahkamlash va baholash',hw:'O\'yin: "Tezkor ustaxona" (jamoa bo\'lib topshiriq bajarish) + amaliy nazorat ishi'},
+{no:25,topic:'MS PowerPoint bilan tanishuv: slaydlar bilan ishlash',goal:'Taqdimot yaratish, slayd qo\'shish/o\'chirish',hw:'Amaliyot: 5 slaydli oddiy taqdimot yaratish'},
+{no:26,topic:'Slayd dizayni, matn va rasm joylashtirish',goal:'Vizual jozibador slayd tayyorlash ko\'nikmasi',hw:'Amaliyot: mavzu bo\'yicha dizaynli slaydlar tayyorlash'},
+{no:27,topic:'Animatsiya va o\'tish effektlari, taqdimotni namoyish qilish',goal:'Slayd effektlari, taqdimotni ekranga chiqarish',hw:'Amaliyot: animatsiyali taqdimotni sinfga namoyish qilish'},
+{no:28,topic:'AMALIY LOYIHA: O\'z-o\'zini tanishtiruvchi taqdimot',goal:'To\'liq taqdimot tayyorlash va so\'zga chiqish ko\'nikmasi',hw:'O\'yin: "1 daqiqalik taqdimot" musobaqasi'},
+{no:29,topic:'Sun\'iy intellekt (AI) nima? ChatGPT/Claude kabi vositalar bilan tanishuv',goal:'AI vositalarining imkoniyatlari va cheklovlarini bilish',hw:'Amaliyot: AI chatbotga oddiy savollar berib, javoblarni tahlil qilish'},
+{no:30,topic:'AI yordamida matn yozish va savol berish san\'ati (prompting)',goal:'Aniq va samarali so\'rov (prompt) tuzish ko\'nikmasi',hw:'Amaliyot: AI yordamida qisqa insho yoki xat matnini yaratish'},
+{no:31,topic:'Rasm tahrirlash asoslari (Canva orqali oddiy dizayn)',goal:'Oddiy grafik dizayn vositalaridan foydalanish',hw:'Amaliyot: Canva\'da tabrik otkritkasi yoki afisha yaratish'},
+{no:32,topic:'AI yordamida rasm yaratish (matndan rasmga vositalar)',goal:'AI rasm generatorlaridan foydalanish, prompt yozish',hw:'Amaliyot: berilgan mavzuga AI orqali 3 ta rasm generatsiya qilish'},
+{no:33,topic:'Video tahrirlash asoslari (CapCut / oddiy video muharrir)',goal:'Video kesish, matn/musiqa qo\'shish ko\'nikmasi',hw:'Amaliyot: 30 soniyalik qisqa video tayyorlash'},
+{no:34,topic:'AMALIY LOYIHA: Qisqa tanishtiruv videosi yaratish',goal:'O\'zi yoki loyihasi haqida video tayyorlash',hw:'O\'yin: eng ijodiy video uchun sinf ovoz berishi'},
+{no:35,topic:'Yakuniy loyiha ustida ishlash: shaxsiy portfolio',goal:'Word, Excel, PowerPoint, rasm va videoni birlashtirib portfolio tayyorlash',hw:'Amaliyot: barcha darslarda tayyorlangan ishlarni bitta papka/taqdimotga jamlash'},
+{no:36,topic:'YAKUNIY IMTIHON: loyihani taqdim etish',goal:'Kurs davomida orttirilgan barcha ko\'nikmalarni namoyish etish',hw:'Nazorat: portfolio himoyasi (5 daqiqalik taqdimot) + sertifikat topshirish'}
+];
+
     const LESSON_PLAN_TEMPLATES = {
       fullstack: {
         name: "To'liq Fullstack Dasturchi — 0 dan Pro darajagacha (90 dars, 30 hafta)",
@@ -7062,6 +7101,11 @@
 {no:89,topic:'Portfolio va GitHub profil',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Kuchli GitHub profil va README yozish; Portfolio saytini yakunlash, texnik rezyume tayyorlash',hw:'Barcha kurs davomidagi loyihalarni o\'z ichiga olgan portfolio sayti va har bir loyiha uchun batafsil README fayl tayyorlash.'},
 {no:90,topic:'Yakuniy taqdimot va ishga joylashish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Har bir o\'quvchi production-loyihasini himoya qiladi; Intervyuga tayyorgarlik, frilans va vakansiyalarga ariza berish strategiyasi',hw:'10 daqiqalik yakuniy taqdimot: loyiha, texnologiyalar, qiyinchiliklar, kelajakdagi rejalar haqida gapirish.'}
 ]
+      },
+      savodxon: {
+        name: "Kompyuter savodxonligi — 3 oylik kurs (36 dars, 12 hafta)",
+        subj: 'Kompyuter savodxonligi',
+        lessons: LESSON_PLAN_TEMPLATE_SAVODXON_LESSONS
       }
     };
 
