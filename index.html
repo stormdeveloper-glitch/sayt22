@@ -3778,6 +3778,47 @@
     .lg-lang-btn { padding: 5px 12px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: .5px; border-radius: 16px; cursor: pointer; color: var(--text2); transition: .15s; }
     .lg-lang-btn:hover { color: var(--text); }
     .lg-lang-btn.active { background: var(--cyan); color: #001820; }
+
+    /* ══════════════════════════════════
+       YOUTUBE IT KANALLAR
+       ══════════════════════════════════ */
+    .yt-card { display: flex; flex-direction: column; gap: 10px; }
+    .yt-card-top { display: flex; align-items: center; gap: 12px; }
+    .yt-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid #ff0000; flex-shrink: 0; }
+    .yt-name { font-weight: 700; font-size: 14.5px; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .yt-name i { color: #ff0000; }
+    .yt-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; letter-spacing: .3px; margin-top: 3px; }
+    .yt-badge.uz { background: rgba(0,229,255,.12); color: var(--cyan); }
+    .yt-badge.intl { background: rgba(255,209,0,.12); color: var(--gold); }
+    .yt-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+    .yt-open-btn { margin-top: auto; }
+    .yt-video-embed { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; }
+    .yt-video-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .yt-video-title { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 10px; }
+    .yt-video-src { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+    /* ══════════════════════════════════
+       DARSLIK BO'LIMI (o'rnatilgan darslar kutubxonasi)
+       ══════════════════════════════════ */
+    .dsl-topic-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .dsl-topic-tab { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 20px; background: var(--card); border: 1px solid var(--bor); color: var(--text2); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: .15s; }
+    .dsl-topic-tab i { font-size: 13px; }
+    .dsl-topic-tab:hover { color: var(--text); border-color: var(--cyan); }
+    .dsl-topic-tab.active { background: var(--cyan); color: #001820; border-color: var(--cyan); }
+    .dsl-lesson-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    .dsl-lesson { background: var(--card); border: 1px solid var(--bor2); border-radius: var(--r); overflow: hidden; }
+    .dsl-lesson-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 15px; cursor: pointer; user-select: none; }
+    .dsl-lesson-head-l { display: flex; align-items: center; gap: 10px; }
+    .dsl-lesson-num { width: 26px; height: 26px; border-radius: 50%; background: rgba(0,229,255,.12); color: var(--cyan); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .dsl-lesson-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .dsl-lesson-chevron { color: var(--text3); transition: transform .2s; }
+    .dsl-lesson.open .dsl-lesson-chevron { transform: rotate(180deg); }
+    .dsl-lesson-body { display: none; padding: 0 15px 16px; }
+    .dsl-lesson.open .dsl-lesson-body { display: block; }
+    .dsl-lesson-body p { font-size: 13px; color: var(--text2); line-height: 1.7; margin: 0 0 10px; }
+    .dsl-lesson-body ul { margin: 0 0 10px 18px; padding: 0; }
+    .dsl-lesson-body li { font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .dsl-code { background: #0d1117; border: 1px solid var(--bor2); border-radius: 8px; padding: 12px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #7ee787; white-space: pre-wrap; word-break: break-word; margin: 0 0 10px; overflow-x: auto; }
   </style>
 </head>
 
@@ -4171,6 +4212,7 @@
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> <span data-i18n="nav_chat">Chat</span> <span
             class="badge-notif" id="sChatBadge" style="display:none;">0</span></div>
         <div class="nav-item" onclick="showPage('matpg',this,'DARSLIK VA KITOBLAR')"><i class="fas fa-book"></i> <span data-i18n="nav_tutorials">Darsliklar</span></div>
+        <div class="nav-item" onclick="showPage('ytpg',this,'YOUTUBE IT KANALLAR')"><i class="fab fa-youtube"></i> <span data-i18n="nav_youtube">YouTube kanallar</span></div>
         <div class="nav-item" onclick="showPage('codepg',this,'KOD YOZISH')"><i class="fas fa-code"></i> <span data-i18n="nav_code">Kod yozish</span></div>
         <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> <span data-i18n="nav_settings">Sozlamalar</span></div>
         <div class="nav-sec" data-i18n="sec_extra">Qo'shimcha</div>
@@ -4979,8 +5021,21 @@
             <h2>ISH REJA</h2>
             <p>// Guruh bo'yicha dars mavzulari — o'quvchi profilida ko'rinadi</p>
           </div>
+          <div class="card" style="margin-bottom:14px;border-left:3px solid var(--gold);">
+            <div class="ch"><h4><i class="fas fa-file-import"></i> TAYYOR SHABLONDAN OMMAVIY YUKLASH</h4></div>
+            <div class="cb">
+              <div class="fs11 txt3 mb-8">// Tayyor kurs dasturidagi barcha darslarni bitta tugma bilan guruhga yuklaydi</div>
+              <div class="g2" style="margin-bottom:0;">
+                <div class="form-group"><label>GURUH</label><select class="form-control" id="lpTplGroup"></select></div>
+                <div class="form-group"><label>SHABLON (KURS DASTURI)</label><select class="form-control" id="lpTplSel"></select></div>
+                <div class="form-group"><label>BOSHLANISH SANASI</label><input type="date" class="form-control" id="lpTplStart"></div>
+              </div>
+              <button class="btn btn-gold" style="width:100%;" onclick="lpBulkImportFromTemplate()"><i class="fas fa-bolt"></i> Shablondagi barcha darslarni yuklash</button>
+              <div class="fs11 txt3 mt-8">// Darslar haftasiga taxminan 3 marta (Dush/Chor/Juma uslubida) bo'lib avtomatik taqsimlanadi. Yuklangandan keyin har bir darsni pastdagi ro'yxatda alohida tahrirlash yoki o'chirish mumkin.</div>
+            </div>
+          </div>
           <div class="card" style="margin-bottom:14px;">
-            <div class="ch"><h4>YANGI DARS QO'SHISH</h4></div>
+            <div class="ch"><h4>YANGI DARS QO'SHISH (QO'LDA)</h4></div>
             <div class="cb">
               <div class="g2" style="margin-bottom:0;">
                 <div class="form-group"><label>GURUH</label><select class="form-control" id="lpGroup" onchange="lpAutoFill()"></select></div>
@@ -5243,7 +5298,14 @@
         <div class="page" id="matpg">
           <div class="ph">
             <h2>DARSLIK VA KITOBLAR</h2>
-            <p>// O'qituvchi tomonidan qo'shilgan materiallar</p>
+            <p>// Texnoo o'quv markazining o'zbek tilidagi darsliklari</p>
+          </div>
+
+          <div class="dsl-topic-tabs" id="dslTopicTabs"></div>
+          <div id="dslLessonList" class="dsl-lesson-list"></div>
+
+          <div class="ch" style="border:none;padding:22px 0 8px;">
+            <h4><i class="fas fa-chalkboard-teacher"></i> O'QITUVCHI MATERIALLARI</h4>
           </div>
           <div id="matStudentList" class="g2">
             <div class="card">
@@ -5313,6 +5375,33 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- YANGI: YOUTUBE IT KANALLAR — tekshirilgan, ishonchli manbalar ro'yxati -->
+        <div class="page" id="ytpg">
+          <div class="ph">
+            <h2 data-i18n="title_youtube">YOUTUBE IT KANALLAR</h2>
+            <p>// Dasturlash va IT bo'yicha eng foydali YouTube kanallari</p>
+          </div>
+          <div class="study-tabs mb-16" id="ytCatTabs" style="flex-wrap:wrap;">
+            <div class="st-tab active" onclick="ytFilterCat('all', this)">Barchasi</div>
+            <div class="st-tab" onclick="ytFilterCat('uz', this)">O'zbek tilida</div>
+            <div class="st-tab" onclick="ytFilterCat('intl', this)">Xalqaro (ingliz tilida)</div>
+          </div>
+
+          <div class="ch" style="border:none;padding:0 0 8px;">
+            <h4><i class="fas fa-star" style="color:var(--gold);"></i> TANLANGAN VIDEO DARSLAR</h4>
+          </div>
+          <div class="g2" id="ytVideosGrid" style="margin-bottom:22px;">
+            <!-- Kartalar ytRenderVideos() orqali chiqariladi -->
+          </div>
+
+          <div class="ch" style="border:none;padding:0 0 8px;">
+            <h4><i class="fab fa-youtube" style="color:#ff0000;"></i> KANALLAR</h4>
+          </div>
+          <div class="g2" id="ytChannelsGrid">
+            <!-- Kartalar ytRenderChannels() orqali chiqariladi -->
           </div>
         </div>
 
@@ -6786,6 +6875,13 @@
         ? groups.map(g => `<option value="${g}">${g}</option>`).join('')
         : `<option value="">— Guruh yo'q —</option>`;
       if (groups.includes(prevVal)) sel.value = prevVal;
+      // Shablondan yuklash bo'limidagi guruh tanlovini ham shu ro'yxat bilan sinxronlaymiz
+      const tplSel = document.getElementById('lpTplGroup');
+      if (tplSel) {
+        const prevTplVal = tplSel.value;
+        tplSel.innerHTML = sel.innerHTML;
+        if (groups.includes(prevTplVal)) tplSel.value = prevTplVal;
+      }
       lpAutoFill();
     }
     // SANA = bugun, VAQT = joriy vaqt (soat:daqiqa), FAN = o'qituvchining faniga bo'yicha default, DARS RAQAMI = shu guruh+fan bo'yicha keyingi raqam
@@ -6865,6 +6961,144 @@
       showToast("🗑️ Dars rejasi o'chirildi");
     }
     window.editLessonPlan = editLessonPlan; window.lpCancelEdit = lpCancelEdit; window.deleteLessonPlan = deleteLessonPlan;
+
+    // ══════════════════════════════════
+    // ISH REJA SHABLONLARI — tayyor kurs dasturlari asosida ommaviy import
+    // (Yangi kurs ish rejasi kelsa, shu tuzilishda LESSON_PLAN_TEMPLATES ga yangi kalit qo'shiladi)
+    // ══════════════════════════════════
+    const LESSON_PLAN_TEMPLATES = {
+      fullstack: {
+        name: "To'liq Fullstack Dasturchi — 0 dan Pro darajagacha (90 dars, 30 hafta)",
+        subj: 'Fullstack dasturlash',
+        lessons: [
+{no:1,topic:'Web qanday ishlaydi',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Internet, brauzer, server, client tushunchalari; Frontend va backend farqi; HTTP/HTTPS, domain, hosting nima; IDE o\'rnatish: VS Code, kerakli extensionlar (Live Server, Prettier)',hw:'VS Code\'ni o\'rnatib, kerakli extensionlarni qo\'shish. 1 varaqda (qo\'lda yoki Word\'da) \'brauzerga sayt manzilini kiritganda nima sodir bo\'ladi\' jarayonini o\'z so\'zi bilan tasvirlab yozish (5-7 gap).'},
+{no:2,topic:'Dasturchi muhiti',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Fayl va papkalar tuzilishi, terminal asoslari (cd, mkdir, ls); Brauzer Developer Tools (Inspect, Console, Network); Loyiha strukturasini to\'g\'ri tashkil qilish',hw:'Terminalda o\'z ismi bilan papka yaratib, ichiga 3 ta ichki papka va 2 ta bo\'sh fayl yaratish (mkdir, cd, touch buyruqlari bilan) va bosqichlarni skrinshot qilib topshirish.'},
+{no:3,topic:'Kasb sifatida web dasturlash',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Frontend / Backend / Fullstack yo\'nalishlari; Roadmap ko\'rsatish, kurs davomida nima o\'rganilishi; Birinchi "Hello World" HTML sahifasini yaratish',hw:'\'Hello World\' sahifasini yaratib, unga o\'z ismi va 3 ta qiziqishini yozib, brauzerda ochib ko\'rish. Fayl nomini va papka joyini skrinshot bilan yuborish.'},
+{no:4,topic:'HTML asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: HTML hujjat tuzilishi (DOCTYPE, html, head, body); Teglar, atributlar tushunchasi; Sarlavhalar (h1-h6), paragraf (p), matn formatlash teglari',hw:'O\'zi haqida oddiy HTML sahifa: h1 sarlavha, 3 ta paragraf (kim ekani, nima bilan shug\'ullanishi, orzusi), bold/italic teglaridan foydalanib.'},
+{no:5,topic:'Ro\'yxatlar va havolalar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: ul, ol, li; a teg, href, target; Rasm qo\'shish (img, alt, src)',hw:'O\'z sevimli 5 ta filmi/kitobi ro\'yxatini ol bilan, 5 ta hobbisini ul bilan chiqarish; har biriga tegishli rasm va bitta tashqi havola (masalan Wikipedia) qo\'shish.'},
+{no:6,topic:'Jadvallar va formalar (1-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: form, input turlari (text, email, password, number); label, button',hw:'Haftalik dars jadvalini table bilan chizish (kun/soat/fan ustunlari) va oddiy \'ro\'yxatdan o\'tish\' formasi (ism, email, parol maydonlari) yaratish.'},
+{no:7,topic:'Formalar (2-qism) va semantik HTML',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: select, textarea, checkbox, radio; Semantik teglar: header, nav, main, section, article, footer; SEO uchun asosiy tushunchalar (meta teglar)',hw:'\'Bog\'lanish\' formasini to\'liq qiling: select (mavzu tanlash), radio (murojaat turi), checkbox (shartlarga rozilik), textarea (xabar). Butun sahifani semantik teglar bilan qayta tuzish.'},
+{no:8,topic:'Amaliyot',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: To\'liq "Rezyume/Portfolio" sahifasini faqat HTML bilan yaratish',hw:'To\'liq rezyume sahifasi: header (ism, sarlavha), nav, section\'lar (haqimda, ko\'nikmalar, loyihalar, bog\'lanish), footer. Barcha oldingi teglardan foydalanish shart.'},
+{no:9,topic:'Mini-loyiha #1: Shaxsiy vizit karta',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: "Shaxsiy vizit karta" saytini HTML bilan yaratish va taqdim qilish',hw:'Loyihani GitHub\'ga yuklash (agar hali Git o\'tilmagan bo\'lsa, faylni ZIP qilib topshirish) va sinfda 2 daqiqalik taqdimot qilishga tayyorlanish.'},
+{no:10,topic:'CSS asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: CSS qo\'shish usullari (inline, internal, external); Selektorlar: element, class, id, universal; Rang, shrift, matn xususiyatlari',hw:'9-darsdagi rezyume sahifasiga external CSS fayl ulab, sarlavha rangini, fon rangini va shrift oilasini o\'zgartirish (kamida 8 ta CSS xususiyati ishlatilishi kerak).'},
+{no:11,topic:'Box Model',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: margin, padding, border, width/height; box-sizing; Amaliy mashqlar',hw:'3 ta turli kartochka (card) yasab, har biriga turli margin/padding/border qiymatlari berib, natijalarni solishtirish; qisqa izohda farqni tushuntirib yozish.'},
+{no:12,topic:'Pozitsionerlash',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: display: block/inline/inline-block; position: static/relative/absolute/fixed/sticky; z-index',hw:'Sahifa yuqorisida doim ko\'rinib turuvchi (fixed) navbar va sahifa pastida \'yuqoriga qaytish\' tugmasini (absolute/fixed) yasash.'},
+{no:13,topic:'Ranglar va fon',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: background, gradient; box-shadow, border-radius; CSS o\'zgaruvchilar (:root, var())',hw:':root\'da 4 ta rang o\'zgaruvchisini e\'lon qilib, butun sahifada shu o\'zgaruvchilardan foydalanish; keyin faqat :root\'dagi qiymatlarni o\'zgartirib butun dizaynni bir zumda almashtirish.'},
+{no:14,topic:'Pseudo-klass va animatsiya',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: :hover, :focus, :nth-child; transition, oddiy animation va @keyframes',hw:'Tugmalarga hover effekti (rang o\'zgarishi + transition), jadval qatorlariga nth-child bilan navbatma-navbat rang berish (zebra-striping).'},
+{no:15,topic:'CSS arxitekturasi',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: BEM metodologiyasi; CSS faylni tartibli yozish (naming convention)',hw:'Oldingi loyihalardan birini BEM qoidalari asosida class nomlarini qayta yozish (masalan .card__title--active).'},
+{no:16,topic:'Amaliyot (1-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Landing page dizaynini CSS bilan pikselga aniq qilib chiqarish',hw:'Tayyor dizayn (Figma yoki rasm) asosida sahifaning yuqori qismini (header + hero) CSS bilan takrorlash.'},
+{no:17,topic:'Amaliyot (2-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Landing page dizaynini CSS bilan pikselga aniq qilib chiqarish (davomi)',hw:'Landing page\'ning qolgan qismlarini (xizmatlar, sharhlar, footer) yakunlash.'},
+{no:18,topic:'Mini-loyiha #2: Landing Page',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: To\'liq statik "Landing Page" (masalan, o\'quv markazi sayti) — HTML+CSS',hw:'Loyihani GitHub Pages orqali (yoki oddiy fayl sifatida) yakunlab, guruh oldida taqdimot qilish.'},
+{no:19,topic:'Flexbox',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: display: flex, justify-content, align-items; flex-direction, flex-wrap, gap',hw:'flexboxfroggy.com o\'yinida kamida 15 ta darajani yechish va natijani skrinshot qilib yuborish.'},
+{no:20,topic:'Flexbox amaliyot',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Navbar, kartochka (card) tuzilmalarini flex bilan yasash',hw:'3 ustunli kartochkalar qatorini (masalan, xizmatlar bo\'limi) flexbox bilan yasash, kartochkalar teng masofada joylashishi kerak.'},
+{no:21,topic:'CSS Grid',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: display: grid, grid-template-columns/rows; grid-gap, grid-area',hw:'cssgridgarden.com o\'yinida kamida 15 ta darajani yechish.'},
+{no:22,topic:'Grid amaliyot',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Galereya va dashboard tuzilmasini grid bilan yasash',hw:'12 ta rasmdan iborat rasm galereyasini CSS Grid bilan (3 ustunli) yasash.'},
+{no:23,topic:'Media query va Responsive',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: @media qoidalari, mobile-first yondashuv; Breakpointlar (mobil, planshet, desktop)',hw:'18-darsdagi Landing Page\'ni to\'liq responsive qilish: mobil (< 600px), planshet (600-1024px), desktop (>1024px) uchun moslashtirish.'},
+{no:24,topic:'Mini-loyiha #3: Responsive Landing Page',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Landing page\'ni to\'liq responsive (mobil moslashuvchan) qilish',hw:'Tayyor loyihani real telefonda ochib tekshirish va kamida 3 ta muammoni topib tuzatish.'},
+{no:25,topic:'Git asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: git init, add, commit, status, log',hw:'Oldingi 3 ta loyihani (vizit karta, landing page) lokal Git repositoryga aylantirib, har biriga kamida 5 ta mazmunli commit yozish.'},
+{no:26,topic:'GitHub bilan ishlash',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Repository yaratish, push, pull, clone; GitHub Pages orqali saytni bepul joylashtirish',hw:'Barcha oldingi loyihalarni GitHub\'ga yuklab, kamida bittasini GitHub Pages orqali onlayn joylashtirib, havolani guruhga yuborish.'},
+{no:27,topic:'Branch va jamoaviy ish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: branch, merge, konflikt yechish; Pull Request tushunchasi (jamoaviy loyihalar uchun)',hw:'Yangi branch yaratib, unda o\'zgarish qilib, asosiy branch\'ga merge qilish; ataylab kichik konflikt yaratib, uni qo\'lda yechish mashqi.'},
+{no:28,topic:'JS ga kirish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: JS nima uchun kerak, brauzerga ulash usullari; O\'zgaruvchilar (let, const, var), data turlari',hw:'Konsolda (console.log) o\'z ismi, yoshi, shaharini o\'zgaruvchilarga saqlab chiqarish; let/const/var farqini 3 ta misol bilan ko\'rsatish.'},
+{no:29,topic:'Operatorlar va shartlar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Arifmetik, mantiqiy operatorlar; if/else, switch',hw:'Foydalanuvchi kiritgan yoshga qarab toifani aniqlaydigan (bola/o\'smir/kattalar) kichik dastur yozish (if/else bilan).'},
+{no:30,topic:'Sikllar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: for, while, do...while; break, continue',hw:'1 dan 100 gacha sonlardan faqat 3 ga bo\'linadiganlarini konsolga chiqarish; 1 dan 20 gacha jadval (ko\'paytirish jadvali) chiqarish.'},
+{no:31,topic:'Funksiyalar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Function declaration, expression, arrow function; Parametrlar, return, scope tushunchasi',hw:'Ikki sonni qo\'shuvchi, ko\'paytiruvchi va maydonini hisoblovchi 3 ta alohida funksiya yozish; ularni arrow function ko\'rinishida ham qayta yozish.'},
+{no:32,topic:'Massivlar (Array)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Array metodlari: push, pop, map, filter, forEach, find',hw:'5 ta mahsulot nomi va narxidan iborat massiv yaratib, filter bilan 50 000 dan qimmat mahsulotlarni, map bilan barcha narxlarga 10% qo\'shilgan yangi massivni chiqarish.'},
+{no:33,topic:'Obyektlar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Object yaratish, property/method; this kalit so\'zi asoslari',hw:'O\'zi haqida obyekt yaratish (ism, yosh, hobbi array, va \'salomlashish\' metodi) va uni chaqirib ko\'rish.'},
+{no:34,topic:'Amaliyot — massiv va obyekt',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Mini vazifalar: kalkulyator, ro\'yxat filtrlash',hw:'Oddiy konsol kalkulyator (4 amal) va 10 ta obyektdan iborat \'o\'quvchilar ro\'yxati\'ni yaratib, bahosi 4 dan yuqori bo\'lganlarni filtrlash.'},
+{no:35,topic:'ES6+ imkoniyatlari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Destructuring, spread/rest operator; Template literals',hw:'Obyektdan destructuring orqali qiymatlarni ajratib olish; template literal bilan \'Salom, [ism]! Siz [yosh] yoshdasiz\' matnini hosil qilish.'},
+{no:36,topic:'Xatoliklar bilan ishlash',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: try/catch, umumiy xatolarni tushunish va debug qilish',hw:'Ataylab xato beruvchi kod yozib (masalan, mavjud bo\'lmagan funksiyani chaqirish), uni try/catch bilan \'tutish\' va foydalanuvchiga tushunarli xabar chiqarish.'},
+{no:37,topic:'Mini-loyiha #4: Todo List logikasi',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Konsolda ishlaydigan kichik loyiha (masalan, "Todo list" logikasi faqat JS bilan, konsolda)',hw:'Massiv asosida vazifa qo\'shish, o\'chirish va \'bajarildi\' deb belgilash funksiyalarini yozib, konsolda test qilish.'},
+{no:38,topic:'DOM nima',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: document.querySelector, getElementById; Elementni o\'zgartirish: innerHTML, textContent, style',hw:'HTML sahifadagi sarlavha matnini, fon rangini va bitta rasmni JavaScript orqali (querySelector bilan) o\'zgartirish.'},
+{no:39,topic:'Eventlar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: addEventListener, click, input, submit; Event object, preventDefault()',hw:'Tugma bosilganda ranglar tasodifiy o\'zgaradigan sahifa yasash; forma submit qilinganda sahifa qayta yuklanmasligini ta\'minlash (preventDefault).'},
+{no:40,topic:'DOM yaratish va o\'chirish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: createElement, appendChild, remove',hw:'Tugma bosilganda sahifaga yangi ro\'yxat elementi (li) qo\'shiladigan, uning yonidagi \'x\' tugmasi bosilganda esa o\'chadigan kichik dastur yozish.'},
+{no:41,topic:'Amaliy loyiha — Todo List (1-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: To\'liq interaktiv Todo List: qo\'shish va ro\'yxatga chiqarish',hw:'37-darsdagi massiv logikasini DOM bilan bog\'lab, vazifa qo\'shish funksiyasini to\'liq ishlaydigan qilish.'},
+{no:42,topic:'Amaliy loyiha — Todo List (2-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: O\'chirish va "bajarilgan" deb belgilash funksiyalarini qo\'shish',hw:'Todo List\'ni to\'liq yakunlash: qo\'shish, o\'chirish, bajarilgan deb belgilash (chizib qo\'yish) barchasi ishlashi kerak.'},
+{no:43,topic:'LocalStorage',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Ma\'lumotni brauzerda saqlash (localStorage.setItem/getItem); Todo List\'ga saqlashni ulash',hw:'Todo List\'ni sahifa qayta yuklanganda ham vazifalar saqlanib qolishi uchun localStorage bilan bog\'lash.'},
+{no:44,topic:'Fetch API va JSON',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: API nima, fetch() bilan tashqi ma\'lumot olish; JSON bilan ishlash',hw:'Ochiq bepul API\'dan (masalan, tasodifiy hazillar yoki iqtiboslar API\'si) ma\'lumot olib, sahifada chiqarish.'},
+{no:45,topic:'Katta loyiha #5 (1-qism): Ob-havo/Valyuta ilovasi',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Loyiha rejasi, API tanlash, interfeys skeletini HTML/CSS bilan tayyorlash',hw:'Tanlangan API\'ning hujjatini (documentation) o\'qib, qanday so\'rov yuborish kerakligini tushunib, sinov so\'rovini konsolda chiqarib ko\'rish.'},
+{no:46,topic:'Katta loyiha #5 (2-qism): Yakunlash',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Fetch orqali real ma\'lumotni olib, interfeysga chiqarish, xatoliklarni boshqarish',hw:'Loyihani to\'liq yakunlab (shahar qidirish yoki valyuta tanlash ishlaydigan), GitHub Pages\'ga joylash.'},
+{no:47,topic:'Node.js ga kirish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Node.js o\'rnatish, npm bilan ishlash; Node.js\'da oddiy skript ishga tushirish',hw:'Node.js o\'rnatib, konsolga \'Salom, backend dunyosi!\' chiqaruvchi va joriy sana/vaqtni ko\'rsatuvchi skript yozish.'},
+{no:48,topic:'Express.js asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Server yaratish, route\'lar (GET, POST); Middleware tushunchasi',hw:'Express bilan oddiy server yaratib, \'/\' manziliga kirganda \'Bosh sahifa\', \'/about\' manziliga kirganda \'Men haqimda\' matnini qaytaradigan qilish.'},
+{no:49,topic:'REST API yaratish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: CRUD (Create, Read, Update, Delete) tushunchasi; Postman bilan API test qilish',hw:'Oddiy \'kitoblar\' ro\'yxati uchun to\'liq CRUD API yozish (hozircha massivda saqlash), Postman orqali barcha endpointlarni test qilish.'},
+{no:50,topic:'Ma\'lumotlar bazasi (1-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: MongoDB yoki MySQL o\'rnatish va ulanish; Jadval/collection yaratish',hw:'Bazaga ulanib, \'foydalanuvchilar\' jadvalini/collection\'ini yaratib, qo\'lda 3 ta yozuv qo\'shish.'},
+{no:51,topic:'Ma\'lumotlar bazasi (2-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Ma\'lumot qo\'shish, o\'qish, yangilash, o\'chirish (Express orqali)',hw:'49-darsdagi \'kitoblar\' API\'sini massiv o\'rniga haqiqiy bazaga ulash — CRUD amallari endi bazada ishlashi kerak.'},
+{no:52,topic:'Frontend-Backend bog\'lash',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Frontend\'dan fetch orqali backend API\'ga so\'rov yuborish; CORS tushunchasi',hw:'42-darsdagi Todo List frontend\'ini localStorage o\'rniga o\'z Express+baza backend\'iga ulash.'},
+{no:53,topic:'Autentifikatsiya asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Login/register logikasi, parolni хеш qilish tushunchasi (bcrypt); JWT haqida umumiy tushuncha',hw:'Oddiy register/login endpointlarini yozish: parol bcrypt bilan хеш qilib saqlanishi, login muvaffaqiyatli bo\'lsa oddiy token qaytarilishi kerak.'},
+{no:54,topic:'Katta loyiha #6 (1-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Fullstack mini-loyiha rejasi: \'Ro\'yxatdan o\'tish + bazaga saqlanadigan Todo List\'',hw:'Loyiha arxitekturasini (frontend/backend/baza qanday bog\'lanishi) diagramma shaklida chizib kelish.'},
+{no:55,topic:'Katta loyiha #6 (2-qism): Yakunlash',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: To\'liq fullstack loyihani yakunlash va sinash',hw:'Loyihani to\'liq yakunlab, 3 xil foydalanuvchi bilan (turli login) test qilib ko\'rish — har birining vazifalari alohida saqlanishi kerak.'},
+{no:56,topic:'Deploy asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Frontend: Netlify, Vercel, GitHub Pages; Backend: Render, Railway kabi bepul xostinglar',hw:'55-darsdagi loyihaning frontend qismini Netlify\'ga, backend qismini Render\'ga joylashtirish.'},
+{no:57,topic:'Domain va environment variables',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: .env fayllar bilan ishlash, maxfiy ma\'lumotlarni yashirish',hw:'Loyihadagi barcha maxfiy kalitlarni (baza parollari va h.k.) .env fayliga ko\'chirib, .gitignore\'ga qo\'shish.'},
+{no:58,topic:'Yakuniy loyiha ustida ishlash (1-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: O\'quvchi o\'zi tanlagan g\'oya asosida to\'liq fullstack loyiha rejasi va boshlanishi',hw:'O\'z loyiha g\'oyasini (masalan, kichik onlayn do\'kon, blog, kundalik) 1 varaqda tasvirlab, asosiy funksiyalar ro\'yxatini tuzish.'},
+{no:59,topic:'Yakuniy loyiha ustida ishlash (2-qism)',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Portfolio saytiga loyihani joylashtirish',hw:'Loyihani asosiy qismini (kamida 60%) tayyorlab, oraliq demo ko\'rsatishga tayyor bo\'lish.'},
+{no:60,topic:'Yakuniy taqdimot',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Har bir o\'quvchi o\'z loyihasini himoya qiladi; Rezyume/portfolio tayyorlash bo\'yicha maslahatlar; Ishga joylashish yo\'llari (frilanс, vakansiya, portfolio)',hw:'5 daqiqalik taqdimot tayyorlash: loyiha nima muammoni yechadi, qanday texnologiyalar ishlatilgan, nima qiyin bo\'ldi.'},
+{no:61,topic:'React\'ga kirish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: SPA (Single Page Application) tushunchasi; Vite bilan loyiha yaratish, React loyihasi tuzilishi; JSX sintaksisi',hw:'Vite bilan yangi React loyihasi yaratib, App komponentida o\'z ismi va qisqa tanishuv matnini JSX bilan chiqarish.'},
+{no:62,topic:'Komponentlar va Props',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Funksional komponentlar yaratish; Props orqali ma\'lumot uzatish; Komponentlarni qayta ishlatish (reusability)',hw:'Bitta \'Card\' komponentini yaratib, unga props orqali turli ism/rasm/matn uzatib, sahifada 4 marta turli ma\'lumot bilan ishlatish.'},
+{no:63,topic:'State va useState',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: useState hook bilan ichki holatni boshqarish; Formalarni React\'da boshqarish (controlled inputs)',hw:'Bosilganda soni ortadigan/kamayadigan \'hisoblagich\' (counter) komponentini yasash; oddiy input maydonini controlled qilib, yozilgan matnni real vaqtda pastda ko\'rsatish.'},
+{no:64,topic:'useEffect va hayotiy sikl',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: useEffect hook, dependency array; API\'dan ma\'lumot olish (fetch + useEffect)',hw:'Komponent yuklanganda avtomatik ravishda tashqi API\'dan (masalan, foydalanuvchilar ro\'yxati) ma\'lumot olib, ro\'yxat qilib chiqarish.'},
+{no:65,topic:'Ro\'yxatlar va shartli render',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: map() bilan ro\'yxat chiqarish, key atributi; Shartli render (&&, ternary)',hw:'Massivdagi mahsulotlarni map bilan kartochkalarga aylantirib chiqarish; agar ro\'yxat bo\'sh bo\'lsa \'Hozircha mahsulot yo\'q\' degan xabar shartli render bilan ko\'rsatilishi kerak.'},
+{no:66,topic:'React Router',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Sahifalar orasida navigatsiya (Routes, Route, Link); Dynamic route va URL parametrlari',hw:'Kamida 3 sahifali (Bosh sahifa, Mahsulotlar, Mahsulot tafsiloti) React ilova yasab, dynamic route orqali har bir mahsulotning o\'z sahifasi ochilishini ta\'minlash.'},
+{no:67,topic:'Context API va global state',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Context yaratish va ulash; Prop drilling muammosini yechish',hw:'Butun ilova bo\'ylab \'til\' yoki \'mavzu (dark/light)\' holatini Context orqali boshqarish — istalgan komponentdan o\'zgartirish mumkin bo\'lishi kerak.'},
+{no:68,topic:'Custom hooks',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: O\'z hook\'ingizni yaratish (masalan useFetch); Kodni qayta ishlatish printsiplari',hw:'64-darsdagi fetch logikasini useFetch nomli custom hook\'ga chiqarib, kamida 2 ta turli komponentda qayta ishlatish.'},
+{no:69,topic:'Mini-loyiha #7: React SPA',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: To\'liq React SPA — masalan, mahsulotlar katalogi yoki kino qidiruv ilovasi (tashqi API bilan)',hw:'Loyihani GitHub\'ga yuklab, Netlify/Vercel\'ga deploy qilish va guruhda taqdimot qilish.'},
+{no:70,topic:'TypeScript asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Statik tiplash nima uchun kerak; Asosiy turlar: string, number, boolean, array, tuple; interface va type e\'lonlari',hw:'5 ta turli o\'zgaruvchini (string, number, boolean, array, obyekt) TypeScript turlari bilan e\'lon qilish; \'Foydalanuvchi\' uchun interface yozish.'},
+{no:71,topic:'Funksiya va obyektlarda TS',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Funksiya parametrlari va qaytish qiymatini tiplash; Optional va default parametrlar; Generics\'ga kirish',hw:'28-33-darslardagi funksiyalarni (kalkulyator, obyekt metodlari) TypeScript bilan qayta yozish, barcha parametr va qaytish turlarini belgilash.'},
+{no:72,topic:'React + TypeScript',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Komponent props\'larini interface bilan tiplash; useState va useEffect\'ni TS bilan ishlatish',hw:'62-darsdagi Card komponentini TypeScript\'ga o\'tkazib, props interface orqali tiplash; noto\'g\'ri prop uzatilganda IDE xato berishini tekshirish.'},
+{no:73,topic:'Amaliyot: JS\'dan TS\'ga o\'tish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Oldingi React loyihasini JavaScript\'dan TypeScript\'ga o\'tkazish',hw:'69-darsdagi mini-loyihani to\'liq TypeScript\'ga o\'tkazish (barcha komponent, funksiya, state\'lar tiplangan bo\'lishi kerak).'},
+{no:74,topic:'Testing asoslari va Jest',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Nima uchun test yozish kerak (unit, integration, e2e); Jest o\'rnatish va birinchi test yozish',hw:'31-darsdagi oddiy funksiyalar (qo\'shish, ko\'paytirish) uchun Jest bilan kamida 5 ta test yozish.'},
+{no:75,topic:'Backend uchun unit testlar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Funksiyalar va API endpointlarni test qilish',hw:'49-darsdagi CRUD API endpointlaridan kamida 3 tasi uchun test yozish (masalan, GET so\'rov to\'g\'ri ma\'lumot qaytarishini tekshirish).'},
+{no:76,topic:'React Testing Library',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Komponentlarni render qilib test qilish; Foydalanuvchi harakatlarini simulyatsiya qilish (click, input)',hw:'63-darsdagi \'hisoblagich\' komponentini test qilish: boshlang\'ich qiymat 0 ekanini, tugma bosilganda 1 ga ortishini tekshiruvchi testlar yozish.'},
+{no:77,topic:'Docker asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Konteyner va image tushunchasi, virtual mashinadan farqi; Dockerfile yozish (Node.js ilova uchun)',hw:'55-darsdagi backend loyihasi uchun Dockerfile yozish (Node.js image asosida).'},
+{no:78,topic:'Docker amaliyot',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Image build qilish va konteynerni ishga tushirish; Docker Hub\'ga image joylash',hw:'Dockerfile\'dan image build qilib, konteynerni ishga tushirib, brauzerda ilova ishlashini tekshirish; image\'ni Docker Hub\'ga yuklash.'},
+{no:79,topic:'docker-compose',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Fullstack loyihani (frontend+backend+baza) bitta compose fayl bilan ishga tushirish',hw:'55-darsdagi fullstack loyiha uchun docker-compose.yml yozib, bitta buyruq (docker compose up) bilan frontend, backend va bazani birga ishga tushirish.'},
+{no:80,topic:'CI/CD asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: CI/CD nima uchun kerak, pipeline tushunchasi; GitHub Actions bilan avtomatik test va build',hw:'GitHub Actions workflow fayli yozib, har bir push\'da avtomatik ravishda 74-76-darslardagi testlar ishga tushishini sozlash.'},
+{no:81,topic:'Avtomatik deploy',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: GitHub Actions orqali serverga avtomatik deploy sozlash',hw:'Testlar muvaffaqiyatli o\'tgandan so\'ng avtomatik ravishda Render/Netlify\'ga deploy bo\'ladigan workflow qo\'shish.'},
+{no:82,topic:'Cloud platformalar',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: AWS / Azure / DigitalOcean / Render — umumiy tushuncha va tanlov mezonlari; Virtual server (VPS) bilan ishlash asoslari',hw:'Bitta cloud platformada (masalan, DigitalOcean yoki Azure) bepul/sinov hisob ochib, oddiy VPS yaratib ko\'rish (agar imkon bo\'lsa).'},
+{no:83,topic:'Monitoring va logging',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Ilova ishlashini kuzatish (loglar, xatoliklarni aniqlash); Uptime monitoring asoslari',hw:'Deploy qilingan loyihaga oddiy uptime monitoring xizmatini (masalan, UptimeRobot) ulash va server loglarini qanday ko\'rishni o\'rganish.'},
+{no:84,topic:'Xavfsizlik asoslari',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: HTTPS/SSL, environment o\'zgaruvchilarni himoya qilish; Rate limiting, SQL injection va XSS\'dan himoyalanish asoslari',hw:'O\'z backend API\'siga oddiy rate limiting middleware qo\'shish (masalan, 1 daqiqada 100 tadan ortiq so\'rovni cheklash).'},
+{no:85,topic:'Performance optimizatsiya',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Frontend: lazy loading, kod bo\'lish (code splitting); Backend: keshlash (caching) asoslari',hw:'69-darsdagi React loyihasida kamida bitta sahifani lazy loading bilan yuklashni sozlash va yuklanish tezligini oldin/keyin solishtirish.'},
+{no:86,topic:'Yakuniy loyiha (1-qism): Reja va arxitektura',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Production-ready fullstack ilova rejasi: React+TypeScript, Node/Express, PostgreSQL/MongoDB',hw:'Yakuniy loyiha g\'oyasini, texnologiyalar to\'plamini va arxitektura diagrammasini tayyorlab kelish.'},
+{no:87,topic:'Yakuniy loyiha (2-qism): Asosiy funksionallik',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Autentifikatsiya, asosiy CRUD funksiyalarini amalga oshirish, testlar yozish',hw:'Loyihaning asosiy (core) funksiyalarini kamida 70% darajasida tugallash.'},
+{no:88,topic:'Yakuniy loyiha (3-qism): Docker, CI/CD va cloud\'ga deploy',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Loyihani konteynerlash, CI/CD pipeline sozlash, cloud\'ga to\'liq deploy qilish',hw:'Loyihani to\'liq yakunlab, jonli (production) havolani tayyorlash.'},
+{no:89,topic:'Portfolio va GitHub profil',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Kuchli GitHub profil va README yozish; Portfolio saytini yakunlash, texnik rezyume tayyorlash',hw:'Barcha kurs davomidagi loyihalarni o\'z ichiga olgan portfolio sayti va har bir loyiha uchun batafsil README fayl tayyorlash.'},
+{no:90,topic:'Yakuniy taqdimot va ishga joylashish',goal:'Ushbu darsda o\'quvchi quyidagilarni o\'rganadi: Har bir o\'quvchi production-loyihasini himoya qiladi; Intervyuga tayyorgarlik, frilans va vakansiyalarga ariza berish strategiyasi',hw:'10 daqiqalik yakuniy taqdimot: loyiha, texnologiyalar, qiyinchiliklar, kelajakdagi rejalar haqida gapirish.'}
+]
+      }
+    };
+
+    function lpFillTemplateSel() {
+      const sel = document.getElementById('lpTplSel'); if (!sel) return;
+      sel.innerHTML = Object.entries(LESSON_PLAN_TEMPLATES).map(([key, t]) => `<option value="${key}">${t.name}</option>`).join('');
+    }
+    window.lpFillTemplateSel = lpFillTemplateSel;
+
+    function lpBulkImportFromTemplate() {
+      const group = document.getElementById('lpTplGroup')?.value.trim();
+      const tplKey = document.getElementById('lpTplSel')?.value;
+      const startDateStr = document.getElementById('lpTplStart')?.value;
+      const tpl = LESSON_PLAN_TEMPLATES[tplKey];
+      if (!group) { showToast("❗ Avval guruhni tanlang"); return; }
+      if (!tpl) { showToast("❗ Shablon topilmadi"); return; }
+      const startDate = startDateStr ? new Date(startDateStr) : new Date();
+      if (!confirm(`"${tpl.name}" shablonidagi ${tpl.lessons.length} ta dars "${group}" guruhiga qo'shilsinmi? Bu amalni ortga qaytarib bo'lmaydi (lekin har bir darsni keyin alohida tahrirlash yoki o'chirish mumkin).`)) return;
+      DB.lessonPlans = DB.lessonPlans || [];
+      const existing = DB.lessonPlans.filter(p => p.teacherId === curUser.id && p.group === group && p.subj === tpl.subj);
+      let baseNo = existing.reduce((m, p) => Math.max(m, Number(p.no) || 0), 0);
+      tpl.lessons.forEach((l, i) => {
+        // Haftasiga taxminan 3 dars (Dush/Chor/Juma uslubida) bo'lib taqsimlanadi
+        const weekIdx = Math.floor(i / 3);
+        const dayInWeek = [0, 2, 4][i % 3];
+        const d = new Date(startDate.getTime());
+        d.setDate(d.getDate() + weekIdx * 7 + dayInWeek);
+        DB.lessonPlans.push({
+          id: 'lp' + Date.now() + '_' + i, teacherId: curUser.id, group, subj: tpl.subj,
+          date: d.toISOString().slice(0, 10), time: '', no: baseNo + l.no,
+          topic: l.topic, goal: l.goal, hw: l.hw, createdAt: Date.now() + i
+        });
+      });
+      saveData(); renderLessonPlans();
+      showToast(`✅ ${tpl.lessons.length} ta dars rejasi "${group}" guruhiga qo'shildi`);
+    }
+    window.lpBulkImportFromTemplate = lpBulkImportFromTemplate;
 
     function renderLessonPlans() {
       const el = document.getElementById('lpList'); if (!el) return;
@@ -8179,13 +8413,17 @@
       if (id === 'stpg') { try { fillNewStudentGroup(); renderStTable(); } catch (e) { console.warn('STPG render:', e); } }
       if (id === 'hwmgrpg') { try { fillHwSelects(); renderHwTeacherList(); } catch (e) { console.warn('HWMGR render:', e); } }
       if (id === 'matmgrpg') { try { renderMaterialsTeacher(); } catch (e) { console.warn('MAT render:', e); } }
-      if (id === 'lpg') { try { fillLpGroupSel(); renderLessonPlans(); } catch (e) { console.warn('LP render:', e); } }
+      if (id === 'lpg') { try { fillLpGroupSel(); renderLessonPlans(); lpFillTemplateSel(); } catch (e) { console.warn('LP render:', e); } }
       if (id === 'testmgrpg') { try { renderTeacherTests(); renderTestResults(); } catch (e) { console.warn('TESTMGR render:', e); } }
       if (id === 'hwspg') { try { renderStudentHomeworks(); } catch (e) { console.warn('HWS render:', e); } }
       if (id === 'slpg') { try { renderStudentLessonTopic(); } catch (e) { console.warn('SLPG render:', e); } }
       if (id === 'matpg') { try { renderMaterialsStudent(); } catch (e) { console.warn('MATPG render:', e); } }
       if (id === 'battlepg') { try { refreshDailyGameBtn(); refreshPracticeBtn(); renderBattleBoard('daily'); } catch (e) { console.warn('BATTLEPG render:', e); } }
       if (id === 'codepg') { try { cdeInit(); setTimeout(function () { if (cdeCM) cdeCM.refresh(); }, 60); } catch (e) { console.warn('CODEPG render:', e); } }
+      if (id === 'ytpg') { try { ytRenderChannels(); ytRenderVideos(); } catch (e) { console.warn('YTPG render:', e); } }
+      if (id === 'matpg') { try { dslInit(); } catch (e) { console.warn('MATPG darslik render:', e); } }
+      if (id === 'newspg') { try { renderNewsFeed(); } catch (e) { console.warn('NEWSPG render:', e); } }
+      if (id === 'newsmgrpg') { try { renderNewsAdminList(); } catch (e) { console.warn('NEWSMGR render:', e); } }
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
       if (title) document.getElementById('tbTitle').textContent = PAGE_TITLE_KEYS[id] ? t(PAGE_TITLE_KEYS[id]) : title;
@@ -11158,7 +11396,7 @@
         // Nav bo'limlari
         sec_my_page: "Mening sahifam", sec_extra: "Qo'shimcha", sec_account: "Hisob", sec_main: "Asosiy", sec_profile: "Profil", sec_admin_panel: "Admin paneli",
         nav_profile: "Profil", nav_home: "Bosh sahifa", nav_rating: "Reyting", nav_news: "Yangiliklar", nav_market: "Market", nav_chat: "Chat",
-        nav_tutorials: "Darsliklar", nav_code: "Kod yozish", nav_settings: "Sozlamalar", nav_history: "Faollik tarixi", nav_tests: "Testlar",
+        nav_tutorials: "Darsliklar", nav_code: "Kod yozish", nav_youtube: "YouTube kanallar", nav_settings: "Sozlamalar", nav_history: "Faollik tarixi", nav_tests: "Testlar",
         nav_lesson_topic: "Dars mavzusi", nav_my_homeworks: "Vazifalarim", nav_logout: "Chiqish",
         nav_stats: "Statistika", nav_students: "Talabalar", nav_give_coins: "Tanga berish", nav_groups: "Guruhlar", nav_work_plan: "Ish reja (mavzu)",
         nav_give_homework: "Vazifa berish", nav_tutorial_book: "Darslik/Kitob", nav_payment_report: "To'lov hisoboti", nav_test_mgmt: "Test boshqaruvi",
@@ -11167,7 +11405,7 @@
         notif_title: "Bildirishnomalar", notif_mark_all: "Barchasini o'qilgan deb belgilash", notif_empty: "Hozircha bildirishnoma yo'q",
         // Sahifa sarlavhalari (topbar)
         title_home: "BOSH SAHIFA", title_rating: "REYTING", title_news: "YANGILIKLAR", title_market: "MARKET", title_chat: "CHAT",
-        title_tutorials: "DARSLIK VA KITOBLAR", title_code: "KOD YOZISH", title_settings: "SOZLAMALAR", title_history: "FAOLLIK TARIXI",
+        title_tutorials: "DARSLIK VA KITOBLAR", title_code: "KOD YOZISH", title_youtube: "YOUTUBE IT KANALLAR", title_settings: "SOZLAMALAR", title_history: "FAOLLIK TARIXI",
         title_tests: "TESTLAR", title_lesson_topic: "DARS MAVZUSI", title_my_homeworks: "VAZIFALARIM", title_my_profile: "PROFILIM",
         title_stats: "STATISTIKA", title_students: "TALABALAR", title_give_coins: "TANGA BERISH", title_groups: "GURUHLAR", title_work_plan: "ISH REJA",
         title_give_homework: "VAZIFA BERISH", title_tutorial_book: "DARSLIK/KITOB", title_test_mgmt: "TEST BOSHQARUVI", title_admin_panel: "ADMIN PANEL",
@@ -11180,14 +11418,14 @@
         lg_login_btn: "ВОЙТИ",
         sec_my_page: "Моя страница", sec_extra: "Дополнительно", sec_account: "Аккаунт", sec_main: "Основное", sec_profile: "Профиль", sec_admin_panel: "Панель админа",
         nav_profile: "Профиль", nav_home: "Главная", nav_rating: "Рейтинг", nav_news: "Новости", nav_market: "Маркет", nav_chat: "Чат",
-        nav_tutorials: "Уроки", nav_code: "Написать код", nav_settings: "Настройки", nav_history: "История активности", nav_tests: "Тесты",
+        nav_tutorials: "Уроки", nav_code: "Написать код", nav_youtube: "YouTube каналы", nav_settings: "Настройки", nav_history: "История активности", nav_tests: "Тесты",
         nav_lesson_topic: "Тема урока", nav_my_homeworks: "Мои задания", nav_logout: "Выход",
         nav_stats: "Статистика", nav_students: "Ученики", nav_give_coins: "Начислить монеты", nav_groups: "Группы", nav_work_plan: "Рабочий план (тема)",
         nav_give_homework: "Дать задание", nav_tutorial_book: "Урок/Книга", nav_payment_report: "Отчёт по оплате", nav_test_mgmt: "Управление тестами",
         nav_dashboard: "Дашборд", nav_all_students: "Все ученики", nav_teachers: "Учителя", nav_payments: "Оплаты", nav_monitoring: "Мониторинг",
         notif_title: "Уведомления", notif_mark_all: "Отметить все как прочитанные", notif_empty: "Пока нет уведомлений",
         title_home: "ГЛАВНАЯ", title_rating: "РЕЙТИНГ", title_news: "НОВОСТИ", title_market: "МАРКЕТ", title_chat: "ЧАТ",
-        title_tutorials: "УРОКИ И КНИГИ", title_code: "НАПИСАТЬ КОД", title_settings: "НАСТРОЙКИ", title_history: "ИСТОРИЯ АКТИВНОСТИ",
+        title_tutorials: "УРОКИ И КНИГИ", title_code: "НАПИСАТЬ КОД", title_youtube: "YOUTUBE IT КАНАЛЫ", title_settings: "НАСТРОЙКИ", title_history: "ИСТОРИЯ АКТИВНОСТИ",
         title_tests: "ТЕСТЫ", title_lesson_topic: "ТЕМА УРОКА", title_my_homeworks: "МОИ ЗАДАНИЯ", title_my_profile: "МОЙ ПРОФИЛЬ",
         title_stats: "СТАТИСТИКА", title_students: "УЧЕНИКИ", title_give_coins: "НАЧИСЛИТЬ МОНЕТЫ", title_groups: "ГРУППЫ", title_work_plan: "РАБОЧИЙ ПЛАН",
         title_give_homework: "ДАТЬ ЗАДАНИЕ", title_tutorial_book: "УРОК/КНИГА", title_test_mgmt: "УПРАВЛЕНИЕ ТЕСТАМИ", title_admin_panel: "ПАНЕЛЬ АДМИНА",
@@ -11200,14 +11438,14 @@
         lg_login_btn: "LOG IN",
         sec_my_page: "My page", sec_extra: "More", sec_account: "Account", sec_main: "Main", sec_profile: "Profile", sec_admin_panel: "Admin panel",
         nav_profile: "Profile", nav_home: "Home", nav_rating: "Rating", nav_news: "News", nav_market: "Market", nav_chat: "Chat",
-        nav_tutorials: "Tutorials", nav_code: "Code editor", nav_settings: "Settings", nav_history: "Activity history", nav_tests: "Tests",
+        nav_tutorials: "Tutorials", nav_code: "Code editor", nav_youtube: "YouTube channels", nav_settings: "Settings", nav_history: "Activity history", nav_tests: "Tests",
         nav_lesson_topic: "Lesson topic", nav_my_homeworks: "My homework", nav_logout: "Log out",
         nav_stats: "Statistics", nav_students: "Students", nav_give_coins: "Give coins", nav_groups: "Groups", nav_work_plan: "Work plan (topics)",
         nav_give_homework: "Assign homework", nav_tutorial_book: "Tutorial/Book", nav_payment_report: "Payment report", nav_test_mgmt: "Test management",
         nav_dashboard: "Dashboard", nav_all_students: "All students", nav_teachers: "Teachers", nav_payments: "Payments", nav_monitoring: "Monitoring",
         notif_title: "Notifications", notif_mark_all: "Mark all as read", notif_empty: "No notifications yet",
         title_home: "HOME", title_rating: "RATING", title_news: "NEWS", title_market: "MARKET", title_chat: "CHAT",
-        title_tutorials: "TUTORIALS & BOOKS", title_code: "CODE EDITOR", title_settings: "SETTINGS", title_history: "ACTIVITY HISTORY",
+        title_tutorials: "TUTORIALS & BOOKS", title_code: "CODE EDITOR", title_youtube: "YOUTUBE IT CHANNELS", title_settings: "SETTINGS", title_history: "ACTIVITY HISTORY",
         title_tests: "TESTS", title_lesson_topic: "LESSON TOPIC", title_my_homeworks: "MY HOMEWORK", title_my_profile: "MY PROFILE",
         title_stats: "STATISTICS", title_students: "STUDENTS", title_give_coins: "GIVE COINS", title_groups: "GROUPS", title_work_plan: "WORK PLAN",
         title_give_homework: "ASSIGN HOMEWORK", title_tutorial_book: "TUTORIAL/BOOK", title_test_mgmt: "TEST MANAGEMENT", title_admin_panel: "ADMIN PANEL",
@@ -11222,7 +11460,7 @@
       slpg: 'title_lesson_topic', hwspg: 'title_my_homeworks', ppg: 'title_my_profile', adpg: 'title_stats',
       cpg: 'title_give_coins', grppg: 'title_groups', lpg: 'title_work_plan', hwmgrpg: 'title_give_homework',
       matmgrpg: 'title_tutorial_book', testmgrpg: 'title_test_mgmt', admpg: 'title_admin_panel', newsmgrpg: 'title_news',
-      tpg: 'title_teachers', monpg: 'title_monitoring', tapg: 'title_profile'
+      tpg: 'title_teachers', monpg: 'title_monitoring', tapg: 'title_profile', ytpg: 'title_youtube'
     };
 
     function t(key) {
@@ -11475,6 +11713,176 @@
       showToast('⬇️ Fayl yuklab olindi');
     }
     window.cdeDownload = cdeDownload;
+
+    // ══════════════════════════════════
+    // YOUTUBE IT KANALLAR — tekshirilgan, ishonchli manbalar ro'yxati
+    // ══════════════════════════════════
+    const YT_CHANNELS = [
+      { name: "Najot Ta'lim", cat: 'uz', url: 'https://www.youtube.com/c/najottalim', desc: "O'zbekistondagi yirik IT ta'lim markazi — dasturlash, dizayn va marketing bo'yicha bepul darslar va bootcamplar.", avatar: 'NT' },
+      { name: 'Mohirdev', cat: 'uz', url: 'https://www.youtube.com/@Mohirdev', desc: "Full Stack Python, Frontend (React), Data Science va sun'iy intellekt bo'yicha o'zbek tilidagi sifatli kurslar.", avatar: 'MD' },
+      { name: 'PDP Academy', cat: 'uz', url: 'https://www.youtube.com/@pdpuz', desc: 'Android, Java Backend, Frontend va boshqa IT yo\'nalishlar bo\'yicha bepul video darslar va bootcamp materiallari.', avatar: 'PD' },
+      { name: 'IT-Academy Uzbekistan', cat: 'uz', url: 'https://www.youtube.com/@itacademy_uz', desc: "Dasturlash asoslaridan tortib amaliy loyihalarga qadar — o'zbek tilida tushunarli video darslar.", avatar: 'IA' },
+      { name: 'freeCodeCamp.org', cat: 'intl', url: 'https://www.youtube.com/@freecodecamp', desc: "Dunyodagi eng yirik bepul dasturlash ta'lim kanali — to'liq kurslar (full courses) HTML, CSS, JS, Python va boshqa yo'nalishlarda.", avatar: 'FCC' },
+      { name: 'Traversy Media', cat: 'intl', url: 'https://www.youtube.com/@TraversyMedia', desc: 'Veb-dasturlash bo\'yicha amaliy, loyihaga asoslangan darslar — JavaScript, React, Node.js va boshqalar.', avatar: 'TM' },
+      { name: 'Fireship', cat: 'intl', url: 'https://www.youtube.com/@Fireship', desc: "Qisqa va zich (100 soniyada tushuntirish) formatdagi zamonaviy texnologiyalar va dasturlash yangiliklari.", avatar: 'FS' },
+      { name: 'Programming with Mosh', cat: 'intl', url: 'https://www.youtube.com/@programmingwithmosh', desc: "Boshlang'ichlar uchun juda tushunarli dasturlash asoslari — Python, JavaScript, C# va h.k.", avatar: 'PM' },
+      { name: 'CS50 (Harvard)', cat: 'intl', url: 'https://www.youtube.com/@cs50', desc: "Garvard universitetining dunyoga mashhur 'Kompyuter fanlari kirish' kursi — bepul va to'liq.", avatar: 'CS' }
+    ];
+    let ytActiveCat = 'all';
+
+    const YT_VIDEOS = [
+      { title: "Dasturlashga oson kirish uchun 5 qadam", src: "Najot Ta'lim", cat: 'uz', id: 'kopZ2a5C0Kg' },
+      { title: 'Learn Python — Full Course for Beginners', src: 'freeCodeCamp.org', cat: 'intl', id: 'rfscVS0vtbw' },
+      { title: 'HTML Crash Course For Absolute Beginners', src: 'Traversy Media', cat: 'intl', id: 'UB1O30fR-EE' },
+      { title: 'CS50x — Introduction', src: 'CS50 (Harvard)', cat: 'intl', id: 'HJP0a6vKvlo' }
+    ];
+
+    function ytRenderVideos() {
+      const grid = document.getElementById('ytVideosGrid');
+      if (!grid) return;
+      const list = ytActiveCat === 'all' ? YT_VIDEOS : YT_VIDEOS.filter(v => v.cat === ytActiveCat);
+      if (!list.length) { grid.innerHTML = `<div class="card"><div class="cb" style="text-align:center;color:var(--text3);padding:20px;">// Bu toifada video yo'q</div></div>`; return; }
+      grid.innerHTML = list.map(v => `
+        <div class="card">
+          <div class="cb">
+            <div class="yt-video-embed">
+              <iframe src="https://www.youtube.com/embed/${v.id}" title="${v.title}" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="yt-video-title">${v.title}</div>
+            <div class="yt-video-src"><i class="fab fa-youtube" style="color:#ff0000;"></i> ${v.src}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    window.ytRenderVideos = ytRenderVideos;
+
+    function ytRenderChannels() {
+      const grid = document.getElementById('ytChannelsGrid');
+      if (!grid) return;
+      const list = ytActiveCat === 'all' ? YT_CHANNELS : YT_CHANNELS.filter(c => c.cat === ytActiveCat);
+      grid.innerHTML = list.map(c => `
+        <div class="card">
+          <div class="cb">
+            <div class="yt-card">
+              <div class="yt-card-top">
+                <img class="yt-avatar" src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.avatar)}&background=ff0000&color=fff&bold=true" alt="${c.name}">
+                <div>
+                  <div class="yt-name"><i class="fab fa-youtube"></i> ${c.name}</div>
+                  <span class="yt-badge ${c.cat}">${c.cat === 'uz' ? "O'ZBEK TILIDA" : 'XALQARO'}</span>
+                </div>
+              </div>
+              <div class="yt-desc">${c.desc}</div>
+              <a class="btn btn-sm yt-open-btn" style="background:rgba(255,0,0,.1);border-color:rgba(255,0,0,.25);color:#ff3b3b;" href="${c.url}" target="_blank" rel="noopener noreferrer"><i class="fas fa-arrow-up-right-from-square"></i> Kanalni ochish</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    window.ytRenderChannels = ytRenderChannels;
+
+    function ytFilterCat(cat, el) {
+      ytActiveCat = cat;
+      document.querySelectorAll('#ytCatTabs .st-tab').forEach(x => x.classList.remove('active'));
+      if (el) el.classList.add('active');
+      ytRenderChannels();
+      ytRenderVideos();
+    }
+    window.ytFilterCat = ytFilterCat;
+
+    // ══════════════════════════════════
+    // DARSLIK BO'LIMI — o'rnatilgan, o'zbek tilidagi darslar kutubxonasi
+    // ══════════════════════════════════
+    const DARSLIK_TOPICS = [
+      {
+        id: 'savodxon', icon: 'fa-desktop', title: 'Kompyuter savodxonligi',
+        lessons: [
+          { t: 'Kompyuter qanday ishlaydi', c: `<p>Har qanday kompyuter to'rtta asosiy qismdan iborat: <b>protsessor (CPU)</b> — barcha hisob-kitoblarni bajaruvchi "miya", <b>operativ xotira (RAM)</b> — dastur ishlayotganda ma'lumotlarni vaqtincha saqlaydi, <b>doimiy xotira (SSD/HDD)</b> — fayllar va dasturlarni doimiy saqlaydi, va <b>kiritish-chiqarish qurilmalari</b> (klaviatura, sichqoncha, monitor).</p><p>Dastur ishga tushganda, u diskdan RAM'ga yuklanadi, so'ng protsessor uni bajaradi. Shuning uchun RAM qancha katta bo'lsa, bir vaqtning o'zida shuncha ko'p dastur tez ishlaydi.</p>` },
+          { t: 'Fayl va papkalar bilan ishlash', c: `<p>Fayl — ma'lumot saqlanadigan birlik (masalan, <code>rasm.jpg</code>, <code>hujjat.docx</code>). Papka (directory) — fayllarni tartibli saqlash uchun "qutichalar".</p><ul><li>Fayl nomidan keyingi qism (<code>.jpg</code>, <code>.pdf</code>, <code>.html</code>) — <b>kengaytma</b> bo'lib, fayl turini bildiradi.</li><li><b>Yo'l (path)</b> — faylning joylashuvi, masalan: <code>C:\\Users\\Ali\\Ish\\hisobot.xlsx</code></li><li>Fayllarni tartibli saqlash — vaqtni tejaydi va topishni osonlashtiradi.</li></ul>` },
+          { t: 'Internet va brauzer qanday ishlaydi', c: `<p>Saytga kirganingizda brauzeringiz (Chrome, Firefox) so'rovni internet orqali serverga yuboradi. Server javob sifatida HTML, CSS, JS fayllarini qaytaradi, brauzer esa ularni o'qib, sahifani chizadi (render qiladi).</p><p><b>URL</b> — sayt manzili, masalan <code>https://texnoo.uz</code>. <b>https</b> qismi ma'lumot shifrlangan holda uzatilishini bildiradi — bu xavfsizroq.</p>` },
+          { t: 'Raqamli xavfsizlik asoslari', c: `<p>Internetda xavfsiz bo'lish uchun asosiy qoidalar:</p><ul><li>Har bir sayt uchun <b>alohida va kuchli parol</b> ishlating (kamida 10 belgi, raqam va maxsus belgilar bilan).</li><li>Notanish havolalarni (link) bosmang — bu <b>fishing</b> hujumi bo'lishi mumkin.</li><li>Ikki bosqichli tasdiqlash (2FA) ni yoqing.</li><li>Shaxsiy ma'lumotlarni (parol, kod) hech kimga, hatto "administratsiya" nomidan yozgan odamga ham yubormang.</li></ul>` }
+        ]
+      },
+      {
+        id: 'html', icon: 'fab fa-html5', title: 'HTML asoslari',
+        lessons: [
+          { t: 'HTML nima va hujjat tuzilishi', c: `<p>HTML (HyperText Markup Language) — veb-sahifaning "skeleti"ni yaratuvchi belgilash tili. Har bir HTML hujjat quyidagi tuzilishga ega:</p><div class="dsl-code">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Sahifa nomi&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1&gt;Salom, Dunyo!&lt;/h1&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</div><p><code>&lt;head&gt;</code> — brauzerga ko'rinmaydigan ma'lumotlar (sarlavha, kodlash), <code>&lt;body&gt;</code> — foydalanuvchi ko'radigan asosiy kontent.</p>` },
+          { t: 'Matn teglari', c: `<p>Matn bilan ishlash uchun asosiy teglar:</p><ul><li><code>&lt;h1&gt;</code> — <code>&lt;h6&gt;</code> — sarlavhalar (h1 eng katta)</li><li><code>&lt;p&gt;</code> — paragraf (matn bloki)</li><li><code>&lt;strong&gt;</code> — qalin (bold) matn</li><li><code>&lt;em&gt;</code> — kursiv (italic) matn</li><li><code>&lt;br&gt;</code> — qator ko'chirish</li></ul><div class="dsl-code">&lt;h1&gt;Texnoo platformasi&lt;/h1&gt;\n&lt;p&gt;Bu &lt;strong&gt;bepul&lt;/strong&gt; o'quv platformasi.&lt;/p&gt;</div>` },
+          { t: "Ro'yxatlar, havolalar va rasmlar", c: `<p><b>Ro'yxatlar:</b> <code>&lt;ul&gt;</code> (tartibsiz), <code>&lt;ol&gt;</code> (tartibli), ichida <code>&lt;li&gt;</code> elementlari bo'ladi.</p><div class="dsl-code">&lt;ul&gt;\n  &lt;li&gt;HTML&lt;/li&gt;\n  &lt;li&gt;CSS&lt;/li&gt;\n  &lt;li&gt;JavaScript&lt;/li&gt;\n&lt;/ul&gt;</div><p><b>Havola:</b> <code>&lt;a href="manzil"&gt;matn&lt;/a&gt;</code>. <b>Rasm:</b> <code>&lt;img src="rasm.jpg" alt="tavsif"&gt;</code> — <code>alt</code> atributi rasm yuklanmasa o'rniga chiqadigan matn.</p>` },
+          { t: 'Formalar (input) asoslari', c: `<p>Foydalanuvchidan ma'lumot olish uchun <code>&lt;form&gt;</code> va <code>&lt;input&gt;</code> ishlatiladi:</p><div class="dsl-code">&lt;form&gt;\n  &lt;label&gt;Ism:&lt;/label&gt;\n  &lt;input type="text" name="ism"&gt;\n  &lt;button type="submit"&gt;Yuborish&lt;/button&gt;\n&lt;/form&gt;</div><p><code>type</code> atributi orqali maydon turi belgilanadi: <code>text</code>, <code>email</code>, <code>password</code>, <code>number</code> va h.k.</p>` }
+        ]
+      },
+      {
+        id: 'css', icon: 'fab fa-css3-alt', title: 'CSS asoslari',
+        lessons: [
+          { t: 'CSS nima va uni ulash', c: `<p>CSS (Cascading Style Sheets) — HTML elementlariga tashqi ko'rinish (rang, o'lcham, joylashuv) beradi. Uni HTML'ga ulashning 3 usuli bor, eng yaxshisi — alohida faylda saqlash:</p><div class="dsl-code">&lt;link rel="stylesheet" href="style.css"&gt;</div><p>CSS qoida tuzilishi: <code>selektor { xususiyat: qiymat; }</code></p><div class="dsl-code">h1 {\n  color: blue;\n  font-size: 32px;\n}</div>` },
+          { t: 'Selektorlar', c: `<p>Selektor — qaysi elementga stil berilishini belgilaydi:</p><ul><li><code>p</code> — barcha <code>&lt;p&gt;</code> elementlari</li><li><code>.klass</code> — <code>class="klass"</code> bo'lgan elementlar</li><li><code>#id</code> — <code>id="id"</code> bo'lgan bitta element</li></ul><div class="dsl-code">.card {\n  background: white;\n  border-radius: 8px;\n}\n#header {\n  height: 60px;\n}</div>` },
+          { t: 'Box model (quti modeli)', c: `<p>Har bir HTML element "quti" sifatida ko'riladi, u quyidagi qatlamlardan iborat (ichkaridan tashqariga): <b>content</b> (kontent) → <b>padding</b> (ichki bo'shliq) → <b>border</b> (chegara) → <b>margin</b> (tashqi bo'shliq).</p><div class="dsl-code">.box {\n  width: 200px;\n  padding: 16px;\n  border: 1px solid #ccc;\n  margin: 10px;\n}</div><p>Elementning umumiy eni = width + padding + border (agar <code>box-sizing: border-box</code> ishlatilmasa).</p>` },
+          { t: 'Flexbox bilan joylashtirish', c: `<p>Flexbox — elementlarni bir qatorda yoki ustunda tekis joylashtirish uchun eng qulay usul:</p><div class="dsl-code">.container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: 12px;\n}</div><p><code>justify-content</code> — gorizontal joylashuv, <code>align-items</code> — vertikal joylashuv, <code>gap</code> — elementlar orasidagi masofa.</p>` }
+        ]
+      },
+      {
+        id: 'js', icon: 'fab fa-js', title: 'JavaScript asoslari',
+        lessons: [
+          { t: "O'zgaruvchilar va ma'lumot turlari", c: `<p>JavaScript'da o'zgaruvchi <code>let</code> yoki <code>const</code> bilan yaratiladi:</p><div class="dsl-code">let ism = "Ali";\nconst yosh = 20;\nlet faol = true;</div><p>Asosiy turlar: <b>String</b> (matn), <b>Number</b> (son), <b>Boolean</b> (true/false), <b>Array</b> (ro'yxat), <b>Object</b> (obyekt). <code>const</code> — o'zgarmas qiymat, <code>let</code> — o'zgaruvchi qiymat uchun ishlatiladi.</p>` },
+          { t: 'Shart operatorlari va sikllar', c: `<p><b>Shart (if/else):</b></p><div class="dsl-code">if (yosh &gt;= 18) {\n  console.log("Voyaga yetgan");\n} else {\n  console.log("Voyaga yetmagan");\n}</div><p><b>Sikl (for):</b></p><div class="dsl-code">for (let i = 1; i &lt;= 5; i++) {\n  console.log(i);\n}</div>` },
+          { t: 'Funksiyalar', c: `<p>Funksiya — bir necha marta ishlatiladigan kod bo'lagi:</p><div class="dsl-code">function qoshish(a, b) {\n  return a + b;\n}\nconsole.log(qoshish(3, 5)); // 8</div><p>Zamonaviy sintaksis — <b>arrow function</b>:</p><div class="dsl-code">const qoshish = (a, b) =&gt; a + b;</div>` },
+          { t: 'DOM bilan ishlash', c: `<p>DOM (Document Object Model) orqali JavaScript HTML elementlarini "topib", o'zgartira oladi:</p><div class="dsl-code">const tugma = document.getElementById("btn");\ntugma.addEventListener("click", function () {\n  document.querySelector("h1").textContent = "Bosildi!";\n});</div><p>Bu — "Kod yozish" bo'limidagi live-preview aynan shu prinsipda ishlaydi.</p>` }
+        ]
+      },
+      {
+        id: 'python', icon: 'fab fa-python', title: 'Python asoslari',
+        lessons: [
+          { t: 'Python sintaksisi', c: `<p>Python — o'qish va yozish oson bo'lgan dasturlash tili. U qavslar o'rniga <b>joylashuv (indentation)</b> orqali kod bloklarini ajratadi:</p><div class="dsl-code">ism = "Ali"\nyosh = 20\nprint(f"Salom, {ism}! Sen {yosh} yoshdasan.")</div>` },
+          { t: 'Shart va sikllar', c: `<div class="dsl-code">yosh = 20\nif yosh &gt;= 18:\n    print("Voyaga yetgan")\nelse:\n    print("Voyaga yetmagan")\n\nfor i in range(1, 6):\n    print(i)</div><p>Python'da <code>{ }</code> qavslar ishlatilmaydi — bloklar chekinish (4 bo'sh joy) orqali belgilanadi.</p>` },
+          { t: 'Ro\'yxat (list) va lug\'at (dict)', c: `<div class="dsl-code">mevalar = ["olma", "nok", "uzum"]\nprint(mevalar[0])  # olma\n\ntalaba = {"ism": "Ali", "yosh": 20}\nprint(talaba["ism"])  # Ali</div><p><b>List</b> — tartiblangan elementlar to'plami, <b>dict</b> — kalit-qiymat (key-value) juftliklari.</p>` },
+          { t: 'Funksiyalar', c: `<div class="dsl-code">def qoshish(a, b):\n    return a + b\n\nnatija = qoshish(3, 5)\nprint(natija)  # 8</div><p><code>def</code> kalit so'zi funksiya yaratadi. Python — sun'iy intellekt, avtomatlashtirish va backend dasturlashda eng ko'p ishlatiladigan tillardan biri.</p>` }
+        ]
+      }
+    ];
+    let dslActiveTopic = 'html';
+    let dslOpenLessons = {};
+
+    function dslRenderTabs() {
+      const tabs = document.getElementById('dslTopicTabs');
+      if (!tabs) return;
+      tabs.innerHTML = DARSLIK_TOPICS.map(t => `
+        <div class="dsl-topic-tab ${t.id === dslActiveTopic ? 'active' : ''}" onclick="dslSelectTopic('${t.id}')">
+          <i class="${t.icon.indexOf('fa-') === 0 ? 'fas ' + t.icon : t.icon}"></i> ${t.title}
+        </div>`).join('');
+    }
+    function dslSelectTopic(id) {
+      dslActiveTopic = id;
+      dslOpenLessons = {};
+      dslRenderTabs();
+      dslRenderLessons();
+    }
+    window.dslSelectTopic = dslSelectTopic;
+
+    function dslRenderLessons() {
+      const wrap = document.getElementById('dslLessonList');
+      if (!wrap) return;
+      const topic = DARSLIK_TOPICS.find(t => t.id === dslActiveTopic);
+      if (!topic) { wrap.innerHTML = ''; return; }
+      wrap.innerHTML = topic.lessons.map((l, i) => `
+        <div class="dsl-lesson ${dslOpenLessons[i] ? 'open' : ''}">
+          <div class="dsl-lesson-head" onclick="dslToggleLesson(${i})">
+            <div class="dsl-lesson-head-l">
+              <div class="dsl-lesson-num">${i + 1}</div>
+              <div class="dsl-lesson-title">${l.t}</div>
+            </div>
+            <i class="fas fa-chevron-down dsl-lesson-chevron"></i>
+          </div>
+          <div class="dsl-lesson-body">${l.c}</div>
+        </div>`).join('');
+    }
+    function dslToggleLesson(i) {
+      dslOpenLessons[i] = !dslOpenLessons[i];
+      dslRenderLessons();
+    }
+    window.dslToggleLesson = dslToggleLesson;
+    function dslInit() { dslRenderTabs(); dslRenderLessons(); }
+    window.dslInit = dslInit;
+
     function mToggleAI(el) {
       const rec = getCurrentAccountRecord(); if (!rec) return;
       ensureAccountPrefs(rec);
