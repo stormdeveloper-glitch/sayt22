@@ -10,6 +10,9 @@
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- KOD YOZISH BO'LIMI uchun CodeMirror (VS Code uslubidagi kod muharriri) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
   <style>
     :root {
       --bg: #060c18;
@@ -3697,6 +3700,84 @@
 
     /* Gorizontal skroll paydo bo'lishining oldini olish */
     .tw, .tx-scroll, .msg-area, .chat-list, .app-nav { -webkit-overflow-scrolling: touch; }
+
+    /* ══════════════════════════════════
+       KOD YOZISH BO'LIMI (VS Code uslubidagi kod muharriri)
+       ══════════════════════════════════ */
+    .cde-wrap {
+      display: flex; flex-direction: column; gap: 10px;
+      height: calc(100vh - var(--hh) - 40px); min-height: 420px;
+      --vsc-bg: #1e1e1e; --vsc-side: #252526; --vsc-actbar: #333333;
+      --vsc-tabbar: #2d2d2d; --vsc-tabactive: #1e1e1e; --vsc-border: #3c3c3c;
+      --vsc-text: #cccccc; --vsc-text-dim: #858585; --vsc-blue: #007acc;
+      --vsc-html: #e37933; --vsc-css: #519aba; --vsc-js: #cbcb41;
+    }
+    .cde-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--card); border: 1px solid var(--bor); border-radius: var(--r); padding: 8px 10px; }
+    .cde-spacer { flex: 1; }
+    .cde-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); display: flex; align-items: center; gap: 5px; }
+    .cde-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: cdePulse 1.4s infinite; }
+    @keyframes cdePulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+    /* --- VS Code oynasi (Explorer + Editor + Preview) --- */
+    .cde-ide { flex: 1; display: flex; min-height: 0; border: 1px solid var(--vsc-border); border-radius: var(--r); overflow: hidden; background: var(--vsc-bg); }
+    .cde-actbar { width: 44px; background: var(--vsc-actbar); display: flex; flex-direction: column; align-items: center; padding-top: 10px; gap: 18px; flex-shrink: 0; }
+    .cde-actbar i { color: #858585; font-size: 18px; cursor: pointer; }
+    .cde-actbar i.active { color: #fff; border-left: 2px solid var(--vsc-blue); padding-left: 2px; margin-left: -2px; }
+    .cde-explorer { width: 190px; background: var(--vsc-side); border-right: 1px solid var(--vsc-border); flex-shrink: 0; display: flex; flex-direction: column; overflow-y: auto; }
+    .cde-explorer-title { padding: 10px 14px 6px; font-size: 11px; letter-spacing: 1px; color: var(--vsc-text-dim); font-weight: 700; }
+    .cde-explorer-proj { padding: 4px 12px; font-size: 12px; color: var(--vsc-text); font-weight: 600; display: flex; align-items: center; gap: 5px; }
+    .cde-file { padding: 4px 12px 4px 28px; font-size: 13px; color: var(--vsc-text); cursor: pointer; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+    .cde-file:hover { background: #2a2d2e; }
+    .cde-file.active { background: #37373d; }
+    .cde-file .dot-icon { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+    .cde-file.html .dot-icon { background: var(--vsc-html); }
+    .cde-file.css .dot-icon { background: var(--vsc-css); }
+    .cde-file.js .dot-icon { background: var(--vsc-js); }
+    .cde-main { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    .cde-tabbar { display: flex; background: var(--vsc-tabbar); border-bottom: 1px solid var(--vsc-border); flex-shrink: 0; overflow-x: auto; }
+    .cde-tabbtn { padding: 8px 16px 7px; font-size: 12.5px; font-family: 'JetBrains Mono', monospace; color: var(--vsc-text-dim); cursor: pointer; user-select: none; display: flex; align-items: center; gap: 7px; border-right: 1px solid var(--vsc-border); white-space: nowrap; }
+    .cde-tabbtn .dot-icon { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+    .cde-tabbtn.html .dot-icon { background: var(--vsc-html); }
+    .cde-tabbtn.css .dot-icon { background: var(--vsc-css); }
+    .cde-tabbtn.js .dot-icon { background: var(--vsc-js); }
+    .cde-tabbtn.active { background: var(--vsc-tabactive); color: #fff; box-shadow: inset 0 -2px 0 var(--vsc-blue); }
+    .cde-tabbtn:not(.active):hover { color: #ddd; }
+    .cde-editor-body { flex: 1; min-height: 0; background: var(--vsc-tabactive); }
+    .cde-editor-body .CodeMirror { height: 100% !important; font-size: 13px; font-family: 'JetBrains Mono', monospace; }
+    .cde-statusbar { background: var(--vsc-blue); color: #fff; font-size: 11px; font-family: 'JetBrains Mono', monospace; padding: 3px 12px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+    .cde-statusbar span { display: flex; align-items: center; gap: 4px; }
+
+    .cde-preview-col { width: 38%; min-width: 260px; display: flex; flex-direction: column; min-height: 0; border-left: 1px solid var(--vsc-border); background: #17181c; flex-shrink: 0; }
+    .cde-preview-head { padding: 7px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text2); background: var(--vsc-side); border-bottom: 1px solid var(--vsc-border); display: flex; align-items: center; justify-content: space-between; }
+    .cde-preview-frame { flex: 1; border: none; background: #fff; }
+    .cde-console { height: 130px; background: #0d1117; border-top: 1px solid var(--vsc-border); display: flex; flex-direction: column; min-height: 0; flex-shrink: 0; }
+    .cde-console-head { padding: 6px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text2); border-bottom: 1px solid var(--vsc-border); display: flex; justify-content: space-between; align-items: center; }
+    .cde-console-body { flex: 1; overflow-y: auto; padding: 6px 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; -webkit-overflow-scrolling: touch; }
+    .cde-console-line { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.04); color: #c9d6e8; white-space: pre-wrap; word-break: break-word; }
+    .cde-console-line.err { color: var(--red); }
+    .cde-console-line.warn { color: var(--gold); }
+
+    /* --- Mobil: Explorer va Activity bar yashiriladi, fayl tablari orqali almashtiriladi, ustma-ust joylanadi --- */
+    @media (max-width: 900px) {
+      .cde-wrap { height: auto; min-height: 0; }
+      .cde-actbar, .cde-explorer { display: none; }
+      .cde-ide { flex-direction: column; }
+      .cde-main { height: 320px; }
+      .cde-preview-col { width: 100%; border-left: none; border-top: 1px solid var(--vsc-border); height: 340px; }
+      .cde-tabbtn { padding: 10px 14px; font-size: 12px; }
+      .cde-toolbar { gap: 6px; padding: 7px 8px; }
+      .cde-toolbar .btn span.cde-btn-label { display: none; }
+      .cde-statusbar span.cde-status-hide-mobile { display: none; }
+    }
+    @media (max-width: 480px) {
+      .cde-status span.cde-status-text { display: none; }
+    }
+
+    /* Login ekranidagi til almashtirish tugmalari */
+    .lg-lang-switch { position: fixed; top: 18px; right: 18px; display: flex; gap: 4px; background: var(--card); border: 1px solid var(--bor); border-radius: 20px; padding: 4px; z-index: 50; }
+    .lg-lang-btn { padding: 5px 12px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: .5px; border-radius: 16px; cursor: pointer; color: var(--text2); transition: .15s; }
+    .lg-lang-btn:hover { color: var(--text); }
+    .lg-lang-btn.active { background: var(--cyan); color: #001820; }
   </style>
 </head>
 
@@ -3784,29 +3865,6 @@
       <div class="modal-foot">
         <button class="btn btn-sm" onclick="closeMod('groupModal')">Bekor</button>
         <button class="btn btn-cyan btn-sm" onclick="createGroup()"><i class="fas fa-plus"></i> Yaratish</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BROADCAST MODAL: bitta xabarni bir nechta shaxsga alohida-alohida (guruh yaratmasdan) yuborish -->
-  <div class="modal-overlay" id="broadcastModal">
-    <div class="modal-box">
-      <div class="modal-head">
-        <h3><i class="fas fa-paper-plane" style="margin-right:7px;color:var(--gold);"></i>OMMAVIY XABAR</h3>
-        <button class="modal-close" onclick="closeMod('broadcastModal')"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group"><label>Qabul qiluvchilarni tanlang</label>
-          <div id="bcMemSel" style="display:flex;flex-direction:column;gap:3px;max-height:150px;overflow-y:auto;"></div>
-        </div>
-        <div id="bcSelMemWrap" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;"></div>
-        <div class="form-group" style="margin-top:10px;"><label>Xabar matni</label>
-          <textarea class="form-control" id="bcTextIn" rows="3" placeholder="Xabar matnini shu yerga yozing..."></textarea>
-        </div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn btn-sm" onclick="closeMod('broadcastModal')">Bekor</button>
-        <button class="btn btn-cyan btn-sm" onclick="sendBroadcast()"><i class="fas fa-paper-plane"></i> Yuborish</button>
       </div>
     </div>
   </div>
@@ -3927,62 +3985,67 @@
 
   <!-- LOGIN -->
   <div id="loginScreen">
+    <div class="lg-lang-switch" id="lgLangSwitch">
+      <span class="lg-lang-btn" data-lang="uz" onclick="setGlobalLang('uz')">UZ</span>
+      <span class="lg-lang-btn" data-lang="ru" onclick="setGlobalLang('ru')">RU</span>
+      <span class="lg-lang-btn" data-lang="en" onclick="setGlobalLang('en')">EN</span>
+    </div>
     <div class="lg-card">
       <div class="lg-top">
         <img class="lg-av" src="teacher.jpg" alt="Logo"
           onerror="this.src='https://ui-avatars.com/api/?name=TT&background=00e5ff&color=000&size=80&bold=true'">
         <div class="lg-title">TEACHER_TEXNO</div>
-        <div class="lg-sub">IT INSTRUCTOR · VALIYEV OMADBEK</div>
+        <div class="lg-sub" data-i18n="lg_sub">IT INSTRUCTOR · VALIYEV OMADBEK</div>
       </div>
       <div class="tab-row">
-        <button class="tab-btn active" id="tabSBtn" onclick="swTab('s')">TALABA</button>
-        <button class="tab-btn" id="tabTBtn" onclick="swTab('t')">O'QITUVCHI</button>
-        <button class="tab-btn" id="tabABtn" onclick="swTab('a')">ADMIN</button>
+        <button class="tab-btn active" id="tabSBtn" onclick="swTab('s')" data-i18n="lg_tab_student">TALABA</button>
+        <button class="tab-btn" id="tabTBtn" onclick="swTab('t')" data-i18n="lg_tab_teacher">O'QITUVCHI</button>
+        <button class="tab-btn" id="tabABtn" onclick="swTab('a')" data-i18n="lg_tab_admin">ADMIN</button>
       </div>
       <div id="lgS">
         <div class="form-group">
-          <label>Ism familiyangizni tanlang</label>
+          <label data-i18n="lg_choose_name">Ism familiyangizni tanlang</label>
           <select id="lgSSel" class="form-control"></select>
         </div>
         <div class="form-group">
-          <label>Parol</label>
+          <label data-i18n="lg_password">Parol</label>
           <div class="pwd-wrapper">
-            <input type="password" id="lgSPwd" class="form-control" placeholder="Parolni kiriting">
+            <input type="password" id="lgSPwd" class="form-control" placeholder="Parolni kiriting" data-i18n-placeholder="lg_password_ph">
             <i class="fas fa-eye pwd-toggle" onclick="tpwd('lgSPwd',this)"></i>
           </div>
         </div>
         <button class="btn btn-cyan btn-block" onclick="doLogin('student')"><i class="fas fa-sign-in-alt"></i>
-          KIRISH</button>
+          <span data-i18n="lg_login_btn">KIRISH</span></button>
       </div>
       <div id="lgT" style="display:none;">
         <div class="form-group">
-          <label>O'qituvchini tanlang</label>
+          <label data-i18n="lg_choose_teacher">O'qituvchini tanlang</label>
           <select id="lgTSel" class="form-control"></select>
         </div>
         <div class="form-group">
-          <label>Parol</label>
+          <label data-i18n="lg_password">Parol</label>
           <div class="pwd-wrapper">
-            <input type="password" id="lgTPwd" class="form-control" placeholder="O'qituvchi paroli">
+            <input type="password" id="lgTPwd" class="form-control" placeholder="O'qituvchi paroli" data-i18n-placeholder="lg_teacher_password_ph">
             <i class="fas fa-eye pwd-toggle" onclick="tpwd('lgTPwd',this)"></i>
           </div>
         </div>
         <button class="btn btn-gold btn-block" onclick="doLogin('teacher')"><i class="fas fa-chalkboard-teacher"></i>
-          KIRISH</button>
+          <span data-i18n="lg_login_btn">KIRISH</span></button>
       </div>
       <div id="lgA" style="display:none;">
         <div class="form-group">
-          <label>Adminni tanlang</label>
+          <label data-i18n="lg_choose_admin">Adminni tanlang</label>
           <select id="lgASel" class="form-control"></select>
         </div>
         <div class="form-group">
-          <label>Parol</label>
+          <label data-i18n="lg_password">Parol</label>
           <div class="pwd-wrapper">
-            <input type="password" id="lgAPwd" class="form-control" placeholder="Admin paroli">
+            <input type="password" id="lgAPwd" class="form-control" placeholder="Admin paroli" data-i18n-placeholder="lg_admin_password_ph">
             <i class="fas fa-eye pwd-toggle" onclick="tpwd('lgAPwd',this)"></i>
           </div>
         </div>
         <button class="btn btn-gold btn-block" onclick="doLogin('admin')"><i class="fas fa-user-shield"></i>
-          KIRISH</button>
+          <span data-i18n="lg_login_btn">KIRISH</span></button>
       </div>
     </div>
   </div>
@@ -4000,13 +4063,13 @@
         <div class="notif-badge" id="notifBadge" style="display:none;">0</div>
         <div class="notif-panel" id="notifPanel" onclick="event.stopPropagation()">
           <div class="notif-head">
-            <div class="notif-ttl"><i class="fas fa-bell"></i> Bildirishnomalar</div>
-            <div class="notif-mark" onclick="markAllNotifsRead()">Barchasini o'qilgan deb belgilash</div>
+            <div class="notif-ttl"><i class="fas fa-bell"></i> <span data-i18n="notif_title">Bildirishnomalar</span></div>
+            <div class="notif-mark" onclick="markAllNotifsRead()" data-i18n="notif_mark_all">Barchasini o'qilgan deb belgilash</div>
           </div>
           <div class="notif-list" id="notifList">
             <div style="padding:30px 20px;text-align:center;color:var(--text3);">
               <i class="fas fa-bell-slash" style="font-size:28px;opacity:.4;"></i>
-              <div style="margin-top:8px;font-size:12px;">Hozircha bildirishnoma yo'q</div>
+              <div style="margin-top:8px;font-size:12px;" data-i18n="notif_empty">Hozircha bildirishnoma yo'q</div>
             </div>
           </div>
         </div>
@@ -4096,76 +4159,76 @@
 
       <!-- TALABA NAV -->
       <nav class="app-nav" id="sNav" style="display:none;">
-        <div class="nav-sec">Mening sahifam</div>
-        <div class="nav-item" onclick="showPage('ppg',this,'PROFILIM')"><i class="fas fa-user-circle"></i> Profil
+        <div class="nav-sec" data-i18n="sec_my_page">Mening sahifam</div>
+        <div class="nav-item" onclick="showPage('ppg',this,'PROFILIM')"><i class="fas fa-user-circle"></i> <span data-i18n="nav_profile">Profil</span>
         </div>
-        <div class="nav-item active" onclick="showPage('dpg',this,'BOSH SAHIFA')"><i class="fas fa-th-large"></i> Bosh
-          sahifa</div>
-        <div class="nav-item" onclick="showPage('rpg',this,'REYTING')"><i class="fas fa-trophy"></i> Reyting</div>
-        <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar <span class="badge-notif" id="sNewsBadge" style="display:none;">0</span></div>
-        <div class="nav-item" onclick="showPage('ytpg',this,'YOUTUBE KANAL')"><i class="fab fa-youtube"></i> YouTube</div>
-        <div class="nav-item" onclick="showPage('marketpg',this,'MARKET')"><i class="fas fa-shopping-cart"></i> Market
+        <div class="nav-item active" onclick="showPage('dpg',this,'BOSH SAHIFA')"><i class="fas fa-th-large"></i> <span data-i18n="nav_home">Bosh
+          sahifa</span></div>
+        <div class="nav-item" onclick="showPage('rpg',this,'REYTING')"><i class="fas fa-trophy"></i> <span data-i18n="nav_rating">Reyting</span></div>
+        <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> <span data-i18n="nav_news">Yangiliklar</span> <span class="badge-notif" id="sNewsBadge" style="display:none;">0</span></div>
+        <div class="nav-item" onclick="showPage('marketpg',this,'MARKET')"><i class="fas fa-shopping-cart"></i> <span data-i18n="nav_market">Market</span>
         </div>
-        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
+        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> <span data-i18n="nav_chat">Chat</span> <span
             class="badge-notif" id="sChatBadge" style="display:none;">0</span></div>
-        <div class="nav-item" onclick="showPage('matpg',this,'DARSLIK VA KITOBLAR')"><i class="fas fa-book"></i> Darsliklar</div>
-        <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
-        <div class="nav-sec">Qo'shimcha</div>
-        <div class="nav-item" onclick="showPage('hpg',this,'FAOLLIK TARIXI')"><i class="fas fa-history"></i> Faollik
-          tarixi</div>
-        <div class="nav-item" onclick="showPage('testspg',this,'TESTLAR')"><i class="fas fa-file-alt"></i> Testlar</div>
-        <div class="nav-item" onclick="showPage('slpg',this,'DARS MAVZUSI')"><i class="fas fa-book-open"></i> Dars mavzusi</div>
-        <div class="nav-item" onclick="showPage('hwspg',this,'VAZIFALARIM')"><i class="fas fa-tasks"></i> Vazifalarim <span class="badge-notif" id="hwPendingBadge" style="display:none;">0</span></div>
+        <div class="nav-item" onclick="showPage('matpg',this,'DARSLIK VA KITOBLAR')"><i class="fas fa-book"></i> <span data-i18n="nav_tutorials">Darsliklar</span></div>
+        <div class="nav-item" onclick="showPage('codepg',this,'KOD YOZISH')"><i class="fas fa-code"></i> <span data-i18n="nav_code">Kod yozish</span></div>
+        <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> <span data-i18n="nav_settings">Sozlamalar</span></div>
+        <div class="nav-sec" data-i18n="sec_extra">Qo'shimcha</div>
+        <div class="nav-item" onclick="showPage('hpg',this,'FAOLLIK TARIXI')"><i class="fas fa-history"></i> <span data-i18n="nav_history">Faollik
+          tarixi</span></div>
+        <div class="nav-item" onclick="showPage('testspg',this,'TESTLAR')"><i class="fas fa-file-alt"></i> <span data-i18n="nav_tests">Testlar</span></div>
+        <div class="nav-item" onclick="showPage('slpg',this,'DARS MAVZUSI')"><i class="fas fa-book-open"></i> <span data-i18n="nav_lesson_topic">Dars mavzusi</span></div>
+        <div class="nav-item" onclick="showPage('hwspg',this,'VAZIFALARIM')"><i class="fas fa-tasks"></i> <span data-i18n="nav_my_homeworks">Vazifalarim</span> <span class="badge-notif" id="hwPendingBadge" style="display:none;">0</span></div>
         <!-- <div class="nav-item" onclick="showPage('battlepg',this,'BILIM BELLASHUVI')"><i class="fas fa-bolt"></i> Bilim bellashuvi</div> -->
-        <div class="nav-sec">Hisob</div>
-        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+        <div class="nav-sec" data-i18n="sec_account">Hisob</div>
+        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> <span data-i18n="nav_logout">Chiqish</span></div>
       </nav>
 
       <!-- O'QITUVCHI NAV -->
       <nav class="app-nav" id="tNav" style="display:none;">
-        <div class="nav-sec">Asosiy</div>
+        <div class="nav-sec" data-i18n="sec_main">Asosiy</div>
         <div class="nav-item active" onclick="showPage('adpg',this,'STATISTIKA')"><i class="fas fa-chart-bar"></i>
-          Statistika</div>
-        <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> Talabalar</div>
-        <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar</div>
-        <div class="nav-item" onclick="showPage('ytpg',this,'YOUTUBE KANAL')"><i class="fab fa-youtube"></i> YouTube</div>
-        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
+          <span data-i18n="nav_stats">Statistika</span></div>
+        <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> <span data-i18n="nav_students">Talabalar</span></div>
+        <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> <span data-i18n="nav_news">Yangiliklar</span></div>
+        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> <span data-i18n="nav_chat">Chat</span> <span
             class="badge-notif" id="tChatBadge" style="display:none;">0</span></div>
-        <div class="nav-item" onclick="showPage('cpg',this,'TANGA BERISH')"><i class="fas fa-coins"></i> Tanga berish
+        <div class="nav-item" onclick="showPage('cpg',this,'TANGA BERISH')"><i class="fas fa-coins"></i> <span data-i18n="nav_give_coins">Tanga berish</span>
         </div>
-        <div class="nav-item" onclick="showPage('grppg',this,'GURUHLAR')"><i class="fas fa-layer-group"></i> Guruhlar
+        <div class="nav-item" onclick="showPage('grppg',this,'GURUHLAR')"><i class="fas fa-layer-group"></i> <span data-i18n="nav_groups">Guruhlar</span>
         </div>
-        <div class="nav-item" onclick="showPage('lpg',this,'ISH REJA')"><i class="fas fa-book-open"></i> Ish reja (mavzu)</div>
-        <div class="nav-item" onclick="showPage('hwmgrpg',this,'VAZIFA BERISH')"><i class="fas fa-tasks"></i> Vazifa berish</div>
-        <div class="nav-item" onclick="showPage('matmgrpg',this,'DARSLIK/KITOB')"><i class="fas fa-book"></i> Darslik/Kitob</div>
+        <div class="nav-item" onclick="showPage('lpg',this,'ISH REJA')"><i class="fas fa-book-open"></i> <span data-i18n="nav_work_plan">Ish reja (mavzu)</span></div>
+        <div class="nav-item" onclick="showPage('hwmgrpg',this,'VAZIFA BERISH')"><i class="fas fa-tasks"></i> <span data-i18n="nav_give_homework">Vazifa berish</span></div>
+        <div class="nav-item" onclick="showPage('matmgrpg',this,'DARSLIK/KITOB')"><i class="fas fa-book"></i> <span data-i18n="nav_tutorial_book">Darslik/Kitob</span></div>
+        <div class="nav-item" onclick="showPage('codepg',this,'KOD YOZISH')"><i class="fas fa-code"></i> <span data-i18n="nav_code">Kod yozish</span></div>
         <div class="nav-item" onclick="showPage('paypg',this,'TO\'LOV HISOBOTI')"><i class="fas fa-money-bill-wave"></i>
-          To'lov hisoboti</div>
-        <div class="nav-item" onclick="showPage('testmgrpg',this,'TEST BOSHQARUVI')"><i class="fas fa-vial"></i> Test
-          boshqaruvi</div>
-        <div class="nav-sec">Profil</div>
-        <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> Profil</div>
-        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+          <span data-i18n="nav_payment_report">To'lov hisoboti</span></div>
+        <div class="nav-item" onclick="showPage('testmgrpg',this,'TEST BOSHQARUVI')"><i class="fas fa-vial"></i> <span data-i18n="nav_test_mgmt">Test
+          boshqaruvi</span></div>
+        <div class="nav-sec" data-i18n="sec_profile">Profil</div>
+        <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> <span data-i18n="nav_profile">Profil</span></div>
+        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> <span data-i18n="nav_logout">Chiqish</span></div>
       </nav>
 
       <!-- ADMIN NAV -->
       <nav class="app-nav" id="aNav" style="display:none;">
-        <div class="nav-sec">Admin paneli</div>
+        <div class="nav-sec" data-i18n="sec_admin_panel">Admin paneli</div>
         <div class="nav-item active" onclick="showPage('admpg',this,'ADMIN PANEL')"><i
-            class="fas fa-tachometer-alt"></i> Dashboard</div>
-        <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> Barcha talabalar
+            class="fas fa-tachometer-alt"></i> <span data-i18n="nav_dashboard">Dashboard</span></div>
+        <div class="nav-item" onclick="showPage('stpg',this,'TALABALAR')"><i class="fas fa-users"></i> <span data-i18n="nav_all_students">Barcha talabalar</span>
         </div>
-        <div class="nav-item" onclick="showPage('newsmgrpg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar</div>
-        <div class="nav-item" onclick="showPage('ytpg',this,'YOUTUBE KANAL')"><i class="fab fa-youtube"></i> YouTube</div>
-        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat</div>
+        <div class="nav-item" onclick="showPage('newsmgrpg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> <span data-i18n="nav_news">Yangiliklar</span></div>
+        <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> <span data-i18n="nav_chat">Chat</span></div>
         <div class="nav-item" onclick="showPage('tpg',this,'O\'QITUVCHILAR')"><i class="fas fa-chalkboard-teacher"></i>
-          O'qituvchilar</div>
+          <span data-i18n="nav_teachers">O'qituvchilar</span></div>
         <div class="nav-item" onclick="showPage('paypg',this,'TO\'LOVLAR')"><i class="fas fa-money-bill-wave"></i>
-          To'lovlar</div>
-        <div class="nav-item" onclick="showPage('monpg',this,'MONITORING')"><i class="fas fa-eye"></i> Monitoring</div>
-        <div class="nav-sec">Profil</div>
-        <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-user-shield"></i> Profil</div>
-        <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
-        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+          <span data-i18n="nav_payments">To'lovlar</span></div>
+        <div class="nav-item" onclick="showPage('monpg',this,'MONITORING')"><i class="fas fa-eye"></i> <span data-i18n="nav_monitoring">Monitoring</span></div>
+        <div class="nav-item" onclick="showPage('codepg',this,'KOD YOZISH')"><i class="fas fa-code"></i> <span data-i18n="nav_code">Kod yozish</span></div>
+        <div class="nav-sec" data-i18n="sec_profile">Profil</div>
+        <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-user-shield"></i> <span data-i18n="nav_profile">Profil</span></div>
+        <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> <span data-i18n="nav_settings">Sozlamalar</span></div>
+        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> <span data-i18n="nav_logout">Chiqish</span></div>
       </nav>
       <div class="sb-footer">TEACHER_TEXNO v3.1 · 2025</div>
     </aside>
@@ -4220,8 +4283,6 @@
                   class="fas fa-user-friends"></i></button>
               <button class="ctb-btn" onclick="openMod('groupModal')" title="Guruh yaratish"><i
                   class="fas fa-users"></i></button>
-              <button class="ctb-btn" onclick="openMod('broadcastModal')" title="Ommaviy xabar (bir nechta odamga)"><i
-                  class="fas fa-paper-plane"></i></button>
               <button class="ctb-btn" onclick="searchInChat()" title="Qidirish"><i class="fas fa-search"></i></button>
               <button class="ctb-btn" onclick="toggleOnline()" id="onlineBtn" title="Online"><i
                   class="fas fa-wifi"></i></button>
@@ -5191,6 +5252,70 @@
           </div>
         </div>
 
+        <!-- YANGI: KOD YOZISH BO'LIMI (VS Code uslubidagi HTML/CSS/JS live playground, auto-run) -->
+        <div class="page" id="codepg">
+          <div class="ph">
+            <h2>KOD YOZISH</h2>
+            <p>// HTML, CSS va JavaScript yozing — natija avtomatik ishga tushadi (VS Code uslubida)</p>
+          </div>
+          <div class="cde-wrap">
+            <div class="cde-toolbar">
+              <div class="cde-status"><span class="dot"></span> <span class="cde-status-text">AUTO-RUN YOQIQ</span></div>
+              <div class="cde-spacer"></div>
+              <button class="btn btn-sm" onclick="cdeReset()" title="Boshlang'ich holatga qaytarish"><i class="fas fa-rotate-left"></i> <span class="cde-btn-label">Tozalash</span></button>
+              <button class="btn btn-sm" onclick="cdeDownload()" title="HTML fayl sifatida yuklab olish"><i class="fas fa-download"></i> <span class="cde-btn-label">Yuklash</span></button>
+              <button class="btn btn-cyan btn-sm" onclick="cdeRun(true)" title="Qo'lda ishga tushirish"><i class="fas fa-play"></i> <span class="cde-btn-label">Run</span></button>
+            </div>
+            <div class="cde-ide">
+              <!-- Activity bar (VS Code chap ikonkalar ustuni) -->
+              <div class="cde-actbar">
+                <i class="fas fa-copy active" title="Explorer"></i>
+                <i class="fas fa-magnifying-glass" title="Qidirish" onclick="showToast('🔍 Qidirish — keyingi versiyada')"></i>
+                <i class="fas fa-terminal" title="Konsol" onclick="document.getElementById('cdeConsoleBody').scrollIntoView({behavior:'smooth'})"></i>
+              </div>
+              <!-- Explorer (fayllar ro'yxati) -->
+              <div class="cde-explorer">
+                <div class="cde-explorer-title">EXPLORER</div>
+                <div class="cde-explorer-proj"><i class="fas fa-chevron-down" style="font-size:9px;"></i> TEXNOO-PROJECT</div>
+                <div class="cde-file html active" id="cdeFile-html" onclick="cdeSwitchTab('html')"><span class="dot-icon"></span> index.html</div>
+                <div class="cde-file css" id="cdeFile-css" onclick="cdeSwitchTab('css')"><span class="dot-icon"></span> style.css</div>
+                <div class="cde-file js" id="cdeFile-js" onclick="cdeSwitchTab('js')"><span class="dot-icon"></span> script.js</div>
+              </div>
+              <!-- Editor (tab satri + kod maydoni + status bar) -->
+              <div class="cde-main">
+                <div class="cde-tabbar">
+                  <div class="cde-tabbtn html active" id="cdeTab-html" onclick="cdeSwitchTab('html')"><span class="dot-icon"></span> index.html</div>
+                  <div class="cde-tabbtn css" id="cdeTab-css" onclick="cdeSwitchTab('css')"><span class="dot-icon"></span> style.css</div>
+                  <div class="cde-tabbtn js" id="cdeTab-js" onclick="cdeSwitchTab('js')"><span class="dot-icon"></span> script.js</div>
+                </div>
+                <div class="cde-editor-body">
+                  <textarea id="cdeEditorHost"></textarea>
+                </div>
+                <div class="cde-statusbar">
+                  <span><i class="fas fa-code-branch"></i> main</span>
+                  <span id="cdeStatusLang"><i class="fas fa-check-circle"></i> HTML</span>
+                  <span class="cde-status-hide-mobile">UTF-8</span>
+                  <span class="cde-status-hide-mobile">Spaces: 2</span>
+                  <div class="cde-spacer"></div>
+                  <span><i class="fas fa-bolt"></i> Auto-Run</span>
+                </div>
+              </div>
+              <!-- Preview + Konsol -->
+              <div class="cde-preview-col">
+                <div class="cde-preview-head">
+                  <span><i class="fas fa-eye"></i> NATIJA (LIVE)</span>
+                  <span style="cursor:pointer;" onclick="cdeClearConsole()" title="Konsolni tozalash"><i class="fas fa-broom"></i></span>
+                </div>
+                <iframe id="cdePreviewFrame" class="cde-preview-frame" sandbox="allow-scripts allow-modals allow-forms allow-popups"></iframe>
+                <div class="cde-console">
+                  <div class="cde-console-head"><span><i class="fas fa-terminal"></i> KONSOL</span></div>
+                  <div class="cde-console-body" id="cdeConsoleBody"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- YANGI: YANGILIKLAR (NEWS) — barcha rollar uchun umumiy lenta -->
         <div class="page" id="newspg">
           <div id="newsWrap"></div>
@@ -5234,11 +5359,6 @@
               <div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;">// E'lon yo'q</div>
             </div>
           </div>
-        </div>
-
-        <!-- YANGI: YOUTUBE KANAL -->
-        <div class="page" id="ytpg">
-          <div id="ytWrap"></div>
         </div>
 
         <!-- YANGI: BILIM BELLASHUVI (Savol-javob raqobat bo'limi) -->
@@ -5504,6 +5624,15 @@
       </div><!-- /pageWrap -->
     </div>
   </div><!-- /appShell -->
+
+  <!-- KOD YOZISH BO'LIMI uchun CodeMirror kutubxonasi -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 
   <script>
     // ══════════════════════════════════════════════════
@@ -6094,6 +6223,7 @@
       prepareChatsForCurrentUser();
       saveData();
       applyThemeFromPrefs();
+      initLangFromStorage();
       if (r === 'student') { initS(); showPage('dpg', null, 'BOSH SAHIFA'); }
       else if (r === 'teacher') { initT(); showPage('adpg', null, 'STATISTIKA'); }
       else { initA(); showPage('admpg', null, 'ADMIN DASHBOARD'); }
@@ -7286,61 +7416,6 @@
     }
     window.renderNewsFeed = renderNewsFeed;
 
-    // ══════════════════════════════════
-    // YOUTUBE KANAL BO'LIMI
-    // ══════════════════════════════════
-    function ytUploadsPlaylist(channelId) {
-      // YouTube "yuklangan videolar" playlist ID'si odatda kanal ID'sida UC -> UU almashtirilib olinadi
-      if (!channelId) return '';
-      channelId = channelId.trim();
-      return channelId.startsWith('UC') ? 'UU' + channelId.slice(2) : channelId;
-    }
-    function saveYtSettings() {
-      const idEl = document.getElementById('ytChannelIdInput');
-      const urlEl = document.getElementById('ytChannelUrlInput');
-      if (!idEl || !urlEl) return;
-      DB.settings = DB.settings || {};
-      DB.settings.ytChannelId = idEl.value.trim();
-      DB.settings.ytChannelUrl = urlEl.value.trim();
-      saveData();
-      showToast('✅ YouTube kanal sozlamalari saqlandi');
-      renderYoutubePage();
-    }
-    window.saveYtSettings = saveYtSettings;
-    function renderYoutubePage() {
-      const wrap = document.getElementById('ytWrap'); if (!wrap) return;
-      const s = DB.settings || {};
-      const chId = s.ytChannelId || '';
-      const chUrl = s.ytChannelUrl || (chId ? `https://www.youtube.com/channel/${chId}` : '');
-      const isAdmin = curUser?.role === 'admin';
-      const adminForm = isAdmin ? `
-        <div class="card" style="margin-bottom:14px;">
-          <div class="ch"><h4>KANAL SOZLAMALARI</h4></div>
-          <div class="cb">
-            <div class="form-group"><label>KANAL ID (masalan: UCxxxxxxxxxxxxxxxxxxxxxx)</label>
-              <input class="form-control" id="ytChannelIdInput" value="${escHtml(chId)}" placeholder="UCxxxxxxxxxxxxxxxxxxxxxx"></div>
-            <div class="form-group"><label>KANAL HAVOLASI (ixtiyoriy, "Obuna bo'lish" tugmasi uchun)</label>
-              <input class="form-control" id="ytChannelUrlInput" value="${escHtml(chUrl)}" placeholder="https://www.youtube.com/@kanal"></div>
-            <button class="btn btn-gold" onclick="saveYtSettings()"><i class="fas fa-check"></i> Saqlash</button>
-          </div>
-        </div>` : '';
-      const playlist = ytUploadsPlaylist(chId);
-      const body = !chId
-        ? `<div class="card"><div class="cb" style="color:var(--text3);font-size:13px;text-align:center;padding:30px;font-family:'JetBrains Mono',monospace;">// Hozircha YouTube kanal ulanmagan</div></div>`
-        : `<div class="card">
-            <div class="ch"><h4><i class="fab fa-youtube" style="color:#ff0000;"></i> KANAL VIDEOLARI</h4>
-              ${chUrl ? `<a class="btn btn-sm btn-cyan" href="${chUrl}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Kanalga o'tish</a>` : ''}
-            </div>
-            <div class="cb" style="padding:0;">
-              <div style="position:relative;width:100%;padding-top:56.25%;">
-                <iframe src="https://www.youtube.com/embed/videoseries?list=${playlist}" title="YouTube kanal" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:0 0 10px 10px;"></iframe>
-              </div>
-            </div>
-          </div>`;
-      wrap.innerHTML = `<div class="ph"><h2>YOUTUBE KANAL</h2><p>// Platformaning rasmiy YouTube kanalidagi darslar va videolar</p></div>${adminForm}${body}`;
-    }
-    window.renderYoutubePage = renderYoutubePage;
-
     function fillRpGroupSel() {
       const sel = document.getElementById('rpGroupSel'); if (!sel) return;
       const cur = sel.value;
@@ -8110,12 +8185,10 @@
       if (id === 'slpg') { try { renderStudentLessonTopic(); } catch (e) { console.warn('SLPG render:', e); } }
       if (id === 'matpg') { try { renderMaterialsStudent(); } catch (e) { console.warn('MATPG render:', e); } }
       if (id === 'battlepg') { try { refreshDailyGameBtn(); refreshPracticeBtn(); renderBattleBoard('daily'); } catch (e) { console.warn('BATTLEPG render:', e); } }
-      if (id === 'newspg') { try { renderNewsFeed(); } catch (e) { console.warn('NEWSPG render:', e); } }
-      if (id === 'newsmgrpg') { try { renderNewsAdminList(); } catch (e) { console.warn('NEWSMGR render:', e); } }
-      if (id === 'ytpg') { try { renderYoutubePage(); } catch (e) { console.warn('YTPG render:', e); } }
+      if (id === 'codepg') { try { cdeInit(); setTimeout(function () { if (cdeCM) cdeCM.refresh(); }, 60); } catch (e) { console.warn('CODEPG render:', e); } }
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
-      if (title) document.getElementById('tbTitle').textContent = title;
+      if (title) document.getElementById('tbTitle').textContent = PAGE_TITLE_KEYS[id] ? t(PAGE_TITLE_KEYS[id]) : title;
       closeSB();
     }
     function toggleSB() {
@@ -8796,7 +8869,6 @@
     // Group
     function openMod(id) {
       if (id === 'groupModal') renderGrpMemSel();
-      if (id === 'broadcastModal') renderBcMemSel();
       document.getElementById(id).classList.add('open');
     }
     function closeMod(id) {
@@ -8837,55 +8909,6 @@
       document.getElementById('grpNameIn').value = '';
       renderCChats(); openGrpChat(g); saveData(); showToast('✅ "' + name + '" guruhi yaratildi!');
     }
-
-    // ── OMMAVIY XABAR (BROADCAST): bitta xabarni tanlangan bir nechta shaxsga
-    // alohida-alohida shaxsiy chatga (guruh yaratmasdan) yuboradi.
-    let selBcMems = [];
-    function renderBcMemSel() {
-      selBcMems = [];
-      const el = document.getElementById('bcMemSel'); el.innerHTML = '';
-      chatFriends.forEach(f => {
-        const d = document.createElement('div'); d.className = 'cl-item'; d.style.cursor = 'pointer';
-        d.onclick = () => togBcMem(f, d);
-        d.innerHTML = `
-      <div class="cl-av" style="${getAvatarStyle(f.c)}width:30px;height:30px;min-width:30px;font-size:11px;">${f.ini}</div>
-      <span style="font-size:12px;flex:1;">${f.name}</span>
-      <i id="bc-${f.id}" class="fas fa-circle" style="color:var(--text3);font-size:12px;"></i>`;
-        el.appendChild(d);
-      });
-      document.getElementById('bcSelMemWrap').innerHTML = '';
-      const t = document.getElementById('bcTextIn'); if (t) t.value = '';
-    }
-    function togBcMem(f, el) {
-      const idx = selBcMems.findIndex(x => x.id === f.id);
-      const ic = document.getElementById('bc-' + f.id);
-      if (idx >= 0) { selBcMems.splice(idx, 1); el.style.background = ''; ic.className = 'fas fa-circle'; ic.style.color = 'var(--text3)'; }
-      else { selBcMems.push(f); el.style.background = 'var(--cyan-dim)'; ic.className = 'fas fa-check-circle'; ic.style.color = 'var(--cyan)'; }
-      document.getElementById('bcSelMemWrap').innerHTML = selBcMems.map(m => `<span style="background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,229,255,.25);border-radius:16px;padding:2px 8px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;">${m.name.split(' ')[0]}</span>`).join('');
-    }
-    function sendBroadcast() {
-      const text = (document.getElementById('bcTextIn')?.value || '').trim();
-      if (!text) { showToast('❗ Xabar matnini kiriting'); return; }
-      if (selBcMems.length < 2) { showToast("❗ Kamida 2 ta qabul qiluvchi tanlang"); return; }
-      let sentCount = 0;
-      selBcMems.forEach(sel => {
-        const data = chatFriends.find(f => f.id === sel.id);
-        if (!data) return;
-        data.msgs = data.msgs || [];
-        data.msgs.push({
-          id: gId(), text, sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '',
-          time: nTime(), type: 'text', reactions: {}, read: true
-        });
-        sentCount++;
-      });
-      closeMod('broadcastModal');
-      renderCChats();
-      if (curChat) renderMsgs(true);
-      saveData();
-      showToast(`✅ Xabar ${sentCount} kishiga yuborildi`);
-    }
-    window.sendBroadcast = sendBroadcast;
-    window.togBcMem = togBcMem;
 
     // Search
     function searchC(q) {
@@ -11118,6 +11141,144 @@
     // SOZLAMALAR MARKAZI (talaba/o'qituvchi/admin uchun umumiy)
     // ══════════════════════════════════
     const LANG_LABELS = { uz: "O'zbekcha", ru: 'Русский', en: 'English' };
+
+    // ══════════════════════════════════
+    // TIL ALMASHTIRISH (i18n) TIZIMI
+    // ══════════════════════════════════
+    const GLOBAL_LANG_KEY = 'texnoo_lang';
+    let currentLang = 'uz';
+
+    const TRANSLATIONS = {
+      uz: {
+        // Login ekrani
+        lg_sub: "IT INSTRUCTOR · VALIYEV OMADBEK", lg_tab_student: "TALABA", lg_tab_teacher: "O'QITUVCHI", lg_tab_admin: "ADMIN",
+        lg_choose_name: "Ism familiyangizni tanlang", lg_choose_teacher: "O'qituvchini tanlang", lg_choose_admin: "Adminni tanlang",
+        lg_password: "Parol", lg_password_ph: "Parolni kiriting", lg_teacher_password_ph: "O'qituvchi paroli", lg_admin_password_ph: "Admin paroli",
+        lg_login_btn: "KIRISH",
+        // Nav bo'limlari
+        sec_my_page: "Mening sahifam", sec_extra: "Qo'shimcha", sec_account: "Hisob", sec_main: "Asosiy", sec_profile: "Profil", sec_admin_panel: "Admin paneli",
+        nav_profile: "Profil", nav_home: "Bosh sahifa", nav_rating: "Reyting", nav_news: "Yangiliklar", nav_market: "Market", nav_chat: "Chat",
+        nav_tutorials: "Darsliklar", nav_code: "Kod yozish", nav_settings: "Sozlamalar", nav_history: "Faollik tarixi", nav_tests: "Testlar",
+        nav_lesson_topic: "Dars mavzusi", nav_my_homeworks: "Vazifalarim", nav_logout: "Chiqish",
+        nav_stats: "Statistika", nav_students: "Talabalar", nav_give_coins: "Tanga berish", nav_groups: "Guruhlar", nav_work_plan: "Ish reja (mavzu)",
+        nav_give_homework: "Vazifa berish", nav_tutorial_book: "Darslik/Kitob", nav_payment_report: "To'lov hisoboti", nav_test_mgmt: "Test boshqaruvi",
+        nav_dashboard: "Dashboard", nav_all_students: "Barcha talabalar", nav_teachers: "O'qituvchilar", nav_payments: "To'lovlar", nav_monitoring: "Monitoring",
+        // Topbar / bildirishnoma
+        notif_title: "Bildirishnomalar", notif_mark_all: "Barchasini o'qilgan deb belgilash", notif_empty: "Hozircha bildirishnoma yo'q",
+        // Sahifa sarlavhalari (topbar)
+        title_home: "BOSH SAHIFA", title_rating: "REYTING", title_news: "YANGILIKLAR", title_market: "MARKET", title_chat: "CHAT",
+        title_tutorials: "DARSLIK VA KITOBLAR", title_code: "KOD YOZISH", title_settings: "SOZLAMALAR", title_history: "FAOLLIK TARIXI",
+        title_tests: "TESTLAR", title_lesson_topic: "DARS MAVZUSI", title_my_homeworks: "VAZIFALARIM", title_my_profile: "PROFILIM",
+        title_stats: "STATISTIKA", title_students: "TALABALAR", title_give_coins: "TANGA BERISH", title_groups: "GURUHLAR", title_work_plan: "ISH REJA",
+        title_give_homework: "VAZIFA BERISH", title_tutorial_book: "DARSLIK/KITOB", title_test_mgmt: "TEST BOSHQARUVI", title_admin_panel: "ADMIN PANEL",
+        title_teachers: "O'QITUVCHILAR", title_monitoring: "MONITORING", title_profile: "PROFIL",
+      },
+      ru: {
+        lg_sub: "IT ИНСТРУКТОР · ВАЛИЕВ ОМАДБЕК", lg_tab_student: "УЧЕНИК", lg_tab_teacher: "УЧИТЕЛЬ", lg_tab_admin: "АДМИН",
+        lg_choose_name: "Выберите своё имя", lg_choose_teacher: "Выберите учителя", lg_choose_admin: "Выберите админа",
+        lg_password: "Пароль", lg_password_ph: "Введите пароль", lg_teacher_password_ph: "Пароль учителя", lg_admin_password_ph: "Пароль админа",
+        lg_login_btn: "ВОЙТИ",
+        sec_my_page: "Моя страница", sec_extra: "Дополнительно", sec_account: "Аккаунт", sec_main: "Основное", sec_profile: "Профиль", sec_admin_panel: "Панель админа",
+        nav_profile: "Профиль", nav_home: "Главная", nav_rating: "Рейтинг", nav_news: "Новости", nav_market: "Маркет", nav_chat: "Чат",
+        nav_tutorials: "Уроки", nav_code: "Написать код", nav_settings: "Настройки", nav_history: "История активности", nav_tests: "Тесты",
+        nav_lesson_topic: "Тема урока", nav_my_homeworks: "Мои задания", nav_logout: "Выход",
+        nav_stats: "Статистика", nav_students: "Ученики", nav_give_coins: "Начислить монеты", nav_groups: "Группы", nav_work_plan: "Рабочий план (тема)",
+        nav_give_homework: "Дать задание", nav_tutorial_book: "Урок/Книга", nav_payment_report: "Отчёт по оплате", nav_test_mgmt: "Управление тестами",
+        nav_dashboard: "Дашборд", nav_all_students: "Все ученики", nav_teachers: "Учителя", nav_payments: "Оплаты", nav_monitoring: "Мониторинг",
+        notif_title: "Уведомления", notif_mark_all: "Отметить все как прочитанные", notif_empty: "Пока нет уведомлений",
+        title_home: "ГЛАВНАЯ", title_rating: "РЕЙТИНГ", title_news: "НОВОСТИ", title_market: "МАРКЕТ", title_chat: "ЧАТ",
+        title_tutorials: "УРОКИ И КНИГИ", title_code: "НАПИСАТЬ КОД", title_settings: "НАСТРОЙКИ", title_history: "ИСТОРИЯ АКТИВНОСТИ",
+        title_tests: "ТЕСТЫ", title_lesson_topic: "ТЕМА УРОКА", title_my_homeworks: "МОИ ЗАДАНИЯ", title_my_profile: "МОЙ ПРОФИЛЬ",
+        title_stats: "СТАТИСТИКА", title_students: "УЧЕНИКИ", title_give_coins: "НАЧИСЛИТЬ МОНЕТЫ", title_groups: "ГРУППЫ", title_work_plan: "РАБОЧИЙ ПЛАН",
+        title_give_homework: "ДАТЬ ЗАДАНИЕ", title_tutorial_book: "УРОК/КНИГА", title_test_mgmt: "УПРАВЛЕНИЕ ТЕСТАМИ", title_admin_panel: "ПАНЕЛЬ АДМИНА",
+        title_teachers: "УЧИТЕЛЯ", title_monitoring: "МОНИТОРИНГ", title_profile: "ПРОФИЛЬ",
+      },
+      en: {
+        lg_sub: "IT INSTRUCTOR · VALIYEV OMADBEK", lg_tab_student: "STUDENT", lg_tab_teacher: "TEACHER", lg_tab_admin: "ADMIN",
+        lg_choose_name: "Choose your name", lg_choose_teacher: "Choose a teacher", lg_choose_admin: "Choose an admin",
+        lg_password: "Password", lg_password_ph: "Enter password", lg_teacher_password_ph: "Teacher password", lg_admin_password_ph: "Admin password",
+        lg_login_btn: "LOG IN",
+        sec_my_page: "My page", sec_extra: "More", sec_account: "Account", sec_main: "Main", sec_profile: "Profile", sec_admin_panel: "Admin panel",
+        nav_profile: "Profile", nav_home: "Home", nav_rating: "Rating", nav_news: "News", nav_market: "Market", nav_chat: "Chat",
+        nav_tutorials: "Tutorials", nav_code: "Code editor", nav_settings: "Settings", nav_history: "Activity history", nav_tests: "Tests",
+        nav_lesson_topic: "Lesson topic", nav_my_homeworks: "My homework", nav_logout: "Log out",
+        nav_stats: "Statistics", nav_students: "Students", nav_give_coins: "Give coins", nav_groups: "Groups", nav_work_plan: "Work plan (topics)",
+        nav_give_homework: "Assign homework", nav_tutorial_book: "Tutorial/Book", nav_payment_report: "Payment report", nav_test_mgmt: "Test management",
+        nav_dashboard: "Dashboard", nav_all_students: "All students", nav_teachers: "Teachers", nav_payments: "Payments", nav_monitoring: "Monitoring",
+        notif_title: "Notifications", notif_mark_all: "Mark all as read", notif_empty: "No notifications yet",
+        title_home: "HOME", title_rating: "RATING", title_news: "NEWS", title_market: "MARKET", title_chat: "CHAT",
+        title_tutorials: "TUTORIALS & BOOKS", title_code: "CODE EDITOR", title_settings: "SETTINGS", title_history: "ACTIVITY HISTORY",
+        title_tests: "TESTS", title_lesson_topic: "LESSON TOPIC", title_my_homeworks: "MY HOMEWORK", title_my_profile: "MY PROFILE",
+        title_stats: "STATISTICS", title_students: "STUDENTS", title_give_coins: "GIVE COINS", title_groups: "GROUPS", title_work_plan: "WORK PLAN",
+        title_give_homework: "ASSIGN HOMEWORK", title_tutorial_book: "TUTORIAL/BOOK", title_test_mgmt: "TEST MANAGEMENT", title_admin_panel: "ADMIN PANEL",
+        title_teachers: "TEACHERS", title_monitoring: "MONITORING", title_profile: "PROFILE",
+      }
+    };
+
+    // Har bir sahifa ID'sini topbar sarlavha kalitiga bog'laydi (bir xil ID turli sarlavha bo'lsa — o'tkazib yuboriladi)
+    const PAGE_TITLE_KEYS = {
+      dpg: 'title_home', rpg: 'title_rating', newspg: 'title_news', marketpg: 'title_market', chatpg: 'title_chat',
+      matpg: 'title_tutorials', codepg: 'title_code', settpg: 'title_settings', hpg: 'title_history', testspg: 'title_tests',
+      slpg: 'title_lesson_topic', hwspg: 'title_my_homeworks', ppg: 'title_my_profile', adpg: 'title_stats',
+      cpg: 'title_give_coins', grppg: 'title_groups', lpg: 'title_work_plan', hwmgrpg: 'title_give_homework',
+      matmgrpg: 'title_tutorial_book', testmgrpg: 'title_test_mgmt', admpg: 'title_admin_panel', newsmgrpg: 'title_news',
+      tpg: 'title_teachers', monpg: 'title_monitoring', tapg: 'title_profile'
+    };
+
+    function t(key) {
+      return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key])
+        || TRANSLATIONS.uz[key] || key;
+    }
+    window.t = t;
+
+    function applyTranslations() {
+      document.documentElement.lang = currentLang;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.setAttribute('placeholder', t(key));
+      });
+      document.querySelectorAll('.lg-lang-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-lang') === currentLang));
+      // Faol sahifaning topbar sarlavhasini ham yangilaymiz
+      try {
+        const activePage = document.querySelector('#pageWrap .page.active');
+        if (activePage && PAGE_TITLE_KEYS[activePage.id]) {
+          const tb = document.getElementById('tbTitle');
+          if (tb) tb.textContent = t(PAGE_TITLE_KEYS[activePage.id]);
+        }
+      } catch (e) { console.warn('Sarlavha tarjimasi xato:', e); }
+    }
+    window.applyTranslations = applyTranslations;
+
+    // Login ekranidan yoki hisobsiz holatda til tanlash (localStorage'da global saqlanadi)
+    function setGlobalLang(lang) {
+      currentLang = lang;
+      try { localStorage.setItem(GLOBAL_LANG_KEY, lang); } catch (e) {}
+      // Agar foydalanuvchi tizimga kirgan bo'lsa — hisob sozlamalariga ham yozib qo'yamiz
+      try {
+        const rec = getCurrentAccountRecord();
+        if (rec) { ensureAccountPrefs(rec); rec.prefs.lang = lang; if (curUser) curUser.prefs = rec.prefs; saveData(); }
+      } catch (e) {}
+      applyTranslations();
+    }
+    window.setGlobalLang = setGlobalLang;
+
+    function initLangFromStorage() {
+      let lang = 'uz';
+      try {
+        const rec = typeof getCurrentAccountRecord === 'function' ? getCurrentAccountRecord() : null;
+        if (rec && rec.prefs && rec.prefs.lang) lang = rec.prefs.lang;
+        else { const saved = localStorage.getItem(GLOBAL_LANG_KEY); if (saved) lang = saved; }
+      } catch (e) {}
+      currentLang = lang;
+      applyTranslations();
+    }
+    window.initLangFromStorage = initLangFromStorage;
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(initLangFromStorage, 0); });
+
     function ensureAccountPrefs(rec) {
       if (!rec || typeof rec !== 'object') return rec;
       if (!rec.prefs || typeof rec.prefs !== 'object') rec.prefs = {};
@@ -11152,10 +11313,168 @@
       if (curUser) curUser.prefs = rec.prefs;
       document.documentElement.lang = lang;
       saveData();
+      currentLang = lang;
+      try { localStorage.setItem(GLOBAL_LANG_KEY, lang); } catch (e) {}
+      applyTranslations();
       showToast('✅ ' + LANG_LABELS[lang] + ' tanlandi');
       renderSettingsHubV2();
     }
     window.mSetLanguage = mSetLanguage;
+
+    // ══════════════════════════════════
+    // KOD YOZISH BO'LIMI (Code Playground) — HTML/CSS/JS, auto-run
+    // ══════════════════════════════════
+    const CDE_STORE_KEY = 'texnoo_code_playground_v1';
+    const CDE_DEFAULT = {
+      html: `<h1>Salom, Texnoo!</h1>\n<p>Bu yerga HTML yozing — natija o'ng tomonda avtomatik chiqadi.</p>\n<button id="btn">Bosing</button>`,
+      css: `body {\n  font-family: sans-serif;\n  text-align: center;\n  padding: 40px 20px;\n  color: #222;\n}\nh1 { color: #00b8d4; }\nbutton {\n  padding: 8px 18px;\n  border: none;\n  border-radius: 8px;\n  background: #00e5ff;\n  cursor: pointer;\n  font-weight: 600;\n}`,
+      js: `document.getElementById('btn').addEventListener('click', function () {\n  console.log('Tugma bosildi!');\n  document.querySelector('h1').textContent = "Ishladi! ✅";\n});`
+    };
+    let cdeCM = null;                 // faol CodeMirror instance
+    let cdeEditors = { html: null, css: null, js: null }; // har bir til uchun alohida CM doc
+    let cdeActiveTab = 'html';
+    let cdeInitialized = false;
+    let cdeRunTimer = null;
+
+    function cdeLoadStore() {
+      try {
+        const raw = localStorage.getItem(CDE_STORE_KEY);
+        if (raw) return Object.assign({}, CDE_DEFAULT, JSON.parse(raw));
+      } catch (e) { console.warn('CDE store xato:', e); }
+      return Object.assign({}, CDE_DEFAULT);
+    }
+    function cdeSaveStore() {
+      try {
+        localStorage.setItem(CDE_STORE_KEY, JSON.stringify({
+          html: cdeEditors.html.getValue(),
+          css: cdeEditors.css.getValue(),
+          js: cdeEditors.js.getValue()
+        }));
+      } catch (e) { console.warn('CDE saqlash xato:', e); }
+    }
+
+    const CDE_MODE = { html: 'htmlmixed', css: 'css', js: 'javascript' };
+    const CDE_FILENAME = { html: 'index.html', css: 'style.css', js: 'script.js' };
+
+    function cdeInit() {
+      if (cdeInitialized) return;
+      if (typeof CodeMirror === 'undefined') { setTimeout(cdeInit, 150); return; }
+      cdeInitialized = true;
+      const data = cdeLoadStore();
+      const host = document.getElementById('cdeEditorHost');
+      cdeCM = CodeMirror.fromTextArea(host, {
+        mode: CDE_MODE.html,
+        theme: 'dracula',
+        lineNumbers: true,
+        lineWrapping: true,
+        autoCloseTags: true,
+        autoCloseBrackets: true,
+        tabSize: 2,
+        indentUnit: 2,
+        extraKeys: { 'Ctrl-S': function () { cdeRun(true); }, 'Cmd-S': function () { cdeRun(true); } }
+      });
+      // Har bir til uchun mustaqil "hujjat" (Doc) yaratamiz — tab almashganda tarix/kursor saqlanadi
+      cdeEditors.html = CodeMirror.Doc(data.html, CDE_MODE.html);
+      cdeEditors.css = CodeMirror.Doc(data.css, CDE_MODE.css);
+      cdeEditors.js = CodeMirror.Doc(data.js, CDE_MODE.js);
+      cdeCM.swapDoc(cdeEditors.html);
+      cdeCM.on('change', function () {
+        if (cdeRunTimer) clearTimeout(cdeRunTimer);
+        cdeRunTimer = setTimeout(function () { cdeRun(false); }, 600); // auto-run — 600ms debounce
+      });
+      window.addEventListener('message', cdeHandleConsoleMsg);
+      cdeRun(true);
+      setTimeout(function () { cdeCM.refresh(); }, 50);
+    }
+
+    const CDE_LANG_LABEL = { html: 'HTML', css: 'CSS', js: 'JavaScript' };
+    function cdeSwitchTab(tab) {
+      if (!cdeCM || !cdeEditors[tab]) return;
+      cdeActiveTab = tab;
+      cdeCM.swapDoc(cdeEditors[tab]);
+      cdeCM.setOption('mode', CDE_MODE[tab]);
+      document.querySelectorAll('.cde-tabbtn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.cde-file').forEach(f => f.classList.remove('active'));
+      const btn = document.getElementById('cdeTab-' + tab); if (btn) btn.classList.add('active');
+      const file = document.getElementById('cdeFile-' + tab); if (file) file.classList.add('active');
+      const statusLang = document.getElementById('cdeStatusLang');
+      if (statusLang) statusLang.innerHTML = '<i class="fas fa-check-circle"></i> ' + CDE_LANG_LABEL[tab];
+      cdeCM.focus();
+    }
+    window.cdeSwitchTab = cdeSwitchTab;
+
+    function cdeBuildSrcDoc() {
+      const html = cdeEditors.html ? cdeEditors.html.getValue() : '';
+      const css = cdeEditors.css ? cdeEditors.css.getValue() : '';
+      const js = cdeEditors.js ? cdeEditors.js.getValue() : '';
+      // iframe ichidagi console.log/warn/error'larni tashqariga (parent) yuborish
+      const consoleBridge = `
+        <script>
+          (function(){
+            var send = function(type, args){
+              try { parent.postMessage({ __cde: true, type: type, msg: Array.prototype.slice.call(args).map(function(a){
+                try { return typeof a === 'object' ? JSON.stringify(a) : String(a); } catch(e){ return String(a); }
+              }).join(' ') }, '*'); } catch(e) {}
+            };
+            ['log','warn','error','info'].forEach(function(m){
+              var orig = console[m];
+              console[m] = function(){ send(m, arguments); orig && orig.apply(console, arguments); };
+            });
+            window.onerror = function(msg, src, line, col){ send('error', [msg + ' (qator: ' + line + ')']); };
+          })();
+        <\/script>`;
+      return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${css}</style></head><body>${html}${consoleBridge}<script>${js}<\/script></body></html>`;
+    }
+
+    function cdeRun(manual) {
+      if (!cdeEditors.html) return;
+      const frame = document.getElementById('cdePreviewFrame');
+      if (frame) frame.srcdoc = cdeBuildSrcDoc();
+      cdeSaveStore();
+      if (manual) { cdeClearConsole(); showToast('▶️ Kod ishga tushirildi'); }
+    }
+    window.cdeRun = cdeRun;
+
+    function cdeHandleConsoleMsg(ev) {
+      const d = ev.data;
+      if (!d || !d.__cde) return;
+      const body = document.getElementById('cdeConsoleBody');
+      if (!body) return;
+      const line = document.createElement('div');
+      line.className = 'cde-console-line' + (d.type === 'error' ? ' err' : d.type === 'warn' ? ' warn' : '');
+      const prefix = d.type === 'error' ? '✗ ' : d.type === 'warn' ? '⚠ ' : '▸ ';
+      line.textContent = prefix + d.msg;
+      body.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function cdeClearConsole() {
+      const body = document.getElementById('cdeConsoleBody');
+      if (body) body.innerHTML = '';
+    }
+    window.cdeClearConsole = cdeClearConsole;
+
+    function cdeReset() {
+      if (!confirm("Kodni boshlang'ich holatga qaytarasizmi? Barcha o'zgarishlar yo'qoladi.")) return;
+      cdeEditors.html.setValue(CDE_DEFAULT.html);
+      cdeEditors.css.setValue(CDE_DEFAULT.css);
+      cdeEditors.js.setValue(CDE_DEFAULT.js);
+      cdeRun(true);
+      showToast("♻️ Kod tozalandi");
+    }
+    window.cdeReset = cdeReset;
+
+    function cdeDownload() {
+      if (!cdeEditors.html) return;
+      const blob = new Blob([cdeBuildSrcDoc()], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'texnoo-kod.html';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('⬇️ Fayl yuklab olindi');
+    }
+    window.cdeDownload = cdeDownload;
     function mToggleAI(el) {
       const rec = getCurrentAccountRecord(); if (!rec) return;
       ensureAccountPrefs(rec);
@@ -11206,7 +11525,7 @@
               ${p.lang === code ? '<span class="badge gr">✅ Faol</span>' : '<span class="badge bb">Tanlash</span>'}
             </div>`).join('')}
           </div>
-          <div class="fs11 txt3 mt-16">// To'liq tarjima keyingi versiyalarda kengaytiriladi</div>
+          <div class="fs11 txt3 mt-16">// Menyu, sarlavha va login ekrani tanlangan tilga o'tadi — qolgan matnlar keyingi versiyalarda kengaytiriladi</div>
         </div>`;
       }
       if (tab === 'appearance') {
