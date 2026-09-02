@@ -4110,55 +4110,24 @@
         <div class="lg-title">TEACHER_TEXNO</div>
         <div class="lg-sub">IT INSTRUCTOR · VALIYEV OMADBEK</div>
       </div>
-      <div class="tab-row">
-        <button class="tab-btn active" id="tabSBtn" onclick="swTab('s')">TALABA</button>
-        <button class="tab-btn" id="tabTBtn" onclick="swTab('t')">O'QITUVCHI</button>
-        <button class="tab-btn" id="tabABtn" onclick="swTab('a')">ADMIN</button>
-      </div>
-      <div id="lgS">
+      <div id="lgUnified">
         <div class="form-group">
-          <label>Ism familiyangizni tanlang</label>
-          <select id="lgSSel" class="form-control"></select>
+          <label>Telefon yoki Email</label>
+          <input type="text" id="lgIdentifier" class="form-control" placeholder="+998901112233 yoki email@misol.uz" autocomplete="username">
         </div>
         <div class="form-group">
           <label>Parol</label>
           <div class="pwd-wrapper">
-            <input type="password" id="lgSPwd" class="form-control" placeholder="Parolni kiriting">
-            <i class="fas fa-eye pwd-toggle" onclick="tpwd('lgSPwd',this)"></i>
+            <input type="password" id="lgPassword" class="form-control" placeholder="Parolni kiriting" autocomplete="current-password" onkeydown="if(event.key==='Enter')doUnifiedLogin()">
+            <i class="fas fa-eye pwd-toggle" onclick="tpwd('lgPassword',this)"></i>
           </div>
         </div>
-        <button class="btn btn-cyan btn-block" onclick="doLogin('student')"><i class="fas fa-sign-in-alt"></i>
+        <button class="btn btn-cyan btn-block" onclick="doUnifiedLogin()"><i class="fas fa-sign-in-alt"></i>
           KIRISH</button>
-      </div>
-      <div id="lgT" style="display:none;">
-        <div class="form-group">
-          <label>O'qituvchini tanlang</label>
-          <select id="lgTSel" class="form-control"></select>
+        <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text2);">
+          Hisobingiz yo'qmi?
+          <a href="javascript:void(0)" style="color:var(--cyan);font-weight:600;" onclick="openRegisterModal()">Ro'yxatdan o'tish</a>
         </div>
-        <div class="form-group">
-          <label>Parol</label>
-          <div class="pwd-wrapper">
-            <input type="password" id="lgTPwd" class="form-control" placeholder="O'qituvchi paroli">
-            <i class="fas fa-eye pwd-toggle" onclick="tpwd('lgTPwd',this)"></i>
-          </div>
-        </div>
-        <button class="btn btn-gold btn-block" onclick="doLogin('teacher')"><i class="fas fa-chalkboard-teacher"></i>
-          KIRISH</button>
-      </div>
-      <div id="lgA" style="display:none;">
-        <div class="form-group">
-          <label>Adminni tanlang</label>
-          <select id="lgASel" class="form-control"></select>
-        </div>
-        <div class="form-group">
-          <label>Parol</label>
-          <div class="pwd-wrapper">
-            <input type="password" id="lgAPwd" class="form-control" placeholder="Admin paroli">
-            <i class="fas fa-eye pwd-toggle" onclick="tpwd('lgAPwd',this)"></i>
-          </div>
-        </div>
-        <button class="btn btn-gold btn-block" onclick="doLogin('admin')"><i class="fas fa-user-shield"></i>
-          KIRISH</button>
       </div>
 
       <a class="apk-dl-btn" href="Texnoo.apk" download="Texnoo.apk" onclick="showToast('⬇️ Ilova yuklanmoqda...')">
@@ -4344,6 +4313,15 @@
         <div class="nav-sec">Profil</div>
         <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-user-shield"></i> Profil</div>
         <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
+        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+      </nav>
+
+      <!-- OTA-ONA NAV -->
+      <nav class="app-nav" id="pNav" style="display:none;">
+        <div class="nav-sec">Ota-ona kabineti</div>
+        <div class="nav-item active" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> Profil</div>
+        <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
+        <div class="nav-sec">Hisob</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
       </nav>
       <div class="sb-footer">TEACHER_TEXNO v3.1 · 2025</div>
@@ -5637,6 +5615,38 @@
               <div id="admGroupRankList"></div>
             </div>
           </div>
+
+          <!-- Faqat PLATFORM ADMIN ko'radi: yangi admin hisoblarini yaratish + ota-onalar ro'yxati -->
+          <div class="card" id="platformAdminPanel" style="margin-top:16px;display:none;">
+            <div class="ch">
+              <h4><i class="fas fa-user-shield"></i> PLATFORM ADMIN — HISOBLAR BOSHQARUVI</h4>
+            </div>
+            <div class="cb">
+              <p style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;">
+                // Faqat Platform Admin yangi School Admin yoki Platform Admin hisobi yarata oladi</p>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px;">
+                <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">ISM FAMILIYA</label>
+                  <input type="text" id="naName" class="form-control" placeholder="Ism Familiya" style="width:170px;"></div>
+                <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">TELEFON/EMAIL</label>
+                  <input type="text" id="naIdentifier" class="form-control" placeholder="+998... yoki email" style="width:170px;"></div>
+                <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">DARAJA</label>
+                  <select id="naLevel" class="form-control" style="width:150px;">
+                    <option value="school_admin">School Admin</option>
+                    <option value="platform_admin">Platform Admin</option>
+                  </select>
+                </div>
+                <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">PAROL</label>
+                  <input type="text" id="naPass" class="form-control" placeholder="Parol" style="width:120px;"></div>
+                <button class="btn btn-success" onclick="addAdminAccount()"><i class="fas fa-user-plus"></i> Qo'shish</button>
+              </div>
+              <div class="tw">
+                <table>
+                  <thead><tr><th>#</th><th>Ism</th><th>Daraja</th><th>Aloqa</th><th>Parol</th><th>Amal</th></tr></thead>
+                  <tbody id="admBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="page" id="tpg">
@@ -5679,6 +5689,8 @@
                       <th>Fan</th>
                       <th>Talabalar</th>
                       <th>Parol</th>
+                      <th>Holat</th>
+                      <th>Amal</th>
                     </tr>
                   </thead>
                   <tbody id="tBody"></tbody>
@@ -5728,8 +5740,19 @@
       students: [],
       teachers: [],
       admins: [],
+      parents: [],
       settings: { exchangeRate: 5 } // 1 Olmos (💎) = 5 Tanga (🪙), admin tomonidan sozlanadi
     };
+
+    // ── AUTH: barcha rollar uchun umumiy yordamchi funksiyalar ──
+    // Har bir hisob: firstName, lastName, phone, email, avatar (dataURL), pass maydonlariga ega bo'lishi mumkin.
+    function normPhone(v) { return String(v || '').trim().replace(/[\s\-()]/g, '').toLowerCase(); }
+    function normEmail(v) { return String(v || '').trim().toLowerCase(); }
+    function fullNameOf(o) {
+      const fn = (o.firstName || '').trim(), ln = (o.lastName || '').trim();
+      if (fn || ln) return (fn + ' ' + ln).trim();
+      return o.name || '';
+    }
 
     let saveTimer = null;
     const apiNum = (v, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
@@ -5750,7 +5773,12 @@
       return {
         ...s,
         id: apiNum(s.id, Date.now()),
-        name: s.name || 'Talaba',
+        name: s.name || fullNameOf(s) || 'Talaba',
+        firstName: s.firstName || '',
+        lastName: s.lastName || '',
+        phone: s.phone || '',
+        email: s.email || '',
+        avatar: s.avatar || '',
         pass: String(s.pass ?? s.password ?? '1234'),
         coins,
         coinMap,
@@ -5764,21 +5792,65 @@
       return {
         ...t,
         id: apiNum(t.id, Date.now()),
-        name: t.name || "O'qituvchi",
+        name: t.name || fullNameOf(t) || "O'qituvchi",
+        firstName: t.firstName || '',
+        lastName: t.lastName || '',
+        phone: t.phone || '',
+        email: t.email || '',
+        avatar: t.avatar || '',
         pass: String(t.pass ?? t.password ?? 'teach123'),
         subj: t.subj || t.subject || '—',
-        code: t.code || t.teacherCode || ('TCH-' + (t.id || '000'))
+        code: t.code || t.teacherCode || ('TCH-' + (t.id || '000')),
+        // Ro'yxatdan o'tgan yangi o'qituvchilar Platform Admin tasdig'igacha 'pending' holatda turadi.
+        // Mavjud/importdan kelgan o'qituvchilar (status ko'rsatilmagan) buzilmasligi uchun 'active' deb qabul qilinadi.
+        status: t.status || 'active'
+      };
+    }
+    function uiParent(p) {
+      return {
+        ...p,
+        id: apiNum(p.id, Date.now()),
+        name: p.name || fullNameOf(p) || 'Ota-ona',
+        firstName: p.firstName || '',
+        lastName: p.lastName || '',
+        phone: p.phone || '',
+        email: p.email || '',
+        avatar: p.avatar || '',
+        pass: String(p.pass ?? p.password ?? ''),
+        code: p.code || p.parentCode || ('PAR-' + (p.id || '000')),
+        childPhone: p.childPhone || '', // farzandi bilan bog'lash uchun (kelajakda kengaytiriladi)
+        status: p.status || 'active'
       };
     }
     function uiAdmin(a) {
       return {
         ...a,
         id: apiNum(a.id, Date.now()),
-        name: a.name || 'Admin',
+        name: a.name || fullNameOf(a) || 'Admin',
+        firstName: a.firstName || '',
+        lastName: a.lastName || '',
+        phone: a.phone || '',
+        email: a.email || '',
+        avatar: a.avatar || '',
         pass: String(a.pass ?? a.password ?? 'admin123'),
         code: a.code || a.adminCode || ('ADM-' + (a.id || '000')),
-        level: a.level || a.role || 'admin'
+        // 'school_admin' yoki 'platform_admin'. Faqat Platform Admin o'qituvchilarni tasdiqlay oladi
+        // va yangi admin hisoblarini yarata oladi. Eski ma'lumotlarda level ko'rsatilmagan bo'lsa,
+        // xavfsizlik uchun eng yuqori huquq (platform_admin) emas, balki 'school_admin' beriladi —
+        // BUNDAN TASHQARI birinchi (id eng kichik) admin har doim platform_admin deb hisoblanadi,
+        // shunda tizimda kamida bitta Platform Admin bo'lishi kafolatlanadi (pastda normalizeAdminLevels() da).
+        level: a.level || a.role || 'school_admin',
+        status: a.status || 'active'
       };
+    }
+    // Har doim kamida bitta Platform Admin bo'lishini kafolatlaydi (masalan eski ma'lumotlar uchun)
+    function normalizeAdminLevels() {
+      if (!DB.admins.length) return;
+      const hasPlatform = DB.admins.some(a => a.level === 'platform_admin');
+      if (!hasPlatform) {
+        const first = [...DB.admins].sort((a, b) => apiNum(a.id, 0) - apiNum(b.id, 0))[0];
+        if (first) first.level = 'platform_admin';
+      }
     }
     function toApiData() {
       syncCurrentChats();
@@ -5804,10 +5876,12 @@
         }),
         transactions: DB.transactions || [],
         nextStudentId: Math.max(1, ...DB.students.map(s => apiNum(s.id, 0))) + 1,
-        teachers: DB.teachers.map(t => ({ ...t, password: t.pass, subject: t.subj, teacherCode: t.code })),
+        teachers: DB.teachers.map(t => ({ ...t, password: t.pass, subject: t.subj, teacherCode: t.code, status: t.status || 'active' })),
         nextTeacherId: Math.max(1, ...DB.teachers.map(t => apiNum(t.id, 0))) + 1,
         admins: DB.admins.map(a => ({ ...a, password: a.pass, role: a.level, adminCode: a.code, status: a.status || 'active' })),
         nextAdminId: Math.max(1, ...DB.admins.map(a => apiNum(a.id, 0))) + 1,
+        parents: (DB.parents || []).map(p => ({ ...p, password: p.pass, parentCode: p.code })),
+        nextParentId: Math.max(1, ...(DB.parents || []).map(p => apiNum(p.id, 0))) + 1,
         adminRequests: DB.adminRequests || [],
         nextRequestId: 1,
         messages: DB.messages || [],
@@ -5846,8 +5920,9 @@
           { id: 2001, name: "Valiyev Omadbek", subj: "IT", pass: "teach123", code: "TCH-100" }
         ],
         admins: [
-          { id: 3001, name: "Admin", pass: "admin123", code: "ADM-100", level: "admin" }
+          { id: 3001, name: "Admin", pass: "admin123", code: "ADM-100", level: "platform_admin", phone: "+998901000001", email: "admin@texnoo.uz" }
         ],
+        parents: [],
         transactions: [], adminRequests: [], messages: [], groups: [],
         chatFriends: [], chatGroups: [], pendingReqs: [],
         pendingTelegramLinks: [], telegramProfiles: {}, tests: [], testResults: [], gamePlays: {}, practicePlays: {}, battleLog: [], attendanceLog: [], pairHistory: [],
@@ -5867,6 +5942,8 @@
       if (Array.isArray(data.students)) DB.students = data.students.map(uiStudent);
       if (Array.isArray(data.teachers)) DB.teachers = data.teachers.map(uiTeacher);
       if (Array.isArray(data.admins)) DB.admins = data.admins.map(uiAdmin);
+      DB.parents = Array.isArray(data.parents) ? data.parents.map(uiParent) : (DB.parents || []);
+      normalizeAdminLevels();
       DB.transactions = Array.isArray(data.transactions) ? data.transactions : [];
       DB.adminRequests = Array.isArray(data.adminRequests) ? data.adminRequests : [];
       DB.messages = Array.isArray(data.messages) ? data.messages : [];
@@ -6200,6 +6277,7 @@
       let list;
       if (curUser.role === 'student') list = DB.students;
       else if (curUser.role === 'teacher') list = DB.teachers;
+      else if (curUser.role === 'parent') list = DB.parents;
       else if (curUser.role === 'admin') list = DB.admins;
       else return;
       const rec = (list || []).find(x => x.id === curUser.id);
@@ -6215,36 +6293,169 @@
       showToast('✅ Parol muvaffaqiyatli yangilandi');
     }
     window.submitPasswordChange = submitPasswordChange;
-    function doLogin(role) {
-      let user = null;
-      if (role === 'student') {
-        const sid = document.getElementById('lgSSel').value;
-        const pwd = document.getElementById('lgSPwd').value;
-        if (!sid) { showToast('❗ Ismingizni tanlang'); return; }
-        user = DB.students.find(s => s.id == sid);
-        if (!user || user.pass !== pwd) { showToast('❌ Parol noto\'g\'ri'); return; }
-        curUser = { ...user, role: 'student' };
-      } else if (role === 'teacher') {
-        const tid = document.getElementById('lgTSel').value;
-        const pwd = document.getElementById('lgTPwd').value;
-        if (!tid) { showToast("❗ O'qituvchini tanlang"); return; }
-        user = DB.teachers.find(t => t.id == tid);
-        if (!user || user.pass !== pwd) { showToast('❌ Parol noto\'g\'ri'); return; }
-        curUser = { ...user, role: 'teacher' };
-      } else {
-        const aid = document.getElementById('lgASel').value;
-        const pwd = document.getElementById('lgAPwd').value;
-        if (!aid) { showToast('❗ Adminni tanlang'); return; }
-        user = DB.admins.find(a => a.id == aid);
-        if (!user || user.pass !== pwd) { showToast('❌ Parol noto\'g\'ri'); return; }
-        curUser = { ...user, role: 'admin' };
+    // ══════════════════════════════════════════════════
+    // YAGONA LOGIN: Telefon/Email + Parol → rol avtomatik aniqlanadi
+    // ══════════════════════════════════════════════════
+    // Barcha hisob turlarini (talaba/o'qituvchi/ota-ona/admin) bitta identifikator bo'yicha qidiradi.
+    // Moslik uchun email/telefon bo'lmagan eski hisoblar `code` yoki `id` bilan ham topiladi.
+    function findAccountByIdentifier(raw) {
+      const idf = String(raw || '').trim();
+      if (!idf) return null;
+      const idfEmail = normEmail(idf);
+      const idfPhone = normPhone(idf);
+      const matches = (u) => {
+        if (u.email && normEmail(u.email) === idfEmail) return true;
+        if (u.phone && normPhone(u.phone) === idfPhone) return true;
+        if (u.code && String(u.code).trim().toLowerCase() === idfEmail) return true;
+        if (String(u.id) === idf.trim()) return true;
+        return false;
+      };
+      let u = DB.students.find(matches); if (u) return { user: u, role: 'student' };
+      u = DB.teachers.find(matches); if (u) return { user: u, role: 'teacher' };
+      u = (DB.parents || []).find(matches); if (u) return { user: u, role: 'parent' };
+      u = DB.admins.find(matches); if (u) return { user: u, role: 'admin' };
+      return null;
+    }
+    function doUnifiedLogin() {
+      const idEl = document.getElementById('lgIdentifier');
+      const pwEl = document.getElementById('lgPassword');
+      const identifier = (idEl?.value || '').trim();
+      const password = pwEl?.value || '';
+      if (!identifier || !password) { showToast('❗ Telefon/Email va parolni kiriting'); return; }
+      const found = findAccountByIdentifier(identifier);
+      if (!found || String(found.user.pass) !== password) {
+        showToast("❌ Login yoki parol noto'g'ri");
+        return;
       }
+      if (found.role === 'teacher' && found.user.status === 'pending') {
+        showToast("⏳ Hisobingiz hali Platform Admin tomonidan tasdiqlanmagan");
+        return;
+      }
+      curUser = { ...found.user, role: found.role };
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('topbar').style.display = 'flex';
       document.getElementById('appShell').style.display = 'flex';
       saveSession();
       initApp();
     }
+    window.doUnifiedLogin = doUnifiedLogin;
+
+    // ══════════════════════════════════════════════════
+    // RO'YXATDAN O'TISH
+    // ══════════════════════════════════════════════════
+    let regAvatarData = '';
+    function openRegisterModal() {
+      regAvatarData = '';
+      openGlobalModal(`
+        <div class="modal-title"><i class="fas fa-user-plus"></i> Ro'yxatdan o'tish</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div id="regAvPreview" style="width:56px;height:56px;border-radius:50%;background:var(--card2);border:1px solid var(--bor2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+            <i class="fas fa-user" style="color:var(--text3);font-size:20px;"></i>
+          </div>
+          <div>
+            <label class="btn btn-sm" style="cursor:pointer;"><i class="fas fa-camera"></i> Avatar tanlash
+              <input type="file" accept="image/*" id="regAvatarInput" style="display:none;" onchange="regHandleAvatar(this)">
+            </label>
+            <div style="font-size:10px;color:var(--text3);margin-top:4px;">Ixtiyoriy</div>
+          </div>
+        </div>
+        <div class="form-group"><label>Rol</label>
+          <select id="regRole" class="form-control">
+            <option value="student">Talaba</option>
+            <option value="teacher">O'qituvchi</option>
+            <option value="parent">Ota-ona</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Ism</label><input class="form-control" id="regFirstName" placeholder="Ismingiz"></div>
+        <div class="form-group"><label>Familiya</label><input class="form-control" id="regLastName" placeholder="Familiyangiz"></div>
+        <div class="form-group"><label>Telefon</label><input class="form-control" id="regPhone" placeholder="+998901112233"></div>
+        <div class="form-group"><label>Email</label><input class="form-control" id="regEmail" placeholder="email@misol.uz"></div>
+        <div class="form-group"><label>Parol</label>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="regPass" placeholder="Kamida 4 ta belgi" autocomplete="new-password">
+            <i class="fas fa-eye" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text3);font-size:13px;" onclick="tpwd('regPass',this)"></i>
+          </div>
+        </div>
+        <div class="form-group"><label>Parolni tasdiqlang</label>
+          <input type="password" class="form-control" id="regPassConfirm" placeholder="Parolni qayta kiriting" autocomplete="new-password">
+        </div>
+        <div id="regNote" style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn" style="flex:1;" onclick="closeGlobalModal()">Bekor</button>
+          <button class="btn btn-cyan" style="flex:1;" onclick="submitRegistration()"><i class="fas fa-check"></i> Ro'yxatdan o'tish</button>
+        </div>`);
+      setTimeout(() => {
+        const sel = document.getElementById('regRole');
+        if (sel) sel.onchange = () => {
+          const note = document.getElementById('regNote');
+          if (note) note.textContent = sel.value === 'teacher' ? "⚠ O'qituvchi sifatida ro'yxatdan o'tgach, hisobingiz Platform Admin tasdiqlagunicha kutish holatida bo'ladi." : '';
+        };
+        const f = document.getElementById('regFirstName'); if (f) f.focus();
+      }, 50);
+    }
+    window.openRegisterModal = openRegisterModal;
+    function regHandleAvatar(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) { showToast('❗ Faqat rasm fayl tanlang'); return; }
+      if (file.size > 2 * 1024 * 1024) { showToast("❗ Rasm hajmi 2MB dan kichik bo'lsin"); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        regAvatarData = String(reader.result || '');
+        const prev = document.getElementById('regAvPreview');
+        if (prev) prev.innerHTML = `<img src="${regAvatarData}" style="width:100%;height:100%;object-fit:cover;">`;
+      };
+      reader.readAsDataURL(file);
+    }
+    window.regHandleAvatar = regHandleAvatar;
+    function identifierTaken(phone, email) {
+      const p = normPhone(phone), e = normEmail(email);
+      const all = [...DB.students, ...DB.teachers, ...(DB.parents || []), ...DB.admins];
+      return all.some(u => (p && normPhone(u.phone) === p) || (e && normEmail(u.email) === e));
+    }
+    function submitRegistration() {
+      const role = document.getElementById('regRole').value;
+      const firstName = document.getElementById('regFirstName').value.trim();
+      const lastName = document.getElementById('regLastName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const pass = document.getElementById('regPass').value;
+      const passConfirm = document.getElementById('regPassConfirm').value;
+      if (!firstName || !lastName) { showToast('❗ Ism va familiyangizni kiriting'); return; }
+      if (!phone && !email) { showToast('❗ Telefon yoki emaildan kamida bittasini kiriting'); return; }
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast("❗ Email formati noto'g'ri"); return; }
+      if (phone && !/^[+\d][\d\s\-()]{6,20}$/.test(phone)) { showToast("❗ Telefon formati noto'g'ri"); return; }
+      if (!pass || pass.length < 4) { showToast("❗ Parol kamida 4 ta belgidan iborat bo'lsin"); return; }
+      if (pass !== passConfirm) { showToast("❌ Parollar bir-biriga mos emas"); return; }
+      if (identifierTaken(phone, email)) { showToast('❌ Bu telefon yoki email allaqachon ro\'yxatdan o\'tgan'); return; }
+
+      const base = {
+        id: Date.now(),
+        firstName, lastName,
+        name: (firstName + ' ' + lastName).trim(),
+        phone, email,
+        pass,
+        avatar: regAvatarData || ''
+      };
+
+      if (role === 'student') {
+        DB.students.push(uiStudent(base));
+      } else if (role === 'teacher') {
+        DB.teachers.push(uiTeacher({ ...base, status: 'pending' }));
+      } else if (role === 'parent') {
+        DB.parents.push(uiParent(base));
+      }
+      saveData();
+      closeGlobalModal();
+      if (role === 'teacher') {
+        showToast("✅ Ro'yxatdan o'tdingiz! Hisobingiz Platform Admin tasdiqlashini kutmoqda.");
+      } else {
+        showToast("✅ Ro'yxatdan muvaffaqiyatli o'tdingiz! Endi tizimga kirishingiz mumkin.");
+      }
+      const idEl = document.getElementById('lgIdentifier');
+      if (idEl) idEl.value = phone || email;
+    }
+    window.submitRegistration = submitRegistration;
     function doLogout() {
       stopMarketSync();
       curUser = null; curChat = null;
@@ -6252,7 +6463,9 @@
       document.getElementById('topbar').style.display = 'none';
       document.getElementById('appShell').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
-      ['lgSPwd', 'lgTPwd', 'lgAPwd'].forEach(id => document.getElementById(id).value = '');
+      const idEl = document.getElementById('lgIdentifier'), pwEl = document.getElementById('lgPassword');
+      if (idEl) idEl.value = '';
+      if (pwEl) pwEl.value = '';
       showToast('👋 Xayr!');
     }
 
@@ -6278,10 +6491,11 @@
     function restoreSession() {
       const sess = readSession();
       if (!sess || !sess.role || sess.id === undefined || sess.id === null) return false;
-      let list = sess.role === 'student' ? DB.students : sess.role === 'teacher' ? DB.teachers : sess.role === 'admin' ? DB.admins : null;
+      let list = sess.role === 'student' ? DB.students : sess.role === 'teacher' ? DB.teachers : sess.role === 'admin' ? DB.admins : sess.role === 'parent' ? DB.parents : null;
       if (!list) return false;
       const user = list.find(x => String(x.id) === String(sess.id));
       if (!user) { clearSession(); return false; }
+      if (sess.role === 'teacher' && user.status === 'pending') { clearSession(); return false; }
       curUser = { ...user, role: sess.role };
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('topbar').style.display = 'flex';
@@ -6294,16 +6508,19 @@
     function initApp() {
       const r = curUser.role;
       if (r === 'student') diamonds = apiNum(curUser.olmos ?? curUser.diamonds, diamonds);
-      ['sNav', 'tNav', 'aNav'].forEach(id => document.getElementById(id).style.display = 'none');
-      document.getElementById(r === 'student' ? 'sNav' : r === 'teacher' ? 'tNav' : 'aNav').style.display = 'block';
+      ['sNav', 'tNav', 'aNav', 'pNav'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      const navId = r === 'student' ? 'sNav' : r === 'teacher' ? 'tNav' : r === 'parent' ? 'pNav' : 'aNav';
+      const navEl = document.getElementById(navId); if (navEl) navEl.style.display = 'block';
       const ini = curUser.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-      document.getElementById('sbAv').textContent = ini;
+      const avHtml = curUser.avatar ? `<img src="${curUser.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">` : ini;
+      document.getElementById('sbAv').innerHTML = avHtml;
       document.getElementById('sbNm').textContent = curUser.name;
-      document.getElementById('sbRl').textContent = r === 'student' ? "// Talaba" : r === 'teacher' ? "// O'qituvchi" : "// Admin";
+      const roleLabel = r === 'student' ? "// Talaba" : r === 'teacher' ? "// O'qituvchi" : r === 'parent' ? "// Ota-ona" : ("// Admin — " + (curUser.level === 'platform_admin' ? 'Platform' : 'Maktab'));
+      document.getElementById('sbRl').textContent = roleLabel;
       document.getElementById('tbCoins').textContent = '🪙 ' + (curUser.coins || 0);
       document.getElementById('tbDiamonds').textContent = '💎 ' + diamonds;
       const swapBtn = document.getElementById('tbSwapBtn'); if (swapBtn) swapBtn.style.display = (r === 'student') ? 'flex' : 'none';
-      document.getElementById('csMyAv').textContent = ini;
+      const csAvEl = document.getElementById('csMyAv'); if (csAvEl) csAvEl.innerHTML = avHtml;
       document.getElementById('csMyName').textContent = curUser.name;
       document.getElementById('csCoins').textContent = diamonds;
       prepareChatsForCurrentUser();
@@ -6311,12 +6528,21 @@
       applyThemeFromPrefs();
       if (r === 'student') { initS(); showPage('dpg', null, 'BOSH SAHIFA'); }
       else if (r === 'teacher') { initT(); showPage('adpg', null, 'STATISTIKA'); }
+      else if (r === 'parent') { initP(); showPage('tapg', null, 'PROFIL'); }
       else { initA(); showPage('admpg', null, 'ADMIN DASHBOARD'); }
       renderCChats(); renderCFriends(); renderCReqs(); renderCMarket();
       initEP(); initSP(); initReactPick(); renderMktPage(); fillCoinSelects();
       // Talaba bo'lsa — coin/olmos/inventar/equip holatini serverdan tortib,
       // sinxronlab turamiz (login, refresh, boshqa qurilma — hammasida bir xil bo'lishi uchun)
       if (r === 'student') startMarketSync(); else stopMarketSync();
+    }
+    // Ota-ona uchun minimal, xavfsiz boshlang'ich ekran (profil + parol).
+    // To'liq "farzand nazorati" paneli keyingi versiyalarda kengaytiriladi.
+    function initP() {
+      document.getElementById('tp_role').textContent = 'Ota-ona';
+      document.getElementById('tp_name').textContent = curUser.name;
+      document.getElementById('tp_code').textContent = curUser.code || 'PAR-???';
+      refreshTelegramLinkUI();
     }
 
     function initS() {
@@ -6386,13 +6612,66 @@
       document.getElementById('adm_tc').textContent = DB.teachers.length;
       document.getElementById('adm_g').textContent = (DB.groups || []).length;
       document.getElementById('adm_c').textContent = DB.students.reduce((s, x) => s + x.coins, 0);
-      document.getElementById('tp_role').textContent = 'Admin — ' + (curUser.level || 'admin');
+      const levelLabel = curUser.level === 'platform_admin' ? 'Platform Admin' : 'School Admin';
+      document.getElementById('tp_role').textContent = 'Admin — ' + levelLabel;
       document.getElementById('tp_name').textContent = curUser.name;
       document.getElementById('tp_code').textContent = curUser.code || 'ADM-???';
       refreshTelegramLinkUI();
       renderStTable(); renderTBody(); renderPayReport();
       fillNewStudentGroup(); renderGrpList(); renderAdminGroupRank();
+      const panel = document.getElementById('platformAdminPanel');
+      if (panel) {
+        const isPlatform = curUser.level === 'platform_admin';
+        panel.style.display = isPlatform ? 'block' : 'none';
+        if (isPlatform) renderAdminAccountsTable();
+      }
     }
+    // Faqat Platform Admin: yangi School Admin / Platform Admin hisobi yaratish
+    function addAdminAccount() {
+      if (!(curUser?.role === 'admin' && curUser.level === 'platform_admin')) { showToast('❗ Faqat Platform Admin'); return; }
+      const name = document.getElementById('naName').value.trim();
+      const identifier = document.getElementById('naIdentifier').value.trim();
+      const level = document.getElementById('naLevel').value;
+      const pass = document.getElementById('naPass').value || 'admin123';
+      if (!name) { showToast('❗ Ism kiriting'); return; }
+      if (!identifier) { showToast('❗ Telefon yoki email kiriting'); return; }
+      const isEmail = identifier.includes('@');
+      if (identifierTaken(isEmail ? '' : identifier, isEmail ? identifier : '')) { showToast('❌ Bu telefon/email allaqachon band'); return; }
+      const rec = uiAdmin({
+        id: Date.now(), name, pass, level,
+        phone: isEmail ? '' : identifier,
+        email: isEmail ? identifier : ''
+      });
+      DB.admins.push(rec);
+      saveData();
+      document.getElementById('naName').value = ''; document.getElementById('naIdentifier').value = ''; document.getElementById('naPass').value = '';
+      renderAdminAccountsTable();
+      showToast('✅ ' + name + " qo'shildi (" + (level === 'platform_admin' ? 'Platform Admin' : 'School Admin') + ')');
+    }
+    window.addAdminAccount = addAdminAccount;
+    function renderAdminAccountsTable() {
+      const body = document.getElementById('admBody'); if (!body) return;
+      body.innerHTML = DB.admins.map((a, i) => `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--text3);">${i + 1}</td>
+        <td><strong>${a.name}</strong></td>
+        <td><span class="badge ${a.level === 'platform_admin' ? 'gr' : 'bb'}">${a.level === 'platform_admin' ? 'Platform Admin' : 'School Admin'}</span></td>
+        <td style="font-size:11px;color:var(--text2);">${a.email || a.phone || '—'}</td>
+        <td><code style="background:var(--card2);padding:2px 6px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);">${a.pass}</code></td>
+        <td>${DB.admins.length > 1 ? `<button class="btn btn-xs btn-danger" onclick="deleteAdminAccount(${a.id})"><i class="fas fa-trash"></i></button>` : '—'}</td>
+      </tr>`).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px;">// Admin yo'q</td></tr>`;
+    }
+    function deleteAdminAccount(id) {
+      if (!(curUser?.role === 'admin' && curUser.level === 'platform_admin')) { showToast('❗ Faqat Platform Admin'); return; }
+      if (DB.admins.length <= 1) { showToast("⚠️ Kamida bitta admin bo'lishi kerak"); return; }
+      if (id === curUser.id) { showToast("❗ O'zingizni o'chira olmaysiz"); return; }
+      const a = DB.admins.find(x => x.id === id); if (!a) return;
+      if (!confirm(`"${a.name}" hisobini o'chirmoqchimisiz?`)) return;
+      DB.admins = DB.admins.filter(x => x.id !== id);
+      normalizeAdminLevels();
+      saveData(); renderAdminAccountsTable();
+      showToast("🗑️ Hisob o'chirildi");
+    }
+    window.deleteAdminAccount = deleteAdminAccount;
     function getLevelName(l) { return ["Starter", "Beginner", "Advanced", "Pro", "Expert", "Master"][l - 1] || "Legend"; }
     function getColor(idx) { return COLORS[idx % COLORS.length]; }
 
@@ -6488,20 +6767,50 @@
       }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:16px;font-family:'JetBrains Mono',monospace;">// Talaba yo'q</td></tr>`;
     }
     function renderTBody() {
+      const isPlatformAdmin = curUser?.role === 'admin' && curUser.level === 'platform_admin';
       document.getElementById('tBody').innerHTML = DB.teachers.map((t, i) => {
         const myStudents = DB.students.filter(s => {
           const ids = Array.isArray(s.teacherIds) ? s.teacherIds : [s.teacherId];
           return ids.map(x => String(x)).includes(String(t.id));
         });
+        const pending = t.status === 'pending';
+        const statusBadge = pending ? '<span class="badge bg">⏳ KUTILMOQDA</span>' : '<span class="badge gr">✅ FAOL</span>';
+        let actionCell = '<span style="color:var(--text3);font-size:11px;">—</span>';
+        if (pending && isPlatformAdmin) {
+          actionCell = `<button class="btn btn-xs btn-success" onclick="approveTeacher(${t.id})" title="Tasdiqlash"><i class="fas fa-check"></i></button>
+            <button class="btn btn-xs btn-danger" onclick="rejectTeacher(${t.id})" title="Rad etish"><i class="fas fa-times"></i></button>`;
+        } else if (pending && !isPlatformAdmin) {
+          actionCell = '<span style="color:var(--text3);font-size:10px;">Faqat Platform Admin</span>';
+        }
         return `<tr>
       <td style="font-family:'JetBrains Mono',monospace;color:var(--text3);">${i + 1}</td>
       <td><strong>${t.name}</strong></td>
       <td style="color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:12px;">${t.subj || '—'}</td>
       <td style="font-weight:700;">${myStudents.length}</td>
       <td><code style="background:var(--card2);padding:2px 6px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);">${t.pass}</code></td>
+      <td>${statusBadge}</td>
+      <td>${actionCell}</td>
     </tr>`;
-      }).join('');
+      }).join('') || `<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:16px;font-family:'JetBrains Mono',monospace;">// O'qituvchi yo'q</td></tr>`;
     }
+    // Faqat Platform Admin o'qituvchini tasdiqlashi yoki rad etishi mumkin.
+    function approveTeacher(id) {
+      if (!(curUser?.role === 'admin' && curUser.level === 'platform_admin')) { showToast('❗ Faqat Platform Admin tasdiqlay oladi'); return; }
+      const t = DB.teachers.find(x => x.id === id); if (!t) return;
+      t.status = 'active';
+      saveData(); renderTBody();
+      showToast(`✅ ${t.name} tasdiqlandi va faollashtirildi`);
+    }
+    window.approveTeacher = approveTeacher;
+    function rejectTeacher(id) {
+      if (!(curUser?.role === 'admin' && curUser.level === 'platform_admin')) { showToast('❗ Faqat Platform Admin rad eta oladi'); return; }
+      const t = DB.teachers.find(x => x.id === id); if (!t) return;
+      if (!confirm(`"${t.name}" ro'yxatdan o'tish so'rovini rad etmoqchimisiz? Hisob o'chiriladi.`)) return;
+      DB.teachers = DB.teachers.filter(x => x.id !== id);
+      saveData(); renderTBody();
+      showToast("🗑️ So'rov rad etildi");
+    }
+    window.rejectTeacher = rejectTeacher;
     function fillCoinSelects() {
       const list = cpgGetFilteredStudents();
       const opts = list.map(s => `<option value="${s.id}">${s.name} (${s.group || '-'}) · ${s.coins || 0}🪙</option>`).join('');
@@ -6841,10 +7150,11 @@
       const s = document.getElementById('ntSubj').value.trim();
       const pass = document.getElementById('ntPass').value || 'teach123';
       if (!n) { showToast('❗ Ism kiriting'); return; }
-      DB.teachers.push({ id: Date.now(), name: n, subj: s || '—', pass, code: 'TCH-' + Math.floor(Math.random() * 900 + 100) });
+      // Admin tomonidan qo'lda qo'shilgan o'qituvchi allaqachon tekshirilgan hisoblanadi — darhol faol.
+      DB.teachers.push({ id: Date.now(), name: n, subj: s || '—', pass, code: 'TCH-' + Math.floor(Math.random() * 900 + 100), status: 'active' });
       document.getElementById('ntName').value = ''; document.getElementById('ntSubj').value = ''; document.getElementById('ntPass').value = '';
       saveData();
-      renderTBody(); fillLoginDropdowns(); showToast('✅ ' + n + " qo'shildi!");
+      renderTBody(); showToast('✅ ' + n + " qo'shildi!");
     }
     // ══════════════════════════════════
     // TASODIFIY SHERIK / RANDOM PARTNER + SAVOL-JAVOB
@@ -7815,7 +8125,7 @@
     }
     function getCurrentAccountRecord() {
       if (!curUser) return null;
-      const list = curUser.role === 'student' ? DB.students : curUser.role === 'teacher' ? DB.teachers : DB.admins;
+      const list = curUser.role === 'student' ? DB.students : curUser.role === 'teacher' ? DB.teachers : curUser.role === 'parent' ? (DB.parents || []) : DB.admins;
       return list.find(x => x.id === curUser.id) || null;
     }
     function refreshTelegramLinkUI() {
