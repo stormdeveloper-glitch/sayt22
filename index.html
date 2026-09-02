@@ -4340,7 +4340,7 @@
         <div class="nav-item" onclick="showPage('codepg',this,'KOD YOZISH')"><i class="fas fa-laptop-code"></i> Kod yozish</div>
         <div class="nav-item" onclick="showPage('slpg',this,'DARS MAVZUSI')"><i class="fas fa-book-open"></i> Dars mavzusi</div>
         <div class="nav-item" onclick="showPage('hwspg',this,'VAZIFALARIM')"><i class="fas fa-tasks"></i> Vazifalarim <span class="badge-notif" id="hwPendingBadge" style="display:none;">0</span></div>
-        <!-- <div class="nav-item" onclick="showPage('battlepg',this,'BILIM BELLASHUVI')"><i class="fas fa-bolt"></i> Bilim bellashuvi</div> -->
+        <div class="nav-item" onclick="showPage('battlepg',this,'TA\'LIM O\'YINLARI')"><i class="fas fa-gamepad" style="color:var(--gold);"></i> Ta'lim o'yinlari</div>
         <div class="nav-item" onclick="showPage('aitutorpg',this,'AI REPETITOR')"><i class="fas fa-robot" style="color:var(--green);"></i> AI Repetitor</div>
         <div class="nav-sec">Hisob</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
@@ -5583,42 +5583,93 @@
         <!-- YANGI: BILIM BELLASHUVI (Savol-javob raqobat bo'limi) -->
         <div class="page" id="battlepg">
           <div class="ph">
-            <h2>BILIM BELLASHUVI</h2>
-            <p>// Do'stlaringiz yoki bot bilan savol-javobda bellashib ball to'plang</p>
+            <h2><i class="fas fa-gamepad" style="color:var(--gold);"></i> TA'LIM O'YINLARI</h2>
+            <p>// O'ynab bilim orttiring — har bir to'g'ri javob XP va tanga beradi</p>
           </div>
-          <div class="card" id="dailyGameCard2">
+
+          <div class="srow" style="margin-bottom:14px;">
+            <div class="sc" style="border-color:rgba(0,255,136,.25);">
+              <div class="sl">XP (o'quv progress)</div>
+              <div class="sv" id="gh_xp" style="color:var(--green);">0</div>
+              <div class="ss">Jami to'plangan</div>
+            </div>
+            <div class="sc" style="border-color:rgba(255,204,0,.25);">
+              <div class="sl">STREAK</div>
+              <div class="sv" id="gh_streak" style="color:var(--gold);">🔥 0</div>
+              <div class="ss">Ketma-ket kun</div>
+            </div>
+            <div class="sc" style="border-color:rgba(0,229,255,.2);">
+              <div class="sl">NISHONLAR</div>
+              <div class="sv" id="gh_badges" style="color:var(--cyan);">0</div>
+              <div class="ss">O'yin nishonlari</div>
+            </div>
+          </div>
+
+          <div class="card" id="dailyGameCard2" style="border-left:3px solid var(--gold);">
             <div class="ch">
-              <h4>🎲 KUNLIK O'YIN</h4><span class="badge bg" id="gameStatusBadge2">MAVJUD</span>
+              <h4>🔥 DAILY CHALLENGE</h4><span class="badge bg" id="gameStatusBadge2">MAVJUD</span>
             </div>
             <div class="cb" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-              <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// 1 ta savol, kuniga 1 marta — sherik yoki bot bilan bellashing</p>
+              <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Kuniga 1 marta — 1 ta savol, sherik yoki bot bilan. Streak va XP uchun muhim!</p>
               <button class="btn btn-gold btn-sm" id="playGameBtn2" onclick="openGame()"><i class="fas fa-play"></i> O'ynash</button>
             </div>
           </div>
-          <div class="card" id="quickMatchCard">
-            <div class="ch">
-              <h4>⚡ TEZKOR TEST (5 savol)</h4>
+
+          <div class="g2">
+            <div class="card" style="margin:0;border-left:3px solid var(--cyan);">
+              <div class="ch"><h4>🎮 QUIZ BATTLE</h4></div>
+              <div class="cb" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Umumiy IT bilim — 5 savol, sherik/bot bilan bellashuv</p>
+                <button class="btn btn-cyan btn-sm" onclick="openQuickMatch('quiz')"><i class="fas fa-bolt"></i> Bellashish</button>
+              </div>
             </div>
-            <div class="cb" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-              <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// 5 ta savoldan iborat tezkor bellashuv — istalgan vaqt o'ynash mumkin</p>
-              <button class="btn btn-cyan btn-sm" onclick="openQuickMatch()"><i class="fas fa-bolt"></i> Bellashish</button>
+            <div class="card" style="margin:0;border-left:3px solid var(--green);">
+              <div class="ch"><h4>🧮 MATH BATTLE</h4></div>
+              <div class="cb" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Tezkor matematika masalalari — 5 savol</p>
+                <button class="btn btn-sm" style="background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.3);color:var(--green);font-weight:700;" onclick="openQuickMatch('math')"><i class="fas fa-bolt"></i> Bellashish</button>
+              </div>
+            </div>
+            <div class="card" style="margin:0;border-left:3px solid var(--purple);">
+              <div class="ch"><h4>💻 CODING CHALLENGE</h4></div>
+              <div class="cb" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// HTML/CSS/JS bo'yicha savollar — 5 savol</p>
+                <button class="btn btn-sm" style="background:rgba(191,95,255,.2);border:1px solid rgba(191,95,255,.3);color:var(--purple);font-weight:700;" onclick="openQuickMatch('code')"><i class="fas fa-bolt"></i> Bellashish</button>
+              </div>
+            </div>
+            <div class="card" style="margin:0;border-left:3px solid var(--gold);">
+              <div class="ch"><h4>🇬🇧 ENGLISH CHALLENGE</h4></div>
+              <div class="cb" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Grammatika va lug'at — 5 savol</p>
+                <button class="btn btn-gold btn-sm" onclick="openQuickMatch('english')"><i class="fas fa-bolt"></i> Bellashish</button>
+              </div>
             </div>
           </div>
+
           <div class="card" id="practiceGameCard2">
             <div class="ch">
               <h4>🎯 SHERIK TOPING (Amaliyot)</h4><span class="badge bb" id="practiceStatusBadge2">0/3 bugun</span>
             </div>
             <div class="cb" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-              <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Istalgan vaqt tasodifiy sherik yoki bot bilan mashq qiling (kuniga 3 marta)</p>
+              <p style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Ball uchun emas — bemalol mashq qilish (kuniga 3 marta)</p>
               <button class="btn btn-cyan btn-sm" id="playPracticeBtn2" onclick="openPracticeGame()"><i class="fas fa-user-friends"></i> Sherik toping</button>
             </div>
           </div>
+
+          <div class="card">
+            <div class="ch"><h4>🏅 MENING NISHONLARIM</h4></div>
+            <div class="cb" id="ghBadgeList" style="padding:10px;display:flex;flex-wrap:wrap;gap:8px;">
+              <div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;">// Hali nishon yo'q — o'ynab birinchi nishoningizni oling!</div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="ch">
-              <h4>🏆 BELLASHUV REYTINGI</h4>
+              <h4>🏆 LEADERBOARD</h4>
               <div class="study-tabs" style="display:flex;gap:6px;">
                 <button class="st-tab active" onclick="swBattleTab('daily', this)">Kunlik</button>
                 <button class="st-tab" onclick="swBattleTab('weekly', this)">Haftalik</button>
+                <button class="st-tab" onclick="swBattleTab('tournament', this)">🏆 Turnir</button>
               </div>
             </div>
             <div class="cb" id="battleBoardList" style="padding:10px;">
@@ -5626,6 +5677,7 @@
             </div>
           </div>
         </div>
+
 
         <div class="page" id="marketpg">
           <div class="ph">
@@ -8754,7 +8806,7 @@
       if (id === 'hwspg') { try { renderStudentHomeworks(); } catch (e) { console.warn('HWS render:', e); } }
       if (id === 'slpg') { try { renderStudentLessonTopic(); } catch (e) { console.warn('SLPG render:', e); } }
       if (id === 'matpg') { try { renderMaterialsStudent(); } catch (e) { console.warn('MATPG render:', e); } }
-      if (id === 'battlepg') { try { refreshDailyGameBtn(); refreshPracticeBtn(); renderBattleBoard('daily'); } catch (e) { console.warn('BATTLEPG render:', e); } }
+      if (id === 'battlepg') { try { refreshDailyGameBtn(); refreshPracticeBtn(); renderBattleBoard('daily'); renderGamingStats(); } catch (e) { console.warn('BATTLEPG render:', e); } }
       if (id === 'codepg') { try { ideOnPageShow(); } catch (e) { console.warn('CODEPG render:', e); } }
       if (id === 'coursespg') { try { renderCoursesPage(); } catch (e) { console.warn('COURSESPG render:', e); } }
       if (id === 'aitutorpg') { try { renderAiTutorChat(); } catch (e) { console.warn('AITUTOR render:', e); } }
@@ -9908,6 +9960,108 @@
       { q: "'git' nima uchun ishlatiladi?", opts: ["Versiya nazorati", "Rasm tahrirlash", "Video montaj", "Musiqa"], correct: 0 },
       { q: "API nimani anglatadi?", opts: ["Application Programming Interface", "Auto Program Install", "App Process Index", "Active Page Info"], correct: 0 },
     ];
+    // ── MATH BATTLE: har safar tasodifiy arifmetik masalalar generatsiya qilinadi ──
+    function genMathQuestions(n) {
+      const out = [];
+      for (let i = 0; i < n; i++) {
+        const ops = ['+', '-', '×'];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        let a = Math.floor(Math.random() * 40) + 1, b = Math.floor(Math.random() * 20) + 1;
+        let correct;
+        if (op === '+') correct = a + b;
+        else if (op === '-') { if (b > a) [a, b] = [b, a]; correct = a - b; }
+        else { a = Math.floor(Math.random() * 12) + 1; b = Math.floor(Math.random() * 12) + 1; correct = a * b; }
+        const wrongs = new Set();
+        while (wrongs.size < 3) {
+          const d = Math.floor(Math.random() * 9) - 4;
+          const w = correct + d + (d === 0 ? 1 : 0);
+          if (w !== correct && w >= 0) wrongs.add(w);
+        }
+        const opts = shuffleArr([correct, ...wrongs]);
+        out.push({ q: `${a} ${op} ${b} = ?`, opts: opts.map(String), correct: opts.indexOf(correct) });
+      }
+      return out;
+    }
+    const CODE_QUESTIONS = [
+      { q: "HTML'da ro'yxat yaratish uchun qaysi teg ishlatiladi?", opts: ["<list>", "<ul>", "<row>", "<items>"], correct: 1 },
+      { q: "CSS'da elementni markazlashtirish uchun 'display: flex' bilan qaysi property ishlatiladi?", opts: ["align-center", "justify-content", "text-align: center;", "center: true;"], correct: 1 },
+      { q: "JavaScript'da o'zgaruvchi e'lon qilishning zamonaviy usuli?", opts: ["var", "let / const", "int", "def"], correct: 1 },
+      { q: "console.log(typeof \"salom\") natijasi?", opts: ["string", "text", "str", "char"], correct: 0 },
+      { q: "Qaysi bu massivga element qo'shadi?", opts: [".remove()", ".push()", ".pop()", ".delete()"], correct: 1 },
+      { q: "Python'da funksiya qanday e'lon qilinadi?", opts: ["function foo():", "def foo():", "func foo():", "void foo():"], correct: 1 },
+      { q: "SQL'da ma'lumot olish uchun buyruq?", opts: ["GET", "FETCH", "SELECT", "PULL"], correct: 2 },
+      { q: "== va === JavaScript'da nimasi bilan farq qiladi?", opts: ["Farqi yo'q", "=== turini ham tekshiradi", "== faqat sonlar uchun", "=== eskirgan"], correct: 1 },
+    ];
+    const ENGLISH_QUESTIONS = [
+      { q: "Choose the correct form: 'She ___ to school every day.'", opts: ["go", "goes", "going", "gone"], correct: 1 },
+      { q: "What is the synonym of 'happy'?", opts: ["sad", "joyful", "angry", "tired"], correct: 1 },
+      { q: "Past tense of 'go' is:", opts: ["goed", "gone", "went", "going"], correct: 2 },
+      { q: "'Book' so'zining o'zbekcha tarjimasi:", opts: ["Qalam", "Kitob", "Stol", "Deraza"], correct: 1 },
+      { q: "Choose the correct article: '___ apple a day keeps the doctor away.'", opts: ["A", "An", "The", "—"], correct: 1 },
+      { q: "Opposite of 'big' is:", opts: ["large", "huge", "small", "tall"], correct: 2 },
+      { q: "'I ___ studying English for 2 years.' (Present Perfect)", opts: ["am", "have been", "was", "will be"], correct: 1 },
+    ];
+    function subjPool(key) {
+      if (key === 'math') return genMathQuestions(10);
+      if (key === 'code') return CODE_QUESTIONS;
+      if (key === 'english') return ENGLISH_QUESTIONS;
+      return GAME_QUESTIONS;
+    }
+    const SUBJ_LABELS = { quiz: '🎮 Quiz Battle', math: '🧮 Math Battle', code: '💻 Coding Challenge', english: '🇬🇧 English Challenge' };
+    // ── XP / STREAK / BADGE mukofot tizimi (ta'lim o'yinlari uchun) ──
+    // Diqqat: bu XP mavjud s.activity.{today,week,total}.xp maydonlaridan
+    // foydalanadi (ilgari e'lon qilingan, lekin hech qayerda ishlatilmagan edi).
+    // Bu — o'quv PROGRESSI, talabaning akademik bahosi (subjectScores/test
+    // natijalari) bilan ARALASHTIRILMAYDI, alohida saqlanadi.
+    function awardGameXP(s, amount) {
+      if (!s) return;
+      mEnsureRich(s);
+      s.activity.today.xp = (Number(s.activity.today.xp) || 0) + amount;
+      s.activity.week.xp = (Number(s.activity.week.xp) || 0) + amount;
+      s.activity.total.xp = (Number(s.activity.total.xp) || 0) + amount;
+      updateStudentStreak(s);
+    }
+    const GAME_BADGE_DEFS = [
+      { id: 'g_first_win', icon: '🥇', name: 'Birinchi g\'alaba', desc: "Istalgan o'yinda birinchi marta yutdingiz", xp: 20, check: (s, ctx) => ctx.won },
+      { id: 'g_streak7', icon: '🔥', name: '7 kunlik streak', desc: "7 kun ketma-ket faol bo'ling", xp: 50, check: (s) => (Number(s.streak) || 0) >= 7 },
+      { id: 'g_streak30', icon: '⚡', name: '30 kunlik streak', desc: "30 kun ketma-ket faol bo'ling", xp: 150, check: (s) => (Number(s.streak) || 0) >= 30 },
+      { id: 'g_math_master', icon: '🧮', name: 'Math Master', desc: 'Math Battle\'da 5/5 natija oling', xp: 30, check: (s, ctx) => ctx.subject === 'math' && ctx.correct === ctx.total && ctx.total >= 5 },
+      { id: 'g_code_ninja', icon: '💻', name: 'Code Ninja', desc: "Coding Challenge'da 5/5 natija oling", xp: 30, check: (s, ctx) => ctx.subject === 'code' && ctx.correct === ctx.total && ctx.total >= 5 },
+      { id: 'g_grammar_guru', icon: '🇬🇧', name: 'Grammar Guru', desc: "English Challenge'da 5/5 natija oling", xp: 30, check: (s, ctx) => ctx.subject === 'english' && ctx.correct === ctx.total && ctx.total >= 5 },
+      { id: 'g_xp_500', icon: '🏅', name: '500 XP', desc: 'Jami 500 XP to\'plang', xp: 40, check: (s) => (Number(s.activity?.total?.xp) || 0) >= 500 },
+    ];
+    function checkGameBadges(s, ctx) {
+      if (!s) return [];
+      mEnsureRich(s);
+      const earned = [];
+      GAME_BADGE_DEFS.forEach(def => {
+        if (s.achievements.find(a => a.id === def.id)) return;
+        try {
+          if (def.check(s, ctx || {})) {
+            s.achievements.push({ id: def.id, icon: def.icon, name: def.name, desc: def.desc, xp: def.xp, earnedAt: Date.now() });
+            s.activity.total.xp = (Number(s.activity.total.xp) || 0) + def.xp;
+            earned.push(def);
+          }
+        } catch (e) { }
+      });
+      if (earned.length) { earned.forEach(def => showToast(`🏅 Yangi nishon: ${def.icon} ${def.name} (+${def.xp} XP)`)); }
+      return earned;
+    }
+    function renderGamingStats() {
+      const s = mGetStudent(); if (!s) return;
+      mEnsureRich(s);
+      const xpEl = document.getElementById('gh_xp'); if (xpEl) xpEl.textContent = Number(s.activity.total.xp) || 0;
+      const stEl = document.getElementById('gh_streak'); if (stEl) stEl.textContent = '🔥 ' + (Number(s.streak) || 0);
+      const gameBadges = (s.achievements || []).filter(a => String(a.id).startsWith('g_'));
+      const bEl = document.getElementById('gh_badges'); if (bEl) bEl.textContent = gameBadges.length;
+      const listEl = document.getElementById('ghBadgeList');
+      if (listEl) {
+        listEl.innerHTML = gameBadges.length
+          ? gameBadges.map(a => `<div class="req-card" style="text-align:center;padding:10px 12px;min-width:90px;" title="${String(a.desc).replace(/"/g, '&quot;')}"><div style="font-size:22px;">${a.icon}</div><div style="font-size:10px;font-weight:700;margin-top:4px;">${a.name}</div><div style="font-size:9px;color:var(--gold);margin-top:2px;">+${a.xp} XP</div></div>`).join('')
+          : `<div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;">// Hali nishon yo'q — o'ynab birinchi nishoningizni oling!</div>`;
+      }
+    }
+    window.renderGamingStats = renderGamingStats;
     function todayKey() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
     function dayKeyOf(ts) { const d = new Date(Number(ts) || 0); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
     function isToday(ts) { return dayKeyOf(ts) === todayKey(); }
@@ -10037,6 +10191,12 @@
         DB.transactions = DB.transactions || [];
         DB.transactions.push({ studentId: curUser.id, type: 'game', amount: reward, reason: `${isPractice ? 'Amaliyot' : "Kunlik o'yin"} (${opp.name} bilan)`, date: Date.now() });
         document.getElementById('tbCoins').textContent = '🪙 ' + (s ? s.coins : curUser.coins);
+        if (!isPractice) {
+          const xpGain = 5 + (!oppCorrect ? 5 : 0);
+          awardGameXP(s, xpGain);
+          checkGameBadges(s, { subject: 'daily', won: !oppCorrect, correct: 1, total: 1 });
+          renderGamingStats();
+        }
       }
       const oppLine = oppCorrect ? `${opp.name} ham to'g'ri javob berdi.` : `${opp.name} noto'g'ri javob berdi.`;
       if (iCorrect) {
@@ -10062,12 +10222,14 @@
       setTimeout(() => closeMod('gameModal'), 2200);
     }
 
-    // ── TEZKOR TEST (5 savolli bellashuv) ──
+    // ── TEZKOR TEST (5 savolli bellashuv) — Quiz/Math/Coding/English Battle ──
     let curQuickQuestions = [], curQuickIndex = 0, curQuickCorrect = 0, curQuickOppCorrect = 0;
-    function openQuickMatch() {
+    let curBattleSubject = 'quiz';
+    function openQuickMatch(subjectKey) {
+      curBattleSubject = subjectKey || 'quiz';
       const area = document.getElementById('gameArea');
       area.innerHTML = `
-        <div style="font-weight:700;font-size:14px;margin-bottom:14px;">⚡ Tezkor test — kim bilan bellashasiz?</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:14px;">${SUBJ_LABELS[curBattleSubject] || '⚡ Tezkor test'} — kim bilan bellashasiz?</div>
         <div style="display:flex;flex-direction:column;gap:9px;">
           <button class="btn btn-cyan" style="justify-content:center;" onclick="startQuickMatch('partner')"><i class="fas fa-user-friends"></i> 🎲 Tasodifiy sherik bilan</button>
           <button class="btn btn-gold" style="justify-content:center;" onclick="startQuickMatch('bot')"><i class="fas fa-robot"></i> 🤖 Bot bilan o'ynash</button>
@@ -10084,7 +10246,7 @@
       }
       if (mode === 'bot') { oppName = '🤖 Texno-Bot'; oppAccuracy = 0.65; }
       curGameOpponent = { mode, name: oppName, accuracy: oppAccuracy };
-      const pool = shuffleArr(GAME_QUESTIONS);
+      const pool = shuffleArr(subjPool(curBattleSubject));
       curQuickQuestions = [];
       for (let i = 0; i < 5; i++) curQuickQuestions.push(pool[i % pool.length]);
       curQuickIndex = 0; curQuickCorrect = 0; curQuickOppCorrect = 0;
@@ -10119,9 +10281,12 @@
       const s = DB.students.find(x => x.id === curUser.id);
       if (s) { s.coins += reward; s.coinMap = { ...coinMapOf(s), [primaryTeacherIdOf(s)]: s.coins }; curUser.coins = s.coins; }
       DB.transactions = DB.transactions || [];
-      DB.transactions.push({ studentId: curUser.id, type: 'game', amount: reward, reason: `Tezkor test (${curGameOpponent.name} bilan)`, date: Date.now() });
+      DB.transactions.push({ studentId: curUser.id, type: 'game', amount: reward, reason: `${SUBJ_LABELS[curBattleSubject] || 'Tezkor test'} (${curGameOpponent.name} bilan)`, date: Date.now() });
+      const xpGain = curQuickCorrect * 4 + (won ? 15 : draw ? 5 : 0);
+      awardGameXP(s, xpGain);
       DB.battleLog = DB.battleLog || [];
-      DB.battleLog.push({ studentId: curUser.id, points: reward, correct: curQuickCorrect, total: curQuickQuestions.length, mode: 'quick', opponent: curGameOpponent.name, won, date: Date.now() });
+      DB.battleLog.push({ studentId: curUser.id, points: reward, xp: xpGain, correct: curQuickCorrect, total: curQuickQuestions.length, mode: 'quick', subject: curBattleSubject, opponent: curGameOpponent.name, won, date: Date.now() });
+      const newBadges = checkGameBadges(s, { subject: curBattleSubject, won, correct: curQuickCorrect, total: curQuickQuestions.length });
       document.getElementById('tbCoins').textContent = '🪙 ' + (s ? s.coins : curUser.coins);
       const area = document.getElementById('gameArea');
       area.innerHTML = `
@@ -10130,15 +10295,15 @@
           <div style="font-weight:700;color:${won ? 'var(--green)' : draw ? 'var(--gold)' : 'var(--red)'};margin-top:6px;">
             ${won ? "G'alaba qozondingiz!" : draw ? "Durrang!" : "Mag'lubiyat"} — Siz: ${curQuickCorrect}/${curQuickQuestions.length} · ${curGameOpponent.name}: ${curQuickOppCorrect}/${curQuickQuestions.length}
           </div>
-          <div style="font-size:12px;color:var(--gold);margin-top:6px;">+${reward} 🪙</div>
+          <div style="font-size:12px;color:var(--gold);margin-top:6px;">+${reward} 🪙 · +${xpGain} XP${newBadges.length ? ' · 🏅 ' + newBadges.length + ' yangi nishon!' : ''}</div>
         </div>`;
-      saveData(); refreshDailyGameBtn(); refreshPracticeBtn(); renderActList();
-      try { renderBattleBoard(document.querySelector('#battlepg .st-tab.active')?.textContent === 'Haftalik' ? 'weekly' : 'daily'); } catch (e) {}
+      saveData(); refreshDailyGameBtn(); refreshPracticeBtn(); renderActList(); renderGamingStats();
+      try { const activeTab = document.querySelector('#battlepg .st-tab.active')?.textContent || ''; renderBattleBoard(activeTab.includes('Haftalik') ? 'weekly' : activeTab.includes('Turnir') ? 'tournament' : 'daily'); } catch (e) {}
       curGameOpponent = null;
       setTimeout(() => closeMod('gameModal'), 2600);
     }
 
-    // ── BELLASHUV REYTINGI (kunlik/haftalik) ──
+    // ── BELLASHUV REYTINGI (kunlik/haftalik/turnir) ──
     function startOfDayTs() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
     function startOfWeekTs() { const d = new Date(); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d.getTime(); }
     function swBattleTab(period, el) {
@@ -10148,20 +10313,24 @@
     }
     function renderBattleBoard(period) {
       const el = document.getElementById('battleBoardList'); if (!el || !curUser) return;
-      const since = period === 'weekly' ? startOfWeekTs() : startOfDayTs();
+      const isTournament = period === 'tournament';
+      const since = period === 'daily' ? startOfDayTs() : startOfWeekTs(); // haftalik va turnir — shu haftaning boshidan
+      const metric = isTournament ? 'xp' : 'points';
+      const unit = isTournament ? 'XP' : '🪙';
       const log = (DB.battleLog || []).filter(e => e.date >= since);
       const totals = {};
-      log.forEach(e => { totals[e.studentId] = (totals[e.studentId] || 0) + (e.points || 0); });
+      log.forEach(e => { totals[e.studentId] = (totals[e.studentId] || 0) + (e[metric] || 0); });
       const rows = Object.entries(totals).map(([sid, pts]) => ({ sid: Number(sid), pts })).sort((a, b) => b.pts - a.pts);
       if (!rows.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;font-family:\'JetBrains Mono\',monospace;">// Hali natija yo\'q — birinchi bo\'lib bellashuvni boshlang!</div>'; return; }
+      const medals = ['🥇', '🥈', '🥉'];
       const top = rows.slice(0, 15);
-      let html = top.map((r, i) => {
+      let html = (isTournament ? `<div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// Haftalik XP bo'yicha turnir reytingi — hafta oxirida TOP-3 bonus oladi</div>` : '') + top.map((r, i) => {
         const st = DB.students.find(s => s.id === r.sid);
         const isMe = r.sid === curUser.id;
         return `<div class="req-card" style="display:flex;align-items:center;gap:10px;${isMe ? 'border-color:var(--gold);' : ''}">
-          <div style="font-weight:800;width:26px;text-align:center;color:${i < 3 ? 'var(--gold)' : 'var(--text3)'};">${i + 1}</div>
+          <div style="font-weight:800;width:26px;text-align:center;font-size:${i < 3 ? '17px' : '13px'};color:${i < 3 ? 'var(--gold)' : 'var(--text3)'};">${i < 3 ? medals[i] : (i + 1)}</div>
           <div style="flex:1;font-weight:600;font-size:13px;">${st ? String(st.name).replace(/</g, '&lt;') : '—'}${isMe ? ' (Siz)' : ''}</div>
-          <div style="font-weight:700;color:var(--cyan);">${r.pts} 🪙</div>
+          <div style="font-weight:700;color:var(--cyan);">${r.pts} ${unit}</div>
         </div>`;
       }).join('');
       const myIndex = rows.findIndex(r => r.sid === curUser.id);
@@ -10169,10 +10338,33 @@
         html += `<div class="req-card" style="display:flex;align-items:center;gap:10px;border-color:var(--gold);margin-top:8px;">
           <div style="font-weight:800;width:26px;text-align:center;color:var(--text3);">${myIndex + 1}</div>
           <div style="flex:1;font-weight:600;font-size:13px;">${curUser.name} (Siz)</div>
-          <div style="font-weight:700;color:var(--cyan);">${rows[myIndex].pts} 🪙</div>
+          <div style="font-weight:700;color:var(--cyan);">${rows[myIndex].pts} ${unit}</div>
         </div>`;
       }
       el.innerHTML = html;
+      if (isTournament) checkTournamentBadge(rows);
+    }
+    // Har hafta boshida bir marta: shu haftaning TOP-3 XP to'plovchilariga bonus + nishon.
+    function weekKey() { return String(startOfWeekTs()); }
+    function checkTournamentBadge(rows) {
+      if (!curUser || curUser.role !== 'student') return;
+      const myIdx = rows.findIndex(r => r.sid === curUser.id);
+      if (myIdx < 0 || myIdx > 2) return;
+      const s = DB.students.find(x => x.id === curUser.id); if (!s) return;
+      mEnsureRich(s);
+      if (s.lastTournamentWeek === weekKey()) return; // shu hafta uchun allaqachon berilgan
+      s.lastTournamentWeek = weekKey();
+      const bonus = [100, 60, 30][myIdx];
+      s.coins += bonus; s.coinMap = { ...coinMapOf(s), [primaryTeacherIdOf(s)]: s.coins }; curUser.coins = s.coins;
+      DB.transactions = DB.transactions || [];
+      DB.transactions.push({ studentId: s.id, type: 'tournament', amount: bonus, reason: `🏆 Haftalik turnir TOP-${myIdx + 1}`, date: Date.now() });
+      if (!s.achievements.find(a => a.id === 'g_tournament_top3')) {
+        s.achievements.push({ id: 'g_tournament_top3', icon: '🏆', name: 'Turnir chempioni', desc: "Haftalik turnirda TOP-3'ga kirdingiz", xp: 80, earnedAt: Date.now() });
+        s.activity.total.xp = (Number(s.activity.total.xp) || 0) + 80;
+      }
+      document.getElementById('tbCoins').textContent = '🪙 ' + s.coins;
+      showToast(`🏆 Turnir TOP-${myIdx + 1}! +${bonus} 🪙 · +80 XP nishon`);
+      saveData(); renderGamingStats();
     }
 
     // ════════════════════════════════════════════════════════
