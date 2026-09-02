@@ -10,6 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     :root {
       --bg: #060c18;
@@ -4210,6 +4211,22 @@
     </div>
   </div>
 
+  <!-- OCHIQ SERTIFIKAT TASDIQLASH EKRANI (login talab qilinmaydi, ?verify=CERTID) -->
+  <div id="certVerifyScreen" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;padding:20px;">
+    <div class="lg-card" style="text-align:center;">
+      <div class="lg-top">
+        <img class="lg-av" src="teacher.jpg" alt="Logo"
+          onerror="this.src='https://ui-avatars.com/api/?name=TT&background=00e5ff&color=000&size=80&bold=true'">
+        <div class="lg-title">SERTIFIKAT TASDIQLASH</div>
+        <div class="lg-sub">TEACHER_TEXNO · CERTIFICATE VERIFICATION</div>
+      </div>
+      <div id="certVerifyBody" style="padding:14px 0;">// Tekshirilmoqda...</div>
+      <button class="btn btn-cyan btn-block" style="margin-top:14px;" onclick="location.href = location.origin + location.pathname">
+        <i class="fas fa-arrow-left"></i> Bosh sahifaga qaytish
+      </button>
+    </div>
+  </div>
+
   <!-- TOPBAR -->
   <div class="topbar" id="topbar" style="display:none;">
     <button id="sidebarToggle" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
@@ -4333,6 +4350,9 @@
             class="badge-notif" id="sChatBadge" style="display:none;">0</span></div>
         <div class="nav-item" onclick="showPage('matpg',this,'DARSLIK VA KITOBLAR')"><i class="fas fa-book"></i> Darsliklar</div>
         <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
+        <div class="nav-sec">Karyera</div>
+        <div class="nav-item" onclick="showPage('certspg',this,'SERTIFIKATLARIM')"><i class="fas fa-certificate" style="color:var(--gold);"></i> Sertifikatlarim</div>
+        <div class="nav-item" onclick="showPage('jobspg',this,'ISH O\'RINLARI')"><i class="fas fa-briefcase" style="color:var(--cyan);"></i> Ish o'rinlari <span class="badge-notif" id="jobAppBadge" style="display:none;">0</span></div>
         <div class="nav-sec">Qo'shimcha</div>
         <div class="nav-item" onclick="showPage('hpg',this,'FAOLLIK TARIXI')"><i class="fas fa-history"></i> Faollik
           tarixi</div>
@@ -4368,6 +4388,7 @@
         <div class="nav-item" onclick="showPage('testmgrpg',this,'TEST BOSHQARUVI')"><i class="fas fa-vial"></i> Test
           boshqaruvi</div>
         <div class="nav-item" onclick="showPage('aiassistpg',this,'AI YORDAMCHI')"><i class="fas fa-robot" style="color:var(--green);"></i> AI Yordamchi</div>
+        <div class="nav-item" onclick="showPage('certsadminpg',this,'SERTIFIKATLAR')"><i class="fas fa-certificate" style="color:var(--gold);"></i> Sertifikatlar</div>
         <div class="nav-sec">Profil</div>
         <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> Profil</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
@@ -4387,6 +4408,8 @@
         <div class="nav-item" onclick="showPage('paypg',this,'TO\'LOVLAR')"><i class="fas fa-money-bill-wave"></i>
           To'lovlar</div>
         <div class="nav-item" onclick="showPage('monpg',this,'MONITORING')"><i class="fas fa-eye"></i> Monitoring</div>
+        <div class="nav-item" onclick="showPage('certsadminpg',this,'SERTIFIKATLAR')"><i class="fas fa-certificate" style="color:var(--gold);"></i> Sertifikatlar</div>
+        <div class="nav-item" onclick="showPage('ejobsadminpg',this,'ISH E\'LONLARI')"><i class="fas fa-briefcase" style="color:var(--cyan);"></i> Ish e'lonlari</div>
         <div class="nav-sec">Profil</div>
         <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-user-shield"></i> Profil</div>
         <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
@@ -4396,9 +4419,21 @@
       <!-- OTA-ONA NAV -->
       <nav class="app-nav" id="pNav" style="display:none;">
         <div class="nav-sec">Ota-ona kabineti</div>
-        <div class="nav-item active" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> Profil</div>
+        <div class="nav-item active" onclick="showPage('parentChildPg',this,'FARZANDIM')"><i class="fas fa-child"></i> Farzandim</div>
+        <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> Profil</div>
         <div class="nav-item" onclick="showPage('settpg',this,'SOZLAMALAR')"><i class="fas fa-gear"></i> Sozlamalar</div>
         <div class="nav-sec">Hisob</div>
+        <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
+      </nav>
+
+      <!-- ISH BERUVCHI (EMPLOYER) NAV -->
+      <nav class="app-nav" id="eNav" style="display:none;">
+        <div class="nav-sec">Ish beruvchi kabineti</div>
+        <div class="nav-item active" onclick="showPage('ejobspg',this,'ISH E\'LONLARIM')"><i class="fas fa-briefcase"></i> Ish e'lonlarim</div>
+        <div class="nav-item" onclick="showPage('estudentspg',this,'TALABALAR')"><i class="fas fa-users"></i> Talabalarni ko'rish</div>
+        <div class="nav-item" onclick="showPage('eappspg',this,'ARIZALAR')"><i class="fas fa-inbox"></i> Arizalar <span class="badge-notif" id="eAppBadge" style="display:none;">0</span></div>
+        <div class="nav-sec">Profil</div>
+        <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> Profil</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
       </nav>
       <div class="sb-footer">TEACHER_TEXNO v3.1 · 2025</div>
@@ -5931,6 +5966,131 @@
           </div>
         </div>
 
+        <!-- ══ PARENT: FARZANDIM ══ -->
+        <div class="page" id="parentChildPg">
+          <div class="ph">
+            <h2>FARZANDIM</h2>
+            <p>// Farzandingizni kuzating: davomat, kurs jarayoni, testlar, vazifalar, streak, yutuqlar</p>
+          </div>
+          <div id="parentChildContent"><div class="card"><div class="cb" style="text-align:center;color:var(--text3);padding:20px;">// Yuklanmoqda...</div></div></div>
+        </div>
+
+        <!-- ══ STUDENT: SERTIFIKATLARIM ══ -->
+        <div class="page" id="certspg">
+          <div class="ph">
+            <h2>SERTIFIKATLARIM</h2>
+            <p>// Kursni 100% tugatganingizda sertifikat avtomatik beriladi</p>
+          </div>
+          <div id="certspgContent"><div class="card"><div class="cb" style="text-align:center;color:var(--text3);padding:20px;">// Yuklanmoqda...</div></div></div>
+        </div>
+
+        <!-- ══ TEACHER/ADMIN: SERTIFIKATLAR RO'YXATI ══ -->
+        <div class="page" id="certsadminpg">
+          <div class="ph">
+            <h2>SERTIFIKATLAR</h2>
+            <p>// Talabalarga berilgan barcha sertifikatlar</p>
+          </div>
+          <div class="card">
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr><th>Talaba</th><th>Kurs</th><th>O'qituvchi</th><th>Sana</th><th>Sertifikat ID</th></tr>
+                </thead>
+                <tbody id="certsAdminBody">
+                  <tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Yuklanmoqda...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ STUDENT: ISH O'RINLARI (JOBS) ══ -->
+        <div class="page" id="jobspg">
+          <div class="ph">
+            <h2>ISH O'RINLARI</h2>
+            <p>// Skills, kurslar, sertifikat va loyihalaringiz asosida ish toping</p>
+          </div>
+          <div id="jobsStudentProfile" style="margin-bottom:16px;"></div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch"><h4>MENING ARIZALARIM</h4></div>
+            <div class="cb" id="myAppsBody"><div style="text-align:center;color:var(--text3);padding:10px;">// Yuklanmoqda...</div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><h4>OCHIQ ISH O'RINLARI</h4></div>
+            <div class="cb">
+              <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <input class="form-control" id="jobSkillFilterIn" placeholder="Skill bo'yicha qidirish..." oninput="renderStudentJobsList()">
+              </div>
+              <div id="jobsStudentListBody"><div style="text-align:center;color:var(--text3);padding:10px;">// Yuklanmoqda...</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ EMPLOYER: ISH E'LONLARIM ══ -->
+        <div class="page" id="ejobspg">
+          <div class="ph">
+            <h2>ISH E'LONLARIM</h2>
+            <p>// Yangi vakansiya joylang va nomzodlarni kuzating</p>
+          </div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch"><h4>YANGI ISH E'LONI</h4></div>
+            <div class="cb">
+              <div class="form-group"><label>Lavozim nomi</label><input class="form-control" id="jobTitleIn" placeholder="Masalan: Junior Python dasturchi"></div>
+              <div class="form-group"><label>Tavsif</label><textarea class="form-control" id="jobDescIn" placeholder="Vazifa tavsifi..." rows="3"></textarea></div>
+              <div class="form-group"><label>Talablar</label><input class="form-control" id="jobReqsIn" placeholder="Masalan: 1 yillik tajriba, Git bilishi"></div>
+              <div class="form-group"><label>Skills (vergul bilan)</label><input class="form-control" id="jobSkillsIn" placeholder="Python, SQL, Git"></div>
+              <button class="btn btn-cyan" onclick="postJob()"><i class="fas fa-plus"></i> E'lon joylash</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><h4>MENING E'LONLARIM</h4></div>
+            <div class="cb" id="eJobsListBody"><div style="text-align:center;color:var(--text3);padding:10px;">// Yuklanmoqda...</div></div>
+          </div>
+        </div>
+
+        <!-- ══ EMPLOYER: TALABALARNI KO'RISH ══ -->
+        <div class="page" id="estudentspg">
+          <div class="ph">
+            <h2>TALABALAR</h2>
+            <p>// Faqat xavfsiz ma'lumotlar: skills, kurslar, sertifikat, loyihalar (shaxsiy ma'lumotlar yashiringan)</p>
+          </div>
+          <div class="card">
+            <div class="cb">
+              <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <input class="form-control" id="eStudentSkillFilterIn" placeholder="Skill bo'yicha filtr..." oninput="renderEmployerStudents()">
+              </div>
+              <div id="eStudentsBody"><div style="text-align:center;color:var(--text3);padding:10px;">// Yuklanmoqda...</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ EMPLOYER: ARIZALAR ══ -->
+        <div class="page" id="eappspg">
+          <div class="ph">
+            <h2>ARIZALAR</h2>
+            <p>// Sizning e'lonlaringizga tushgan arizalar</p>
+          </div>
+          <div class="card">
+            <div class="cb" id="eAppsBody"><div style="text-align:center;color:var(--text3);padding:10px;">// Yuklanmoqda...</div></div>
+          </div>
+        </div>
+
+        <!-- ══ ADMIN: ISH E'LONLARI (barcha kompaniyalar) ══ -->
+        <div class="page" id="ejobsadminpg">
+          <div class="ph">
+            <h2>ISH E'LONLARI</h2>
+            <p>// Platformadagi barcha kompaniyalarning vakansiyalari</p>
+          </div>
+          <div class="card">
+            <div class="tw">
+              <table>
+                <thead><tr><th>Lavozim</th><th>Kompaniya</th><th>Holat</th><th>Arizalar soni</th><th>Sana</th></tr></thead>
+                <tbody id="ejobsAdminBody"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Yuklanmoqda...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div><!-- /pageWrap -->
     </div>
   </div><!-- /appShell -->
@@ -5944,8 +6104,12 @@
       teachers: [],
       admins: [],
       parents: [],
+      employers: [], // YANGI: Ish beruvchi (kompaniya) hisoblari — JOBS tizimi
+      jobs: [], // YANGI: Ish e'lonlari
+      applications: [], // YANGI: Talabalarning ish o'rinlariga arizalari
+      certificates: [], // YANGI: Kurs tugatilganda beriladigan sertifikatlar
       courses: [], // YANGI: Course → Module → Lesson strukturasi (Kurs → Modul → Dars)
-      settings: { exchangeRate: 5 } // 1 Olmos (💎) = 5 Tanga (🪙), admin tomonidan sozlanadi
+      settings: { exchangeRate: 5, schoolName: "Teacher_texno EdTech Platform" } // 1 Olmos (💎) = 5 Tanga (🪙), admin tomonidan sozlanadi
     };
 
     // ── AUTH: barcha rollar uchun umumiy yordamchi funksiyalar ──
@@ -5989,7 +6153,9 @@
         level: apiNum(s.level, Math.max(1, Math.floor(coins / 100) + 1)),
         streak: apiNum(s.streak, 0),
         ref: s.ref || s.refCode || ('REF' + (s.id || '')),
-        group: s.group || 'D1'
+        group: s.group || 'D1',
+        skills: Array.isArray(s.skills) ? s.skills : [],
+        projects: Array.isArray(s.projects) ? s.projects : []
       };
     }
     function uiTeacher(t) {
@@ -6047,6 +6213,20 @@
         status: a.status || 'active'
       };
     }
+    function uiEmployer(e) {
+      return {
+        ...e,
+        id: apiNum(e.id, Date.now()),
+        name: e.name || e.company || fullNameOf(e) || 'Kompaniya',
+        company: e.company || e.name || 'Kompaniya',
+        phone: e.phone || '',
+        email: e.email || '',
+        avatar: e.avatar || '',
+        pass: String(e.pass ?? e.password ?? ''),
+        code: e.code || e.employerCode || ('EMP-' + (e.id || '000')),
+        status: e.status || 'active'
+      };
+    }
     // Har doim kamida bitta Platform Admin bo'lishini kafolatlaydi (masalan eski ma'lumotlar uchun)
     function normalizeAdminLevels() {
       if (!DB.admins.length) return;
@@ -6086,6 +6266,11 @@
         nextAdminId: Math.max(1, ...DB.admins.map(a => apiNum(a.id, 0))) + 1,
         parents: (DB.parents || []).map(p => ({ ...p, password: p.pass, parentCode: p.code })),
         nextParentId: Math.max(1, ...(DB.parents || []).map(p => apiNum(p.id, 0))) + 1,
+        employers: (DB.employers || []).map(e => ({ ...e, password: e.pass, employerCode: e.code })),
+        nextEmployerId: Math.max(1, ...(DB.employers || []).map(e => apiNum(e.id, 0))) + 1,
+        jobs: DB.jobs || [],
+        applications: DB.applications || [],
+        certificates: DB.certificates || [],
         adminRequests: DB.adminRequests || [],
         nextRequestId: 1,
         messages: DB.messages || [],
@@ -6108,7 +6293,7 @@
         homeworkSubmissions: DB.homeworkSubmissions || [],
         lessonPlans: DB.lessonPlans || [],
         courses: DB.courses || [],
-        settings: DB.settings || { exchangeRate: 5 }
+        settings: DB.settings || { exchangeRate: 5, schoolName: "Teacher_texno EdTech Platform" }
       };
     }
     const LOCAL_KEY = 'teacherTexnoData';
@@ -6127,7 +6312,13 @@
         admins: [
           { id: 3001, name: "Admin", pass: "admin123", code: "ADM-100", level: "platform_admin", phone: "+998901000001", email: "admin@texnoo.uz" }
         ],
-        parents: [],
+        parents: [
+          { id: 3501, name: "Aliyev Oybek (Ota)", phone: "+998901112299", pass: "1234", code: "PAR-3501", childPhone: "+998901112233", childPhones: ["+998901112233"] }
+        ],
+        employers: [
+          { id: 4001, name: "TexnoSoft LLC", company: "TexnoSoft LLC", phone: "+998901112288", email: "hr@texnosoft.uz", pass: "1234", code: "EMP-4001" }
+        ],
+        jobs: [], applications: [], certificates: [],
         transactions: [], adminRequests: [], messages: [], groups: [],
         chatFriends: [], chatGroups: [], pendingReqs: [],
         pendingTelegramLinks: [], telegramProfiles: {}, tests: [], testResults: [], gamePlays: {}, practicePlays: {}, battleLog: [], attendanceLog: [], pairHistory: [],
@@ -6152,7 +6343,7 @@
             ]
           }
         ],
-        settings: { exchangeRate: 5 }
+        settings: { exchangeRate: 5, schoolName: "Teacher_texno EdTech Platform" }
       };
     }
 
@@ -6169,6 +6360,10 @@
       if (Array.isArray(data.teachers)) DB.teachers = data.teachers.map(uiTeacher);
       if (Array.isArray(data.admins)) DB.admins = data.admins.map(uiAdmin);
       DB.parents = Array.isArray(data.parents) ? data.parents.map(uiParent) : (DB.parents || []);
+      DB.employers = Array.isArray(data.employers) ? data.employers.map(uiEmployer) : (DB.employers || []);
+      DB.jobs = Array.isArray(data.jobs) ? data.jobs : [];
+      DB.applications = Array.isArray(data.applications) ? data.applications : [];
+      DB.certificates = Array.isArray(data.certificates) ? data.certificates : [];
       normalizeAdminLevels();
       DB.transactions = Array.isArray(data.transactions) ? data.transactions : [];
       DB.adminRequests = Array.isArray(data.adminRequests) ? data.adminRequests : [];
@@ -6192,7 +6387,7 @@
       DB.homeworkSubmissions = Array.isArray(data.homeworkSubmissions) ? data.homeworkSubmissions : [];
       DB.lessonPlans = Array.isArray(data.lessonPlans) ? data.lessonPlans : [];
       DB.courses = Array.isArray(data.courses) ? data.courses : [];
-      DB.settings = (data.settings && typeof data.settings === 'object') ? { exchangeRate: 5, ...data.settings } : { exchangeRate: 5 };
+      DB.settings = (data.settings && typeof data.settings === 'object') ? { exchangeRate: 5, schoolName: "Teacher_texno EdTech Platform", ...data.settings } : { exchangeRate: 5, schoolName: "Teacher_texno EdTech Platform" };
     }
 
     async function loadData() {
@@ -6395,6 +6590,8 @@
         setTimeout(() => { ol.style.display = 'none'; }, 400);
       }
       const ls = document.getElementById('loginScreen');
+      // Agar URL'da ?verify=CERTID bo'lsa — login ekrani o'rniga ochiq sertifikat tasdiqlash ekranini ko'rsatamiz
+      if (!curUser && renderCertVerifyScreen()) { return; }
       // Agar sessiya tiklanib, foydalanuvchi allaqachon tizimga kirgan bo'lsa — login ekranini ko'rsatmaymiz
       if (ls && !curUser) {
         ls.style.display = 'flex';
@@ -6505,6 +6702,7 @@
       if (curUser.role === 'student') list = DB.students;
       else if (curUser.role === 'teacher') list = DB.teachers;
       else if (curUser.role === 'parent') list = DB.parents;
+      else if (curUser.role === 'employer') list = DB.employers;
       else if (curUser.role === 'admin') list = DB.admins;
       else return;
       const rec = (list || []).find(x => x.id === curUser.id);
@@ -6540,6 +6738,7 @@
       let u = DB.students.find(matches); if (u) return { user: u, role: 'student' };
       u = DB.teachers.find(matches); if (u) return { user: u, role: 'teacher' };
       u = (DB.parents || []).find(matches); if (u) return { user: u, role: 'parent' };
+      u = (DB.employers || []).find(matches); if (u) return { user: u, role: 'employer' };
       u = DB.admins.find(matches); if (u) return { user: u, role: 'admin' };
       return null;
     }
@@ -6591,10 +6790,12 @@
             <option value="student">Talaba</option>
             <option value="teacher">O'qituvchi</option>
             <option value="parent">Ota-ona</option>
+            <option value="employer">Ish beruvchi (Kompaniya)</option>
           </select>
         </div>
-        <div class="form-group"><label>Ism</label><input class="form-control" id="regFirstName" placeholder="Ismingiz"></div>
-        <div class="form-group"><label>Familiya</label><input class="form-control" id="regLastName" placeholder="Familiyangiz"></div>
+        <div class="form-group" id="regCompanyGroup" style="display:none;"><label>Kompaniya nomi</label><input class="form-control" id="regCompany" placeholder="Masalan: Texno LLC"></div>
+        <div class="form-group" id="regFirstNameGroup"><label>Ism</label><input class="form-control" id="regFirstName" placeholder="Ismingiz"></div>
+        <div class="form-group" id="regLastNameGroup"><label>Familiya</label><input class="form-control" id="regLastName" placeholder="Familiyangiz"></div>
         <div class="form-group"><label>Telefon</label><input class="form-control" id="regPhone" placeholder="+998901112233"></div>
         <div class="form-group"><label>Email</label><input class="form-control" id="regEmail" placeholder="email@misol.uz"></div>
         <div class="form-group"><label>Parol</label>
@@ -6616,6 +6817,8 @@
         if (sel) sel.onchange = () => {
           const note = document.getElementById('regNote');
           if (note) note.textContent = sel.value === 'teacher' ? "⚠ O'qituvchi sifatida ro'yxatdan o'tgach, hisobingiz Platform Admin tasdiqlagunicha kutish holatida bo'ladi." : '';
+          const isEmp = sel.value === 'employer';
+          const cg = document.getElementById('regCompanyGroup'); if (cg) cg.style.display = isEmp ? 'block' : 'none';
         };
         const f = document.getElementById('regFirstName'); if (f) f.focus();
       }, 50);
@@ -6637,18 +6840,23 @@
     window.regHandleAvatar = regHandleAvatar;
     function identifierTaken(phone, email) {
       const p = normPhone(phone), e = normEmail(email);
-      const all = [...DB.students, ...DB.teachers, ...(DB.parents || []), ...DB.admins];
+      const all = [...DB.students, ...DB.teachers, ...(DB.parents || []), ...DB.admins, ...(DB.employers || [])];
       return all.some(u => (p && normPhone(u.phone) === p) || (e && normEmail(u.email) === e));
     }
     function submitRegistration() {
       const role = document.getElementById('regRole').value;
-      const firstName = document.getElementById('regFirstName').value.trim();
-      const lastName = document.getElementById('regLastName').value.trim();
+      const companyEl = document.getElementById('regCompany');
+      const company = companyEl ? companyEl.value.trim() : '';
+      let firstName = document.getElementById('regFirstName').value.trim();
+      let lastName = document.getElementById('regLastName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const pass = document.getElementById('regPass').value;
       const passConfirm = document.getElementById('regPassConfirm').value;
-      if (!firstName || !lastName) { showToast('❗ Ism va familiyangizni kiriting'); return; }
+      if (role === 'employer') {
+        if (!company) { showToast('❗ Kompaniya nomini kiriting'); return; }
+        firstName = company; lastName = '';
+      } else if (!firstName || !lastName) { showToast('❗ Ism va familiyangizni kiriting'); return; }
       if (!phone && !email) { showToast('❗ Telefon yoki emaildan kamida bittasini kiriting'); return; }
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast("❗ Email formati noto'g'ri"); return; }
       if (phone && !/^[+\d][\d\s\-()]{6,20}$/.test(phone)) { showToast("❗ Telefon formati noto'g'ri"); return; }
@@ -6671,6 +6879,8 @@
         DB.teachers.push(uiTeacher({ ...base, status: 'pending' }));
       } else if (role === 'parent') {
         DB.parents.push(uiParent(base));
+      } else if (role === 'employer') {
+        DB.employers.push(uiEmployer({ ...base, company }));
       }
       saveData();
       closeGlobalModal();
@@ -6718,7 +6928,7 @@
     function restoreSession() {
       const sess = readSession();
       if (!sess || !sess.role || sess.id === undefined || sess.id === null) return false;
-      let list = sess.role === 'student' ? DB.students : sess.role === 'teacher' ? DB.teachers : sess.role === 'admin' ? DB.admins : sess.role === 'parent' ? DB.parents : null;
+      let list = sess.role === 'student' ? DB.students : sess.role === 'teacher' ? DB.teachers : sess.role === 'admin' ? DB.admins : sess.role === 'parent' ? DB.parents : sess.role === 'employer' ? DB.employers : null;
       if (!list) return false;
       const user = list.find(x => String(x.id) === String(sess.id));
       if (!user) { clearSession(); return false; }
@@ -6735,14 +6945,14 @@
     function initApp() {
       const r = curUser.role;
       if (r === 'student') diamonds = apiNum(curUser.olmos ?? curUser.diamonds, diamonds);
-      ['sNav', 'tNav', 'aNav', 'pNav'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-      const navId = r === 'student' ? 'sNav' : r === 'teacher' ? 'tNav' : r === 'parent' ? 'pNav' : 'aNav';
+      ['sNav', 'tNav', 'aNav', 'pNav', 'eNav'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      const navId = r === 'student' ? 'sNav' : r === 'teacher' ? 'tNav' : r === 'parent' ? 'pNav' : r === 'employer' ? 'eNav' : 'aNav';
       const navEl = document.getElementById(navId); if (navEl) navEl.style.display = 'block';
       const ini = curUser.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
       const avHtml = curUser.avatar ? `<img src="${curUser.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">` : ini;
       document.getElementById('sbAv').innerHTML = avHtml;
       document.getElementById('sbNm').textContent = curUser.name;
-      const roleLabel = r === 'student' ? "// Talaba" : r === 'teacher' ? "// O'qituvchi" : r === 'parent' ? "// Ota-ona" : ("// Admin — " + (curUser.level === 'platform_admin' ? 'Platform' : 'Maktab'));
+      const roleLabel = r === 'student' ? "// Talaba" : r === 'teacher' ? "// O'qituvchi" : r === 'parent' ? "// Ota-ona" : r === 'employer' ? "// Ish beruvchi" : ("// Admin — " + (curUser.level === 'platform_admin' ? 'Platform' : 'Maktab'));
       document.getElementById('sbRl').textContent = roleLabel;
       document.getElementById('tbCoins').textContent = '🪙 ' + (curUser.coins || 0);
       document.getElementById('tbDiamonds').textContent = '💎 ' + diamonds;
@@ -6755,7 +6965,8 @@
       applyThemeFromPrefs();
       if (r === 'student') { initS(); showPage('dpg', null, 'BOSH SAHIFA'); }
       else if (r === 'teacher') { initT(); showPage('adpg', null, 'STATISTIKA'); }
-      else if (r === 'parent') { initP(); showPage('tapg', null, 'PROFIL'); }
+      else if (r === 'parent') { initP(); showPage('parentChildPg', null, 'FARZANDIM'); }
+      else if (r === 'employer') { initE(); showPage('ejobspg', null, "ISH E'LONLARIM"); }
       else { initA(); showPage('admpg', null, 'ADMIN DASHBOARD'); }
       renderCChats(); renderCFriends(); renderCReqs(); renderCMarket();
       initEP(); initSP(); initReactPick(); renderMktPage(); fillCoinSelects();
@@ -6763,13 +6974,504 @@
       // sinxronlab turamiz (login, refresh, boshqa qurilma — hammasida bir xil bo'lishi uchun)
       if (r === 'student') startMarketSync(); else stopMarketSync();
     }
-    // Ota-ona uchun minimal, xavfsiz boshlang'ich ekran (profil + parol).
-    // To'liq "farzand nazorati" paneli keyingi versiyalarda kengaytiriladi.
+    // Ota-ona uchun profil + farzand nazorati paneli
     function initP() {
       document.getElementById('tp_role').textContent = 'Ota-ona';
       document.getElementById('tp_name').textContent = curUser.name;
       document.getElementById('tp_code').textContent = curUser.code || 'PAR-???';
       refreshTelegramLinkUI();
+      renderParentDashboard();
+    }
+
+    // Ish beruvchi (employer) uchun boshlang'ich holat
+    function initE() {
+      document.getElementById('tp_role').textContent = 'Ish beruvchi';
+      document.getElementById('tp_name').textContent = curUser.name;
+      document.getElementById('tp_code').textContent = curUser.code || 'EMP-???';
+      refreshTelegramLinkUI();
+      renderEmployerJobs();
+      renderEmployerApplications();
+    }
+
+    // ══════════════════════════════════════════════════
+    // 1) PARENT — Farzandini accountga bog'lash va monitoring
+    // ══════════════════════════════════════════════════
+    function parentChildPhones() {
+      const p = DB.parents.find(x => x.id === curUser.id);
+      if (!p) return [];
+      const list = Array.isArray(p.childPhones) && p.childPhones.length ? p.childPhones.slice() : (p.childPhone ? [p.childPhone] : []);
+      return [...new Set(list.filter(Boolean))];
+    }
+    function parentLinkedStudents() {
+      const phones = parentChildPhones().map(normPhone);
+      return DB.students.filter(s => phones.includes(normPhone(s.phone)));
+    }
+    function linkParentChild() {
+      const input = document.getElementById('parentChildPhoneIn');
+      const phone = input ? input.value.trim() : '';
+      if (!phone) { showToast('❗ Farzandingizning telefon raqamini kiriting'); return; }
+      const student = DB.students.find(s => normPhone(s.phone) === normPhone(phone));
+      if (!student) { showToast('❌ Bu raqam bilan talaba topilmadi'); return; }
+      const p = DB.parents.find(x => x.id === curUser.id);
+      if (!p) { showToast('❌ Xatolik: profil topilmadi'); return; }
+      p.childPhones = Array.isArray(p.childPhones) ? p.childPhones : (p.childPhone ? [p.childPhone] : []);
+      if (p.childPhones.some(ph => normPhone(ph) === normPhone(phone))) { showToast("⚠ Bu farzand allaqachon bog'langan"); return; }
+      p.childPhones.push(phone);
+      if (!p.childPhone) p.childPhone = phone;
+      curUser.childPhones = p.childPhones.slice();
+      saveData();
+      if (input) input.value = '';
+      showToast('✅ Farzand hisobga bog\'landi: ' + student.name);
+      renderParentDashboard();
+    }
+    window.linkParentChild = linkParentChild;
+    function unlinkParentChild(phone) {
+      const p = DB.parents.find(x => x.id === curUser.id);
+      if (!p) return;
+      p.childPhones = (p.childPhones || []).filter(ph => normPhone(ph) !== normPhone(phone));
+      if (normPhone(p.childPhone) === normPhone(phone)) p.childPhone = p.childPhones[0] || '';
+      curUser.childPhones = p.childPhones.slice();
+      saveData();
+      showToast("🔗 Bog'lanish o'chirildi");
+      renderParentDashboard();
+    }
+    window.unlinkParentChild = unlinkParentChild;
+    let parentActiveChildId = null;
+    function parentSetActiveChild(id) { parentActiveChildId = apiNum(id, null); renderParentDashboard(); }
+    window.parentSetActiveChild = parentSetActiveChild;
+    function renderParentDashboard() {
+      const wrap = document.getElementById('parentChildContent');
+      if (!wrap) return;
+      const kids = parentLinkedStudents();
+      const linkFormHtml = `
+        <div class="card" style="margin-bottom:14px;">
+          <div class="ch"><h4>FARZANDNI BOG'LASH</h4></div>
+          <div class="cb">
+            <div class="form-group"><label>Farzandingizning telefon raqami</label>
+              <input class="form-control" id="parentChildPhoneIn" placeholder="+998901112233"></div>
+            <button class="btn btn-sm btn-cyan" onclick="linkParentChild()"><i class="fas fa-link"></i> Bog'lash</button>
+          </div>
+        </div>`;
+      if (!kids.length) {
+        wrap.innerHTML = linkFormHtml + `<div class="card"><div class="cb" style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Hozircha farzand bog'lanmagan</div></div>`;
+        return;
+      }
+      if (!parentActiveChildId || !kids.some(k => k.id === parentActiveChildId)) parentActiveChildId = kids[0].id;
+      const tabsHtml = kids.map(k => `<button class="btn btn-sm ${k.id === parentActiveChildId ? 'btn-cyan' : ''}" onclick="parentSetActiveChild(${k.id})">${k.name}</button>`).join(' ');
+      const kid = kids.find(k => k.id === parentActiveChildId);
+      const courses = studentVisibleCourses(kid);
+      const progressHtml = courses.length ? courses.map(c => {
+        const st = courseProgressStats(kid, c);
+        return `<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>${c.icon || '📘'} ${c.name}</span><span>${st.done}/${st.total} (${st.pct}%)</span></div><div class="progress-bar" style="background:var(--card2);border-radius:6px;height:8px;overflow:hidden;"><div style="width:${st.pct}%;height:100%;background:var(--cyan);"></div></div></div>`;
+      }).join('') : `<div style="color:var(--text3);font-size:12px;">// Kurslar yo'q</div>`;
+      const attLog = (DB.attendanceLog || []).filter(l => l.studentId === kid.id).slice(-15).reverse();
+      const attTotal = (DB.attendanceLog || []).filter(l => l.studentId === kid.id);
+      const attPresent = attTotal.filter(l => l.status === 'present' || l.present === true).length;
+      const attPct = attTotal.length ? Math.round(attPresent / attTotal.length * 100) : 0;
+      const attHtml = attLog.length ? `<table style="width:100%;font-size:12px;"><tbody>${attLog.map(l => `<tr><td style="border:none;padding:4px 0;color:var(--text3);">${new Date(l.date || l.createdAt || Date.now()).toLocaleDateString()}</td><td style="border:none;padding:4px 0;">${(l.status === 'present' || l.present === true) ? '✅ Bor' : '❌ Yo\'q'}</td></tr>`).join('')}</tbody></table>` : `<div style="color:var(--text3);font-size:12px;">// Davomat belgilanmagan</div>`;
+      const testResults = (DB.testResults || []).filter(r => r.studentId === kid.id).slice(-10).reverse();
+      const testHtml = testResults.length ? `<table style="width:100%;font-size:12px;"><tbody>${testResults.map(r => `<tr><td style="border:none;padding:4px 0;">${r.testName || r.title || 'Test'}</td><td style="border:none;padding:4px 0;text-align:right;color:var(--cyan);">${r.score ?? r.correct ?? '—'}${r.total ? '/' + r.total : ''}</td></tr>`).join('')}</tbody></table>` : `<div style="color:var(--text3);font-size:12px;">// Test natijalari yo'q</div>`;
+      const hws = (DB.homeworkSubmissions || []).filter(h => h.studentId === kid.id).slice(-10).reverse();
+      const hwHtml = hws.length ? `<table style="width:100%;font-size:12px;"><tbody>${hws.map(h => `<tr><td style="border:none;padding:4px 0;">${h.title || 'Vazifa'}</td><td style="border:none;padding:4px 0;text-align:right;">${h.status === 'checked' || h.graded ? ('✅ ' + (h.grade ?? 'Tekshirilgan')) : '⏳ Kutilmoqda'}</td></tr>`).join('')}</tbody></table>` : `<div style="color:var(--text3);font-size:12px;">// Vazifalar yo'q</div>`;
+      const achs = kid.achievements || [];
+      const achHtml = achs.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;">${achs.map(a => `<div title="${a.desc || ''}" style="background:var(--card2);border:1px solid var(--bor2);border-radius:8px;padding:6px 10px;font-size:12px;">${a.icon || '🏅'} ${a.name}</div>`).join('')}</div>` : `<div style="color:var(--text3);font-size:12px;">// Yutuqlar yo'q</div>`;
+      wrap.innerHTML = linkFormHtml + `
+        <div class="card" style="margin-bottom:14px;">
+          <div class="cb" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">${tabsHtml}</div>
+            <button class="btn btn-sm btn-danger" onclick="unlinkParentChild('${kid.phone}')"><i class="fas fa-unlink"></i> Bog'lanishni uzish</button>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card"><div class="ch"><h4>UMUMIY</h4></div><div class="cb">
+            <table style="width:100%;font-size:12px;border:none;">
+              <tr><td style="border:none;padding:4px 0;color:var(--text3);">Ism:</td><td style="border:none;padding:4px 0;">${kid.name}</td></tr>
+              <tr><td style="border:none;padding:4px 0;color:var(--text3);">Guruh:</td><td style="border:none;padding:4px 0;">${kid.group || '—'}</td></tr>
+              <tr><td style="border:none;padding:4px 0;color:var(--text3);">Daraja:</td><td style="border:none;padding:4px 0;">${kid.level} — ${getLevelName(kid.level)}</td></tr>
+              <tr><td style="border:none;padding:4px 0;color:var(--text3);">🔥 Streak:</td><td style="border:none;padding:4px 0;">${kid.streak} kun</td></tr>
+              <tr><td style="border:none;padding:4px 0;color:var(--text3);">Davomat:</td><td style="border:none;padding:4px 0;">${attPct}% (${attPresent}/${attTotal.length})</td></tr>
+            </table>
+          </div></div>
+          <div class="card"><div class="ch"><h4>KURS JARAYONI</h4></div><div class="cb">${progressHtml}</div></div>
+          <div class="card"><div class="ch"><h4>DAVOMAT TARIXI</h4></div><div class="cb">${attHtml}</div></div>
+          <div class="card"><div class="ch"><h4>TEST NATIJALARI</h4></div><div class="cb">${testHtml}</div></div>
+          <div class="card"><div class="ch"><h4>UY VAZIFALARI</h4></div><div class="cb">${hwHtml}</div></div>
+          <div class="card"><div class="ch"><h4>YUTUQLAR</h4></div><div class="cb">${achHtml}</div></div>
+        </div>`;
+    }
+
+    // ══════════════════════════════════════════════════
+    // 2) CERTIFICATE — Kurs tugaganda sertifikat va QR tasdiqlash
+    // ══════════════════════════════════════════════════
+    function genCertId() {
+      return 'CERT-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    }
+    // Talabaning barcha kurslarini tekshirib, 100% tugatilgan bo'lsa sertifikat beradi (agar hali berilmagan bo'lsa)
+    function checkAndIssueCertificates(student) {
+      if (!student) return;
+      const courses = studentVisibleCourses(student);
+      courses.forEach(c => {
+        const st = courseProgressStats(student, c);
+        if (st.total > 0 && st.pct >= 100) {
+          const exists = (DB.certificates || []).some(cert => cert.studentId === student.id && cert.courseId === c.id);
+          if (!exists) {
+            const teacher = DB.teachers.find(t => t.id === c.teacherId);
+            DB.certificates = DB.certificates || [];
+            DB.certificates.push({
+              id: Date.now() + Math.floor(Math.random() * 1000),
+              certId: genCertId(),
+              studentId: student.id,
+              studentName: student.name,
+              courseId: c.id,
+              courseName: c.name,
+              teacherId: c.teacherId,
+              teacherName: teacher ? teacher.name : "O'qituvchi",
+              school: (DB.settings && DB.settings.schoolName) || 'Teacher_texno EdTech Platform',
+              dateIssued: Date.now()
+            });
+          }
+        }
+      });
+    }
+    function certVerifyUrl(certId) {
+      const base = location.origin + location.pathname;
+      return base + '?verify=' + encodeURIComponent(certId);
+    }
+    function certificateCardHtml(cert) {
+      const d = new Date(cert.dateIssued).toLocaleDateString();
+      return `
+        <div class="card" style="margin-bottom:14px;">
+          <div class="cb" style="text-align:center;padding:18px;border:1px dashed var(--gold);border-radius:8px;">
+            <div style="font-family:'Orbitron',sans-serif;color:var(--gold);font-size:13px;letter-spacing:2px;">SERTIFIKAT</div>
+            <div style="font-size:18px;font-weight:700;margin:8px 0;">${cert.studentName}</div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">kursni muvaffaqiyatli tugatdi:</div>
+            <div style="font-size:15px;font-weight:600;color:var(--cyan);margin-bottom:10px;">${cert.courseName}</div>
+            <table style="margin:0 auto;font-size:11px;color:var(--text3);border:none;">
+              <tr><td style="border:none;padding:2px 8px;">O'qituvchi:</td><td style="border:none;padding:2px 8px;color:var(--text);">${cert.teacherName}</td></tr>
+              <tr><td style="border:none;padding:2px 8px;">Maktab:</td><td style="border:none;padding:2px 8px;color:var(--text);">${cert.school}</td></tr>
+              <tr><td style="border:none;padding:2px 8px;">Sana:</td><td style="border:none;padding:2px 8px;color:var(--text);">${d}</td></tr>
+              <tr><td style="border:none;padding:2px 8px;">Sertifikat ID:</td><td style="border:none;padding:2px 8px;color:var(--text);"><code>${cert.certId}</code></td></tr>
+            </table>
+            <div id="qr_${cert.certId}" style="display:flex;justify-content:center;margin-top:12px;"></div>
+            <div style="font-size:10px;color:var(--text3);margin-top:6px;">QR kodni skanerlab tasdiqlang</div>
+          </div>
+        </div>`;
+    }
+    function renderQrInto(elId, certId) {
+      const el = document.getElementById(elId);
+      if (!el || typeof QRCode === 'undefined') return;
+      el.innerHTML = '';
+      try { new QRCode(el, { text: certVerifyUrl(certId), width: 120, height: 120, colorDark: '#060c18', colorLight: '#ffffff' }); } catch (e) {}
+    }
+    function renderCertificatesList() {
+      const wrap = document.getElementById('certspgContent');
+      if (!wrap || curUser.role !== 'student') return;
+      const student = DB.students.find(s => s.id === curUser.id);
+      checkAndIssueCertificates(student);
+      saveData();
+      const certs = (DB.certificates || []).filter(c => c.studentId === curUser.id);
+      if (!certs.length) {
+        wrap.innerHTML = `<div class="card"><div class="cb" style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Hozircha sertifikat yo'q. Kursni 100% tugating!</div></div>`;
+        return;
+      }
+      wrap.innerHTML = certs.map(certificateCardHtml).join('');
+      certs.forEach(c => renderQrInto('qr_' + c.certId, c.certId));
+    }
+    function renderCertsAdmin() {
+      const wrap = document.getElementById('certsAdminBody');
+      if (!wrap) return;
+      let certs = DB.certificates || [];
+      if (curUser.role === 'teacher') certs = certs.filter(c => c.teacherId === curUser.id);
+      if (!certs.length) { wrap.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Sertifikatlar yo'q</td></tr>`; return; }
+      wrap.innerHTML = certs.slice().reverse().map(c => `<tr>
+        <td>${c.studentName}</td><td>${c.courseName}</td><td>${c.teacherName}</td>
+        <td>${new Date(c.dateIssued).toLocaleDateString()}</td>
+        <td><code style="font-size:10px;">${c.certId}</code></td>
+      </tr>`).join('');
+    }
+    // Login talab qilmaydigan ochiq sertifikat tasdiqlash sahifasi (?verify=CERTID)
+    function renderCertVerifyScreen() {
+      const params = new URLSearchParams(location.search);
+      const certId = params.get('verify');
+      if (!certId) return false;
+      const cert = (DB.certificates || []).find(c => c.certId === certId);
+      const scr = document.getElementById('certVerifyScreen');
+      if (!scr) return false;
+      document.getElementById('loginScreen').style.display = 'none';
+      scr.style.display = 'flex';
+      const body = document.getElementById('certVerifyBody');
+      if (cert) {
+        const d = new Date(cert.dateIssued).toLocaleDateString();
+        body.innerHTML = `
+          <div style="color:var(--green);font-size:15px;font-weight:700;margin-bottom:14px;"><i class="fas fa-circle-check"></i> SERTIFIKAT HAQIQIY</div>
+          <table style="margin:0 auto;font-size:13px;border:none;">
+            <tr><td style="border:none;padding:5px 10px;color:var(--text3);">Talaba:</td><td style="border:none;padding:5px 10px;">${cert.studentName}</td></tr>
+            <tr><td style="border:none;padding:5px 10px;color:var(--text3);">Kurs:</td><td style="border:none;padding:5px 10px;">${cert.courseName}</td></tr>
+            <tr><td style="border:none;padding:5px 10px;color:var(--text3);">O'qituvchi:</td><td style="border:none;padding:5px 10px;">${cert.teacherName}</td></tr>
+            <tr><td style="border:none;padding:5px 10px;color:var(--text3);">Maktab:</td><td style="border:none;padding:5px 10px;">${cert.school}</td></tr>
+            <tr><td style="border:none;padding:5px 10px;color:var(--text3);">Sana:</td><td style="border:none;padding:5px 10px;">${d}</td></tr>
+            <tr><td style="border:none;padding:5px 10px;color:var(--text3);">ID:</td><td style="border:none;padding:5px 10px;"><code>${cert.certId}</code></td></tr>
+          </table>`;
+      } else {
+        body.innerHTML = `<div style="color:var(--red);font-size:15px;font-weight:700;"><i class="fas fa-circle-xmark"></i> SERTIFIKAT TOPILMADI YOKI HAQIQIY EMAS</div>`;
+      }
+      return true;
+    }
+
+    // ══════════════════════════════════════════════════
+    // 3) JOBS — Talaba profili (skills/projects), Ish e'lonlari, Arizalar
+    // ══════════════════════════════════════════════════
+    function addStudentSkill() {
+      const input = document.getElementById('newSkillIn');
+      const v = input ? input.value.trim() : '';
+      if (!v) return;
+      const s = DB.students.find(x => x.id === curUser.id);
+      if (!s) return;
+      s.skills = s.skills || [];
+      if (!s.skills.includes(v)) s.skills.push(v);
+      saveData(); if (input) input.value = ''; renderStudentJobsProfile();
+    }
+    window.addStudentSkill = addStudentSkill;
+    function removeStudentSkill(skill) {
+      const s = DB.students.find(x => x.id === curUser.id);
+      if (!s) return;
+      s.skills = (s.skills || []).filter(x => x !== skill);
+      saveData(); renderStudentJobsProfile();
+    }
+    window.removeStudentSkill = removeStudentSkill;
+    function addStudentProject() {
+      const t = document.getElementById('newProjTitle'), d = document.getElementById('newProjDesc'), l = document.getElementById('newProjLink');
+      const title = t ? t.value.trim() : '';
+      if (!title) { showToast('❗ Loyiha nomini kiriting'); return; }
+      const s = DB.students.find(x => x.id === curUser.id);
+      if (!s) return;
+      s.projects = s.projects || [];
+      s.projects.push({ id: Date.now(), title, desc: d ? d.value.trim() : '', link: l ? l.value.trim() : '' });
+      saveData();
+      if (t) t.value = ''; if (d) d.value = ''; if (l) l.value = '';
+      renderStudentJobsProfile();
+    }
+    window.addStudentProject = addStudentProject;
+    function removeStudentProject(id) {
+      const s = DB.students.find(x => x.id === curUser.id);
+      if (!s) return;
+      s.projects = (s.projects || []).filter(p => p.id !== id);
+      saveData(); renderStudentJobsProfile();
+    }
+    window.removeStudentProject = removeStudentProject;
+    function applyToJob(jobId) {
+      const s = DB.students.find(x => x.id === curUser.id);
+      if (!s) return;
+      DB.applications = DB.applications || [];
+      if (DB.applications.some(a => a.jobId === jobId && a.studentId === s.id)) { showToast('⚠ Siz allaqachon ariza yubordingiz'); return; }
+      const job = (DB.jobs || []).find(j => j.id === jobId);
+      DB.applications.push({ id: Date.now(), jobId, studentId: s.id, studentName: s.name, employerId: job ? job.employerId : null, status: 'pending', appliedAt: Date.now() });
+      saveData();
+      showToast('✅ Ariza yuborildi: ' + (job ? job.title : ''));
+      renderStudentJobsList(); renderMyApplications();
+    }
+    window.applyToJob = applyToJob;
+    function renderStudentJobsProfile() {
+      const wrap = document.getElementById('jobsStudentProfile');
+      if (!wrap || curUser.role !== 'student') return;
+      const s = DB.students.find(x => x.id === curUser.id);
+      if (!s) return;
+      const certs = (DB.certificates || []).filter(c => c.studentId === s.id);
+      const courses = studentVisibleCourses(s);
+      wrap.innerHTML = `
+        <div class="g2">
+          <div class="card"><div class="ch"><h4>SKILLS</h4></div><div class="cb">
+            <div style="display:flex;gap:6px;margin-bottom:10px;">
+              <input class="form-control" id="newSkillIn" placeholder="Masalan: Python">
+              <button class="btn btn-sm btn-cyan" onclick="addStudentSkill()"><i class="fas fa-plus"></i></button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              ${(s.skills || []).map(sk => `<span style="background:var(--card2);border:1px solid var(--bor2);border-radius:14px;padding:4px 10px;font-size:11px;">${sk} <i class="fas fa-xmark" style="cursor:pointer;color:var(--red);margin-left:4px;" onclick="removeStudentSkill('${sk.replace(/'/g, "\\'")}')"></i></span>`).join('') || '<span style="color:var(--text3);font-size:12px;">// Skill qo\'shilmagan</span>'}
+            </div>
+          </div></div>
+          <div class="card"><div class="ch"><h4>KURSLAR</h4></div><div class="cb">
+            ${courses.length ? courses.map(c => { const st = courseProgressStats(s, c); return `<div style="font-size:12px;margin-bottom:6px;">${c.icon || '📘'} ${c.name} — ${st.pct}%</div>`; }).join('') : '<span style="color:var(--text3);font-size:12px;">// Kurslar yo\'q</span>'}
+          </div></div>
+          <div class="card"><div class="ch"><h4>SERTIFIKATLAR</h4></div><div class="cb">
+            ${certs.length ? certs.map(c => `<div style="font-size:12px;margin-bottom:6px;"><i class="fas fa-certificate" style="color:var(--gold);"></i> ${c.courseName}</div>`).join('') : '<span style="color:var(--text3);font-size:12px;">// Sertifikat yo\'q</span>'}
+          </div></div>
+          <div class="card"><div class="ch"><h4>LOYIHALAR</h4></div><div class="cb">
+            <div class="form-group"><input class="form-control" id="newProjTitle" placeholder="Loyiha nomi" style="margin-bottom:6px;"></div>
+            <div class="form-group"><input class="form-control" id="newProjDesc" placeholder="Qisqacha tavsif" style="margin-bottom:6px;"></div>
+            <div class="form-group"><input class="form-control" id="newProjLink" placeholder="Havola (ixtiyoriy)" style="margin-bottom:6px;"></div>
+            <button class="btn btn-sm btn-cyan" onclick="addStudentProject()"><i class="fas fa-plus"></i> Loyiha qo'shish</button>
+            <div style="margin-top:10px;">
+              ${(s.projects || []).map(p => `<div style="border:1px solid var(--bor2);border-radius:6px;padding:8px;margin-bottom:6px;font-size:12px;"><b>${p.title}</b> <i class="fas fa-xmark" style="cursor:pointer;color:var(--red);float:right;" onclick="removeStudentProject(${p.id})"></i><div style="color:var(--text3);">${p.desc || ''}</div>${p.link ? `<a href="${p.link}" target="_blank" style="color:var(--cyan);">${p.link}</a>` : ''}</div>`).join('') || '<span style="color:var(--text3);font-size:12px;">// Loyiha yo\'q</span>'}
+            </div>
+          </div></div>
+        </div>`;
+    }
+    function renderStudentJobsList() {
+      const wrap = document.getElementById('jobsStudentListBody');
+      if (!wrap) return;
+      const filterEl = document.getElementById('jobSkillFilterIn');
+      const filter = filterEl ? filterEl.value.trim().toLowerCase() : '';
+      let jobs = (DB.jobs || []).filter(j => j.status !== 'closed');
+      if (filter) jobs = jobs.filter(j => (j.skills || []).some(sk => sk.toLowerCase().includes(filter)) || j.title.toLowerCase().includes(filter));
+      if (!jobs.length) { wrap.innerHTML = `<div style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Ish e'lonlari yo'q</div>`; return; }
+      const myApps = new Set((DB.applications || []).filter(a => a.studentId === curUser.id).map(a => a.jobId));
+      wrap.innerHTML = jobs.slice().reverse().map(j => {
+        const emp = (DB.employers || []).find(e => e.id === j.employerId);
+        return `<div class="card" style="margin-bottom:10px;"><div class="cb">
+          <div style="display:flex;justify-content:space-between;align-items:start;">
+            <div>
+              <div style="font-weight:700;">${j.title}</div>
+              <div style="font-size:11px;color:var(--text3);">${emp ? emp.company : 'Kompaniya'}</div>
+            </div>
+            ${myApps.has(j.id) ? '<span class="btn btn-sm" style="opacity:.6;">✅ Ariza yuborilgan</span>' : `<button class="btn btn-sm btn-cyan" onclick="applyToJob(${j.id})"><i class="fas fa-paper-plane"></i> Ariza berish</button>`}
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin:8px 0;">${j.description || ''}</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Talablar: ${j.requirements || '—'}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">${(j.skills || []).map(sk => `<span style="background:var(--card2);border:1px solid var(--bor2);border-radius:12px;padding:2px 8px;font-size:10px;">${sk}</span>`).join('')}</div>
+        </div></div>`;
+      }).join('');
+    }
+    function renderMyApplications() {
+      const wrap = document.getElementById('myAppsBody');
+      if (!wrap) return;
+      const apps = (DB.applications || []).filter(a => a.studentId === curUser.id);
+      const badge = document.getElementById('jobAppBadge');
+      if (badge) { const pend = apps.filter(a => a.status === 'pending').length; badge.style.display = pend ? 'inline-block' : 'none'; badge.textContent = pend; }
+      if (!apps.length) { wrap.innerHTML = `<div style="text-align:center;color:var(--text3);padding:14px;font-family:'JetBrains Mono',monospace;">// Arizalar yo'q</div>`; return; }
+      wrap.innerHTML = apps.slice().reverse().map(a => {
+        const job = (DB.jobs || []).find(j => j.id === a.jobId);
+        const statusLabel = a.status === 'accepted' ? '✅ Qabul qilindi' : a.status === 'rejected' ? '❌ Rad etildi' : '⏳ Ko\'rib chiqilmoqda';
+        return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bor2);font-size:12px;"><span>${job ? job.title : 'Ish o\'rni'}</span><span>${statusLabel}</span></div>`;
+      }).join('');
+    }
+    function renderStudentJobsPage() {
+      renderStudentJobsProfile();
+      renderStudentJobsList();
+      renderMyApplications();
+    }
+
+    // ── Employer (ish beruvchi) tomoni ──
+    function postJob() {
+      const title = document.getElementById('jobTitleIn').value.trim();
+      const desc = document.getElementById('jobDescIn').value.trim();
+      const reqs = document.getElementById('jobReqsIn').value.trim();
+      const skillsRaw = document.getElementById('jobSkillsIn').value.trim();
+      if (!title) { showToast('❗ Ish nomini kiriting'); return; }
+      const skills = skillsRaw ? skillsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+      DB.jobs = DB.jobs || [];
+      DB.jobs.push({ id: Date.now(), employerId: curUser.id, title, description: desc, requirements: reqs, skills, status: 'open', createdAt: Date.now() });
+      saveData();
+      ['jobTitleIn', 'jobDescIn', 'jobReqsIn', 'jobSkillsIn'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      showToast('✅ Ish e\'loni joylandi');
+      renderEmployerJobs();
+    }
+    window.postJob = postJob;
+    function deleteJob(jobId) {
+      DB.jobs = (DB.jobs || []).filter(j => j.id !== jobId);
+      saveData(); renderEmployerJobs();
+    }
+    window.deleteJob = deleteJob;
+    function toggleJobStatus(jobId) {
+      const j = (DB.jobs || []).find(x => x.id === jobId);
+      if (!j) return;
+      j.status = j.status === 'open' ? 'closed' : 'open';
+      saveData(); renderEmployerJobs();
+    }
+    window.toggleJobStatus = toggleJobStatus;
+    function renderEmployerJobs() {
+      const wrap = document.getElementById('eJobsListBody');
+      if (!wrap || curUser.role !== 'employer') return;
+      const jobs = (DB.jobs || []).filter(j => j.employerId === curUser.id);
+      if (!jobs.length) { wrap.innerHTML = `<div style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Hali ish e'lonlari yo'q</div>`; return; }
+      wrap.innerHTML = jobs.slice().reverse().map(j => {
+        const appCount = (DB.applications || []).filter(a => a.jobId === j.id).length;
+        return `<div class="card" style="margin-bottom:10px;"><div class="cb">
+          <div style="display:flex;justify-content:space-between;align-items:start;">
+            <div><div style="font-weight:700;">${j.title}</div><div style="font-size:11px;color:var(--text3);">${j.status === 'open' ? '🟢 Ochiq' : '🔴 Yopiq'} · ${appCount} ariza</div></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-sm" onclick="toggleJobStatus(${j.id})"><i class="fas fa-toggle-on"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteJob(${j.id})"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin:6px 0;">${j.description || ''}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">${(j.skills || []).map(sk => `<span style="background:var(--card2);border:1px solid var(--bor2);border-radius:12px;padding:2px 8px;font-size:10px;">${sk}</span>`).join('')}</div>
+        </div></div>`;
+      }).join('');
+    }
+    // Xavfsizlik: employerga faqat xavfsiz (sanitized) talaba ma'lumotlari ko'rsatiladi — parol/telefon/email yashiriladi
+    function employerViewOfStudent(s) {
+      const certs = (DB.certificates || []).filter(c => c.studentId === s.id).map(c => c.courseName);
+      const courses = studentVisibleCourses(s).map(c => c.name);
+      return { id: s.id, name: s.name, skills: s.skills || [], projects: s.projects || [], courses, certificates: certs };
+    }
+    function renderEmployerStudents() {
+      const wrap = document.getElementById('eStudentsBody');
+      if (!wrap || curUser.role !== 'employer') return;
+      const filterEl = document.getElementById('eStudentSkillFilterIn');
+      const filter = filterEl ? filterEl.value.trim().toLowerCase() : '';
+      let list = DB.students.map(employerViewOfStudent);
+      if (filter) list = list.filter(s => s.skills.some(sk => sk.toLowerCase().includes(filter)));
+      if (!list.length) { wrap.innerHTML = `<div style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Talaba topilmadi</div>`; return; }
+      wrap.innerHTML = list.map(s => `<div class="card" style="margin-bottom:10px;"><div class="cb">
+        <div style="font-weight:700;">${s.name}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;">${s.skills.map(sk => `<span style="background:var(--card2);border:1px solid var(--bor2);border-radius:12px;padding:2px 8px;font-size:10px;">${sk}</span>`).join('') || '<span style="color:var(--text3);font-size:11px;">skills yo\'q</span>'}</div>
+        <div style="font-size:11px;color:var(--text3);">Kurslar: ${s.courses.join(', ') || '—'}</div>
+        <div style="font-size:11px;color:var(--text3);">Sertifikatlar: ${s.certificates.join(', ') || '—'}</div>
+        <div style="font-size:11px;color:var(--text3);">Loyihalar: ${s.projects.map(p => p.title).join(', ') || '—'}</div>
+      </div></div>`).join('');
+    }
+    function setApplicationStatus(appId, status) {
+      const a = (DB.applications || []).find(x => x.id === appId);
+      if (!a) return;
+      const job = (DB.jobs || []).find(j => j.id === a.jobId);
+      if (!job || job.employerId !== curUser.id) { showToast('❌ Ruxsat yo\'q'); return; }
+      a.status = status;
+      saveData();
+      showToast('✅ Ariza holati yangilandi');
+      renderEmployerApplications();
+    }
+    window.setApplicationStatus = setApplicationStatus;
+    function renderEmployerApplications() {
+      const wrap = document.getElementById('eAppsBody');
+      if (!wrap || curUser.role !== 'employer') return;
+      const myJobIds = new Set((DB.jobs || []).filter(j => j.employerId === curUser.id).map(j => j.id));
+      const apps = (DB.applications || []).filter(a => myJobIds.has(a.jobId));
+      const badge = document.getElementById('eAppBadge');
+      if (badge) { const pend = apps.filter(a => a.status === 'pending').length; badge.style.display = pend ? 'inline-block' : 'none'; badge.textContent = pend; }
+      if (!apps.length) { wrap.innerHTML = `<div style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Arizalar yo'q</div>`; return; }
+      wrap.innerHTML = apps.slice().reverse().map(a => {
+        const job = (DB.jobs || []).find(j => j.id === a.jobId);
+        const s = employerViewOfStudent(DB.students.find(x => x.id === a.studentId) || {});
+        return `<div class="card" style="margin-bottom:10px;"><div class="cb">
+          <div style="display:flex;justify-content:space-between;align-items:start;">
+            <div><b>${a.studentName}</b><div style="font-size:11px;color:var(--text3);">${job ? job.title : ''}</div></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-sm btn-cyan" onclick="setApplicationStatus(${a.id},'accepted')"><i class="fas fa-check"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="setApplicationStatus(${a.id},'rejected')"><i class="fas fa-xmark"></i></button>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px;">Skills: ${(s.skills || []).join(', ') || '—'}</div>
+          <div style="font-size:11px;color:var(--text3);">Holat: ${a.status === 'accepted' ? '✅ Qabul qilindi' : a.status === 'rejected' ? '❌ Rad etildi' : '⏳ Kutilmoqda'}</div>
+        </div></div>`;
+      }).join('');
+    }
+    // Admin uchun: barcha kompaniyalarning ish e'lonlari ro'yxati
+    function renderJobsAdmin() {
+      const wrap = document.getElementById('ejobsAdminBody');
+      if (!wrap) return;
+      const jobs = DB.jobs || [];
+      if (!jobs.length) { wrap.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px;font-family:'JetBrains Mono',monospace;">// Ish e'lonlari yo'q</td></tr>`; return; }
+      wrap.innerHTML = jobs.slice().reverse().map(j => {
+        const emp = (DB.employers || []).find(e => e.id === j.employerId);
+        const appCount = (DB.applications || []).filter(a => a.jobId === j.id).length;
+        return `<tr>
+          <td>${j.title}</td>
+          <td>${emp ? emp.company : '—'}</td>
+          <td>${j.status === 'open' ? '🟢 Ochiq' : '🔴 Yopiq'}</td>
+          <td>${appCount}</td>
+          <td>${new Date(j.createdAt).toLocaleDateString()}</td>
+        </tr>`;
+      }).join('');
     }
 
     function initS() {
@@ -8810,6 +9512,14 @@
       if (id === 'codepg') { try { ideOnPageShow(); } catch (e) { console.warn('CODEPG render:', e); } }
       if (id === 'coursespg') { try { renderCoursesPage(); } catch (e) { console.warn('COURSESPG render:', e); } }
       if (id === 'aitutorpg') { try { renderAiTutorChat(); } catch (e) { console.warn('AITUTOR render:', e); } }
+      if (id === 'parentChildPg') { try { renderParentDashboard(); } catch (e) { console.warn('PARENTPG render:', e); } }
+      if (id === 'certspg') { try { renderCertificatesList(); } catch (e) { console.warn('CERTSPG render:', e); } }
+      if (id === 'certsadminpg') { try { renderCertsAdmin(); } catch (e) { console.warn('CERTSADMIN render:', e); } }
+      if (id === 'jobspg') { try { renderStudentJobsPage(); } catch (e) { console.warn('JOBSPG render:', e); } }
+      if (id === 'ejobspg') { try { renderEmployerJobs(); } catch (e) { console.warn('EJOBSPG render:', e); } }
+      if (id === 'estudentspg') { try { renderEmployerStudents(); } catch (e) { console.warn('ESTUDENTS render:', e); } }
+      if (id === 'eappspg') { try { renderEmployerApplications(); } catch (e) { console.warn('EAPPS render:', e); } }
+      if (id === 'ejobsadminpg') { try { renderJobsAdmin(); } catch (e) { console.warn('EJOBSADMIN render:', e); } }
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
       if (title) document.getElementById('tbTitle').textContent = title;
