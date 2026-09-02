@@ -3987,6 +3987,79 @@
     </div>
   </div>
 
+  <!-- YANGI KURS MODALI -->
+  <div class="modal-overlay" id="courseNewModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-graduation-cap" style="margin-right:7px;color:var(--cyan);"></i>YANGI KURS</h3>
+        <button class="modal-close" onclick="closeMod('courseNewModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Kurs nomi</label><input class="form-control" id="crsNameIn" placeholder="Masalan: Python Beginner"></div>
+        <div class="form-group"><label>Ikonka (emoji)</label><input class="form-control" id="crsIconIn" placeholder="🐍" value="📘"></div>
+        <div class="form-group"><label>Tavsif</label><textarea class="form-control" id="crsDescIn" rows="3" placeholder="Kurs haqida qisqacha"></textarea></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-sm" onclick="closeMod('courseNewModal')">Bekor</button>
+        <button class="btn btn-cyan btn-sm" onclick="createCourse()"><i class="fas fa-plus"></i> Yaratish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- YANGI MODUL MODALI -->
+  <div class="modal-overlay" id="moduleNewModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3><i class="fas fa-layer-group" style="margin-right:7px;color:var(--cyan);"></i>YANGI MODUL</h3>
+        <button class="modal-close" onclick="closeMod('moduleNewModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Modul nomi</label><input class="form-control" id="modNameIn" placeholder="Masalan: 1-Modul: Asoslar"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-sm" onclick="closeMod('moduleNewModal')">Bekor</button>
+        <button class="btn btn-cyan btn-sm" onclick="createModule()"><i class="fas fa-plus"></i> Yaratish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- YANGI DARS MODALI (Material/Video → Practice → Test → Homework) -->
+  <div class="modal-overlay" id="lessonNewModal">
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-head">
+        <h3><i class="fas fa-book-open" style="margin-right:7px;color:var(--cyan);"></i>YANGI DARS</h3>
+        <button class="modal-close" onclick="closeMod('lessonNewModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="max-height:60vh;overflow:auto;">
+        <div class="form-group"><label>Dars nomi</label><input class="form-control" id="lesNameIn" placeholder="Masalan: 1-dars: Kirish"></div>
+        <div class="form-group"><label>📖 Material (matn)</label><textarea class="form-control" id="lesMaterialIn" rows="3" placeholder="Dars materiali matni"></textarea></div>
+        <div class="form-group"><label>🎬 Video (URL, ixtiyoriy)</label><input class="form-control" id="lesVideoIn" placeholder="https://..."></div>
+        <div class="form-group"><label>🛠️ Practice (amaliyot)</label><textarea class="form-control" id="lesPracticeIn" rows="2" placeholder="Amaliy mashq topshirig'i"></textarea></div>
+        <div class="form-group"><label>📝 Test</label><textarea class="form-control" id="lesTestIn" rows="2" placeholder="Test savollari"></textarea></div>
+        <div class="form-group"><label>📚 Homework (uy vazifasi)</label><textarea class="form-control" id="lesHwIn" rows="2" placeholder="Uyga vazifa"></textarea></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-sm" onclick="closeMod('lessonNewModal')">Bekor</button>
+        <button class="btn btn-cyan btn-sm" onclick="saveLessonModal()"><i class="fas fa-check"></i> Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DARSNI KO'RISH MODALI (talaba: Material → Practice → Test → Homework → Progress) -->
+  <div class="modal-overlay" id="lessonViewModal">
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-head">
+        <h3 id="lvTitle"><i class="fas fa-book-open" style="margin-right:7px;color:var(--cyan);"></i>DARS</h3>
+        <button class="modal-close" onclick="closeMod('lessonViewModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" id="lvBody" style="max-height:62vh;overflow:auto;"></div>
+      <div class="modal-foot">
+        <button class="btn btn-sm" onclick="closeMod('lessonViewModal')">Yopish</button>
+        <button class="btn btn-cyan btn-sm" id="lvDoneBtn" onclick="markCurLessonComplete()"><i class="fas fa-check-circle"></i> Darsni tugatdim</button>
+      </div>
+    </div>
+  </div>
+
   <!-- REACTION MODAL -->
   <div class="modal-overlay" id="reactModal">
     <div class="modal-box" style="max-width:280px;">
@@ -4253,6 +4326,7 @@
           sahifa</div>
         <div class="nav-item" onclick="showPage('rpg',this,'REYTING')"><i class="fas fa-trophy"></i> Reyting</div>
         <div class="nav-item" onclick="showPage('newspg',this,'YANGILIKLAR')"><i class="fas fa-newspaper"></i> Yangiliklar <span class="badge-notif" id="sNewsBadge" style="display:none;">0</span></div>
+        <div class="nav-item" onclick="showPage('coursespg',this,'KURSLAR')"><i class="fas fa-graduation-cap"></i> Kurslar</div>
         <div class="nav-item" onclick="showPage('marketpg',this,'MARKET')"><i class="fas fa-shopping-cart"></i> Market
         </div>
         <div class="nav-item" onclick="showPage('chatpg',this,'CHAT')"><i class="fas fa-comments"></i> Chat <span
@@ -4267,6 +4341,7 @@
         <div class="nav-item" onclick="showPage('slpg',this,'DARS MAVZUSI')"><i class="fas fa-book-open"></i> Dars mavzusi</div>
         <div class="nav-item" onclick="showPage('hwspg',this,'VAZIFALARIM')"><i class="fas fa-tasks"></i> Vazifalarim <span class="badge-notif" id="hwPendingBadge" style="display:none;">0</span></div>
         <!-- <div class="nav-item" onclick="showPage('battlepg',this,'BILIM BELLASHUVI')"><i class="fas fa-bolt"></i> Bilim bellashuvi</div> -->
+        <div class="nav-item" onclick="showPage('aitutorpg',this,'AI REPETITOR')"><i class="fas fa-robot" style="color:var(--green);"></i> AI Repetitor</div>
         <div class="nav-sec">Hisob</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
       </nav>
@@ -4284,6 +4359,7 @@
         </div>
         <div class="nav-item" onclick="showPage('grppg',this,'GURUHLAR')"><i class="fas fa-layer-group"></i> Guruhlar
         </div>
+        <div class="nav-item" onclick="showPage('coursespg',this,'KURSLAR')"><i class="fas fa-graduation-cap"></i> Kurslar</div>
         <div class="nav-item" onclick="showPage('lpg',this,'ISH REJA')"><i class="fas fa-book-open"></i> Ish reja (mavzu)</div>
         <div class="nav-item" onclick="showPage('hwmgrpg',this,'VAZIFA BERISH')"><i class="fas fa-tasks"></i> Vazifa berish</div>
         <div class="nav-item" onclick="showPage('matmgrpg',this,'DARSLIK/KITOB')"><i class="fas fa-book"></i> Darslik/Kitob</div>
@@ -4291,6 +4367,7 @@
           To'lov hisoboti</div>
         <div class="nav-item" onclick="showPage('testmgrpg',this,'TEST BOSHQARUVI')"><i class="fas fa-vial"></i> Test
           boshqaruvi</div>
+        <div class="nav-item" onclick="showPage('aiassistpg',this,'AI YORDAMCHI')"><i class="fas fa-robot" style="color:var(--green);"></i> AI Yordamchi</div>
         <div class="nav-sec">Profil</div>
         <div class="nav-item" onclick="showPage('tapg',this,'PROFIL')"><i class="fas fa-id-card"></i> Profil</div>
         <div class="nav-item" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Chiqish</div>
@@ -5282,6 +5359,55 @@
           </div>
         </div>
 
+        <div class="page" id="aiassistpg">
+          <div class="ph">
+            <h2><i class="fas fa-robot" style="color:var(--green);"></i> AI YORDAMCHI</h2>
+            <p>// AI qoralama tayyorlaydi — nashr qilishdan oldin albatta tekshirib, o'zingiz tasdiqlaysiz</p>
+          </div>
+          <div class="card" style="border-left:3px solid var(--green);margin-bottom:14px;">
+            <div class="cb" style="padding:10px 14px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;">
+              <i class="fas fa-shield-halved" style="color:var(--green);"></i>
+              AI faqat qoralama (draft) yaratadi. Hech narsa avtomatik talabalarga chiqmaydi — siz ko'rib chiqib, mavjud "Saqlash / Berish / Qo'shish" tugmasini bosgandan keyingina nashr bo'ladi.
+            </div>
+          </div>
+
+          <div class="g2" style="align-items:start;">
+            <div class="card" style="margin:0;border-left:3px solid var(--gold);">
+              <div class="ch"><h4>📝 AI TEST GENERATOR</h4></div>
+              <div class="cb">
+                <div class="form-group"><label>MAVZU</label><input class="form-control" id="aiTestTopic" placeholder="Masalan: HTML Forms"></div>
+                <div class="g2" style="margin-bottom:0;">
+                  <div class="form-group"><label>SAVOLLAR SONI</label><input type="number" class="form-control" id="aiTestCount" value="20" min="1" max="50"></div>
+                  <div class="form-group"><label>DARAJA</label>
+                    <select class="form-control" id="aiTestLevel"><option value="boshlang'ich">Boshlang'ich</option><option value="o'rta" selected>O'rta</option><option value="murakkab">Murakkab</option></select>
+                  </div>
+                </div>
+                <button class="btn btn-gold" style="width:100%;" id="aiTestBtn" onclick="aiGenerateTest()"><i class="fas fa-wand-magic-sparkles"></i> Test yaratish (AI)</button>
+              </div>
+            </div>
+
+            <div class="card" style="margin:0;border-left:3px solid var(--cyan);">
+              <div class="ch"><h4>📚 AI UY VAZIFA GENERATOR</h4></div>
+              <div class="cb">
+                <div class="form-group"><label>MAVZU</label><input class="form-control" id="aiHwTopic" placeholder="Masalan: 5-bob mashqlari"></div>
+                <div class="form-group"><label>DARAJA</label>
+                  <select class="form-control" id="aiHwLevel"><option value="boshlang'ich">Boshlang'ich</option><option value="o'rta" selected>O'rta</option><option value="murakkab">Murakkab</option></select>
+                </div>
+                <button class="btn" style="width:100%;background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.3);color:var(--cyan);font-weight:700;" id="aiHwBtn" onclick="aiGenerateHomework()"><i class="fas fa-wand-magic-sparkles"></i> Vazifa yaratish (AI)</button>
+              </div>
+            </div>
+
+            <div class="card" style="margin:0;border-left:3px solid var(--purple);">
+              <div class="ch"><h4>🗓️ AI DARS REJA GENERATOR</h4></div>
+              <div class="cb">
+                <div class="form-group"><label>MAVZU</label><input class="form-control" id="aiLpTopic" placeholder="Masalan: HTML asoslari"></div>
+                <div class="form-group"><label>FAN</label><input class="form-control" id="aiLpSubj" placeholder="Masalan: IT"></div>
+                <button class="btn" style="width:100%;background:rgba(191,95,255,.2);border:1px solid rgba(191,95,255,.3);color:var(--purple);font-weight:700;" id="aiLpBtn" onclick="aiGenerateLesson()"><i class="fas fa-wand-magic-sparkles"></i> Dars reja yaratish (AI)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="page" id="testspg">
           <div class="ph">
             <h2>TESTLAR</h2>
@@ -5330,6 +5456,26 @@
             <div class="ch"><h4>✅ BAJARILGAN VAZIFALAR</h4></div>
             <div class="cb" id="hwDoneList" style="padding:10px;">
               <div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;">// Bajarilgan vazifa yo'q</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page" id="aitutorpg">
+          <div class="ph">
+            <h2><i class="fas fa-robot" style="color:var(--green);"></i> AI REPETITOR</h2>
+            <p>// Tushunmagan mavzuni yozing — AI tushuntiradi, misol beradi, savol beradi va javobingizni tekshiradi</p>
+          </div>
+          <div class="card" style="border-left:3px solid var(--green);margin-bottom:14px;">
+            <div class="cb" style="padding:10px 14px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;">
+              <i class="fas fa-circle-info" style="color:var(--green);"></i>
+              Javobingiz darajangizga qarab AI tushuntirishni soddalashtiradi yoki chuqurlashtiradi.
+            </div>
+          </div>
+          <div class="card" style="padding:0;overflow:hidden;">
+            <div id="aiTutorChat" style="min-height:340px;max-height:52vh;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;"></div>
+            <div style="display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--bor2);background:var(--bg3);">
+              <input class="form-control" id="aiTutorInput" placeholder="Masalan: Python loopni tushunmadim..." style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();sendAiTutorMsg();}">
+              <button class="btn btn-gold" id="aiTutorSendBtn" onclick="sendAiTutorMsg()"><i class="fas fa-paper-plane"></i></button>
             </div>
           </div>
         </div>
@@ -5500,6 +5646,11 @@
         <!-- YANGI: STUDY (O'QISH) SAHIFASI -->
         <div class="page" id="studypg">
           <div id="studyWrap"></div>
+        </div>
+
+        <!-- YANGI: KURSLAR (Course → Module → Lesson) -->
+        <div class="page" id="coursespg">
+          <div id="courseWrap"></div>
         </div>
 
         <!-- YANGI: SUBJECT SCORES (FANLAR BO'YICHA NATIJALAR) -->
@@ -5741,6 +5892,7 @@
       teachers: [],
       admins: [],
       parents: [],
+      courses: [], // YANGI: Course → Module → Lesson strukturasi (Kurs → Modul → Dars)
       settings: { exchangeRate: 5 } // 1 Olmos (💎) = 5 Tanga (🪙), admin tomonidan sozlanadi
     };
 
@@ -5903,6 +6055,7 @@
         homeworks: DB.homeworks || [],
         homeworkSubmissions: DB.homeworkSubmissions || [],
         lessonPlans: DB.lessonPlans || [],
+        courses: DB.courses || [],
         settings: DB.settings || { exchangeRate: 5 }
       };
     }
@@ -5912,7 +6065,7 @@
       // Backend ham, localStorage ham bo'sh bo'lsa — tizim ishlashi uchun boshlang'ich demo ma'lumot
       return {
         students: [
-          { id: 1001, name: "Aliyev Vali", phone: "+998901112233", pass: "1234", coins: 45, level: 1, streak: 3, ref: "REF1001", group: "D1", teacherId: 2001, teacherIds: [2001] },
+          { id: 1001, name: "Aliyev Vali", phone: "+998901112233", pass: "1234", coins: 45, level: 1, streak: 3, ref: "REF1001", group: "D1", teacherId: 2001, teacherIds: [2001], courseProgress: { 9000001: { done: [9000001, 9000002, 9000003, 9000004, 9000005, 9000006, 9000007, 9000008], lastLessonId: 9000008 } } },
           { id: 1002, name: "Karimova Nilufar", phone: "+998901112244", pass: "1234", coins: 80, level: 1, streak: 5, ref: "REF1002", group: "D1", teacherId: 2001, teacherIds: [2001] },
           { id: 1003, name: "Yusupov Sardor", phone: "+998901112255", pass: "1234", coins: 20, level: 1, streak: 0, ref: "REF1003", group: "D2", teacherId: 2001, teacherIds: [2001] }
         ],
@@ -5926,6 +6079,27 @@
         transactions: [], adminRequests: [], messages: [], groups: [],
         chatFriends: [], chatGroups: [], pendingReqs: [],
         pendingTelegramLinks: [], telegramProfiles: {}, tests: [], testResults: [], gamePlays: {}, practicePlays: {}, battleLog: [], attendanceLog: [], pairHistory: [],
+        // YANGI: Course → Module → Lesson (demo: Python Beginner, 1 modul, 10 dars)
+        courses: [
+          {
+            id: 9000000, name: "Python Beginner", desc: "Python dasturlash tilining boshlang'ich kursi.", icon: "🐍",
+            teacherId: 2001, createdAt: Date.now(),
+            modules: [
+              {
+                id: 9100000, name: "1-Modul: Asoslar",
+                lessons: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => ({
+                  id: 9000000 + n,
+                  name: n + "-dars: Python asoslari " + n,
+                  material: { type: "text", content: n + "-dars uchun material matni va tushuntirish shu yerda bo'ladi." },
+                  video: "",
+                  practice: n + "-dars bo'yicha amaliy mashq topshirig'i.",
+                  test: n + "-dars bo'yicha bilimni tekshiruvchi test savollari.",
+                  homework: n + "-dars bo'yicha uyga vazifa."
+                }))
+              }
+            ]
+          }
+        ],
         settings: { exchangeRate: 5 }
       };
     }
@@ -5965,6 +6139,7 @@
       DB.homeworks = Array.isArray(data.homeworks) ? data.homeworks : [];
       DB.homeworkSubmissions = Array.isArray(data.homeworkSubmissions) ? data.homeworkSubmissions : [];
       DB.lessonPlans = Array.isArray(data.lessonPlans) ? data.lessonPlans : [];
+      DB.courses = Array.isArray(data.courses) ? data.courses : [];
       DB.settings = (data.settings && typeof data.settings === 'object') ? { exchangeRate: 5, ...data.settings } : { exchangeRate: 5 };
     }
 
@@ -8581,6 +8756,8 @@
       if (id === 'matpg') { try { renderMaterialsStudent(); } catch (e) { console.warn('MATPG render:', e); } }
       if (id === 'battlepg') { try { refreshDailyGameBtn(); refreshPracticeBtn(); renderBattleBoard('daily'); } catch (e) { console.warn('BATTLEPG render:', e); } }
       if (id === 'codepg') { try { ideOnPageShow(); } catch (e) { console.warn('CODEPG render:', e); } }
+      if (id === 'coursespg') { try { renderCoursesPage(); } catch (e) { console.warn('COURSESPG render:', e); } }
+      if (id === 'aitutorpg') { try { renderAiTutorChat(); } catch (e) { console.warn('AITUTOR render:', e); } }
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       if (navEl) navEl.classList.add('active');
       if (title) document.getElementById('tbTitle').textContent = title;
@@ -9103,6 +9280,129 @@
       aiMsg.time = nTime();
       renderMsgs(); renderCChats(); saveData();
     }
+
+    // ══════════════════════════════════
+    // AI EDUCATION ASSISTANT (AI Repetitor + Teacher AI Yordamchi)
+    // Diqqat: API kaliti bu yerda YO'Q. Barcha so'rovlar /api/ai/* backend
+    // endpointlariga yuboriladi — kalit faqat serverda (.env) saqlanadi.
+    // AI hech qachon avtomatik nashr qilmaydi: har bir generator faqat
+    // mavjud shakl/oynani qoralama bilan to'ldiradi, "Saqlash/Berish/
+    // Qo'shish" tugmasini bosish — bu ustoz tasdig'i — orqali chiqadi.
+    // ══════════════════════════════════
+    let aiTutorHistory = [];
+    function aiTutorBubble(text, who) {
+      const mine = who === 'user';
+      return `<div style="align-self:${mine ? 'flex-end' : 'flex-start'};max-width:82%;">
+        <div style="font-size:9px;color:var(--text3);margin-bottom:3px;font-family:'JetBrains Mono',monospace;${mine ? 'text-align:right;' : ''}">${mine ? (curUser?.name || 'Siz') : '🤖 AI Repetitor'}</div>
+        <div style="background:${mine ? 'var(--card3)' : 'rgba(0,255,136,.08)'};border:1px solid ${mine ? 'var(--bor2)' : 'rgba(0,255,136,.2)'};border-radius:12px;padding:10px 13px;font-size:13px;line-height:1.55;white-space:pre-wrap;">${String(text).replace(/</g, '&lt;')}</div>
+      </div>`;
+    }
+    function renderAiTutorChat() {
+      const el = document.getElementById('aiTutorChat'); if (!el) return;
+      if (!aiTutorHistory.length) {
+        el.innerHTML = `<div style="color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:center;padding:30px 10px;">// Savolingizni yozing, masalan: "Python loopni tushunmadim"</div>`;
+        return;
+      }
+      el.innerHTML = aiTutorHistory.map(m => aiTutorBubble(m.content, m.role === 'user' ? 'user' : 'ai')).join('');
+      el.scrollTop = el.scrollHeight;
+    }
+    async function sendAiTutorMsg() {
+      const inp = document.getElementById('aiTutorInput');
+      const text = inp.value.trim(); if (!text) return;
+      inp.value = '';
+      aiTutorHistory.push({ role: 'user', content: text });
+      aiTutorHistory.push({ role: 'assistant', content: '⏳ AI yozmoqda...' });
+      renderAiTutorChat();
+      const btn = document.getElementById('aiTutorSendBtn'); if (btn) btn.disabled = true;
+      try {
+        const res = await fetch('/api/ai/tutor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            studentName: curUser?.name || '',
+            studentGroup: curUser?.group || '',
+            history: aiTutorHistory.slice(0, -2).slice(-12)
+          })
+        });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(out.message || 'AI javob bermadi');
+        aiTutorHistory[aiTutorHistory.length - 1].content = out.reply || 'Javob topilmadi';
+      } catch (e) {
+        aiTutorHistory[aiTutorHistory.length - 1].content = "⚠️ AI Repetitor serveri ulanmagan (backend yo'q yoki band). Server sozlansa AI javob beradi.";
+      }
+      if (btn) btn.disabled = false;
+      renderAiTutorChat();
+    }
+    window.sendAiTutorMsg = sendAiTutorMsg;
+
+    async function aiCallEndpoint(endpoint, payload, btnId) {
+      const btn = btnId ? document.getElementById(btnId) : null;
+      const oldHtml = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yaratilmoqda...'; }
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(out.message || 'AI javob bermadi');
+        return out;
+      } catch (e) {
+        showToast("⚠️ AI serveri ulanmagan (backend yo'q yoki band)");
+        return null;
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = oldHtml; }
+      }
+    }
+
+    async function aiGenerateTest() {
+      const topic = document.getElementById('aiTestTopic').value.trim();
+      const count = parseInt(document.getElementById('aiTestCount').value) || 20;
+      const level = document.getElementById('aiTestLevel').value;
+      if (!topic) { showToast('❗ Mavzuni kiriting'); return; }
+      const out = await aiCallEndpoint('/api/ai/generate-test', { topic, count, level }, 'aiTestBtn');
+      if (!out || !out.text) return;
+      openTestBuilder();
+      document.getElementById('tstQList').innerHTML = ''; tstQCount = 0;
+      document.getElementById('tstTitle').value = topic;
+      document.getElementById('tstImportText').value = out.text;
+      importTestFromText();
+      showToast('✅ AI qoralamasi tayyor — savollarni tekshirib, "Testni saqlash" tugmasini bosing');
+    }
+    window.aiGenerateTest = aiGenerateTest;
+
+    async function aiGenerateHomework() {
+      const topic = document.getElementById('aiHwTopic').value.trim();
+      const level = document.getElementById('aiHwLevel').value;
+      if (!topic) { showToast('❗ Mavzuni kiriting'); return; }
+      const out = await aiCallEndpoint('/api/ai/generate-homework', { topic, level }, 'aiHwBtn');
+      if (!out) return;
+      showPage('hwmgrpg', document.querySelector('#tNav .nav-item[onclick*="hwmgrpg"]'), 'VAZIFA BERISH');
+      document.getElementById('hwGrpTitle').value = out.title || topic;
+      document.getElementById('hwGrpDesc').value = out.desc || '';
+      document.getElementById('hwmgrpg').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast('✅ AI qoralamasi tayyor — tekshirib, guruh tanlang va "Guruhga berish" tugmasini bosing');
+    }
+    window.aiGenerateHomework = aiGenerateHomework;
+
+    async function aiGenerateLesson() {
+      const topic = document.getElementById('aiLpTopic').value.trim();
+      const subj = document.getElementById('aiLpSubj').value.trim();
+      if (!topic) { showToast('❗ Mavzuni kiriting'); return; }
+      const out = await aiCallEndpoint('/api/ai/generate-lesson', { topic, subject: subj }, 'aiLpBtn');
+      if (!out) return;
+      showPage('lpg', document.querySelector('#tNav .nav-item[onclick*="lpg"]'), 'ISH REJA');
+      if (subj) document.getElementById('lpSubj').value = subj;
+      document.getElementById('lpTopic').value = out.topic || topic;
+      document.getElementById('lpGoal').value = out.goal || '';
+      document.getElementById('lpHw').value = out.hw || '';
+      document.getElementById('lpg').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast('✅ AI qoralamasi tayyor — guruh/sana tanlang, tekshirib "Qo\'shish" tugmasini bosing');
+    }
+    window.aiGenerateLesson = aiGenerateLesson;
+
     async function uploadChatFile(file) {
       const fd = new FormData();
       fd.append('file', file);
@@ -10938,6 +11238,289 @@
       document.querySelectorAll('.st-tab').forEach(x=>x.classList.remove('active')); if (el) el.classList.add('active');
     }
     window.mStudyTab = mStudyTab;
+
+    // ════════════════════════════════════════════════════════════
+    // YANGI: KURSLAR — Course → Module → Lesson → Material/Video → Practice → Test → Homework → Progress
+    // ════════════════════════════════════════════════════════════
+    let curCourseId = null;   // o'qituvchi tomonidan hozir ochilgan kurs (boshqarish ko'rinishi)
+    let curLessonRef = null;  // { courseId, moduleId, lessonId } — hozir modalda ochiq dars
+
+    function courseUid() { return Date.now() + Math.floor(Math.random() * 1000); }
+    function flattenLessons(course) {
+      const out = [];
+      (course.modules || []).forEach(m => (m.lessons || []).forEach(l => out.push({ moduleId: m.id, lesson: l })));
+      return out;
+    }
+    function courseLessonCount(course) { return flattenLessons(course).length; }
+    function teacherCourses() {
+      if (curUser?.role !== 'teacher') return DB.courses || [];
+      return (DB.courses || []).filter(c => String(c.teacherId) === String(curUser.id));
+    }
+    function studentVisibleCourses(student) {
+      const tids = studentTeacherIds(student);
+      return (DB.courses || []).filter(c => tids.includes(String(c.teacherId)));
+    }
+    function ensureCourseProgress(student, courseId) {
+      student.courseProgress = student.courseProgress || {};
+      if (!student.courseProgress[courseId]) student.courseProgress[courseId] = { done: [], lastLessonId: null };
+      return student.courseProgress[courseId];
+    }
+    function courseProgressStats(student, course) {
+      const flat = flattenLessons(course);
+      const total = flat.length;
+      const prog = (student.courseProgress || {})[course.id] || { done: [], lastLessonId: null };
+      const done = flat.filter(x => (prog.done || []).includes(x.lesson.id)).length;
+      const pct = total ? Math.round(done / total * 100) : 0;
+      return { total, done, pct, lastLessonId: prog.lastLessonId };
+    }
+    // Talaba kursga qayta kirganda qolgan joyidan davom etishi uchun keyingi darsni topadi
+    function resumeLessonRef(student, course) {
+      const flat = flattenLessons(course);
+      if (!flat.length) return null;
+      const prog = (student.courseProgress || {})[course.id];
+      if (prog && prog.lastLessonId) {
+        const idx = flat.findIndex(x => x.lesson.id === prog.lastLessonId);
+        if (idx >= 0) {
+          const isDone = (prog.done || []).includes(prog.lastLessonId);
+          const next = isDone ? flat[idx + 1] : flat[idx];
+          if (next) return { courseId: course.id, moduleId: next.moduleId, lessonId: next.lesson.id };
+        }
+      }
+      const firstIncomplete = flat.find(x => !((prog && prog.done) || []).includes(x.lesson.id));
+      const target = firstIncomplete || flat[0];
+      return { courseId: course.id, moduleId: target.moduleId, lessonId: target.lesson.id };
+    }
+
+    function renderCoursesPage() {
+      if (curUser?.role === 'teacher') renderTeacherCourses();
+      else if (curUser?.role === 'student') renderStudentCourses();
+      else { const wrap = document.getElementById('courseWrap'); if (wrap) wrap.innerHTML = emptyPg('KURSLAR'); }
+    }
+
+    // ────────── O'QITUVCHI: Kurs/Modul/Dars yaratish ──────────
+    function renderTeacherCourses() {
+      const wrap = document.getElementById('courseWrap'); if (!wrap) return;
+      const list = teacherCourses();
+      wrap.innerHTML = `
+      <div class="pg-wrap">
+        <div class="pg-title"><i class="fas fa-graduation-cap"></i> KURSLAR</div>
+        <div class="pg-sub">Course → Module → Lesson strukturasida kurslaringizni boshqaring</div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
+          <button class="btn btn-cyan btn-sm" onclick="openMod('courseNewModal')"><i class="fas fa-plus"></i> Yangi kurs</button>
+        </div>
+        <div class="g3" id="crsGrid">
+          ${list.length ? list.map(c => {
+            const total = courseLessonCount(c);
+            return `<div class="mkt-card">
+              <div class="mkt-cover" style="background:linear-gradient(135deg,var(--cyan-dim),transparent);"><div style="font-size:52px;">${c.icon || '📘'}</div></div>
+              <div class="mkt-body">
+                <span class="mkt-type">KURS</span>
+                <div class="mkt-name">${escHtml(c.name)}</div>
+                <div class="mkt-desc">${escHtml(c.desc || '')}</div>
+                <div class="mkt-meta"><div>${(c.modules || []).length} modul</div><div>${total} dars</div></div>
+              </div>
+              <div class="mkt-foot">
+                <button class="buy-btn" onclick="openTeacherCourseDetail(${c.id})"><i class="fas fa-cog"></i> Boshqarish</button>
+                <button class="btn btn-sm" style="color:var(--red);" onclick="deleteCourse(${c.id})"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>`;
+          }).join('') : `<div class="fs13 txt3" style="padding:20px;">Hali kurs yaratilmagan. "Yangi kurs" tugmasi orqali boshlang.</div>`}
+        </div>
+        <div id="crsDetailWrap" style="margin-top:22px;"></div>
+      </div>`;
+    }
+    function createCourse() {
+      const nameEl = document.getElementById('crsNameIn');
+      const name = nameEl.value.trim();
+      if (!name) { showToast('⚠️ Kurs nomini kiriting'); return; }
+      const icon = document.getElementById('crsIconIn').value.trim() || '📘';
+      const desc = document.getElementById('crsDescIn').value.trim();
+      DB.courses = DB.courses || [];
+      const course = { id: courseUid(), name, icon, desc, teacherId: curUser.id, createdAt: Date.now(), modules: [] };
+      DB.courses.push(course);
+      saveData();
+      nameEl.value = ''; document.getElementById('crsDescIn').value = ''; document.getElementById('crsIconIn').value = '📘';
+      closeMod('courseNewModal');
+      showToast('✅ Kurs yaratildi');
+      renderTeacherCourses();
+    }
+    function deleteCourse(id) {
+      if (!confirm("Kursni butunlay o'chirmoqchimisiz? Barcha modul va darslar ham o'chadi.")) return;
+      DB.courses = (DB.courses || []).filter(c => c.id !== id);
+      if (curCourseId === id) { curCourseId = null; const dw = document.getElementById('crsDetailWrap'); if (dw) dw.innerHTML = ''; }
+      saveData();
+      renderTeacherCourses();
+      showToast("🗑️ Kurs o'chirildi");
+    }
+    function openTeacherCourseDetail(id) { curCourseId = id; renderTeacherCourseDetail(); }
+    function renderTeacherCourseDetail() {
+      const dw = document.getElementById('crsDetailWrap'); if (!dw) return;
+      const course = (DB.courses || []).find(c => c.id === curCourseId);
+      if (!course) { dw.innerHTML = ''; return; }
+      dw.innerHTML = `
+      <div class="ch"><h4>${course.icon || '📘'} ${escHtml(course.name)} — MODULLAR</h4></div>
+      <div style="margin-bottom:12px;"><button class="btn btn-cyan btn-sm" onclick="openNewModuleModal(${course.id})"><i class="fas fa-plus"></i> Yangi modul</button></div>
+      ${(course.modules || []).length ? course.modules.map(m => `
+        <div class="card" style="margin-bottom:12px;padding:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="font-weight:700;color:var(--cyan);"><i class="fas fa-layer-group" style="margin-right:6px;"></i>${escHtml(m.name)}</div>
+            <div>
+              <button class="btn btn-sm" onclick="openNewLessonModal(${course.id},${m.id})"><i class="fas fa-plus"></i> Dars</button>
+              <button class="btn btn-sm" style="color:var(--red);" onclick="deleteModule(${course.id},${m.id})"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          ${(m.lessons || []).length ? m.lessons.map((l, i) => `
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bor2);font-size:13px;">
+              <span style="color:var(--text3);width:20px;font-family:'JetBrains Mono',monospace;">${i + 1}</span>
+              <span style="flex:1;">${escHtml(l.name)}</span>
+              <button class="btn btn-sm" style="color:var(--red);" onclick="deleteLesson(${course.id},${m.id},${l.id})"><i class="fas fa-trash"></i></button>
+            </div>`).join('') : `<div class="fs13 txt3" style="padding:6px 0;">// Dars yo'q</div>`}
+        </div>`).join('') : `<div class="fs13 txt3">// Modul yo'q</div>`}
+      `;
+    }
+    function openNewModuleModal(courseId) { curCourseId = courseId; document.getElementById('modNameIn').value = ''; openMod('moduleNewModal'); }
+    function createModule() {
+      const course = (DB.courses || []).find(c => c.id === curCourseId); if (!course) return;
+      const name = document.getElementById('modNameIn').value.trim();
+      if (!name) { showToast('⚠️ Modul nomini kiriting'); return; }
+      course.modules = course.modules || [];
+      course.modules.push({ id: courseUid(), name, lessons: [] });
+      saveData(); closeMod('moduleNewModal'); showToast('✅ Modul qo\'shildi');
+      renderTeacherCourses(); openTeacherCourseDetail(course.id);
+    }
+    function deleteModule(courseId, modId) {
+      const course = (DB.courses || []).find(c => c.id === courseId); if (!course) return;
+      if (!confirm("Modulni o'chirmoqchimisiz? Ichidagi darslar ham o'chadi.")) return;
+      course.modules = (course.modules || []).filter(m => m.id !== modId);
+      saveData(); renderTeacherCourseDetail(); showToast("🗑️ Modul o'chirildi");
+    }
+    let curNewLessonCtx = null;
+    function openNewLessonModal(courseId, moduleId) {
+      curNewLessonCtx = { courseId, moduleId };
+      ['lesNameIn', 'lesMaterialIn', 'lesVideoIn', 'lesPracticeIn', 'lesTestIn', 'lesHwIn'].forEach(id => document.getElementById(id).value = '');
+      openMod('lessonNewModal');
+    }
+    function saveLessonModal() {
+      if (!curNewLessonCtx) return;
+      const course = (DB.courses || []).find(c => c.id === curNewLessonCtx.courseId); if (!course) return;
+      const mod = (course.modules || []).find(m => m.id === curNewLessonCtx.moduleId); if (!mod) return;
+      const name = document.getElementById('lesNameIn').value.trim();
+      if (!name) { showToast('⚠️ Dars nomini kiriting'); return; }
+      mod.lessons = mod.lessons || [];
+      mod.lessons.push({
+        id: courseUid(), name,
+        material: { type: 'text', content: document.getElementById('lesMaterialIn').value.trim() },
+        video: document.getElementById('lesVideoIn').value.trim(),
+        practice: document.getElementById('lesPracticeIn').value.trim(),
+        test: document.getElementById('lesTestIn').value.trim(),
+        homework: document.getElementById('lesHwIn').value.trim()
+      });
+      saveData(); closeMod('lessonNewModal'); showToast('✅ Dars qo\'shildi');
+      renderTeacherCourses(); openTeacherCourseDetail(course.id);
+    }
+    function deleteLesson(courseId, modId, lesId) {
+      const course = (DB.courses || []).find(c => c.id === courseId); if (!course) return;
+      const mod = (course.modules || []).find(m => m.id === modId); if (!mod) return;
+      if (!confirm("Darsni o'chirmoqchimisiz?")) return;
+      mod.lessons = (mod.lessons || []).filter(l => l.id !== lesId);
+      saveData(); renderTeacherCourseDetail(); showToast("🗑️ Dars o'chirildi");
+    }
+
+    // ────────── TALABA: Kurslar ro'yxati + progress + "qayerda qolgan bo'lsa davom etish" ──────────
+    function renderStudentCourses() {
+      const wrap = document.getElementById('courseWrap'); if (!wrap) return;
+      const s = mGetStudent(); if (!s) { wrap.innerHTML = emptyPg('KURSLAR'); return; }
+      const list = studentVisibleCourses(s);
+      wrap.innerHTML = `
+      <div class="pg-wrap">
+        <div class="pg-title"><i class="fas fa-graduation-cap"></i> KURSLAR</div>
+        <div class="pg-sub">Kurslaringiz va ulardagi progressingiz</div>
+        <div id="stuCrsList">
+          ${list.length ? list.map(c => {
+            const st = courseProgressStats(s, c);
+            return `<div class="card" style="padding:16px;margin-bottom:14px;cursor:pointer;" onclick="openStudentCourseDetail(${c.id})">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                <div style="font-weight:800;font-size:15px;">${c.icon || '📘'} ${escHtml(c.name)}</div>
+                <div style="font-weight:700;color:var(--cyan);font-family:'JetBrains Mono',monospace;">${st.pct}%</div>
+              </div>
+              <div class="pbar" style="height:10px;"><div class="pbar-fill" style="width:${st.pct}%;"></div></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+                <div class="fs12 txt2">${st.done}/${st.total} lessons</div>
+                <button class="btn btn-cyan btn-sm" onclick="event.stopPropagation();continueCourse(${c.id})"><i class="fas fa-play"></i> Davom ettirish</button>
+              </div>
+            </div>`;
+          }).join('') : `<div class="fs13 txt3" style="padding:20px;">Sizga hali kurs biriktirilmagan.</div>`}
+        </div>
+        <div id="stuCrsDetailWrap"></div>
+      </div>`;
+    }
+    function continueCourse(courseId) {
+      const s = mGetStudent(); const course = (DB.courses || []).find(c => c.id === courseId);
+      if (!s || !course) return;
+      const ref = resumeLessonRef(s, course);
+      if (!ref) { showToast("Bu kursda hali dars yo'q"); return; }
+      openLessonViewer(ref.courseId, ref.moduleId, ref.lessonId);
+    }
+    function openStudentCourseDetail(courseId) {
+      const s = mGetStudent(); const course = (DB.courses || []).find(c => c.id === courseId);
+      const dw = document.getElementById('stuCrsDetailWrap'); if (!s || !course || !dw) return;
+      const prog = ensureCourseProgress(s, courseId);
+      const ref = resumeLessonRef(s, course);
+      dw.innerHTML = `
+      <div class="ch"><h4>${course.icon || '📘'} ${escHtml(course.name)} — DARSLAR</h4></div>
+      ${(course.modules || []).map(m => `
+        <div class="card" style="margin-bottom:12px;padding:14px;">
+          <div style="font-weight:700;color:var(--cyan);margin-bottom:8px;"><i class="fas fa-layer-group" style="margin-right:6px;"></i>${escHtml(m.name)}</div>
+          ${(m.lessons || []).map((l, i) => {
+            const done = (prog.done || []).includes(l.id);
+            const isResume = ref && ref.lessonId === l.id;
+            return `<div style="display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid var(--bor2);font-size:13px;cursor:pointer;${isResume ? 'background:var(--cyan-dim);border-radius:6px;' : ''}" onclick="openLessonViewer(${course.id},${m.id},${l.id})">
+              <span style="color:${done ? 'var(--green)' : 'var(--text3)'};width:18px;"><i class="fas ${done ? 'fa-check-circle' : 'fa-circle'}"></i></span>
+              <span style="flex:1;">${i + 1}. ${escHtml(l.name)}</span>
+              ${isResume ? '<span class="ph-chip" style="font-size:10px;">Davom etilyapti</span>' : ''}
+            </div>`;
+          }).join('')}
+        </div>`).join('')}
+      `;
+    }
+    // ── Dars ko'rish modali: Material/Video → Practice → Test → Homework → (tugatilganda) Progress ──
+    function openLessonViewer(courseId, moduleId, lessonId) {
+      const course = (DB.courses || []).find(c => c.id === courseId); if (!course) return;
+      const mod = (course.modules || []).find(m => m.id === moduleId); if (!mod) return;
+      const lesson = (mod.lessons || []).find(l => l.id === lessonId); if (!lesson) return;
+      curLessonRef = { courseId, moduleId, lessonId };
+      document.getElementById('lvTitle').innerHTML = `<i class="fas fa-book-open" style="margin-right:7px;color:var(--cyan);"></i>${escHtml(lesson.name)}`;
+      document.getElementById('lvBody').innerHTML = `
+        ${lesson.video ? `<div class="form-group"><label>🎬 VIDEO</label><div class="fs13"><a href="${escHtml(lesson.video)}" target="_blank" rel="noopener" style="color:var(--cyan);">${escHtml(lesson.video)}</a></div></div>` : ''}
+        <div class="form-group"><label>📖 MATERIAL</label><div class="fs13" style="white-space:pre-wrap;">${escHtml(lesson.material?.content || '—')}</div></div>
+        <div class="form-group"><label>🛠️ PRACTICE</label><div class="fs13" style="white-space:pre-wrap;">${escHtml(lesson.practice || '—')}</div></div>
+        <div class="form-group"><label>📝 TEST</label><div class="fs13" style="white-space:pre-wrap;">${escHtml(lesson.test || '—')}</div></div>
+        <div class="form-group"><label>📚 HOMEWORK</label><div class="fs13" style="white-space:pre-wrap;">${escHtml(lesson.homework || '—')}</div></div>
+      `;
+      const s = mGetStudent();
+      const btn = document.getElementById('lvDoneBtn');
+      if (s) {
+        const prog = ensureCourseProgress(s, courseId);
+        const done = (prog.done || []).includes(lessonId);
+        if (btn) { btn.innerHTML = done ? '<i class="fas fa-check-circle"></i> Tugallangan' : '<i class="fas fa-check-circle"></i> Darsni tugatdim'; btn.disabled = !!done; }
+        // Talaba kursga qayta kirganda aynan shu joydan davom etishi uchun "oxirgi ko'rilgan dars" deb belgilaymiz
+        prog.lastLessonId = lessonId;
+        saveData();
+      } else if (btn) { btn.style.display = 'none'; }
+      openMod('lessonViewModal');
+    }
+    function markCurLessonComplete() {
+      if (!curLessonRef) return;
+      const s = mGetStudent(); if (!s) return;
+      const prog = ensureCourseProgress(s, curLessonRef.courseId);
+      if (!(prog.done || []).includes(curLessonRef.lessonId)) prog.done.push(curLessonRef.lessonId);
+      prog.lastLessonId = curLessonRef.lessonId;
+      saveData();
+      showToast('✅ Dars tugallandi');
+      closeMod('lessonViewModal');
+      renderStudentCourses();
+      openStudentCourseDetail(curLessonRef.courseId);
+    }
 
     function emptyPg(title) { return `<div class="pg-wrap"><div class="pg-title"><i class="fas fa-info-circle"></i> ${title}</div><div class="pg-sub">Tizimga kiring va talaba hisobidan foydalaning</div></div>`; }
 
