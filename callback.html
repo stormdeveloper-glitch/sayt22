@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google OAuth - Yuklanmoqda</title>
+  <style>
+    body {
+      background-color: #060c18;
+      color: #e2eaff;
+      font-family: 'Exo 2', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(0, 229, 255, 0.1);
+      border-top-color: #00e5ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="spinner"></div>
+  <h2 id="status">Tizimga kirilmoqda...</h2>
+  <script>
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const error = urlParams.get('error');
+      const action = urlParams.get('action');
+
+      if (error) {
+        document.getElementById('status').innerText = "Xatolik: " + decodeURIComponent(error);
+        setTimeout(() => window.location.href = '/', 3000);
+        return;
+      }
+
+      if (token) {
+        localStorage.setItem('google_auth_token', token);
+        if (action === 'link') {
+          document.getElementById('status').innerText = "Google hisob bog'landi!";
+        } else {
+          document.getElementById('status').innerText = "Muvaffaqiyatli kirildi!";
+        }
+        setTimeout(() => window.location.href = '/', 1000);
+      } else {
+        document.getElementById('status').innerText = "Token topilmadi. Qayta yo'naltirilmoqda...";
+        setTimeout(() => window.location.href = '/', 2000);
+      }
+    };
+  </script>
+</body>
+</html>

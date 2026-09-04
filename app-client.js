@@ -3683,3 +3683,145 @@ window.toggleTopDropdown = function() {
 window.renderPlanMgrPage = renderPlanMgrPage;
 window.renderTeacherPlans = renderTeacherPlans;
 window.renderStudentPlanPage = renderStudentPlanPage;
+
+// ───────── GOOGLE OAUTH & PASSKEY LOGIC ─────────
+window.uploadProfilePhoto = async function(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result;
+    toast('Rasm yuklanmoqda... biroz kuting', 'info');
+    try {
+      const res = await fetch('/api/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64 })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        const s = getStudentById(curId);
+        if (s) {
+          s.photoFileId = data.file_id;
+          await save();
+          if (typeof renderProfileV2 === 'function') renderProfileV2();
+          toast('Rasm muvaffaqiyatli saqlandi!', 'success');
+        }
+      } else {
+        toast('Rasm yuklashda xatolik: ' + data.err, 'error');
+      }
+    } catch (e) {
+      toast('Tarmoq xatosi', 'error');
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
+window.checkGooglePasskeyStatus = async function() {
+  const btn = document.getElementById('googlePasskeyBtn');
+  const unlinkBtn = document.getElementById('googlePasskeyUnlinkBtn');
+  const statusEl = document.getElementById('googlePasskeyStatus');
+  if (!btn || !unlinkBtn || !statusEl) return;
+  
+  if (!curId) return;
+
+  try {
+    const res = await fetch(`/api/auth/google-status?userType=${curType}&userId=${curId}`);
+    const data = await res.json();
+    if (data.ok && data.linked) {
+      statusEl.innerHTML = `<span style="color:#4caf50;">✅ Bog'langan:</span> ${data.email}`;
+      btn.style.display = 'none';
+      unlinkBtn.style.display = 'block';
+    } else {
+      statusEl.innerHTML = `Siz parolsiz, Google akauntingiz bilan tizimga kira olasiz.`;
+      btn.style.display = 'block';
+      unlinkBtn.style.display = 'none';
+    }
+  } catch (e) {
+    statusEl.innerHTML = `Tarmoq xatosi.`;
+  }
+};
+
+window.linkGoogleAccount = function() {
+  window.location.href = '/auth/google?action=link';
+};
+
+window.unlinkGoogleAccount = async function() {
+  if (!confirm("Google hisob bilan bog'lanishni uzmoqchimisiz?")) return;
+  try {
+    const res = await fetch('/api/auth/google-unlink', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userType: curType, userId: curId })
+    });
+    if (res.ok) {
+      toast("Bog'lanish uzildi!", "success");
+      checkGooglePasskeyStatus();
+    }
+  } catch (e) {
+    toast('Xatolik', 'error');
+  }
+};
+
+window.handleGoogleCallback = async function() {
+  const token = localStorage.getItem('google_auth_token');
+  if (token) {
+    localStorage.removeItem('google_auth_token');
+    
+    // Check if user is trying to link or login
+    // If we have a curType/curId, we are already logged in (maybe redirect back to profile)
+    const ls = document.getElementById('loginScreen');
+    if (!ls || ls.style.display === 'none') {
+      // User is already logged in, they were linking
+      if (curId) {
+        try {
+          const res = await fetch('/api/auth/google-link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, userType: curType, userId: curId })
+          });
+          if (res.ok) {
+            toast("Google hisob bog'landi!", 'success');
+            if (typeof renderProfileV2 === 'function') renderProfileV2();
+          } else {
+            toast("Bog'lashda xatolik", 'error');
+          }
+        } catch(e) {}
+      }
+    } else {
+      // User is logging in
+      try {
+        const res = await fetch('/api/auth/google-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+        const data = await res.json();
+        if (data.ok && data.data) {
+          const { type, id } = data.data;
+          curType = type;
+          if (type === 'student') { curId = id; enterS(); }
+          else if (type === 'teacher') { curTeacherId = id; enterT(); }
+          else if (type === 'admin') { curAdminId = id; enterA(); }
+          toast('Google orqali kirdingiz!', 'success');
+        } else {
+          toast(data.err || "Bunday profil topilmadi. Avval profilingiz sozlamalaridan Google'ni bog'lang.", 'error');
+        }
+      } catch (e) {
+        toast('Tarmoq xatosi', 'error');
+      }
+    }
+  }
+};
+
+// Patch renderProfileV2 to check status after rendering
+const _origRP = window.renderProfileV2;
+if (_origRP) {
+  window.renderProfileV2 = function() {
+    _origRP();
+    setTimeout(checkGooglePasskeyStatus, 100);
+  };
+}
+
+// Call on init
+setTimeout(handleGoogleCallback, 1000);

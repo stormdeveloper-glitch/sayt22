@@ -8,11 +8,36 @@ const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const { DatabaseSync } = require('node:sqlite');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '25mb' }));
-app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+app.use(session({
+  secret: process.env.JWT_SECRET || 'super_secret',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+if (process.env.GOOGLE_CLIENT_ID) {
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: `${process.env.APP_URL || 'http://localhost:3000'}/auth/google/callback`
+  }, (accessToken, refreshToken, profile, done) => {
+    return done(null, profile);
+  }));
+}
 
 // ───────── DATA FOLDER (Railway /app/data | lokal ./data) ─────────
 function resolveDataDir() {
@@ -103,6 +128,15 @@ CREATE TABLE IF NOT EXISTS races_kv (
   tenant TEXT NOT NULL,
   payload_json TEXT NOT NULL,
   updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS google_links (
+  google_id TEXT PRIMARY KEY,
+  user_type TEXT NOT NULL,
+  user_id INTEGER NOT NULL,
+  email TEXT,
+  name TEXT,
+  created_at INTEGER NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_tp_u ON typing_progress(tenant, user_id);
@@ -343,9 +377,122 @@ app.post('/api/race/progress', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════════════════════
+// GOOGLE OAUTH ROUTES
+// ════════════════════════════════════════════════════════════════════════
+app.get('/auth/google', (req, res, next) => {
+  req.session.oauthAction = req.query.action || 'login';
+  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+});
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/callback.html?error=auth_failed' }), (req, res) => {
+  const profile = req.user;
+  const action = req.session.oauthAction;
+  const token = jwt.sign({ googleId: profile.id, email: profile.emails?.[0]?.value, name: profile.displayName }, process.env.JWT_SECRET || 'super_secret', { expiresIn: '1h' });
+  res.redirect(`/callback.html?token=${token}&action=${action}`);
+});
+
+app.post('/api/auth/google-link', (req, res) => {
+  const { token, userType, userId } = req.body;
+  if (!token || !userType || !userId) return res.status(400).json({ ok: false, err: 'Missing parameters' });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret');
+    db.prepare(`INSERT INTO google_links (google_id, user_type, user_id, email, name, created_at) VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(google_id) DO UPDATE SET user_type=excluded.user_type, user_id=excluded.user_id, email=excluded.email, name=excluded.name`)
+      .run(decoded.googleId, userType, userId, decoded.email, decoded.name, now());
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ ok: false, err: 'Invalid token' });
+  }
+});
+
+app.post('/api/auth/google-unlink', (req, res) => {
+  const { userType, userId } = req.body;
+  if (!userType || !userId) return res.status(400).json({ ok: false });
+  db.prepare(`DELETE FROM google_links WHERE user_type=? AND user_id=?`).run(userType, userId);
+  res.json({ ok: true });
+});
+
+app.post('/api/auth/google-login', (req, res) => {
+  const { token } = req.body;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret');
+    const link = db.prepare(`SELECT user_type, user_id FROM google_links WHERE google_id=?`).get(decoded.googleId);
+    if (!link) return res.status(404).json({ ok: false, err: 'Bunday profil bog\\'lanmagan' });
+    res.json({ ok: true, data: { type: link.user_type, id: link.user_id } });
+  } catch (e) {
+    res.status(400).json({ ok: false, err: 'Invalid token' });
+  }
+});
+
+app.get('/api/auth/google-status', (req, res) => {
+  const { userType, userId } = req.query;
+  const link = db.prepare(`SELECT email FROM google_links WHERE user_type=? AND user_id=?`).get(userType, userId);
+  res.json({ ok: true, linked: !!link, email: link?.email });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// TELEGRAM PHOTO PROXY
+// ════════════════════════════════════════════════════════════════════════
+app.post('/api/upload-photo', async (req, res) => {
+  const { base64 } = req.body;
+  const botToken = process.env.BOT_TOKEN;
+  const chatId = process.env.PHOTO_CHAT_ID;
+  if (!botToken || !chatId || !base64) return res.status(400).json({ ok: false, err: 'Configuration or image missing' });
+
+  try {
+    const base64Data = base64.replace(/^data:image\\/\\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, 'base64');
+    const blob = new Blob([buffer], { type: 'image/jpeg' });
+    const formData = new FormData();
+    formData.append('chat_id', chatId);
+    formData.append('photo', blob, 'photo.jpg');
+
+    const tgRes = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await tgRes.json();
+    if (!data.ok) return res.status(400).json({ ok: false, err: data.description });
+    
+    // Eng katta rasmni tanlash
+    const photos = data.result.photo;
+    const fileId = photos[photos.length - 1].file_id;
+    res.json({ ok: true, file_id: fileId });
+  } catch (e) {
+    console.error('Photo upload error:', e);
+    res.status(500).json({ ok: false, err: e.message });
+  }
+});
+
+app.get('/api/photo/:fileId', async (req, res) => {
+  const fileId = req.params.fileId;
+  const botToken = process.env.BOT_TOKEN;
+  if (!botToken) return res.status(404).end();
+  try {
+    const fileRes = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`);
+    const fileData = await fileRes.json();
+    if (!fileData.ok) return res.status(404).end();
+    
+    const filePath = fileData.result.file_path;
+    const imgRes = await fetch(`https://api.telegram.org/file/bot${botToken}/${filePath}`);
+    
+    res.setHeader('Content-Type', imgRes.headers.get('content-type') || 'image/jpeg');
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Keshda 1 yil
+    imgRes.body.pipe(res);
+  } catch (e) {
+    res.status(500).end();
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════
 // STATIC + SPA FALLBACK
 // ════════════════════════════════════════════════════════════════════════
 app.use(express.static(__dirname, { index: ['index.html'] }));
+
+app.get('/callback', (req, res) => res.sendFile(path.join(__dirname, 'callback.html')));
+app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'privacy.html')));
+app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'terms.html')));
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });

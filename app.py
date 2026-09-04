@@ -23,11 +23,13 @@ from collections import defaultdict, deque
 from pathlib import Path
 # DB utilities
 from data_database import (
+    authenticate_user,
     get_all_data,
     get_storage_health,
     init_data_db,
     migrate_json_to_db,
     save_data_dict,
+    update_user_password,
 )
 from typing import Any, Optional
 
@@ -581,6 +583,52 @@ def health():
 def get_data():
     """Bazalardan ma'lumotni o'qib beradi."""
     return jsonify(read_data())
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def auth_login():
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"status": "error", "message": "JSON obyekt yuboring"}), 400
+
+    identifier = str(body.get("identifier", "")).strip()
+    password = str(body.get("password", ""))
+    if not identifier or not password:
+        return jsonify({"status": "error", "message": "Login va parol kerak"}), 400
+
+    result = authenticate_user(identifier, password)
+    if not result:
+        return jsonify({"status": "error", "message": "Login yoki parol noto'g'ri"}), 401
+
+    user = dict(result["user"])
+    user["pass"] = ""
+    user["password"] = ""
+    return jsonify({
+        "status": "success",
+        "role": result["role"],
+        "user": user,
+    })
+
+
+@app.route("/api/auth/change-password", methods=["POST"])
+def auth_change_password():
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"status": "error", "message": "JSON obyekt yuboring"}), 400
+
+    role = str(body.get("role", "")).strip().lower()
+    account_id = n_int(body.get("accountId"))
+    old_password = str(body.get("oldPassword", ""))
+    new_password = str(body.get("newPassword", ""))
+    if not role or not account_id or not old_password or not new_password:
+        return jsonify({"status": "error", "message": "Barcha maydonlar kerak"}), 400
+    if len(new_password) < 4:
+        return jsonify({"status": "error", "message": "Yangi parol kamida 4 ta bo'lsin"}), 400
+
+    if not update_user_password(role, account_id, old_password, new_password):
+        return jsonify({"status": "error", "message": "Joriy parol noto'g'ri"}), 401
+
+    return jsonify({"status": "success", "message": "Parol yangilandi"})
 
 
 @app.route("/api/data", methods=["POST"])

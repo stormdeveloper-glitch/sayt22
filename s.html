@@ -3899,6 +3899,9 @@
         </div>
         <button class="btn btn-cyan btn-block" onclick="doLogin('student')"><i class="fas fa-sign-in-alt"></i>
           KIRISH</button>
+        <div style="margin-top: 15px;">
+          <button class="btn btn-block" style="background:#fff;color:#000;border:1px solid #ddd;" onclick="window.location.href='/auth/google?action=login'"><i class="fab fa-google" style="color:#DB4437;"></i> Google orqali kirish (Passkey)</button>
+        </div>
       </div>
       <div id="lgT" style="display:none;">
         <div class="form-group">
@@ -3914,6 +3917,9 @@
         </div>
         <button class="btn btn-gold btn-block" onclick="doLogin('teacher')"><i class="fas fa-chalkboard-teacher"></i>
           KIRISH</button>
+        <div style="margin-top: 15px;">
+          <button class="btn btn-block" style="background:#fff;color:#000;border:1px solid #ddd;" onclick="window.location.href='/auth/google?action=login'"><i class="fab fa-google" style="color:#DB4437;"></i> Google orqali kirish (Passkey)</button>
+        </div>
       </div>
       <div id="lgA" style="display:none;">
         <div class="form-group">
@@ -3929,6 +3935,9 @@
         </div>
         <button class="btn btn-gold btn-block" onclick="doLogin('admin')"><i class="fas fa-user-shield"></i>
           KIRISH</button>
+        <div style="margin-top: 15px;">
+          <button class="btn btn-block" style="background:#fff;color:#000;border:1px solid #ddd;" onclick="window.location.href='/auth/google?action=login'"><i class="fab fa-google" style="color:#DB4437;"></i> Google orqali kirish (Passkey)</button>
+        </div>
       </div>
     </div>
   </div>
@@ -8468,6 +8477,12 @@
             <div class="sc-head"><div class="sc-title"><i class="fas fa-bell" style="color:var(--purple);"></i> Bildirishnoma sozlamalari</div><i class="fas fa-chevron-right txt3"></i></div>
             <div class="txt2 fs12">Qaysi xabarlarga e'tibor berishingizni belgilang</div>
           </button>
+          <div class="scard" style="text-align:left;cursor:pointer;">
+            <div class="sc-head mb-8"><div class="sc-title"><i class="fab fa-google" style="color:#DB4437;"></i> Google Passkey</div></div>
+            <div id="googlePasskeyStatus" class="txt2 fs12 mb-8">Yuklanmoqda...</div>
+            <button class="btn btn-sm btn-cyan" id="googlePasskeyBtn" onclick="linkGoogleAccount()" style="display:none;width:100%;">Bog'lash</button>
+            <button class="btn btn-sm" id="googlePasskeyUnlinkBtn" onclick="unlinkGoogleAccount()" style="display:none;background:rgba(255,100,100,0.1);color:#ff6464;border:1px solid #ff6464;width:100%;">Bog'lanishni uzish</button>
+          </div>
         </div>
       </div>`;
     }

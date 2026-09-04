@@ -4262,6 +4262,9 @@
           Hisobingiz yo'qmi?
           <a href="javascript:void(0)" style="color:var(--cyan);font-weight:600;" onclick="openRegisterModal()">Ro'yxatdan o'tish</a>
         </div>
+        <div style="margin-top: 15px;">
+          <button class="btn btn-block" style="background:#fff;color:#000;border:1px solid #ddd;" onclick="window.location.href='/auth/google?action=login'"><i class="fab fa-google" style="color:#DB4437;"></i> Google orqali kirish</button>
+        </div>
       </div>
 
       <a class="apk-dl-btn" href="Texnoo.apk" download="Texnoo.apk" onclick="showToast('⬇️ Ilova yuklanmoqda...')">
@@ -6838,24 +6841,23 @@
       if (!oldEl || !newEl || !confEl) return;
       const oldP = oldEl.value.trim(), newP = newEl.value.trim(), confP = confEl.value.trim();
       if (!oldP || !newP || !confP) { showToast("❗ Barcha maydonlarni to'ldiring"); return; }
-      let list;
-      if (curUser.role === 'student') list = DB.students;
-      else if (curUser.role === 'teacher') list = DB.teachers;
-      else if (curUser.role === 'parent') list = DB.parents;
-      else if (curUser.role === 'employer') list = DB.employers;
-      else if (curUser.role === 'admin') list = DB.admins;
-      else return;
-      const rec = (list || []).find(x => x.id === curUser.id);
-      if (!rec) { showToast('❌ Foydalanuvchi topilmadi'); return; }
-      if (String(rec.pass) !== oldP) { showToast("❌ Joriy parol noto'g'ri"); return; }
       if (newP.length < 4) { showToast("❗ Yangi parol kamida 4 ta belgidan iborat bo'lsin"); return; }
       if (newP !== confP) { showToast("❌ Yangi parollar bir-biriga mos emas"); return; }
       if (newP === oldP) { showToast("❗ Yangi parol eskisidan farq qilishi kerak"); return; }
-      rec.pass = newP;
-      curUser.pass = newP;
-      saveData();
-      closeGlobalModal();
-      showToast('✅ Parol muvaffaqiyatli yangilandi');
+      fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: curUser.role, accountId: curUser.id, oldPassword: oldP, newPassword: newP })
+      })
+        .then(res => res.json().catch(() => ({})).then(out => ({ ok: res.ok, out })))
+        .then(({ ok, out }) => {
+          if (!ok) throw new Error(out.message || "Joriy parol noto'g'ri");
+          closeGlobalModal();
+          showToast('✅ Parol muvaffaqiyatli yangilandi');
+        })
+        .catch((e) => {
+          showToast('❌ ' + (e.message || 'Parol yangilanmadi'));
+        });
     }
     window.submitPasswordChange = submitPasswordChange;
     // ══════════════════════════════════════════════════
@@ -6888,21 +6890,27 @@
       const identifier = (idEl?.value || '').trim();
       const password = pwEl?.value || '';
       if (!identifier || !password) { showToast('❗ Telefon/Email va parolni kiriting'); return; }
-      const found = findAccountByIdentifier(identifier);
-      if (!found || String(found.user.pass) !== password) {
-        showToast("❌ Login yoki parol noto'g'ri");
-        return;
-      }
-      if (found.role === 'teacher' && found.user.status === 'pending') {
-        showToast("⏳ Hisobingiz hali Platform Admin tomonidan tasdiqlanmagan");
-        return;
-      }
-      curUser = { ...found.user, role: found.role };
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('topbar').style.display = 'flex';
-      document.getElementById('appShell').style.display = 'flex';
-      saveSession();
-      initApp();
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, password })
+      })
+        .then(res => res.json().catch(() => ({})).then(out => ({ ok: res.ok, out })))
+        .then(({ ok, out }) => {
+          if (!ok) throw new Error(out.message || "Login yoki parol noto'g'ri");
+          if (out.role === 'teacher' && out.user && out.user.status === 'pending') {
+            throw new Error("Hisobingiz hali Platform Admin tomonidan tasdiqlanmagan");
+          }
+          curUser = { ...(out.user || {}), role: out.role };
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('topbar').style.display = 'flex';
+          document.getElementById('appShell').style.display = 'flex';
+          saveSession();
+          initApp();
+        })
+        .catch((e) => {
+          showToast('❌ ' + (e.message || "Login yoki parol noto'g'ri"));
+        });
     }
     window.doUnifiedLogin = doUnifiedLogin;
 
@@ -7052,7 +7060,7 @@
       if (!curUser) return;
       try {
         sessionStorage.setItem(SESSION_KEY, JSON.stringify({ role: curUser.role, id: curUser.id }));
-        localStorage.setItem(SESSION_KEY, JSON.stringify({ role: curUser.role, id: curUser.id }));
+        localStorage.removeItem(SESSION_KEY);
       } catch (e) { console.warn('Sessiya saqlashda xatolik', e); }
     }
     function clearSession() {
@@ -7060,10 +7068,11 @@
     }
     function readSession() {
       try {
-        const raw = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+        const raw = sessionStorage.getItem(SESSION_KEY);
         return raw ? JSON.parse(raw) : null;
       } catch (e) { return null; }
     }
+    try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
     // Avvalgi sessiyani DB yuklangandan so'ng tiklashga urinamiz (loadData() dan keyin chaqiriladi)
     function restoreSession() {
       const sess = readSession();
@@ -13101,7 +13110,11 @@
       <div class="pg-wrap">
         <div class="profile-hero">
           <div class="ph-wrap">
-            <div class="ph-av ${s.vip?.status?'vip-ph':''} ${s.mktOwned?.includes('Avatar ramka')?'mkt-framed':''}">${(s.firstName||s.name||'U').charAt(0).toUpperCase()}</div>
+            <div class="ph-av ${s.vip?.status?'vip-ph':''} ${s.mktOwned?.includes('Avatar ramka')?'mkt-framed':''}" style="cursor:pointer;position:relative;${s.photoFileId ? `background-image:url('/api/photo/${s.photoFileId}');background-size:cover;background-position:center;color:transparent;` : ''}" onclick="document.getElementById('profilePhotoInput').click()">
+              ${s.photoFileId ? '' : (s.firstName||s.name||'U').charAt(0).toUpperCase()}
+              <div style="position:absolute;bottom:-5px;right:-5px;background:var(--cyan);color:#000;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--bg);"><i class="fas fa-camera"></i></div>
+            </div>
+            <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="uploadProfilePhoto(this)">
             <div style="flex:1;min-width:0;">
               <div class="ph-name">${escHtml(s.firstName+' '+(s.lastName||''))} ${s.vip?.status?'<span class="vip-badge" style="margin-left:6px;">👑 VIP</span>':''}${s.mktOwned?.includes('VIP nishon')?' <span class="vip-badge" style="margin-left:6px;background:var(--gold-dim);color:var(--gold);">⭐ Nishon</span>':''}</div>
               <div class="ph-uname">${escHtml(s.username||'')} · ID: ${s.id}</div>
@@ -13184,6 +13197,12 @@
             <div class="sc-head"><div class="sc-title"><i class="fas fa-bell" style="color:var(--purple);"></i> Bildirishnoma sozlamalari</div><i class="fas fa-chevron-right txt3"></i></div>
             <div class="txt2 fs12">Qaysi xabarlarga e'tibor berishingizni belgilang</div>
           </button>
+          <div class="scard" style="text-align:left;cursor:pointer;">
+            <div class="sc-head mb-8"><div class="sc-title"><i class="fab fa-google" style="color:#DB4437;"></i> Google Passkey</div></div>
+            <div id="googlePasskeyStatus" class="txt2 fs12 mb-8">Yuklanmoqda...</div>
+            <button class="btn btn-sm btn-cyan" id="googlePasskeyBtn" onclick="linkGoogleAccount()" style="display:none;width:100%;">Bog'lash</button>
+            <button class="btn btn-sm" id="googlePasskeyUnlinkBtn" onclick="unlinkGoogleAccount()" style="display:none;background:rgba(255,100,100,0.1);color:#ff6464;border:1px solid #ff6464;width:100%;">Bog'lanishni uzish</button>
+          </div>
         </div>
       </div>`;
     }
