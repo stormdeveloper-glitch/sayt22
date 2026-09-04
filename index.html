@@ -43,6 +43,7 @@
       --bor2: rgba(255, 255, 255, .06);
       --r: 10px;
       --hh: 54px;
+      --maint-h: 38px;
 
       --scan: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 229, 255, .015) 2px, rgba(0, 229, 255, .015) 4px);
     }
@@ -564,6 +565,65 @@
     }
 
     /* ── TOPBAR ── */
+    .maintenance-banner {
+      height: var(--maint-h);
+      width: 100%;
+      overflow: hidden;
+      position: sticky;
+      top: 0;
+      z-index: 160;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, #3a1200, #7a2600 20%, #a93a00 50%, #7a2600 80%, #3a1200);
+      border-bottom: 1px solid rgba(255, 204, 0, .24);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+    }
+
+    .maintenance-banner::before,
+    .maintenance-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .maintenance-banner::before {
+      background: linear-gradient(90deg, rgba(255, 204, 0, .12), transparent 20%, transparent 80%, rgba(255, 204, 0, .12));
+    }
+
+    .maintenance-banner::after {
+      border-top: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .maintenance-track {
+      min-width: 100%;
+      white-space: nowrap;
+      will-change: transform;
+      animation: maint-marquee 18s linear infinite;
+    }
+
+    .maintenance-text {
+      display: inline-block;
+      padding-left: 100%;
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      color: #fff3bf;
+      text-shadow: 0 0 14px rgba(255, 204, 0, .32);
+      text-transform: uppercase;
+    }
+
+    @keyframes maint-marquee {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
     .topbar {
       height: var(--hh);
       display: flex;
@@ -576,7 +636,7 @@
       box-shadow: 0 1px 30px rgba(0, 0, 0, .5), 0 0 1px rgba(0, 229, 255, .2);
       flex-shrink: 0;
       position: sticky;
-      top: 0;
+      top: var(--maint-h);
       z-index: 100;
     }
 
@@ -4227,6 +4287,12 @@
     </div>
   </div>
 
+  <div class="maintenance-banner">
+    <div class="maintenance-track">
+      <div class="maintenance-text">TEXNOO.COM TAMIRLANMOQDA • 2 KUNDA ISHGA TUSHADI • TEXNOO.COM TAMIRLANMOQDA • 2 KUNDA ISHGA TUSHADI •</div>
+    </div>
+  </div>
+
   <!-- TOPBAR -->
   <div class="topbar" id="topbar" style="display:none;">
     <button id="sidebarToggle" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
@@ -5854,6 +5920,22 @@
             </div>
           </div>
 
+          <div class="card" style="margin-top:16px;">
+            <div class="ch">
+              <h4><i class="fas fa-file-import"></i> DATA IMPORT</h4>
+            </div>
+            <div class="cb">
+              <p style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;">
+                // JSON yuklanadi, tekshiriladi va ichidagi barcha ma'lumot SQLite hamda PostgreSQL'ga yoziladi
+              </p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                <button class="btn btn-cyan" onclick="triggerAdminJsonImport()"><i class="fas fa-upload"></i> JSON yuklash</button>
+                <span id="adminImportStatus" style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">// Hali import qilinmagan</span>
+              </div>
+              <input type="file" id="adminJsonFileInput" accept=".json,application/json" style="display:none;" onchange="handleAdminJsonImport(event)">
+            </div>
+          </div>
+
           <!-- Faqat PLATFORM ADMIN ko'radi: yangi admin hisoblarini yaratish + ota-onalar ro'yxati -->
           <div class="card" id="platformAdminPanel" style="margin-top:16px;display:none;">
             <div class="ch">
@@ -6236,8 +6318,17 @@
         if (first) first.level = 'platform_admin';
       }
     }
-    function toApiData() {
+    function chatStatePayload() {
       syncCurrentChats();
+      return {
+        messages: DB.messages || [],
+        chatFriends: allChatFriends,
+        chatGroups: allChatGroups,
+        pendingReqs: allPendingReqs
+      };
+    }
+    function toApiData(includeChat = true) {
+      if (includeChat) syncCurrentChats();
       return {
         seedVersion: 1,
         students: DB.students.map(s => {
@@ -6273,11 +6364,11 @@
         certificates: DB.certificates || [],
         adminRequests: DB.adminRequests || [],
         nextRequestId: 1,
-        messages: DB.messages || [],
+        messages: includeChat ? (DB.messages || []) : [],
         groups: DB.groups || [],
-        chatFriends: allChatFriends,
-        chatGroups: allChatGroups,
-        pendingReqs: allPendingReqs,
+        chatFriends: includeChat ? allChatFriends : [],
+        chatGroups: includeChat ? allChatGroups : [],
+        pendingReqs: includeChat ? allPendingReqs : [],
         pendingTelegramLinks: DB.pendingTelegramLinks || [],
         telegramProfiles: DB.telegramProfiles || {},
         tests: DB.tests || [],
@@ -6399,7 +6490,17 @@
         clearTimeout(timeoutId);
         if (res.ok) {
           const data = await res.json();
-          if (hasRealData(data)) { applyLoadedData(data); return; }
+          if (hasRealData(data)) {
+            applyLoadedData(data);
+            try {
+              const chatRes = await fetch('/api/chat/state', { cache: 'no-store' });
+              const chatOut = await chatRes.json().catch(() => ({}));
+              if (chatRes.ok && chatOut.chat) applyLoadedData(chatOut.chat);
+            } catch (e) {
+              console.warn('Chat state backenddan olinmadi', e);
+            }
+            return;
+          }
         }
       } catch (e) {
         console.warn('Backend topilmadi yoki file:// rejimi, localStorage/demo rejimga o\'tildi', e);
@@ -6427,7 +6528,8 @@
     function saveData() {
       clearTimeout(saveTimer);
       saveTimer = setTimeout(async () => {
-        const payload = toApiData();
+        const payload = toApiData(false);
+        const chatPayload = chatStatePayload();
 
         // Har doim localStorage'ga saqlaymiz — backend ishlamasa ham hech narsa yo'qolmaydi
         try {
@@ -6447,6 +6549,44 @@
         } catch (e) {
           // Backend yo'q bo'lishi mumkin — bu endi kritik xato emas, localStorage'da saqlangan
           console.warn('Backendga saqlanmadi (localStorage\'da saqlangan)', e);
+        }
+      }, 180);
+    }
+
+    function saveData() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(async () => {
+        const payload = toApiData(false);
+        const chatPayload = chatStatePayload();
+
+        try {
+          localStorage.setItem(LOCAL_KEY, JSON.stringify(payload));
+        } catch (e) {
+          console.warn('localStorage saqlashda xatolik', e);
+        }
+
+        let mainSaved = false;
+        try {
+          const res = await fetch('/api/data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error('API ' + res.status);
+          mainSaved = true;
+        } catch (e) {
+          console.warn('Backendga saqlanmadi (localStorage\'da saqlangan)', e);
+        }
+
+        try {
+          const res = await fetch('/api/chat/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(chatPayload)
+          });
+          if (!res.ok) throw new Error('CHAT API ' + res.status);
+        } catch (e) {
+          console.warn(mainSaved ? 'Chat backendga saqlanmadi' : 'Chat ham backendga saqlanmadi', e);
         }
       }, 180);
     }
@@ -7555,6 +7695,60 @@
         if (isPlatform) renderAdminAccountsTable();
       }
     }
+    function setAdminImportStatus(text, isError) {
+      const el = document.getElementById('adminImportStatus');
+      if (!el) return;
+      el.textContent = text;
+      el.style.color = isError ? 'var(--danger)' : 'var(--text3)';
+    }
+    function triggerAdminJsonImport() {
+      if (curUser?.role !== 'admin') { showToast('❗ Faqat admin uchun'); return; }
+      const input = document.getElementById('adminJsonFileInput');
+      if (input) input.click();
+    }
+    window.triggerAdminJsonImport = triggerAdminJsonImport;
+    async function handleAdminJsonImport(event) {
+      if (curUser?.role !== 'admin') { showToast('❗ Faqat admin uchun'); return; }
+      const file = event?.target?.files?.[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        setAdminImportStatus('// Xato: JSON fayl 5 MB dan katta', true);
+        showToast('❗ JSON fayl juda katta');
+        event.target.value = '';
+        return;
+      }
+
+      setAdminImportStatus(`// Import qilinmoqda: ${file.name}`, false);
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('adminId', String(curUser.id || ''));
+
+      try {
+        const res = await fetch('/api/admin/import-json', { method: 'POST', body: fd });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(out.message || ('API ' + res.status));
+
+        if (out.data) {
+          applyLoadedData(out.data);
+          try { localStorage.setItem(LOCAL_KEY, JSON.stringify(out.data)); } catch (e) { console.warn('Import localStorage xatosi', e); }
+          initA();
+        }
+
+        const s = out.summary || {};
+        const storage = out.storage || {};
+        setAdminImportStatus(
+          `// OK: ${s.students || 0} student, ${s.teachers || 0} teacher, ${s.admins || 0} admin | sqlite:${storage.sqlite ? 'on' : 'off'} postgres:${storage.postgres ? 'on' : 'off'}`,
+          false
+        );
+        showToast('✅ JSON import qilindi');
+      } catch (e) {
+        setAdminImportStatus(`// Xato: ${e.message || 'import bajarilmadi'}`, true);
+        showToast('❗ JSON import bajarilmadi');
+      } finally {
+        event.target.value = '';
+      }
+    }
+    window.handleAdminJsonImport = handleAdminJsonImport;
     // Faqat Platform Admin: yangi School Admin / Platform Admin hisobi yaratish
     function addAdminAccount() {
       if (!(curUser?.role === 'admin' && curUser.level === 'platform_admin')) { showToast('❗ Faqat Platform Admin'); return; }
@@ -9783,6 +9977,50 @@
       return null;
     }
 
+    function cloneChatMsg(msg) {
+      return {
+        ...msg,
+        reactions: msg && typeof msg.reactions === 'object' ? { ...msg.reactions } : {}
+      };
+    }
+
+    function appendMessageToCurrentChat(msg) {
+      const data = getChatData();
+      if (!data || !msg) return null;
+      const nextMsg = cloneChatMsg(msg);
+
+      if (curChat?.type === 'friend') {
+        const owner = currentOwnerKey();
+        const peerKey = data.peerKey || (Array.isArray(data.members) ? data.members.find(x => x !== owner) : '');
+        const threadId = String(data.threadId || data.id || directThreadId(owner, peerKey));
+        let canonical = allChatFriends.find(f => chatThreadKey(f) === threadId);
+        if (!canonical) {
+          canonical = {
+            ...data,
+            id: threadId,
+            threadId,
+            ownerKey: owner,
+            peerKey,
+            members: Array.isArray(data.members) && data.members.length ? data.members : [owner, peerKey].filter(Boolean),
+            msgs: []
+          };
+          allChatFriends.push(canonical);
+        }
+        if (!Array.isArray(canonical.msgs)) canonical.msgs = [];
+        canonical.msgs.push(nextMsg);
+        data.msgs = canonical.msgs;
+        const localThread = chatFriends.find(f => f.id === data.id);
+        if (localThread) localThread.msgs = canonical.msgs;
+        return nextMsg;
+      }
+
+      if (!Array.isArray(data.msgs)) data.msgs = [];
+      data.msgs.push(nextMsg);
+      const localGroup = chatGroups.find(g => g.id === data.id);
+      if (localGroup) localGroup.msgs = data.msgs;
+      return nextMsg;
+    }
+
     // ── MESSAGES
     function buildMsgEl(m, data) {
       if (!m || typeof m !== 'object') {
@@ -9971,6 +10209,8 @@
           text,
           sent: true,
           senderKey: currentOwnerKey(),
+          senderId: curUser?.id,
+          senderRole: curUser?.role,
           senderName: curUser?.name || '',
           time: nTime(),
           type: 'text',
@@ -9979,7 +10219,7 @@
         };
         if (replyTo && replyTo.text) { msg.rply = String(replyTo.text).slice(0, 50); }
         else if (replyTo) { msg.rply = '[Media]'; }
-        data.msgs.push(msg);
+        appendMessageToCurrentChat(msg);
         try { inp.value = ''; inp.style.height = 'auto'; } catch (e) { }
         cancelReply();
         renderMsgs(true);
@@ -10183,7 +10423,7 @@
         console.warn('Media serverga yuklanmadi, vaqtinchalik preview ishlatiladi', e);
         showToast('⚠️ Media serverga yuklanmadi, lekin shu qurilmada ko\'rinadi');
       }
-      data.msgs.push({ id: gId(), type, src: url, sent: true, senderKey: currentOwnerKey(), senderName: curUser?.name || '', time: nTime(), reactions: {} });
+      appendMessageToCurrentChat({ id: gId(), type, src: url, sent: true, senderKey: currentOwnerKey(), senderId: curUser?.id, senderRole: curUser?.role, senderName: curUser?.name || '', time: nTime(), reactions: {} });
       inp.value = ''; renderMsgs(); renderCChats(); saveData();
       showToast(type === 'image' ? '📷 Rasm yuborildi' : '🎵 Audio yuborildi');
     }

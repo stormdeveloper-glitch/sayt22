@@ -19,9 +19,16 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
+from collections import defaultdict, deque
 from pathlib import Path
 # DB utilities
-from data_database import init_data_db, get_all_data, save_data_dict, migrate_json_to_db
+from data_database import (
+    get_all_data,
+    get_storage_health,
+    init_data_db,
+    migrate_json_to_db,
+    save_data_dict,
+)
 from typing import Any, Optional
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -39,6 +46,23 @@ logging.basicConfig(
 logger = logging.getLogger("teacher_texno")
 
 
+def load_env_file() -> None:
+    """Load local .env values when running outside managed hosting."""
+    env_file = Path(__file__).resolve().parent / ".env"
+    if not env_file.is_file():
+        return
+    with env_file.open("r", encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+load_env_file()
+
+
 # --------------------------------------------------------------------------
 # Konfiguratsiya
 # --------------------------------------------------------------------------
@@ -50,12 +74,22 @@ class Config:
 
     UPLOAD_DIR = BASE_DIR / "uploads"
     ALLOWED_UPLOAD_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "pdf"}
+    ALLOWED_IMPORT_EXTENSIONS = {"json"}
     MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10 MB
+    MAX_JSON_IMPORT_SIZE = 5 * 1024 * 1024  # 5 MB
+    MAX_JSON_PAYLOAD_SIZE = 5 * 1024 * 1024  # 5 MB
+    RATE_LIMIT_WINDOW_SEC = int(os.environ.get("RATE_LIMIT_WINDOW_SEC", 60))
+    RATE_LIMIT_API = int(os.environ.get("RATE_LIMIT_API", 180))
+    RATE_LIMIT_WRITE = int(os.environ.get("RATE_LIMIT_WRITE", 45))
+    RATE_LIMIT_AUTH = int(os.environ.get("RATE_LIMIT_AUTH", 20))
+    RATE_LIMIT_UPLOAD = int(os.environ.get("RATE_LIMIT_UPLOAD", 12))
+    RATE_LIMIT_ADMIN_IMPORT = int(os.environ.get("RATE_LIMIT_ADMIN_IMPORT", 6))
 
     OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
     OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+    RUN_TELEGRAM_BOT = os.environ.get("RUN_TELEGRAM_BOT", "1").strip() not in {"0", "false", "False", "no", "NO"}
 
     SMS_GATEWAY_URL = os.environ.get("SMS_GATEWAY_URL")
     SMS_GATEWAY_API_KEY = os.environ.get("SMS_GATEWAY_API_KEY")
@@ -75,6 +109,8 @@ Config.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # data.json ga bir vaqtda bir nechta so'rov yozishining oldini olish uchun.
 _data_lock = threading.Lock()
+_rate_limit_lock = threading.Lock()
+_rate_limit_buckets: dict[str, deque[float]] = defaultdict(deque)
 
 STUDENT_DEFAULTS = {
     "Bahodirjonov Sardor": {"group": "D2", "coins": 100},
@@ -121,10 +157,6 @@ def n_int(value: Any, default: int = 0) -> int:
         return int(value)
     except (TypeError, ValueError):
         return default
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return default
 
 
 def coins_total(value: Any) -> int:
@@ -132,18 +164,10 @@ def coins_total(value: Any) -> int:
     if isinstance(value, dict):
         return sum(n_int(v) for v in value.values())
     return n_int(value)
-    if isinstance(value, dict):
-        return sum(n_int(v) for v in value.values())
-    return n_int(value)
 
 
 def normalize_data(data: Any) -> tuple[dict, bool]:
     """Ensure data structure exists and add missing defaults for students."""
-    if not isinstance(data, dict):
-        data = {}
-
-    # Existing defaults handling (unchanged) ...
-    """Ma'lumot bazasi strukturasini to'ldiradi va talabalar hisobini yangilaydi."""
     if not isinstance(data, dict):
         data = {}
 
@@ -241,20 +265,135 @@ def normalize_data(data: Any) -> tuple[dict, bool]:
     return data, changed
 
 
+def client_ip() -> str:
+    forwarded_for = request.headers.get("X-Forwarded-For", "")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()[:64]
+    return (request.remote_addr or "unknown")[:64]
+
+
+def is_rate_limited(scope: str, limit: int, window_seconds: int) -> bool:
+    now = time.time()
+    bucket_key = f"{scope}:{client_ip()}"
+    with _rate_limit_lock:
+        bucket = _rate_limit_buckets[bucket_key]
+        while bucket and now - bucket[0] > window_seconds:
+            bucket.popleft()
+        if len(bucket) >= limit:
+            return True
+        bucket.append(now)
+        return False
+
+
+def validate_dataset_payload(data: Any) -> tuple[bool, str]:
+    if not isinstance(data, dict):
+        return False, "JSON obyekt yuboring"
+
+    expected_lists = (
+        "students",
+        "teachers",
+        "admins",
+        "transactions",
+        "groups",
+        "messages",
+        "adminRequests",
+        "chatFriends",
+        "chatGroups",
+        "pendingReqs",
+        "pendingTelegramLinks",
+        "tests",
+        "plans",
+        "submissions",
+        "currencyExchanges",
+    )
+    for key in expected_lists:
+        if key in data and not isinstance(data[key], list):
+            return False, f"`{key}` massiv bo'lishi kerak"
+
+    expected_objects = ("settings", "telegramProfiles", "studentDefaults")
+    for key in expected_objects:
+        if key in data and not isinstance(data[key], dict):
+            return False, f"`{key}` obyekt bo'lishi kerak"
+
+    if len(json.dumps(data, ensure_ascii=False)) > Config.MAX_JSON_PAYLOAD_SIZE:
+        return False, "JSON hajmi juda katta"
+
+    return True, ""
+
+
+def summarize_dataset(data: dict) -> dict:
+    return {
+        "students": len(data.get("students", [])),
+        "teachers": len(data.get("teachers", [])),
+        "admins": len(data.get("admins", [])),
+        "groups": len(data.get("groups", [])),
+        "messages": len(data.get("messages", [])),
+    }
+
+
+def chat_state_payload(data: dict) -> dict:
+    return {
+        "messages": data.get("messages", []) if isinstance(data.get("messages"), list) else [],
+        "chatFriends": data.get("chatFriends", []) if isinstance(data.get("chatFriends"), list) else [],
+        "chatGroups": data.get("chatGroups", []) if isinstance(data.get("chatGroups"), list) else [],
+        "pendingReqs": data.get("pendingReqs", []) if isinstance(data.get("pendingReqs"), list) else [],
+    }
+
+
+def validate_chat_payload(data: Any) -> tuple[bool, str]:
+    if not isinstance(data, dict):
+        return False, "JSON obyekt yuboring"
+    for key in ("messages", "chatFriends", "chatGroups", "pendingReqs"):
+        if key in data and not isinstance(data[key], list):
+            return False, f"`{key}` massiv bo'lishi kerak"
+    if len(json.dumps(data, ensure_ascii=False)) > (3 * 1024 * 1024):
+        return False, "Chat payload juda katta"
+    return True, ""
+
+
+def detect_upload_type(filename: str, head: bytes) -> bool:
+    ext = filename.rsplit(".", 1)[1].lower()
+    if ext == "pdf":
+        return head.startswith(b"%PDF-")
+    if ext in {"png"}:
+        return head.startswith(b"\x89PNG\r\n\x1a\n")
+    if ext in {"jpg", "jpeg"}:
+        return head.startswith(b"\xff\xd8\xff")
+    if ext == "gif":
+        return head.startswith((b"GIF87a", b"GIF89a"))
+    if ext == "webp":
+        return len(head) >= 12 and head[:4] == b"RIFF" and head[8:12] == b"WEBP"
+    if ext == "json":
+        stripped = head.lstrip(b"\xef\xbb\xbf\r\n\t ")
+        return stripped.startswith(b"{") or stripped.startswith(b"[")
+    return False
+
+
+def require_admin(data: dict, admin_id: Any) -> Optional[dict]:
+    admin = find_account(data, "admin", n_int(admin_id))
+    if not admin:
+        return None
+    return admin
+
+
 def init_data_file() -> None:
-    """Initialize the online database. If a legacy JSON file exists, migrate it."""
+    """Initialize databases and migrate legacy JSON if it exists."""
     init_data_db()
     migrate_json_to_db(Config.DATA_FILE)
 
 
 def read_data() -> dict:
-    """Fetch the complete dataset from the online database."""
-    return get_all_data()
+    """Fetch and normalize the complete dataset from storage."""
+    data = get_all_data()
+    data, changed = normalize_data(data)
+    if changed:
+        save_data_dict("app_data", data)
+    return data
 
 
-def write_data(data: dict) -> None:
-    """Ma'lumotlarni online bazaga (app_data kaliti ostida) saqlash."""
-    save_data_dict("app_data", data)
+def write_data(data: dict) -> dict[str, bool]:
+    """Persist the dataset to all configured storages."""
+    return save_data_dict("app_data", data)
 
 
 def find_account(data: dict, role: str, account_id: int) -> Optional[dict]:
@@ -334,6 +473,9 @@ def allowed_upload_file(filename: str) -> bool:
 
 def start_telegram_bot() -> None:
     """BOT_TOKEN mavjud bo'lsa, Telegram botni fon rejimida ishga tushiradi."""
+    if not Config.RUN_TELEGRAM_BOT:
+        logger.info("RUN_TELEGRAM_BOT o'chirilgan, Telegram bot ishga tushmadi")
+        return
     if not Config.BOT_TOKEN:
         logger.info("BOT_TOKEN topilmadi, Telegram bot ishga tushmadi")
         return
@@ -344,6 +486,54 @@ def start_telegram_bot() -> None:
         logger.info("Telegram bot background thread ishga tushdi")
     except Exception:
         logger.exception("Telegram botni ishga tushirishda xato")
+
+
+@app.before_request
+def enforce_request_limits():
+    if not request.path.startswith("/api/"):
+        return None
+
+    if request.path == "/health":
+        return None
+
+    scope = "api"
+    limit = Config.RATE_LIMIT_API
+
+    if request.path.startswith("/api/auth"):
+        scope = "auth"
+        limit = Config.RATE_LIMIT_AUTH
+    elif request.path == "/api/upload":
+        scope = "upload"
+        limit = Config.RATE_LIMIT_UPLOAD
+    elif request.path == "/api/admin/import-json":
+        scope = "admin-import"
+        limit = Config.RATE_LIMIT_ADMIN_IMPORT
+    elif request.method in {"POST", "PUT", "PATCH", "DELETE"}:
+        scope = "write"
+        limit = Config.RATE_LIMIT_WRITE
+
+    if is_rate_limited(scope, limit, Config.RATE_LIMIT_WINDOW_SEC):
+        return jsonify({
+            "status": "error",
+            "message": "Juda ko'p so'rov yuborildi. Birozdan keyin qayta urinib ko'ring.",
+        }), 429
+    return None
+
+
+@app.after_request
+def apply_security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; "
+        "img-src 'self' data: blob: https:; "
+        "media-src 'self' blob: data: https:; "
+        "connect-src 'self' https://api.openai.com https://api.telegram.org;"
+    )
+    return response
 
 
 # --------------------------------------------------------------------------
@@ -377,24 +567,121 @@ def index():
     return send_from_directory(".", "index.html")
 
 
+@app.route("/health", methods=["GET"])
+def health():
+    storage = get_storage_health()
+    ok = storage.get("sqlite") or storage.get("postgres")
+    return jsonify({
+        "status": "ok" if ok else "degraded",
+        "storage": storage,
+    }), 200 if ok else 503
+
+
 @app.route("/api/data", methods=["GET"])
 def get_data():
-    """Volume'dan ma'lumotni o'qib beradi."""
+    """Bazalardan ma'lumotni o'qib beradi."""
     return jsonify(read_data())
 
 
 @app.route("/api/data", methods=["POST"])
 def save_data():
-    """Frontend'dan kelgan ma'lumotni Volume'ga saqlaydi."""
+    """Frontend'dan kelgan ma'lumotni bazalarga saqlaydi."""
     req_data = request.get_json(silent=True)
-    if not isinstance(req_data, dict):
-        return jsonify({"status": "error", "message": "JSON obyekt yuboring"}), 400
+    valid, message = validate_dataset_payload(req_data)
+    if not valid:
+        return jsonify({"status": "error", "message": message}), 400
     if not all(k in req_data for k in ("students", "transactions", "nextStudentId")):
         return jsonify({"status": "error", "message": "Majburiy maydonlar yetishmayapti"}), 400
 
     req_data, _ = normalize_data(req_data)
-    write_data(req_data)
-    return jsonify({"status": "success", "message": "Ma'lumot saqlandi"})
+    storage = write_data(req_data)
+    return jsonify({
+        "status": "success",
+        "message": "Ma'lumot saqlandi",
+        "storage": storage,
+    })
+
+
+@app.route("/api/chat/state", methods=["GET"])
+def get_chat_state():
+    data = read_data()
+    return jsonify({
+        "status": "success",
+        "chat": chat_state_payload(data),
+    })
+
+
+@app.route("/api/chat/state", methods=["POST"])
+def save_chat_state():
+    body = request.get_json(silent=True)
+    valid, message = validate_chat_payload(body)
+    if not valid:
+        return jsonify({"status": "error", "message": message}), 400
+
+    with _data_lock:
+        data = read_data()
+        data["messages"] = body.get("messages", []) if isinstance(body.get("messages"), list) else []
+        data["chatFriends"] = body.get("chatFriends", []) if isinstance(body.get("chatFriends"), list) else []
+        data["chatGroups"] = body.get("chatGroups", []) if isinstance(body.get("chatGroups"), list) else []
+        data["pendingReqs"] = body.get("pendingReqs", []) if isinstance(body.get("pendingReqs"), list) else []
+        storage = write_data(data)
+
+    return jsonify({
+        "status": "success",
+        "message": "Chat saqlandi",
+        "storage": storage,
+    })
+
+
+@app.route("/api/admin/import-json", methods=["POST"])
+def import_json():
+    """Admin uchun JSON import: validate -> normalize -> SQLite + PostgreSQL."""
+    admin_id = n_int(request.form.get("adminId"))
+    import_file = request.files.get("file")
+
+    if not admin_id:
+        return jsonify({"status": "error", "message": "Admin ID kerak"}), 400
+    if not import_file or not import_file.filename:
+        return jsonify({"status": "error", "message": "JSON fayl tanlanmadi"}), 400
+
+    original_name = secure_filename(import_file.filename)
+    if "." not in original_name or original_name.rsplit(".", 1)[1].lower() not in Config.ALLOWED_IMPORT_EXTENSIONS:
+        return jsonify({"status": "error", "message": "Faqat .json fayl yuklash mumkin"}), 400
+
+    raw = import_file.read(Config.MAX_JSON_IMPORT_SIZE + 1)
+    if len(raw) > Config.MAX_JSON_IMPORT_SIZE:
+        return jsonify({"status": "error", "message": "JSON fayl juda katta"}), 413
+    if not detect_upload_type(original_name, raw[:128]):
+        return jsonify({"status": "error", "message": "JSON fayl formati noto'g'ri"}), 400
+
+    try:
+        imported = json.loads(raw.decode("utf-8-sig"))
+    except json.JSONDecodeError:
+        return jsonify({"status": "error", "message": "JSON parse bo'lmadi"}), 400
+
+    valid, message = validate_dataset_payload(imported)
+    if not valid:
+        return jsonify({"status": "error", "message": message}), 400
+
+    with _data_lock:
+        current = read_data()
+        current_admin = require_admin(current, admin_id)
+        imported_admin = require_admin(imported, admin_id)
+        if current.get("admins") and not current_admin:
+            return jsonify({"status": "error", "message": "Admin topilmadi"}), 403
+        if not current.get("admins") and not imported_admin:
+            return jsonify({"status": "error", "message": "Import ichida mos admin topilmadi"}), 403
+
+        imported, _ = normalize_data(imported)
+        storage = write_data(imported)
+
+    return jsonify({
+        "status": "success",
+        "message": "JSON import qilindi va bazalarga yozildi",
+        "summary": summarize_dataset(imported),
+        "storage": storage,
+        "data": imported,
+    })
 
 
 @app.route("/api/market/state", methods=["GET"])
@@ -619,10 +906,7 @@ def request_telegram_link():
 
     # Race condition oldini olish uchun lock ichida o'qish + yozish
     with _data_lock:
-        init_data_file()
-        with Config.DATA_FILE.open("r", encoding="utf-8") as fh:
-            data = json.load(fh)
-        data, _ = normalize_data(data)
+        data = read_data()
         account = find_account(data, role, account_id)
         if not account:
             return jsonify({"status": "error", "message": "Profil topilmadi"}), 404
@@ -645,11 +929,7 @@ def request_telegram_link():
             "status": "pending",
         }
         data["pendingTelegramLinks"].append(pending)
-
-        tmp = Config.DATA_FILE.with_suffix(Config.DATA_FILE.suffix + ".tmp")
-        with tmp.open("w", encoding="utf-8") as fh:
-            json.dump(data, fh, ensure_ascii=False, indent=2)
-        os.replace(tmp, Config.DATA_FILE)
+        write_data(data)
 
     role_label = {"student": "Talaba", "teacher": "O'qituvchi", "admin": "Admin"}[role]
     text = (
@@ -693,12 +973,19 @@ def upload_file():
         return jsonify({"status": "error", "message": "Fayl tanlanmadi"}), 400
 
     original_name = secure_filename(file.filename)
+    if len(original_name) > 120:
+        return jsonify({"status": "error", "message": "Fayl nomi juda uzun"}), 400
     if not original_name or not allowed_upload_file(original_name):
         allowed = ", ".join(sorted(Config.ALLOWED_UPLOAD_EXTENSIONS))
         return jsonify({
             "status": "error",
             "message": f"Ruxsat etilmagan fayl turi. Ruxsat etilganlar: {allowed}",
         }), 400
+
+    head = file.stream.read(32)
+    file.stream.seek(0)
+    if not detect_upload_type(original_name, head):
+        return jsonify({"status": "error", "message": "Fayl turi va tarkibi mos emas"}), 400
 
     ext = original_name.rsplit(".", 1)[1].lower()
     filename = f"{uuid.uuid4().hex}.{ext}"
