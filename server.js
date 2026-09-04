@@ -10,8 +10,13 @@ const cors = require('cors');
 const { DatabaseSync } = require('node:sqlite');
 const session = require('express-session');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+let GoogleStrategy;
+try { GoogleStrategy = require('passport-google-oauth20').Strategy; } catch(e) {}
 const jwt = require('jsonwebtoken');
+
+try {
+  require('dotenv').config();
+} catch(e) {}
 
 const app = express();
 app.use(cors());
@@ -29,14 +34,16 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-if (process.env.GOOGLE_CLIENT_ID) {
+if (process.env.GOOGLE_CLIENT_ID && GoogleStrategy) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${process.env.APP_URL || 'http://localhost:3000'}/auth/google/callback`
+    callbackURL: `${process.env.APP_URL || 'https://texnoo.com'}/auth/google/callback`
   }, (accessToken, refreshToken, profile, done) => {
     return done(null, profile);
   }));
+} else {
+  console.log("⚠️ GOOGLE_CLIENT_ID kiritilmagan yoki kutubxonalar o'rnatilmagan. Google Login ishlamaydi.");
 }
 
 // ───────── DATA FOLDER (Railway /app/data | lokal ./data) ─────────
